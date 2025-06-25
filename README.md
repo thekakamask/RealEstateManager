@@ -10,11 +10,14 @@ This project is developed using modern Android architecture principles, with a f
 - 📝 Initial project README created and structured.
 - ✅ Basic utility class Utils.java preserved for mandatory use.
 
+- ⚙️ Updated Gradle wrapper to 8.6 and Android Gradle Plugin to 8.4.0.
+- 🔧 Kotlin Gradle Plugin added (1.9.22) and fully integrated.
+- ✅ Gradle sync successful and project builds without error.
+- 📦 Android SDK Build-Tools 34 installed and licenses accepted automatically.
+
       
 ## ❌ **NEXT UPDATES**
 
-- 🛠️ Resolve Gradle compatibility issue (gradle version not supported).
-- 🧩 Fix XML tools:context tag mismatch causing runtime crash.
 - 🐞 Fix critical bug in causing emulator crash.
 - 🎨 Add application logo (vector asset).
 - 🎨 Implement custom Material 3 theme with primary/secondary colors.
