@@ -3,17 +3,13 @@
 This project is developed using modern Android architecture principles, with a focus on local data persistence, modular code, and responsive design. It evolves from a legacy student prototype and will be gradually refactored and extended.
 
 
-## ✅ **LAST MAJOR UPDATES**
+## ✅ **LAST MAJOR UPDATES Detailed in the UPDATES file**
 
-- 🛠️ Initial recovery of legacy intern project.
-- 📁 GitHub repository initialized and project imported into Android Studio.
-- 📝 Initial project README created and structured.
-- ✅ Basic utility class Utils.java preserved for mandatory use.
-
-- ⚙️ Updated Gradle wrapper to 8.6 and Android Gradle Plugin to 8.4.0.
-- 🔧 Kotlin Gradle Plugin added (1.9.22) and fully integrated.
-- ✅ Gradle sync successful and project builds without error.
-- 📦 Android SDK Build-Tools 34 installed and licenses accepted automatically.
+- 🧩 Fixed manifest issues for Android 12+ compatibility.
+- 🧠 Fixed runtime crash due to incorrect TextView ID and NullPointerException (trainee version).
+- 🔁 Replaced deprecated imports (android.support.*) with proper androidx. equivalents in MainActivity and SecondActivity (trainee version).
+- ✅ Emulator now launches and app runs without crash base intern version stable (trainee version).
+- 🗂️ Create UPDATES file for keep track of all the updates of the project.
 
       
 ## ❌ **NEXT UPDATES**
