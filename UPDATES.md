@@ -16,6 +16,7 @@ This file documents key technical updates applied to the RealEstateManager Andro
 - 📝 Basic README scaffolded with purpose, tech stack, and instructions.
 - ✅ Utils.java preserved for currency conversion utility (mandatory requirement).
 
+
 ### 🔹 **Update #2**
 
 - ⚙️ Upgraded Gradle Wrapper to 8.6.
@@ -24,6 +25,7 @@ This file documents key technical updates applied to the RealEstateManager Andro
 - 🧱 Project build system modernized with no sync issues.
 - 📦 Installed Android SDK Platform 34 and Build Tools 34.0.0 via SDK Manager.
 - 📜 Automatically accepted licenses to ensure CI/CD compatibility.
+
 
 ### 🔹 **Update #3**
 
@@ -45,6 +47,33 @@ This file documents key technical updates applied to the RealEstateManager Andro
 
 - ✅ **TextView Bug**:
   - Replaced textView.setText(quantity) with textView.setText(String.valueOf(quantity)) to prevent setText(int) from resolving as string resource ID.
+
+
+### 🔹 **Update #4**
+
+- 🧪 **Build system migration to Kotlin DSL**:
+  - ✅ Renamed build.gradle → build.gradle.kts (project-level).
+  - ✅ Renamed settings.gradle → settings.gradle.kts.
+  - ✅ Renamed app/build.gradle → app/build.gradle.kts.
+
+- 📦 **Kotlin DSL Integration**:
+  - 🔧 Adapted syntax for plugin declarations using Kotlin DSL (plugins {} vs apply plugin).
+  - ✅ Applied correct scoping for android {} and dependencies {} blocks.
+  - 🧹 Cleaned up legacy Groovy syntax to eliminate warnings.
+  - 💡 Type-safe configuration and better IDE support (auto-completion).
+  - 📘 Consistent with modern Android/Kotlin best practices.
+
+- 📚 **Version Catalogs (libs.versions.toml)**:
+  - ✅ Defined all library and plugin versions in a TOML file for centralized and declarative dependency management.
+  - 🔍 Eliminated hardcoded versions across build.gradle.kts files.
+  - 🧩 Used aliases (e.g., libs.androidx.appcompat) to reference dependencies for improved maintainability.
+  - ⚠️ Fixed configuration error caused by multiple from(...) calls ensured only one is present.
+  - 📌 Compatible with Gradle dependencyResolutionManagement and modern best practices.
+
+- 🚀 **Java 11 & Compose build compatibility**:
+  - ✅ Set compileOptions and kotlinOptions to Java 11 (sourceCompatibility + jvmTarget).
+  - 🧱 Enabled buildFeatures.compose = true for Jetpack Compose support.
+  - 🔧 Switched ProGuard config to use proguard-android-optimize.txt in release builds.
 
 
 ## 🤝 **Contributions**

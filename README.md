@@ -5,16 +5,13 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES Detailed in the UPDATES file**
 
-- 🧩 Fixed manifest issues for Android 12+ compatibility.
-- 🧠 Fixed runtime crash due to incorrect TextView ID and NullPointerException (trainee version).
-- 🔁 Replaced deprecated imports (android.support.*) with proper androidx. equivalents in MainActivity and SecondActivity (trainee version).
-- ✅ Emulator now launches and app runs without crash base intern version stable (trainee version).
-- 🗂️ Create UPDATES file for keep track of all the updates of the project.
+- 🔄 Migrated Gradle scripts from Groovy (.gradle) to Kotlin DSL (.gradle.kts) for improved type safety and readability.
+- 📦 Integrated centralized dependency and plugin management using libs.versions.toml (Version Catalogs).
+- ⚙️ Applied Java 11 compatibility settings and enabled Jetpack Compose support in Gradle.
 
-      
+
 ## ❌ **NEXT UPDATES**
 
-- 🐞 Fix critical bug in causing emulator crash.
 - 🎨 Add application logo (vector asset).
 - 🎨 Implement custom Material 3 theme with primary/secondary colors.
 - 🔤 Integrate custom font (Google Fonts) for titles and body text.
