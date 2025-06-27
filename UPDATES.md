@@ -99,5 +99,21 @@ This file documents key technical updates applied to the RealEstateManager Andro
   - 🧪 Confirmed Compose preview rendering works with theming and font integration.
 
 
+### 🔹 **Update #6**
+
+  - 🧹 **Java-to-Kotlin migration & project restructuring**:
+    - 🔄 Fully removed legacy Java classes including MainActivity.java, in favor of idiomatic Kotlin components.
+    - 🧱 Reorganized source folders to follow MVVM architecture: data, model, ui, utils, workers.
+    - 🔧 Updated AndroidManifest.xml with proper Application class and Compose theme reference.
+  
+  - 🛠️ **Refactored Utils.java to Kotlin**:
+    - ✅ Migrated to Utils.kt as an object, following Kotlin best practices.
+    - ✅ Preserved the three original methods (convertDollarToEuro, getTodayDate, isInternetAvailable) with improved implementations:
+      - ✅ Internet check now supports API 21+ via version-aware logic.
+      - ✅ Currency conversion and date formatting are simplified and localized.
+    - 📲 Updated method logic to use ConnectivityManager with NetworkCapabilities or NetworkInfo fallback.
+    - 🛡️ Removed any direct calls to APIs not available on Android 5.0.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

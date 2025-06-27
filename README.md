@@ -10,9 +10,13 @@ This project is developed using modern Android architecture principles, with a f
 - 🎨 Add application logo (vector asset).
 - 🎨 Implement custom Material 3 theme with primary/secondary colors.
 - 🔤 Integrate custom font (Google Fonts) for titles and body text.
-
+- 🧹 Java-to-Kotlin migration and MVVM structure setup: replaced legacy classes, refactored Utils, and introduced modern architecture base.
 
 ## ❌ **NEXT UPDATES**
+
+- 🧱 Define core data models and Room entities for real estate properties, photos, and POIs.
+- 🗃️ Setup Room database with DAO and relationship mappings.
+- 🧩 Create repository layer for data access abstraction.
 
 
 ## 📋 **Features**
