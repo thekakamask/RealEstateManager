@@ -5,16 +5,14 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES Detailed in the UPDATES file**
 
-- 🔄 Migrated Gradle scripts from Groovy (.gradle) to Kotlin DSL (.gradle.kts) for improved type safety and readability.
-- 📦 Integrated centralized dependency and plugin management using libs.versions.toml (Version Catalogs).
-- ⚙️ Applied Java 11 compatibility settings and enabled Jetpack Compose support in Gradle.
-
-
-## ❌ **NEXT UPDATES**
-
+- 🧩 Setup of essential dependencies for the project: Jetpack Compose, Room, DataStore, Maps & Location, KSP, and testing tools.  
+- 🚀 Updated all project dependencies to latest stable versions (Compose BOM, Room, DataStore, Location, Maps, Testing, KSP).
 - 🎨 Add application logo (vector asset).
 - 🎨 Implement custom Material 3 theme with primary/secondary colors.
 - 🔤 Integrate custom font (Google Fonts) for titles and body text.
+
+
+## ❌ **NEXT UPDATES**
 
 
 ## 📋 **Features**

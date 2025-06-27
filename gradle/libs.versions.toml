@@ -1,22 +1,100 @@
 [versions]
 # Library and plugin version declarations (centralized)
-appcompat = "1.6.1"
-constraintlayout = "2.1.4"
+appcompat = "1.7.1"
+constraintlayout = "2.2.1"
 junit = "4.13.2"
-androidxJunit = "1.1.5"
-espressoCore = "3.5.1"
-agp = "8.4.0"
-kotlin = "1.9.22"
+androidxJunit = "1.2.1"
+espressoCore = "3.6.1"
+agp = "8.4.2"
+kotlin = "2.1.20"
+
+compose-bom = "2025.06.01"
+room = "2.7.2"
+datastore = "1.1.7"
+location = "21.3.0"
+maps = "19.2.0"
+ksp = "2.1.20-1.0.32"
+mockk = "1.13.7"
+truth = "1.4.2"
+
+uiTextGoogleFonts = "1.8.3"
+activityCompose = "1.10.1"
+
 
 [libraries]
 # Declare libraries using group, name, and version references
+
+# 🔹 Provides backwards compatibility for interface components (Toolbar, Theme, etc.) on older versions of Android.
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+# 🔹 Create flexible, high-performance interfaces with fluid positioning via constraints.
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+# 🧪 Used for classic Java unit tests (e.g. business logic).
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+# 🧪 Provides JUnit integration for instrumented Android testing (in the emulator or on a real device).
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
+
+# 🧪 Android UI test framework to automatically interact with UI components.
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+# --- Compose (via BOM) ---
+# 🎨 BOM Compose: ensures that all Compose libraries used are compatible with each other.
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+
+# 🎨 Basic UI component: allows you to design declarative interfaces (equivalent to classic `Views`).
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+
+# 🛠️ Adds preview to Android Studio + Compose debugging tools.
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+
+# 🎨 Material Design 3 library for Compose (buttons, sliders, themes...).
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
+# --- Room ---
+# 🗃️ Room's main runtime for database access.
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+
+# 🧪 Kotlin-friendly version of Room with coroutine support and practical extensions.
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+# ⚙️ Used by KSP/KAPT to generate DAO/entity code at compile time.
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# --- DataStore ---
+# 💾 Saves simple preferences (key/value) asynchronously and type-safely (replaces SharedPreferences).
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# --- Location & Maps ---
+# 📍 Provides access to GPS location, network, etc. via the Fused Location API.
+location-services = { group = "com.google.android.gms", name = "play-services-location", version.ref = "location" }
+
+# 🗺️ Integration of Google Maps into Android applications (map display, markers, etc.).
+maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "maps" }
+
+# --- Testing ---
+# 🧪 Kotlin mocking lib: simulates objects for unit testing.
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+
+# 🧪 Assertion framework more readable and expressive than JUnit (used with Espresso or MockK).
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
 [plugins]
 # Plugin declarations using IDs and versions from the version catalog
+# ⚙️ Main plugin for creating Android applications (APK, buildTypes, etc.).
 android-application = { id = "com.android.application", version.ref = "agp" }
+
+# ⚙️ Enables Kotlin support for Android (syntax, coroutines, interop...).
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+# ⚙️ Kotlin Symbol Processing: compile-time code generation plugin for Room, Hilt, etc. (faster than KAPT).
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

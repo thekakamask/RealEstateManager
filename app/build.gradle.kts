@@ -2,19 +2,21 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.compose)
 }
 
 // Android-specific build settings for the app module
 // Includes SDK versioning, build types, and default configuration
 android {
     namespace = "com.openclassrooms.realestatemanager" // Kotlin package namespace for generated code
-    compileSdk = 34 // Android SDK version to compile against
+    compileSdk = 35 // Android SDK version to compile against
 
     // Configuration that applies to all build variants (debug/release)
     defaultConfig {
         applicationId = "com.openclassrooms.realestatemanager" // Unique app identifier
         minSdk = 21  // Minimum Android version supported
-        targetSdk = 34  // Targeted Android version for compatibility testing
+        targetSdk = 35  // Targeted Android version for compatibility testing
         versionCode = 1 // Internal version number
         versionName = "1.0" // User-visible version string
 
@@ -59,4 +61,28 @@ dependencies {
     // Android instrumentation testing libraries
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Jetpack Compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.material3)
+
+    //Makes it easy to integrate Google Fonts directly into Jetpack Compose.
+    implementation(libs.androidx.ui.text.google.fonts)
+    //Provides additional Material Design icons for use in the user interface.
+    implementation(libs.androidx.material.icons.extended)
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+    // DataStore
+    implementation(libs.datastore.preferences)
+    // Location & Maps
+    implementation(libs.location.services)
+    implementation(libs.maps)
+    // Testing
+    testImplementation(libs.mockk)
+    testImplementation(libs.truth)
 }

@@ -76,5 +76,28 @@ This file documents key technical updates applied to the RealEstateManager Andro
   - 🔧 Switched ProGuard config to use proguard-android-optimize.txt in release builds.
 
 
+### 🔹 **Update #5**
+
+- 🧱 **Project dependency foundation and setup**:
+  - ✅ Integrated Jetpack Compose using the official Compose BOM and Material3 libraries.
+  - ✅ Added Room (with KTX and compiler) for local database persistence and annotation processing via KSP.
+  - ✅ Included DataStore Preferences for key-value data storage (modern replacement of SharedPreferences).
+  - ✅ Integrated Location Services and Google Maps SDK for geolocation and static/dynamic map rendering.
+  - ✅ Configured KSP (Kotlin Symbol Processing) for Room code generation compatibility with Kotlin.
+  - ✅ Added full testing stack with MockK and Truth to complement JUnit and Espresso for unit/integration testing.
+  - 📦 All major libraries have been updated to their latest stable versions.
+
+- 🎨 **UI Theming & Fonts**:
+  - ✅ Added application logo as a vector asset to align with branding needs and scalable UI rendering.
+  - ✅ Created a fully customized Material 3 theme using lightColorScheme() and darkColorScheme() for modern UI appearance.
+  - ✅ Defined a color palette including primary, secondary, and background colors to support both light and dark modes.
+  - ✅ Integrated Google Fonts via androidx.compose.ui:ui-text-google-fonts, enabling dynamic loading and usage of high-quality typography.
+  - 🔤 Applied a clear typographic hierarchy:
+    - DM Serif Display for titles, headlines, and large labels to reinforce elegance and impact (ideal for real estate).
+    - Inter for body text and UI labels to ensure legibility and a modern feel.
+  - 💡 Used Typography() and FontFamily() APIs to inject the font styles into the app MaterialTheme.
+  - 🧪 Confirmed Compose preview rendering works with theming and font integration.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.
