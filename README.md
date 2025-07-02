@@ -5,16 +5,12 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES Detailed in the UPDATES file**
 
-- 🧩 Setup of essential dependencies for the project: Jetpack Compose, Room, DataStore, Maps & Location, KSP, and testing tools.  
-- 🚀 Updated all project dependencies to latest stable versions (Compose BOM, Room, DataStore, Location, Maps, Testing, KSP).
-- 🎨 Add application logo (vector asset).
-- 🎨 Implement custom Material 3 theme with primary/secondary colors.
-- 🔤 Integrate custom font (Google Fonts) for titles and body text.
-- 🧹 Java-to-Kotlin migration and MVVM structure setup: replaced legacy classes, refactored Utils, and introduced modern architecture base.
+- 🧱 Define core data models and Room entities for real estate properties, photos, and POIs.
+- 🗃️ Setup DAO and relationship mappings.
+
 
 ## ❌ **NEXT UPDATES**
 
-- 🧱 Define core data models and Room entities for real estate properties, photos, and POIs.
 - 🗃️ Setup Room database with DAO and relationship mappings.
 - 🧩 Create repository layer for data access abstraction.
 
@@ -23,10 +19,10 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🏠 **Property Listings** :
 
-      - ❌ **NOT IMPLEMENTED** Create/edit property listings.
-      - ❌ **NOT IMPLEMENTED** View detail and photos of each property.
-      - ❌ **NOT IMPLEMENTED** Add status (available / sold).
-      - ❌ **NOT IMPLEMENTED** Add real estate agent assigned to each listing.
+      - 🟩 **IN PROGRESS** Create/edit property listings.
+      - 🟩 **IN PROGRESS** View detail and photos of each property.
+      - 🟩 **IN PROGRESS** Add status (available / sold).
+      - 🟩 **IN PROGRESS** Add real estate agent assigned to each listing.
    
    - 📍 **Geolocation** :
 
@@ -35,22 +31,22 @@ This project is developed using modern Android architecture principles, with a f
 
    - 📷 **Media Management** :
 
-      - ❌ **NOT IMPLEMENTED** Take or select photos from gallery.
-      - ❌ **NOT IMPLEMENTED** Add multiple images per listing.
+      - 🟩 **IN PROGRESS** Take or select photos from gallery.
+      - 🟩 **IN PROGRESS** Add multiple images per listing.
 
    - 🔍 **Search** :
 
-      - ❌ **NOT IMPLEMENTED** Multi-criteria search (surface, price, type, POI, dates, sold status).
-      - ❌ **NOT IMPLEMENTED** Sort and filter property results.
+      - 🟩 **IN PROGRESS** Multi-criteria search (surface, price, type, POI, dates, sold status).
+      - 🟩 **IN PROGRESS** Sort and filter property results.
 
    - 💾 **Offline Mode** :
 
-      - ❌ **NOT IMPLEMENTED** Local data persistence via Room (SQLite).
-      - ❌ **NOT IMPLEMENTED** Full offline functionality for all screens.
+      - 🟩 **IN PROGRESS** Local data persistence via Room (SQLite).
+      - 🟩 **IN PROGRESS** Full offline functionality for all screens.
 
    - 🧠 **Utilities** :
       - ✅ **DONE** Convert dollar to euro.
-      - ❌ **NOT IMPLEMENTED** Convert euro to dollar (to be implemented).
+      - ❌ **NOT IMPLEMENTED** Convert euro to dollar.
       - ✅ **DONE** Get today's date (format to be improved).
       - ❌ **NOT IMPLEMENTED** Better network availability check.
       - ❌ **NOT IMPLEMENTED** Add unit and integration tests.
@@ -70,22 +66,22 @@ This project is developed using modern Android architecture principles, with a f
          - ❌ **NOT IMPLEMENTED** Display application title and possible future actions.
 
       - Light/Dark Mode:
-         - ❌ **NOT IMPLEMENTED** Supports light/dark mode.
+         - ✅ **DONE** Supports light/dark mode.
 
       - Custom theme:
-         - ❌ **NOT IMPLEMENTED** Implemented custom colors and shapes.
-         - ❌ **NOT IMPLEMENTED** Implemented custom Google Fonts.
+         - ✅ **DONE** Implemented custom colors and shapes.
+         - ✅ **DONE** Implemented custom Google Fonts.
 
    - 🔄 Real-time status management:
 
       - ❌ **NOT IMPLEMENTED** Use of StateFlow for UI state handling.
       - ❌ **NOT IMPLEMENTED** ViewModel for lifecycle-aware logic.
-      - ❌ **NOT IMPLEMENTED** Coroutines for async data operations.
+      - 🟩 **IN PROGRESS** Coroutines for async data operations.
 
    - 🧠 Architecture & Code Structure:
 
-      - ❌ **NOT IMPLEMENTED** Refactor legacy Java to MVVM.
-      - ❌ **NOT IMPLEMENTED** Introduce ViewModel, LiveData / StateFlow, DAO.
+      - ✅ **DONE** Refactor legacy Java to MVVM.
+      - 🟩 **IN PROGRESS** Introduce ViewModel, LiveData / StateFlow, DAO.
 
    - 🚀 Performance and responsiveness:
    

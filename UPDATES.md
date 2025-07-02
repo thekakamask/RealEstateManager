@@ -115,5 +115,46 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - 🛡️ Removed any direct calls to APIs not available on Android 5.0.
 
 
+### 🔹 **Update #7**
+
+  - 🧱 **Define core data models and Room entities for real estate properties, photos, and POIs.**
+
+  #### 🏠 **PropertyEntity & DAO** : 
+  Defined the PropertyEntity class to represent real estate listings in the Room database. This model includes all key attributes expected from a property:
+    - Title, type (e.g. loft, house), price in dollars, surface area, number of rooms, and detailed description.
+    - Address information, agent name, listing status (sold/available), entry and optional sale date.
+    
+  Also implemented PropertyDao interface to handle database access:
+    - Retrieve all properties, sorted either by entry date (descending) or alphabetically by title.
+    - Fetch a property by ID.
+    - Insert new listings or update existing ones.
+    - Mark properties as sold with a timestamp, or delete them individually.
+    - A method is also included to clear the database (for development/testing).
+    - Introduced a multi-criteria search method using SQL conditions with optional filters (Surface area, price range, type of property, and sold status).
+  
+  #### 🖼️ **PhotoEntity & DAO** :
+  Created the PhotoEntity class to store photos linked to a specific property. Each photo includes:
+    - A reference to the associated property (via propertyId).
+    - A URI to the image stored locally or remotely.
+    - A textual description (e.g. "Living room", "Balcony view").
+
+  Developed the PhotoDao interface to manage photo data access:
+    - Fetch all photos related to a given property by its ID.
+    - Insert multiple photos at once (typically during property creation or editing).
+    - Remove photos individually or all photos linked to a specific property (e.g. on deletion).
+
+  #### 📍 **PoiEntity & DAO** :
+  Implemented the PoiEntity data class to represent nearby points of interest (POIs) linked to a property. Each POI record includes:
+    - A reference to the associated property via propertyId.
+    - A name (e.g. "Central Park", "Harlem Public School").
+    - A type or category (e.g. "Park", "School", "Store").
+
+  Built the PoiDao interface to manage interaction with POIs:
+    - Fetch all POIs related to a given property using its ID.
+    - Insert a list of POIs in bulk during property creation or update.
+    - Delete all POIs tied to a specific property (e.g. upon property removal).
+    - Allow selective deletion of individual POIs if needed (manual clean-up or updates).
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.
