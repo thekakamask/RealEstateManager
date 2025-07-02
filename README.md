@@ -5,14 +5,23 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES Detailed in the UPDATES file**
 
-- 🧱 Define core data models and Room entities for real estate properties, photos, and POIs.
-- 🗃️ Setup DAO and relationship mappings.
+   - 🧱 Define core data models and Room entities for real estate properties, photos, and POIs.
+   - 🗃️ Setup DAO and relationship mappings.
+   - 🗃️ Setup Room database with DAO and relationship mappings.
+   - 🧩 Create repository layer for data access abstraction.
 
 
 ## ❌ **NEXT UPDATES**
 
-- 🗃️ Setup Room database with DAO and relationship mappings.
-- 🧩 Create repository layer for data access abstraction.
+   - 📍 Integrate Static Maps API
+   - 📡 Implement dynamic geolocation support
+   - 🧠 ViewModel Implementation
+   - 🔄 State Management with LiveData / StateFlow
+   - 💾 Prepopulate sample data
+   - 📤 ContentProvider setup (for external data access)
+   - 🔔 Notification on property creation
+   - 🧰 Improve Utils.java methods
+   - 🛡️ Permission & Error Handling Layer.
 
 
 ## 📋 **Features**
