@@ -1,6 +1,8 @@
 package com.dcac.realestatemanager.data
 
 import android.content.Context
+import com.dcac.realestatemanager.data.googleMap.GoogleMapRepository
+import com.dcac.realestatemanager.data.googleMap.OnlineGoogleMapRepository
 import com.dcac.realestatemanager.data.offlineStaticMap.OfflineStaticMapRepository
 import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.offlinedatabase.RealEstateManagerDatabase
@@ -24,6 +26,7 @@ interface AppContainer{
     val photoRepository: PhotoRepository
     val poiRepository: PoiRepository
     val staticMapRepository: StaticMapRepository
+    val googleMapRepository: GoogleMapRepository
 }
 
 //Default implementation of AppContainer.
@@ -67,5 +70,13 @@ class AppDataContainer(private val context: Context) : AppContainer {
     // It abstracts away the Retrofit implementation and provides a clean interface for the ViewModel layer.
     override val staticMapRepository : StaticMapRepository by lazy {
         OfflineStaticMapRepository(staticMapRetrofitService)
+    }
+
+    override val googleMapRepository: GoogleMapRepository by lazy {
+        OnlineGoogleMapRepository(
+            context = context,
+            propertyRepository = propertyRepository,
+            poiRepository = poiRepository
+        )
     }
 }

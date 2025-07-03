@@ -219,5 +219,26 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - This approach avoids exposing sensitive credentials in version control systems.
 
 
+### 🔹 **Update #10**
+
+  - 📍 **Location Permission Handling**
+    - Implemented runtime permission request flow for accessing the user fine location (ACCESS_FINE_LOCATION).
+    - Updated AndroidManifest.xml to declare required location permissions (ACCESS_FINE_LOCATION and ACCESS_COARSE_LOCATION).
+    - Added user-friendly permission rationale and error handling to ensure smooth experience when permissions are denied or revoked.
+    - This setup prepares the app for integrating live user geolocation features and map display with location-based markers.
+  
+  - 📦 **Google Play Services & Coroutines Integration**
+    - Added dependencies for Google Maps SDK, Location Services, and Kotlin Coroutines support for asynchronous location retrieval.
+    - Configured Kotlin Coroutines Play Services to allow suspending functions when accessing the fused location client.
+
+  - 🗺️ **Dynamic Location & Data Integration**
+    - Implemented GoogleMapRepository that uses the fused location client to asynchronously obtain the user current location.
+    - Repository streams all properties and POIs stored locally via existing Room repositories, enabling live data updates for map display.
+
+  - 💉 **Dependency Injection Enhancements**
+    - Extended AppContainer and its implementation to provide an instance of GoogleMapRepository, injecting the necessary context and offline repositories.
+    - Centralized repository management to streamline future ViewModel integration and testing.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

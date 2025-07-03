@@ -3,20 +3,17 @@
 This project is developed using modern Android architecture principles, with a focus on local data persistence, modular code, and responsive design. It evolves from a legacy intern prototype and will be gradually refactored and extended.
 
 
-## ✅ **LAST MAJOR UPDATES Detailed in the UPDATES file**
+## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔧 Migrated base package name from com.openclassrooms.realestatemanager to com.dcac.realestatemanager.
-   - 🔌 Integrated Retrofit & Kotlinx Serialization to enable networking with external APIs.
-   - 🗺️ Integrated Google Static Maps API to display static images of property locations.
-   - 💾 Enabled offline caching of map images by storing them as local files.
-   - 🏠 Updated Room model to persist static map path in PropertyEntity.
-   - 💉 Extended AppContainer to inject StaticMapRepository :
-      - Includes Retrofit configuration (base URL, instance, service creation) for Maps API.
+   - 📍 Added runtime location permission request to enable user geolocation features.
+   - 📦 Added Google Play Services dependencies for Maps and Location with coroutine support.
+   - 🗺️ Integrated dynamic retrieval of user location, properties, and POIs using Google Maps SDK and Location Services APIs.
+   - 🔄 Implemented GoogleMapRepository to manage geolocation data and property/POI streams from Room.
+   - 💉 Extended AppContainer to inject GoogleMapRepository with offline repositories and location client dependencies.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - 📡 Implement dynamic geolocation support
    - 🧠 ViewModel Implementation
    - 🔄 State Management with LiveData / StateFlow
    - 💾 Prepopulate sample data
@@ -37,22 +34,23 @@ This project is developed using modern Android architecture principles, with a f
    
    - 📍 **Geolocation** :
 
-      - ❌ **NOT IMPLEMENTED** Auto-map property using Static Maps API.
-      - ❌ **NOT IMPLEMENTED** Display pins of nearby listings on a map.
+      - ✅ **DONE** Auto-map property using Static Maps API.
+      - 🟩 **IN PROGRESS** Display pins of nearby listings on a map.
+      - 🟩 **IN PROGRESS** Retrieve and display user current location.
 
    - 📷 **Media Management** :
 
-      - 🟩 **IN PROGRESS** Take or select photos from gallery.
-      - 🟩 **IN PROGRESS** Add multiple images per listing.
+      - ❌ **NOT IMPLEMENTED** Take or select photos from gallery.
+      - ❌ **NOT IMPLEMENTED** Add multiple images per listing.
 
    - 🔍 **Search** :
 
-      - 🟩 **IN PROGRESS** Multi-criteria search (surface, price, type, POI, dates, sold status).
-      - 🟩 **IN PROGRESS** Sort and filter property results.
+      - ❌ **NOT IMPLEMENTED** Multi-criteria search (surface, price, type, POI, dates, sold status).
+      - ❌ **NOT IMPLEMENTED** Sort and filter property results.
 
    - 💾 **Offline Mode** :
 
-      - 🟩 **IN PROGRESS** Local data persistence via Room (SQLite).
+      - ✅ **DONE** Local data persistence via Room (SQLite).
       - 🟩 **IN PROGRESS** Full offline functionality for all screens.
 
    - 🧠 **Utilities** :
@@ -120,6 +118,14 @@ This project is developed using modern Android architecture principles, with a f
    - **Coroutines** : Background processing.
    - **Jetpack Compose** : Future UI enhancements.
    - **Material 3**: Modern, accessible user interface.
+   - **Retrofit** : Networking client for API calls.
+   - **Kotlinx Serialization** : JSON serialization/deserialization with Kotlin.
+   - **Google Maps Static API** : Used to render static images of property locations.
+   - **AppContainer (Manual DI)** : Centralized dependency management without external DI framework (e.g., Hilt).
+   - **Internal Storage API** : Used to persist static map images locally for offline access.
+   - **BuildConfig / Secure API Key Handling** : Prevent exposing secrets via Gradle-based injection.
+   - **Google Play Services (Maps & Location)** : For real-time location tracking and interactive map display.
+   - **Kotlinx Coroutines Play Services** : To integrate Google Play Services APIs with Kotlin coroutines for asynchronous tasks.
    
 
 ## 🚀 **How to Use**

@@ -8,4 +8,5 @@ interface PoiRepository {
     suspend fun insertAll(poi: List<PoiEntity>)
     suspend fun deletePoiForProperty(propertyId: Long)
     suspend fun deletePoi(poi: PoiEntity)
+    fun getAllPoi(): Flow<List<PoiEntity>>
 }

@@ -24,7 +24,8 @@ retrofit = "2.9.0"
 kotlinSerialization = "1.9.0"
 retrofitKotlinxSerializationConverter = "1.0.0"
 okhttp = "4.11.0"
-kotlinxSerializationJson = "1.5.1"
+kotlinxSerializationJson = "1.6.3"
+coroutinesPlayServices = "1.7.3"
 
 
 [libraries]
@@ -100,6 +101,9 @@ retrofit-kotlinx-serialization = { module = "com.jakewharton.retrofit:retrofit2-
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 # 📄 JSON parsing library with kotlinx.serialization, annotates `@Serializable` classes.
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+# Kotlin coroutines support for Google Play Services APIs,
+# enabling coroutine-friendly usage of Play Services tasks such as Location API.
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
 
 [plugins]
 # Plugin declarations using IDs and versions from the version catalog

@@ -14,6 +14,6 @@ interface StaticMapApiService {
         @Query("size") size: String,
         @Query("maptype") mapType: String = "roadmap",
         @Query("markers") markers: List<String>,
-        @Query("key") apiKey: String = BuildConfig.STATIC_MAPS_API_KEY
+        @Query("key") apiKey: String = BuildConfig.MAPS_API_KEY
     ): Response<ResponseBody>
 }

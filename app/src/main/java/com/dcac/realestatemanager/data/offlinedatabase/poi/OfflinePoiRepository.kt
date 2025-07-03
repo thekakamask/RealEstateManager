@@ -16,4 +16,7 @@ class OfflinePoiRepository(
 
     override suspend fun deletePoi(poi: PoiEntity)
     = poiDao.deletePoi(poi)
+
+    override fun getAllPoi(): Flow<List<PoiEntity>>
+    = poiDao.getAllPoi()
 }

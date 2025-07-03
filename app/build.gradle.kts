@@ -10,13 +10,13 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-// Load the StaticMap API key from the local.properties file (not committed to VCS)
+// Load the mapsApiKe from the local.properties file (not committed to VCS)
 // This approach ensures the API key stays secure and out of version control
 val localProperties = Properties().apply {
     load(FileInputStream(File(rootDir, "local.properties")))
 }
-val staticMapsApiKey = localProperties.getProperty("STATIC_MAPS_API_KEY")
-    ?: throw GradleException("STATIC_MAPS_API_KEY not found in local.properties")
+val mapsApiKey = localProperties.getProperty("MAPS_API_KEY")
+    ?: throw GradleException("MAPS_API_KEY not found in local.properties")
 
 // Android-specific build settings for the app module
 // Includes SDK versioning, build types, and default configuration
@@ -35,9 +35,9 @@ android {
         // Runner used for instrumentation tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Inject the static map API key into BuildConfig
+        // Inject the map API key into BuildConfig
         // This allows referencing BuildConfig.MAPS_API_KEY directly in the code
-        buildConfigField("String", "STATIC_MAPS_API_KEY", "\"$staticMapsApiKey\"")
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
     }
 
     // Release build configuration
@@ -99,6 +99,8 @@ dependencies {
     // Location & Maps
     implementation(libs.location.services)
     implementation(libs.maps)
+    // Coroutine support for Google Play Services APIs (e.g., FusedLocationProviderClient.await()).
+    implementation(libs.kotlinx.coroutines.play.services)
     // Unit testing framework
     testImplementation(libs.junit)
     // Testing
@@ -106,4 +108,5 @@ dependencies {
     testImplementation(libs.truth)
     // Android instrumentation testing libraries
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)}
+    androidTestImplementation(libs.androidx.espresso.core)
+}

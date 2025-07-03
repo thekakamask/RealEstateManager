@@ -26,4 +26,7 @@ interface PoiDao {
     // Delete a single POI if needed (e.g., removing a specific entry manually)
     @Delete
     suspend fun deletePoi(poi: PoiEntity)
+
+    @Query("SELECT * FROM poi")
+    fun getAllPoi(): Flow<List<PoiEntity>>
 }
