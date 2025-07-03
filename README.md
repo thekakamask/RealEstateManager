@@ -1,19 +1,21 @@
 # 🏠 **RealEstateManager**
 **RealEstateManager** is a modern Android application aimed at helping real estate agents manage exceptional property listings from their mobile device. Built to support a digital transformation for a prestigious New York agency, the app allows agents to browse, add, edit, and geolocate real estate properties even in offline mode.
-This project is developed using modern Android architecture principles, with a focus on local data persistence, modular code, and responsive design. It evolves from a legacy student prototype and will be gradually refactored and extended.
+This project is developed using modern Android architecture principles, with a focus on local data persistence, modular code, and responsive design. It evolves from a legacy intern prototype and will be gradually refactored and extended.
 
 
 ## ✅ **LAST MAJOR UPDATES Detailed in the UPDATES file**
 
-   - 🧱 Define core data models and Room entities for real estate properties, photos, and POIs.
-   - 🗃️ Setup DAO and relationship mappings.
-   - 🗃️ Setup Room database with DAO and relationship mappings.
-   - 🧩 Create repository layer for data access abstraction.
+   - 🔧 Migrated base package name from com.openclassrooms.realestatemanager to com.dcac.realestatemanager.
+   - 🔌 Integrated Retrofit & Kotlinx Serialization to enable networking with external APIs.
+   - 🗺️ Integrated Google Static Maps API to display static images of property locations.
+   - 💾 Enabled offline caching of map images by storing them as local files.
+   - 🏠 Updated Room model to persist static map path in PropertyEntity.
+   - 💉 Extended AppContainer to inject StaticMapRepository :
+      - Includes Retrofit configuration (base URL, instance, service creation) for Maps API.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - 📍 Integrate Static Maps API
    - 📡 Implement dynamic geolocation support
    - 🧠 ViewModel Implementation
    - 🔄 State Management with LiveData / StateFlow

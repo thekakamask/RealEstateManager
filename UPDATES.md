@@ -181,5 +181,43 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - This allows dependency access from any part of the app using context.applicationContext.
 
 
+### 🔹 **Update #9**
+
+  - 🔧 **Migrated base package name from com.openclassrooms.realestatemanager to com.dcac.realestatemanager.**
+    - Used Android Studio's Refactor feature to rename the openclassrooms part of the package to dcac.
+    - Updated the package declaration in all .kt source files accordingly.
+    - Modified the AndroidManifest.xml to reflect the new package name
+
+  - 🌐 **Integrated Retrofit & Kotlinx Serialization for API access**
+    - Added the following libraries to support network requests and JSON parsing:
+      - retrofit2 – Core networking library for HTTP API calls.
+      - retrofit2-kotlinx-serialization-converter – Allows Retrofit to use kotlinx.serialization for JSON parsing.
+      - okhttp3 – HTTP client used by Retrofit.
+      - kotlinx-serialization-json – Official Kotlin library for JSON serialization/deserialization.
+    - Configured plugin block with:
+      - kotlin-serialization – Enables Kotlin’s serialization compiler plugin for handling JSON models.
+    - These libraries will support integration with the Google Static Maps API to display static, offline-compatible property maps.
+
+  - 🗺️ **Google Static Maps API Integration**
+    - Defined a Retrofit interface targeting the Google Static Maps API /staticmap endpoint.
+    - Created a dedicated data class to encapsulate all map request parameters like center, zoom level, size, map type, and marker definitions.
+    - Implemented a centralized OfflineStaticMapRepository that orchestrates API calls, handles error logging, and manages image retrieval.
+    - The repository abstracts the networking logic, exposing a clean method to get static maps as raw image byte arrays for use in the UI or for offline storage.
+
+  - 💾 **Offline Caching Support for Map Images**
+    - Extended the OfflineStaticMapRepository to persist downloaded map images to internal storage.
+    - A local save method creates a subfolder in context.filesDir/maps/ to store images with custom filenames.
+    - Image file paths are then persisted in the Room database and reused when displaying maps offline, avoiding unnecessary network calls.
+
+  - 🏠 **Room Model Enhancement**
+    - Extended the PropertyEntity model to include a new column for storing the path to the static map file.
+    - This association allows each property to persist a visual context of its surroundings, improving user experience offline.
+
+  - 🔐 **API Key Management via BuildConfig**
+    - Moved the Google Maps Static API key out of source code and into a secure Gradle configuration (local.properties).
+    - The key is injected into the app at build time using buildConfigField, allowing safe usage through BuildConfig.
+    - This approach avoids exposing sensitive credentials in version control systems.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

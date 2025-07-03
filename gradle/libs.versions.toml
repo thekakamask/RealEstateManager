@@ -20,6 +20,12 @@ truth = "1.4.2"
 uiTextGoogleFonts = "1.8.3"
 activityCompose = "1.10.1"
 
+retrofit = "2.9.0"
+kotlinSerialization = "1.9.0"
+retrofitKotlinxSerializationConverter = "1.0.0"
+okhttp = "4.11.0"
+kotlinxSerializationJson = "1.5.1"
+
 
 [libraries]
 # Declare libraries using group, name, and version references
@@ -86,6 +92,15 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
+# 🚀 Retrofit itself, to make HTTP calls (GET, POST, etc).
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+# 🔁 JSON converter for Retrofit, based on kotlinx.serialization (alternative to Gson/Moshi).
+retrofit-kotlinx-serialization = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxSerializationConverter" }
+# 🛠️ Low-level network library used by Retrofit for connections, redirections, timeouts, etc.
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+# 📄 JSON parsing library with kotlinx.serialization, annotates `@Serializable` classes.
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
 [plugins]
 # Plugin declarations using IDs and versions from the version catalog
 # ⚙️ Main plugin for creating Android applications (APK, buildTypes, etc.).
@@ -98,3 +113,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+# ✨ Kotlin Serialization plugin (enable in `build.gradle.kts`) to automatically generate JSON serialization code.
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
