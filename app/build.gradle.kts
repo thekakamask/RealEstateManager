@@ -101,6 +101,8 @@ dependencies {
     implementation(libs.maps)
     // Coroutine support for Google Play Services APIs (e.g., FusedLocationProviderClient.await()).
     implementation(libs.kotlinx.coroutines.play.services)
+    //provides backport support for Java 8’s java.time API on Android devices with API level < 26
+    implementation(libs.threetenabp)
     // Unit testing framework
     testImplementation(libs.junit)
     // Testing

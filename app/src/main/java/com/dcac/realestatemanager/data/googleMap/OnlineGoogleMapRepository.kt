@@ -3,10 +3,10 @@ package com.dcac.realestatemanager.data.googleMap
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiEntity
 import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiRepository
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyEntity
 import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyRepository
+import com.dcac.realestatemanager.model.Poi
+import com.dcac.realestatemanager.model.Property
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.Flow
@@ -31,9 +31,9 @@ class OnlineGoogleMapRepository(
         }
     }
 
-    override fun getAllProperties(): Flow<List<PropertyEntity>> =
+    override fun getAllProperties(): Flow<List<Property>> =
         propertyRepository.getAllPropertiesByDate()
 
-    override fun getAllPoi(): Flow<List<PoiEntity>> =
-        poiRepository.getAllPoi()
+    override fun getAllPoiS(): Flow<List<Poi>> =
+        poiRepository.getAllPoiS()
 }

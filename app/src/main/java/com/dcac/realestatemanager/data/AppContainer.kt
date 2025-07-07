@@ -47,7 +47,11 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     // Provides access to property data via the OfflinePropertyRepository
     override val propertyRepository: PropertyRepository by lazy {
-        OfflinePropertyRepository(RealEstateManagerDatabase.getDatabase(context).propertyDao())
+        OfflinePropertyRepository(
+            RealEstateManagerDatabase.getDatabase(context).propertyDao(),
+            poiRepository,
+            photoRepository
+        )
     }
 
     // Provides access to photo data via the OfflinePhotoRepository

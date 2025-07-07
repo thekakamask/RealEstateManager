@@ -3,6 +3,7 @@ package com.dcac.realestatemanager
 import android.app.Application
 import com.dcac.realestatemanager.data.AppContainer
 import com.dcac.realestatemanager.data.AppDataContainer
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 //Custom Application class for the RealEstateManager app.
 // Acts as the global entry point for initializing application-wide dependencies.
@@ -19,6 +20,7 @@ class RealEstateManagerApplication : Application() {
         super.onCreate()
         // Initialize the dependency container (repositories) once for the entire app lifecycle.
         container = AppDataContainer(this)
+        AndroidThreeTen.init(this)
 
     }
 }

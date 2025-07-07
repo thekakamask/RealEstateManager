@@ -1,12 +1,15 @@
 package com.dcac.realestatemanager.data.offlinedatabase.poi
 
+import com.dcac.realestatemanager.model.Poi
 import kotlinx.coroutines.flow.Flow
 
 interface PoiRepository {
 
-    fun getPoiForProperty(propertyId: Long): Flow<List<PoiEntity>>
-    suspend fun insertAll(poi: List<PoiEntity>)
-    suspend fun deletePoiForProperty(propertyId: Long)
+    fun getPoiSByPropertyId(propertyId: Long): Flow<List<Poi>>
+    fun getAllPoiS(): Flow<List<Poi>>
+
+    suspend fun insertPoi(poi: PoiEntity)
+    suspend fun insertAllPoiS(poiS: List<PoiEntity>)
+    suspend fun deletePoiSForProperty(propertyId: Long)
     suspend fun deletePoi(poi: PoiEntity)
-    fun getAllPoi(): Flow<List<PoiEntity>>
 }

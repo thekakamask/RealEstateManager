@@ -240,5 +240,33 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Centralized repository management to streamline future ViewModel integration and testing.
 
 
+### 🔹 **Update #11**
+
+  - 🆕 **Core Business Models Creation**
+    - Introduced dedicated domain model classes Photo, Poi, and Property to clearly represent the core business entities.
+    - Separated business models from database entities to ensure clean domain-driven design.
+    - Simplified handling of data relationships and improved code clarity and maintainability.
+
+  - 🔄 **Repository Refactoring for Business Models**
+    - Refactored repository interfaces and implementations to expose flows of business models instead of raw database entities for all non-CRUD functions.
+    - Improved UI integration by providing ready-to-use domain objects.
+    - Facilitated easier mocking and testing of business logic.
+
+  - 🛠️ **ModelUtils and Date Conversion Enhancements**
+    - Added utilities for converting database entities into business models.  
+    - Implemented robust date parsing and formatting using the ThreeTenABP library for LocalDate.
+    - Ensured compatibility with Android API 21+ for consistent date handling.
+
+  - 🧩 **ViewModel and UI State Scaffolding**
+    - Created placeholder ViewModel interfaces and their concrete implementations. 
+    - Developed sealed interface-based UI States for all main features.
+    - Established a modular and testable foundation for reactive UI logic and incremental development.
+
+  - 🔧 **Clean Architecture and Separation of Concerns**
+    - Defined clear boundaries between interfaces and implementations.
+    - Promoted separation of concerns to enhance scalability and maintainability.
+    - Prepared the project for future growth and easier extensions.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

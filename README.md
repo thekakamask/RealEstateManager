@@ -5,11 +5,11 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 📍 Added runtime location permission request to enable user geolocation features.
-   - 📦 Added Google Play Services dependencies for Maps and Location with coroutine support.
-   - 🗺️ Integrated dynamic retrieval of user location, properties, and POIs using Google Maps SDK and Location Services APIs.
-   - 🔄 Implemented GoogleMapRepository to manage geolocation data and property/POI streams from Room.
-   - 💉 Extended AppContainer to inject GoogleMapRepository with offline repositories and location client dependencies.
+   - 🆕 Created core business models: Photo, Poi, and Property to represent domain entities cleanly and separate from database entities, ensuring clear domain-driven design with rich relations for better maintainability.
+   - 🔄 Updated repositories to return business models (instead of raw database entities) for all non-CRUD functions, improving abstraction, enabling better UI integration, and simplifying testing.
+   - 🛠️ Added ModelUtils for converting database entities into business models, including robust date conversion handling with LocalDate via the ThreeTenABP library for full compatibility down to Android API 21.
+   - 🧩 Prepared the application architecture with scaffolded ViewModel interfaces and implementations, alongside sealed UI State classes for all main features; these serve as placeholders for future logic, facilitating modular development and testability.
+   - 🔧 Enforced a clean separation of concerns by clearly defining interfaces and implementations, enabling scalability, easy extensions, and maintainability.
 
 
 ## ❌ **NEXT UPDATES**
@@ -41,12 +41,12 @@ This project is developed using modern Android architecture principles, with a f
    - 📷 **Media Management** :
 
       - ❌ **NOT IMPLEMENTED** Take or select photos from gallery.
-      - ❌ **NOT IMPLEMENTED** Add multiple images per listing.
+      - 🟩 **IN PROGRESS** Add multiple images per listing.
 
    - 🔍 **Search** :
 
-      - ❌ **NOT IMPLEMENTED** Multi-criteria search (surface, price, type, POI, dates, sold status).
-      - ❌ **NOT IMPLEMENTED** Sort and filter property results.
+      - 🟩 **IN PROGRESS** Multi-criteria search (surface, price, type, POI, dates, sold status).
+      - 🟩 **IN PROGRESS** Sort and filter property results.
 
    - 💾 **Offline Mode** :
 
@@ -84,7 +84,7 @@ This project is developed using modern Android architecture principles, with a f
    - 🔄 Real-time status management:
 
       - ❌ **NOT IMPLEMENTED** Use of StateFlow for UI state handling.
-      - ❌ **NOT IMPLEMENTED** ViewModel for lifecycle-aware logic.
+      - 🟩 **IN PROGRESS** ViewModel for lifecycle-aware logic.
       - 🟩 **IN PROGRESS** Coroutines for async data operations.
 
    - 🧠 Architecture & Code Structure:
@@ -126,6 +126,7 @@ This project is developed using modern Android architecture principles, with a f
    - **BuildConfig / Secure API Key Handling** : Prevent exposing secrets via Gradle-based injection.
    - **Google Play Services (Maps & Location)** : For real-time location tracking and interactive map display.
    - **Kotlinx Coroutines Play Services** : To integrate Google Play Services APIs with Kotlin coroutines for asynchronous tasks.
+   - **ThreeTenABP** : Backport of Java Time API (LocalDate, etc.) for Android API 21+, enabling modern date/time handling on older devices.
    
 
 ## 🚀 **How to Use**

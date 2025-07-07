@@ -19,11 +19,20 @@ interface PhotoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPhotos(photos: List<PhotoEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPhoto(photo: PhotoEntity)
+
     // Delete all photos linked to a specific property (e.g. when a property is deleted)
     @Query("DELETE FROM photos WHERE property_id = :propertyId")
     suspend fun deletePhotosByPropertyId(propertyId: Long)
 
-    // Delete a specific photo by entity
+    // Delete a specific photo
     @Delete
     suspend fun deletePhoto(photo: PhotoEntity)
+
+    //get All Photos
+    @Query("SELECT * FROM photos")
+    fun getAllPhotos(): Flow<List<PhotoEntity>>
+
+
 }
