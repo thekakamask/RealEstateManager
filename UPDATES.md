@@ -268,5 +268,32 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Prepared the project for future growth and easier extensions.
 
 
+### 🔹 **Update #12**
+
+  - 🔐 **Firebase Authentication & Firestore Integration**
+    - Added Firebase BoM (firebase-bom) to manage consistent Firebase library versions centrally.
+    - Integrated Firebase Authentication (firebase-auth) to support secure user sign-in functionality.
+    - Connected Firebase Firestore (firebase-firestore) as a scalable cloud NoSQL database to complement the local Room database.
+    - Firebase Analytics (firebase-analytics) added for tracking in-app user behavior and engagement.
+    - com.google.gms.google-services plugin configured via Gradle Version Catalog for automatic initialization from google-services.json`.
+    - Updated build.gradle.kts and libs.versions.toml to declare all Firebase dependencies using best practices (via BOM and centralized plugin declarations).
+    - Ensured secure handling of API credentials by relying on Gradle's BuildConfig, local.properties and google-services.JSON (no secrets committed to VCS).
+    - This integration sets the stage for future bi-directional sync between local Room database and Firestore, enabling full offline-online data resilience.
+
+  - 🧩 **Firebase Initialization in Application class**
+    - Updated RealEstateManagerApplication to initialize Firebase using FirebaseApp.initializeApp(this).
+    - Ensures Firebase services are available globally and initialized at app startup.
+
+  - 🔐 **Authentication Abstraction Layer**
+    - Introduced AuthRepository interface to define contract for user authentication logic.
+    - Created OnlineAuthRepository as a Firebase-based implementation using FirebaseAuth.
+    - Exposed currentUser state and observeAuthState() as a Flow of FirebaseUser to observe changes in authentication status reactively.
+    - Added coroutine-based signInWithEmail() and signUpWithEmail() functions with Result wrappers for robust error handling.
+
+  - 🛡️ **Secure API Key & Secrets Handling**
+    - Placed google-services.json in the app/ module.
+    - Updated .gitignore to exclude google-services.json from version control, ensuring Firebase credentials are not exposed.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

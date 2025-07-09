@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
 }
 
 // Load the mapsApiKe from the local.properties file (not committed to VCS)
@@ -103,6 +104,13 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
     //provides backport support for Java 8’s java.time API on Android devices with API level < 26
     implementation(libs.threetenabp)
+
+    implementation(platform(libs.firebase.bom))
+
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.analytics)
+
     // Unit testing framework
     testImplementation(libs.junit)
     // Testing

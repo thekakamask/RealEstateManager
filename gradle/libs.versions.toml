@@ -28,6 +28,8 @@ okhttp = "4.11.0"
 kotlinxSerializationJson = "1.6.3"
 coroutinesPlayServices = "1.7.3"
 
+firebaseBom = "32.7.3"
+googleServices = "4.4.3"
 
 [libraries]
 # Declare libraries using group, name, and version references
@@ -108,6 +110,25 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 # enabling coroutine-friendly usage of Play Services tasks such as Location API.
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
 
+# --- Firebase (via BOM) ---
+
+# 📦 Firebase Bill of Materials (BOM) to align all Firebase library versions automatically.
+# This allows you to omit versions on individual Firebase dependencies for consistency and easier upgrades.
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+
+# 🔐 Firebase Authentication: enables user sign-in with email, Google, Facebook, etc.
+# Used for managing secure access and user identity in the app.
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+
+# ☁️ Firebase Firestore: cloud-hosted NoSQL database with offline support.
+# Allows real-time syncing and querying of property data between local and remote.
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+
+# 📊 Firebase Analytics: automatically tracks user engagement and navigation in your app.
+# Helps you measure screen views, button clicks, session duration, etc.
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+
+
 [plugins]
 # Plugin declarations using IDs and versions from the version catalog
 # ⚙️ Main plugin for creating Android applications (APK, buildTypes, etc.).
@@ -122,3 +143,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 # ✨ Kotlin Serialization plugin (enable in `build.gradle.kts`) to automatically generate JSON serialization code.
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
+
+# 🔧 Firebase Gradle Plugin: required to initialize Firebase SDK and inject configuration (e.g., google-services.json).
+# This plugin parses google-services.json and generates necessary code during the build.
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }

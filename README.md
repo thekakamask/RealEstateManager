@@ -5,11 +5,11 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🆕 Created core business models: Photo, Poi, and Property to represent domain entities cleanly and separate from database entities, ensuring clear domain-driven design with rich relations for better maintainability.
-   - 🔄 Updated repositories to return business models (instead of raw database entities) for all non-CRUD functions, improving abstraction, enabling better UI integration, and simplifying testing.
-   - 🛠️ Added ModelUtils for converting database entities into business models, including robust date conversion handling with LocalDate via the ThreeTenABP library for full compatibility down to Android API 21.
-   - 🧩 Prepared the application architecture with scaffolded ViewModel interfaces and implementations, alongside sealed UI State classes for all main features; these serve as placeholders for future logic, facilitating modular development and testability.
-   - 🔧 Enforced a clean separation of concerns by clearly defining interfaces and implementations, enabling scalability, easy extensions, and maintainability.
+   - 🔐 Integrated Firebase Authentication and Firestore database support using Firebase BoM, enabling future cloud synchronization of properties with secure user identity handling.
+   - 🧩 Added FirebaseApp.initializeApp(this) in the custom Application class to enable Firebase SDK initialization across the entire app lifecycle.
+   - 🔐 Created AuthRepository and OnlineAuthRepository abstractions for clean authentication logic using Firebase Authentication and Kotlin coroutines.
+   - 🧪 Implemented observeAuthState() and coroutine-based signInWithEmail() / signUpWithEmail() methods using Flow and await() for lifecycle-aware and asynchronous authentication.
+   - 🛡️ Added google-services.json to the app/ module and updated .gitignore to ensure no secrets are exposed in version control.
 
 
 ## ❌ **NEXT UPDATES**
@@ -38,6 +38,12 @@ This project is developed using modern Android architecture principles, with a f
       - 🟩 **IN PROGRESS** Display pins of nearby listings on a map.
       - 🟩 **IN PROGRESS** Retrieve and display user current location.
 
+    - 🔐 **User Authentication wtih Firebase** :
+
+      - 🟩 **IN PROGRESS** Secure user login and registration using Firebase Authentication.
+      - 🟩 **IN PROGRESS** Manager user sessions and connection state.
+      - ❌ **NOT IMPLEMENTED** Prepare for integration with cloud-based user features and personalization.
+
    - 📷 **Media Management** :
 
       - ❌ **NOT IMPLEMENTED** Take or select photos from gallery.
@@ -53,7 +59,14 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Local data persistence via Room (SQLite).
       - 🟩 **IN PROGRESS** Full offline functionality for all screens.
 
+   - ☁️ **Online mode with Firebase Firestore**
+
+      - ❌ **NOT IMPLEMENTED** Synchronize property listings and user data with Firestore Cloud Database.
+      - ❌ **NOT IMPLEMENTED** Enable real-time updates and multi-device data consistency.
+      - ❌ **NOT IMPLEMENTED** Prepare seamless offline-to-online data synch for robust user experience.
+
    - 🧠 **Utilities** :
+
       - ✅ **DONE** Convert dollar to euro.
       - ❌ **NOT IMPLEMENTED** Convert euro to dollar.
       - ✅ **DONE** Get today's date (format to be improved).
@@ -127,6 +140,9 @@ This project is developed using modern Android architecture principles, with a f
    - **Google Play Services (Maps & Location)** : For real-time location tracking and interactive map display.
    - **Kotlinx Coroutines Play Services** : To integrate Google Play Services APIs with Kotlin coroutines for asynchronous tasks.
    - **ThreeTenABP** : Backport of Java Time API (LocalDate, etc.) for Android API 21+, enabling modern date/time handling on older devices.
+   - **Firebase Authentication** : Secure user login using email/password and Firebase Identity platform.
+   - **Firebase Firestore** : Scalable NoSQL cloud database used for syncing property data online.
+   - **Firebase Analytics** : Tracks user engagement and feature usage to inform future improvements.
    
 
 ## 🚀 **How to Use**
