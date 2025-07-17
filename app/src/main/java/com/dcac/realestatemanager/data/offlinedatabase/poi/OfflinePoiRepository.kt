@@ -1,6 +1,8 @@
 package com.dcac.realestatemanager.data.offlinedatabase.poi
 
 import com.dcac.realestatemanager.model.Poi
+import com.dcac.realestatemanager.model.PoiWithProperties
+import com.dcac.realestatemanager.utils.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import com.dcac.realestatemanager.utils.toModel
@@ -13,19 +15,16 @@ class OfflinePoiRepository(
     override fun getAllPoiS(): Flow<List<Poi>> =
         poiDao.getAllPoiS().map { list -> list.map { it.toModel() } }
 
-    // Returns a flow of business model POIs linked to the specified property ID.
-    override fun getPoiSByPropertyId(propertyId: Long): Flow<List<Poi>> =
-        poiDao.getPoiSForProperty(propertyId).map { list -> list.map { it.toModel() } }
-
     // Inserts single POI
-    override suspend fun insertPoi(poi: PoiEntity) = poiDao.insertPoi(poi)
+    override suspend fun insertPoi(poi: Poi) = poiDao.insertPoi(poi.toEntity())
 
     // Inserts a list of POI entities into the database.
-    override suspend fun insertAllPoiS(poiS: List<PoiEntity>)= poiDao.insertAllPoiS(poiS)
-
-    // Deletes all POIs associated with the specified property ID.
-    override suspend fun deletePoiSForProperty(propertyId: Long) = poiDao.deletePoiSForProperty(propertyId)
+    override suspend fun insertAllPoiS(poiS: List<Poi>)=
+        poiDao.insertAllPoiS(poiS.map { it.toEntity() })
 
     // Deletes a specific POI entity from the database.
-    override suspend fun deletePoi(poi: PoiEntity) = poiDao.deletePoi(poi)
+    override suspend fun deletePoi(poi: Poi) = poiDao.deletePoi(poi.toEntity())
+
+    override fun getPoiWithProperties(poiId: Long): Flow<PoiWithProperties> =
+        poiDao.getPoiWithProperties(poiId).map { it.toModel() }
 }

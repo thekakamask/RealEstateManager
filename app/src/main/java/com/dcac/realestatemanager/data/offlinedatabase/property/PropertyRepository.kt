@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.offlinedatabase.property
 
 import com.dcac.realestatemanager.model.Property
+import com.dcac.realestatemanager.model.PropertyWithPoiS
 import kotlinx.coroutines.flow.Flow
 
 interface PropertyRepository {
@@ -16,10 +17,10 @@ interface PropertyRepository {
         type: String?,
         isSold: Boolean?
     ): Flow<List<Property>>
-
-    suspend fun insertProperty(property: PropertyEntity): Long
-    suspend fun updateProperty(property: PropertyEntity)
-    suspend fun deleteProperty(property: PropertyEntity)
+    suspend fun insertProperty(property: Property): Long
+    suspend fun updateProperty(property: Property)
+    suspend fun deleteProperty(property: Property)
     suspend fun markPropertyAsSold(propertyId: Long, saleDate: String)
     suspend fun clearAll()
+    fun getPropertyWithPoiS(id: Long): Flow<PropertyWithPoiS>
 }

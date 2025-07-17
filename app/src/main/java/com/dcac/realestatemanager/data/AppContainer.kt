@@ -12,6 +12,12 @@ import com.dcac.realestatemanager.data.offlinedatabase.poi.OfflinePoiRepository
 import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlinedatabase.property.OfflinePropertyRepository
 import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyRepository
+import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.OfflinePropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlinedatabase.user.OfflineUserRepository
+import com.dcac.realestatemanager.data.offlinedatabase.user.UserRepository
+import com.dcac.realestatemanager.data.userConnection.AuthRepository
+import com.dcac.realestatemanager.data.userConnection.OnlineAuthRepository
 import com.dcac.realestatemanager.network.StaticMapApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -25,8 +31,11 @@ interface AppContainer{
     val propertyRepository: PropertyRepository
     val photoRepository: PhotoRepository
     val poiRepository: PoiRepository
+    val propertyPoiCrossRepository: PropertyPoiCrossRepository
+    val userRepository: UserRepository
     val staticMapRepository: StaticMapRepository
     val googleMapRepository: GoogleMapRepository
+    val authRepository : AuthRepository
 }
 
 //Default implementation of AppContainer.
@@ -50,7 +59,14 @@ class AppDataContainer(private val context: Context) : AppContainer {
         OfflinePropertyRepository(
             RealEstateManagerDatabase.getDatabase(context).propertyDao(),
             poiRepository,
-            photoRepository
+            photoRepository,
+            propertyPoiCrossRepository
+        )
+    }
+
+    override val propertyPoiCrossRepository: PropertyPoiCrossRepository by lazy {
+        OfflinePropertyPoiCrossRepository(
+            RealEstateManagerDatabase.getDatabase(context).propertyCrossDao()
         )
     }
 
@@ -62,6 +78,10 @@ class AppDataContainer(private val context: Context) : AppContainer {
     // Provides access to POI data via the OfflinePoiRepository
     override val poiRepository: PoiRepository by lazy {
         OfflinePoiRepository(RealEstateManagerDatabase.getDatabase(context).poiDao())
+    }
+
+    override val userRepository: UserRepository by lazy {
+        OfflineUserRepository(RealEstateManagerDatabase.getDatabase(context).userDao())
     }
 
     // Retrofit service interface implementation for the Static Maps API.
@@ -82,5 +102,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
             propertyRepository = propertyRepository,
             poiRepository = poiRepository
         )
+    }
+
+    override val authRepository: AuthRepository by lazy {
+        OnlineAuthRepository()
     }
 }

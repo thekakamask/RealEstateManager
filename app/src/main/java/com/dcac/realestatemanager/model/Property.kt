@@ -14,7 +14,6 @@ data class Property(
     val isSold: Boolean,
     val entryDate: LocalDate,
     val saleDate: LocalDate?,
-    val agentName: String,
     val staticMapPath: String? = null,
     val photos: List<Photo> = emptyList(),
     val poiS: List<Poi> = emptyList()

@@ -10,11 +10,15 @@ import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiDao
 import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiEntity
 import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyDao
 import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyEntity
+import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossDao
+import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossEntity
+import com.dcac.realestatemanager.data.offlinedatabase.user.UserDao
+import com.dcac.realestatemanager.data.offlinedatabase.user.UserEntity
 
 // Room database definition for the application.
 // - Declares entities used by the database: Property, Photo, POI.
 // - Declares DAO accessors to interact with the database.
-@Database(entities = [PropertyEntity::class, PhotoEntity::class, PoiEntity::class],
+@Database(entities = [PropertyEntity::class, PhotoEntity::class, PoiEntity::class, UserEntity::class, PropertyPoiCrossEntity::class],
     version = 1, // Version number of the schema. Increment it if the schema (entities, fields, relations) changes.
     exportSchema = false) // If true, Room will export the schema to a folder (used for schema versioning/testing). Disabled here.
 abstract class RealEstateManagerDatabase : RoomDatabase() {
@@ -22,6 +26,8 @@ abstract class RealEstateManagerDatabase : RoomDatabase() {
     abstract fun propertyDao(): PropertyDao
     abstract fun photoDao(): PhotoDao
     abstract fun poiDao(): PoiDao
+    abstract fun userDao(): UserDao
+    abstract fun propertyCrossDao(): PropertyPoiCrossDao
 
     // Singleton instance to avoid multiple database instances at runtime.
     companion object {
@@ -44,6 +50,7 @@ abstract class RealEstateManagerDatabase : RoomDatabase() {
                     context,
                     RealEstateManagerDatabase::class.java,
                     "real_estate_manager_database")  // Name of the SQLite DB file.
+                    .fallbackToDestructiveMigration()
                     .build() // Create Room DB instance. No fallback strategy configured (migrations must be handled manually).
                     .also { Instance = it } // Save the instance for reuse.
             }

@@ -295,5 +295,39 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Updated .gitignore to exclude google-services.json from version control, ensuring Firebase credentials are not exposed.
 
 
+### 🔹 **Update #13**
+
+  - 🧩 **Firebase Authentification Repository Injection Setup**
+    - Injected OnlineAuthRepository as AuthRepository implementation within AppContainer for centralized dependency management.
+    - Ensured consistent and easy access to authentication functionality across the app via dependency injection.
+
+  - 👥 **User Data Model and Repository Implementation**
+    - Introduced UserEntity Room entity with fields for email, password, and agent name.
+    - Developed UserDao with standard CRUD operations and Flow support.
+    - Created UserRepository interface and OfflineUserRepository implementation encapsulating data access.
+    - Added domain model User and mapping extension functions for seamless entity-model conversion.
+
+  - 🔄 **Property-POI Many-to-Many Relationship Handling**
+    - Created cross-reference entity PropertyPoiCrossEntity to manage many-to-many associations between properties and POIs.
+    - Updated Room schema: removed direct foreign key in PoiEntity to property; handled relations via junction table.
+    - Enhanced DAO interfaces with join queries to retrieve POIs linked to properties.
+    - Added composite data class PropertyWithPois using Room @Relation with @Junction to fetch relational data efficiently.
+
+  - 🧩 **Repository and Dependency Injection Updates**
+    - Developed repository implementation managing property-poi links and user data repositories with clean architecture principles.
+    - Ensured repositories provide domain models enriched with relational data to upper layers.
+    - Extended DI container to provide these repositories application-wide.
+    - Designed data layer with clean separation (Entity vs Domain Model) to facilitate future synchronization with remote data sources.
+
+  - 🛠️ **Model Mappers and Utility Extensions**
+    - Extended utils file to add toEntity() functions for all domain models: Property, Poi, Photo, User, and PropertyPoiCrossRef.
+    - Continued to leverage ThreeTenABP for reliable LocalDate conversion between strings and domain models.
+    - Facilitated future offline-online synchronization and consistent UI binding through robust mapping layers.
+
+  - 🗃️ **Database Consistency and Optimization**
+    - Applied foreign keys with ON DELETE CASCADE to ensure dependent entities are removed automatically, preventing orphan data.
+    - Added indices on foreign key columns (user_id, propertyId, poiId) for improved query performance and scalability.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

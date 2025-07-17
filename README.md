@@ -5,11 +5,12 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔐 Integrated Firebase Authentication and Firestore database support using Firebase BoM, enabling future cloud synchronization of properties with secure user identity handling.
-   - 🧩 Added FirebaseApp.initializeApp(this) in the custom Application class to enable Firebase SDK initialization across the entire app lifecycle.
-   - 🔐 Created AuthRepository and OnlineAuthRepository abstractions for clean authentication logic using Firebase Authentication and Kotlin coroutines.
-   - 🧪 Implemented observeAuthState() and coroutine-based signInWithEmail() / signUpWithEmail() methods using Flow and await() for lifecycle-aware and asynchronous authentication.
-   - 🛡️ Added google-services.json to the app/ module and updated .gitignore to ensure no secrets are exposed in version control.
+   - 🧩 Integrated OnlineAuthRepository into AppContainer for centralized authentication management via dependency injection.
+   - 👥 Implemented complete user management with UserEntity, UserDao, UserRepository, and model/entity mappers.
+   - 🔄 Established many-to-many relationship between Property and POI using PropertyPoiCrossRef, with DAO and model support.
+   - 🧩 Developed repositories for user and property-poi data with dependency injection setup.
+   - 🛠️ Extended utility mapping functions (toEntity / toModel) and improved date handling with ThreeTenBP.
+   - 🗃️ Strengthened database integrity with cascading foreign keys and indexed relations for performance optimization.
 
 
 ## ❌ **NEXT UPDATES**

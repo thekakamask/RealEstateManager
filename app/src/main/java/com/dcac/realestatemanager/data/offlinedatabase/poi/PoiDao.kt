@@ -5,14 +5,12 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 // DAO interface for accessing POIs associated with properties
 @Dao
 interface PoiDao {
-
-    @Query("SELECT * FROM poi WHERE property_id = :propertyId")
-    fun getPoiSForProperty(propertyId: Long): Flow<List<PoiEntity>>
 
     @Query("SELECT * FROM poi")
     fun getAllPoiS(): Flow<List<PoiEntity>>
@@ -23,9 +21,10 @@ interface PoiDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPoi(poi: PoiEntity)
 
-    @Query("DELETE FROM poi WHERE property_id = :propertyId")
-    suspend fun deletePoiSForProperty(propertyId: Long)
-
     @Delete
     suspend fun deletePoi(poi: PoiEntity)
+
+    @Transaction
+    @Query("SELECT * FROM poi WHERE id = :poiId")
+    fun getPoiWithProperties(poiId: Long): Flow<PoiWithPropertiesRelation>
 }
