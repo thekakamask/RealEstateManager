@@ -2,9 +2,9 @@ package com.dcac.realestatemanager.ui.googleMap
 
 import androidx.lifecycle.ViewModel
 import com.dcac.realestatemanager.data.googleMap.GoogleMapRepository
-import com.dcac.realestatemanager.data.offlinedatabase.photo.PhotoRepository
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiRepository
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 
 class GoogleMapViewModel(
     private val googleMapRepository: GoogleMapRepository,

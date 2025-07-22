@@ -11,7 +11,7 @@ data class Property(
     val rooms: Int,
     val description: String,
     val address: String,
-    val isSold: Boolean,
+    val isSold: Boolean = false,
     val entryDate: LocalDate,
     val saleDate: LocalDate?,
     val staticMapPath: String? = null,

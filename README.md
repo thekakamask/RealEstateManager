@@ -4,13 +4,9 @@ This project is developed using modern Android architecture principles, with a f
 
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
-
-   - 🧩 Integrated OnlineAuthRepository into AppContainer for centralized authentication management via dependency injection.
-   - 👥 Implemented complete user management with UserEntity, UserDao, UserRepository, and model/entity mappers.
-   - 🔄 Established many-to-many relationship between Property and POI using PropertyPoiCrossRef, with DAO and model support.
-   - 🧩 Developed repositories for user and property-poi data with dependency injection setup.
-   - 🛠️ Extended utility mapping functions (toEntity / toModel) and improved date handling with ThreeTenBP.
-   - 🗃️ Strengthened database integrity with cascading foreign keys and indexed relations for performance optimization.
+  
+   - 🔐 Secured offline user management with password hashing (SHA-256) and email uniqueness enforcement; added email lookup and existence checks for authentication flows. 
+   - 🔄 Introduced UserSyncManager and global SyncManager to enable offline-to-Firebase user synchronization with state tracking and update propagation.
 
 
 ## ❌ **NEXT UPDATES**
@@ -39,11 +35,12 @@ This project is developed using modern Android architecture principles, with a f
       - 🟩 **IN PROGRESS** Display pins of nearby listings on a map.
       - 🟩 **IN PROGRESS** Retrieve and display user current location.
 
-    - 🔐 **User Authentication wtih Firebase** :
+    - 🔐 **User Authentication with Firebase** :
 
+      - ✅ **DONE** Local user account creation with Room and secure password hashing (offline fallback).
       - 🟩 **IN PROGRESS** Secure user login and registration using Firebase Authentication.
-      - 🟩 **IN PROGRESS** Manager user sessions and connection state.
-      - ❌ **NOT IMPLEMENTED** Prepare for integration with cloud-based user features and personalization.
+      - 🟩 **IN PROGRESS** Manage user sessions and authentication state via Flow.
+      - ❌ **NOT IMPLEMENTED** Personalized Firebase user profile (e.g., preferences, avatars, etc.).
 
    - 📷 **Media Management** :
 
@@ -58,10 +55,13 @@ This project is developed using modern Android architecture principles, with a f
    - 💾 **Offline Mode** :
 
       - ✅ **DONE** Local data persistence via Room (SQLite).
+      - ✅ **DONE** One-way sync of offline users to Firebase Auth when online.
       - 🟩 **IN PROGRESS** Full offline functionality for all screens.
+      - ❌ **NOT IMPLEMENTED** Conflict resolution strategy for offline edits vs. online data.
 
    - ☁️ **Online mode with Firebase Firestore**
 
+      - 🟩 **IN PROGRESS** Firebase sync infrastructure (SyncManager & entity-level managers).
       - ❌ **NOT IMPLEMENTED** Synchronize property listings and user data with Firestore Cloud Database.
       - ❌ **NOT IMPLEMENTED** Enable real-time updates and multi-device data consistency.
       - ❌ **NOT IMPLEMENTED** Prepare seamless offline-to-online data synch for robust user experience.
@@ -103,8 +103,9 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🧠 Architecture & Code Structure:
 
-      - ✅ **DONE** Refactor legacy Java to MVVM.
-      - 🟩 **IN PROGRESS** Introduce ViewModel, LiveData / StateFlow, DAO.
+      - ✅ **DONE** Refactored legacy Java into clean MVVM structure.
+      - ✅ **DONE** Modularized repositories, DAOs, entities, and mappers with separation of concerns.
+      - 🟩 **IN PROGRESS** Manual dependency injection via AppContainer.
 
    - 🚀 Performance and responsiveness:
    
@@ -144,6 +145,7 @@ This project is developed using modern Android architecture principles, with a f
    - **Firebase Authentication** : Secure user login using email/password and Firebase Identity platform.
    - **Firebase Firestore** : Scalable NoSQL cloud database used for syncing property data online.
    - **Firebase Analytics** : Tracks user engagement and feature usage to inform future improvements.
+   - **SHA-256 (MessageDigest)** : Secure local password hashing for authentication.
    
 
 ## 🚀 **How to Use**

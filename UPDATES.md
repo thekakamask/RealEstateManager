@@ -329,5 +329,23 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Added indices on foreign key columns (user_id, propertyId, poiId) for improved query performance and scalability.
 
 
+### 🔹 **Update #14**
+
+  - 🔐 **Offline User Authentication Security Enhancements**
+    - Implemented secure password hashing using SHA-256 during user creation and updates, ensuring sensitive credentials are never stored in plain text.
+    - Enforced unique email constraints at the database level using Room indices, guaranteeing no duplicate accounts can exist.
+    - Added DAO method emailExists(email) for fast user existence checks and provided getUserByEmail() for authentication use cases.
+    - Extended UserRepository with a secure authenticateUser(email, password) method that hashes input and matches credentials against stored values.
+    - Updated OfflineUserRepository to hash passwords transparently during insertions and to support authentication logic with consistent mapping.
+    - Laid strong foundations for seamless integration between local and Firebase-based authentication layers in future updates.
+
+  - 🔄 **User-Firebase Synchronization Architecture**
+    - Designed and implemented a robust synchronization flow between offline Room database and Firebase Authentication.
+    - Introduced isSynced flag in UserEntity and domain model to track synchronization status of locally created users.
+    - Created UserSyncManager responsible for detecting unsynced users and registering them on Firebase Auth when a network connection is available.
+    - Developed a centralized SyncManager to coordinate future data syncs across entities (e.g., Property, POI, Photo) in a scalable and extensible way.
+    - Prepared the app for seamless bidirectional data flow between local storage and cloud services, starting with authentication.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.
