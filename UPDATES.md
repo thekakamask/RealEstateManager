@@ -329,5 +329,40 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Added indices on foreign key columns (user_id, propertyId, poiId) for improved query performance and scalability.
 
 
+### 🔹 **Update #14**
+
+  - 🔐 **Online-Only Account Creation**
+    - User accounts must now be created online using Firebase Authentication (createUserWithEmailAndPassword).
+    - The password is not stored in plain text anywhere — only the hashed version (SHA-256) is retained locally for offline authentication.
+    - Upon successful signup, the user's profile (email + agent name + uid) is uploaded to Firestore under the path: users/{uid}.
+    - Once both Firebase Auth and Firestore steps succeed, the account is marked as isSynced = true and saved in the local Room database for offline access.
+
+  - 💾 **Offline Authentication (Room)**
+    - Introduced a secure hashing utility using SHA-256 to hash passwords before storing them in Room.
+    - The app supports offline login by comparing the hash of the entered password with the one stored locally.
+    - Implemented Room DAO queries to check user existence (emailExists) and retrieve users by email.
+    - Enhanced the OfflineUserRepository to transparently hash passwords during cacheUserFromFirebase().
+
+  - 🔄 **Sync-Only Logic for User Modifications**
+    - Account creation is now excluded from the sync logic.
+    - UserSyncManager is responsible only for syncing modified users (e.g., email/agent name changes) from Room to Firestore.
+    - Users with isSynced = false are automatically detected and synchronized when the network is available.
+    - The Firebase UID is stored locally to maintain reference consistency between Firestore and Room.
+    - Robust error handling is in place: failed syncs do not mark the user as synced and retry later.
+    - Firestore security rules enforce write access only to authenticated users modifying their own document.
+
+  - 🧩 **Architecture & Extensibility**
+    - Clear separation of concerns:
+      - ✅ FirebaseAuth handles account creation and sign-in
+      - ✅ Firestore stores public user profile info
+      - ✅ Room caches the user account for offline usage
+      - ✅ Sync system (SyncManager & UserSyncManager) pushes changes, not creation
+    - The model User and entity UserEntity include isSynced and firebaseUid to track sync state and cross-reference.
+    - This setup lays the groundwork for synchronizing other entities (e.g., properties, photos, POIs) using the same principles.
+
+  - ✅ **TL;DR**  
+    - User accounts are now created online-only, authenticated offline, and synchronized intelligently with Firebase when needed. This architecture ensures security, offline resilience, and cloud consistency.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

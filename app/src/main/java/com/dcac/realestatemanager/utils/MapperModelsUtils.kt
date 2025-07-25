@@ -1,12 +1,12 @@
 package com.dcac.realestatemanager.utils
 
-import com.dcac.realestatemanager.data.offlinedatabase.photo.PhotoEntity
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiEntity
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyEntity
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiWithPropertiesRelation
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyWithPoiSRelation
-import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossEntity
-import com.dcac.realestatemanager.data.offlinedatabase.user.UserEntity
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiWithPropertiesRelation
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyWithPoiSRelation
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
@@ -102,14 +102,19 @@ fun Poi.toEntity(): PoiEntity = PoiEntity(
 fun UserEntity.toModel(): User = User(
     id = id,
     email = email,
-    agentName = agentName
+    password = password,
+    agentName = agentName,
+    isSynced = isSynced,
+    firebaseUid = firebaseUid
 )
 
 fun User.toEntity(): UserEntity = UserEntity(
     id = id,
     email = email,
-    password = "",
-    agentName = agentName
+    password = password,
+    agentName = agentName,
+    isSynced = isSynced,
+    firebaseUid = firebaseUid
 )
 
 fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
