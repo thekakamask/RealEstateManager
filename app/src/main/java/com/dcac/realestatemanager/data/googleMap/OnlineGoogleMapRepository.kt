@@ -3,8 +3,8 @@ package com.dcac.realestatemanager.data.googleMap
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiRepository
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.Property
 import com.google.android.gms.location.FusedLocationProviderClient

@@ -329,7 +329,7 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Added indices on foreign key columns (user_id, propertyId, poiId) for improved query performance and scalability.
 
 
-### 🔹 **Update #14**
+### 🔹 **Update #14 (correction)**
 
   - 🔐 **Online-Only Account Creation**
     - User accounts must now be created online using Firebase Authentication (createUserWithEmailAndPassword).

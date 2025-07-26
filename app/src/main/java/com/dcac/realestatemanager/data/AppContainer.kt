@@ -5,20 +5,25 @@ import com.dcac.realestatemanager.data.googleMap.GoogleMapRepository
 import com.dcac.realestatemanager.data.googleMap.OnlineGoogleMapRepository
 import com.dcac.realestatemanager.data.offlineStaticMap.OfflineStaticMapRepository
 import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapRepository
-import com.dcac.realestatemanager.data.offlinedatabase.RealEstateManagerDatabase
-import com.dcac.realestatemanager.data.offlinedatabase.photo.OfflinePhotoRepository
-import com.dcac.realestatemanager.data.offlinedatabase.photo.PhotoRepository
-import com.dcac.realestatemanager.data.offlinedatabase.poi.OfflinePoiRepository
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiRepository
-import com.dcac.realestatemanager.data.offlinedatabase.property.OfflinePropertyRepository
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyRepository
-import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.OfflinePropertyPoiCrossRepository
-import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossRepository
-import com.dcac.realestatemanager.data.offlinedatabase.user.OfflineUserRepository
-import com.dcac.realestatemanager.data.offlinedatabase.user.UserRepository
+import com.dcac.realestatemanager.data.offlineDatabase.RealEstateManagerDatabase
+import com.dcac.realestatemanager.data.offlineDatabase.photo.OfflinePhotoRepository
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.OfflinePoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.property.OfflinePropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.OfflinePropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.OfflineUserRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import com.dcac.realestatemanager.data.onlineDatabase.user.FirebaseUserOnlineRepository
+import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.data.sync.SyncManager
+import com.dcac.realestatemanager.data.sync.UserSyncManager
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.data.userConnection.OnlineAuthRepository
 import com.dcac.realestatemanager.network.StaticMapApiService
+import com.google.firebase.firestore.FirebaseFirestore
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -36,6 +41,9 @@ interface AppContainer{
     val staticMapRepository: StaticMapRepository
     val googleMapRepository: GoogleMapRepository
     val authRepository : AuthRepository
+    val userOnlineRepository: UserOnlineRepository
+    val userSyncManager: UserSyncManager
+    val syncManager: SyncManager
 }
 
 //Default implementation of AppContainer.
@@ -106,5 +114,23 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val authRepository: AuthRepository by lazy {
         OnlineAuthRepository()
+    }
+
+    override val userOnlineRepository: UserOnlineRepository by lazy {
+        FirebaseUserOnlineRepository(FirebaseFirestore.getInstance())
+    }
+
+    override val userSyncManager: UserSyncManager by lazy {
+        UserSyncManager(
+            userRepository = userRepository,
+            userOnlineRepository = userOnlineRepository
+        )
+    }
+
+    override val syncManager: SyncManager by lazy {
+        SyncManager(
+            userSyncManager = userSyncManager
+            //OTHERS SYNC MANAGERS WILL BE ADDED
+        )
     }
 }

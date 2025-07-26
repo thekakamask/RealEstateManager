@@ -1,10 +1,10 @@
-package com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross
+package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiEntity
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyEntity
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 
 @Entity(
     tableName = "property_poi_cross_ref",

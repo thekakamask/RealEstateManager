@@ -1,8 +1,8 @@
-package com.dcac.realestatemanager.data.offlinedatabase.property
+package com.dcac.realestatemanager.data.offlineDatabase.property
 
-import com.dcac.realestatemanager.data.offlinedatabase.photo.PhotoRepository
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiRepository
-import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyWithPoiS
 import com.dcac.realestatemanager.utils.toEntity

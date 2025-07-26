@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlinedatabase.property
+package com.dcac.realestatemanager.data.offlineDatabase.property
 
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyWithPoiS

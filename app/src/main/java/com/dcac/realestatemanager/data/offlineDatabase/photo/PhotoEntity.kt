@@ -1,10 +1,10 @@
-package com.dcac.realestatemanager.data.offlinedatabase.photo
+package com.dcac.realestatemanager.data.offlineDatabase.photo
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyEntity
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import androidx.room.Index
 
 //Represents a photo associated with a specific property.

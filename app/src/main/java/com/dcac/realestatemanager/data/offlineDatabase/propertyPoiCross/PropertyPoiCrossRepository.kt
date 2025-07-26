@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross
+package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
 import com.dcac.realestatemanager.model.PropertyPoiCross
 import kotlinx.coroutines.flow.Flow

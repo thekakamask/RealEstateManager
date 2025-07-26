@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlinedatabase.poi
+package com.dcac.realestatemanager.data.offlineDatabase.poi
 
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties

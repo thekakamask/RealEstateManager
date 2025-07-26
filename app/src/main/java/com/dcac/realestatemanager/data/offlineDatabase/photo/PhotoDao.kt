@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlinedatabase.photo
+package com.dcac.realestatemanager.data.offlineDatabase.photo
 
 import androidx.room.Dao
 import androidx.room.Delete

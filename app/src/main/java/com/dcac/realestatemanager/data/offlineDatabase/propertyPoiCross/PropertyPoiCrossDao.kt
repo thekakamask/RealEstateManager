@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross
+package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
 import androidx.room.Dao
 import androidx.room.Insert

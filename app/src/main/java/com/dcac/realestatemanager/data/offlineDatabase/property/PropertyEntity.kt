@@ -1,10 +1,10 @@
-package com.dcac.realestatemanager.data.offlinedatabase.property
+package com.dcac.realestatemanager.data.offlineDatabase.property
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.dcac.realestatemanager.data.offlinedatabase.user.UserEntity
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 import androidx.room.Index
 
 // Represents a real estate property stored in the database

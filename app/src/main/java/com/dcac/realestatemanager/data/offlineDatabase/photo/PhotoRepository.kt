@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlinedatabase.photo
+package com.dcac.realestatemanager.data.offlineDatabase.photo
 
 import com.dcac.realestatemanager.model.Photo
 import kotlinx.coroutines.flow.Flow

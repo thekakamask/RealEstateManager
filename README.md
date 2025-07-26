@@ -37,12 +37,19 @@ This project is developed using modern Android architecture principles, with a f
       - 🟩 **IN PROGRESS** Display pins of nearby listings on a map.
       - 🟩 **IN PROGRESS** Retrieve and display user current location.
 
-    - 🔐 **User Authentication with Firebase** :
+   - 🔐 **User Authentication with Firebase** :
 
       - ✅ **DONE** Local user account creation with Room and secure password hashing (offline fallback).
       - 🟩 **IN PROGRESS** Secure user login and registration using Firebase Authentication.
-      - 🟩 **IN PROGRESS** Manage user sessions and authentication state via Flow.
-      - ❌ **NOT IMPLEMENTED** Personalized Firebase user profile (e.g., preferences, avatars, etc.).
+      - ✅ **DONE** Online-only account creation using Firebase Authentication.
+      - ✅ **DONE** Room fallback for offline login using SHA-256 hashed password.
+
+   - 🔁 **User Data Sync** :
+
+      - ✅ **DONE** Upload user profile (email, agentName) to Firestore after account creation.
+      - ✅ **DONE** Cache Firebase user in Room with password hash (offline authentication).
+      - ✅ **DONE** Detect local modifications and sync changes to Firestore when online.
+      - ❌ **NOT IMPLEMENTED** Conflict handling not yet implemented.
 
    - 📷 **Media Management** :
 
@@ -56,10 +63,8 @@ This project is developed using modern Android architecture principles, with a f
 
    - 💾 **Offline Mode** :
 
-      - ✅ **DONE** Local data persistence via Room (SQLite).
       - ✅ **DONE** One-way sync of offline users to Firebase Auth when online.
-      - 🟩 **IN PROGRESS** Full offline functionality for all screens.
-      - ❌ **NOT IMPLEMENTED** Conflict resolution strategy for offline edits vs. online data.
+      - ✅ **DONE** One-way sync of local user modifications (agent name, etc.) to Firestore.
 
    - ☁️ **Online mode with Firebase Firestore**
 
@@ -81,35 +86,35 @@ This project is developed using modern Android architecture principles, with a f
       - ❌ **NOT IMPLEMENTED** Navigation between list and detail.
       - ❌ **NOT IMPLEMENTED** Two-pane mode support for tablets.
 
-   - 🎨 Modern and Fluid Interface:
+   - 🎨 **Modern and Fluid Interface**:
 
       - ❌ **NOT IMPLEMENTED** Follows Material Design 3 guidelines.
       - ❌ **NOT IMPLEMENTED** Smooth transitions with Navigation Component.
       - ❌ **NOT IMPLEMENTED** Responsive layout with adaptive UI.
 
-      - TopBar:
+      - **TopBar**:
          - ❌ **NOT IMPLEMENTED** Display application title and possible future actions.
 
-      - Light/Dark Mode:
+      - **Light/Dark Mode**:
          - ✅ **DONE** Supports light/dark mode.
 
-      - Custom theme:
+      - **Custom theme**:
          - ✅ **DONE** Implemented custom colors and shapes.
          - ✅ **DONE** Implemented custom Google Fonts.
 
-   - 🔄 Real-time status management:
+   - 🔄 **Real-time status management**:
 
       - ❌ **NOT IMPLEMENTED** Use of StateFlow for UI state handling.
       - 🟩 **IN PROGRESS** ViewModel for lifecycle-aware logic.
       - 🟩 **IN PROGRESS** Coroutines for async data operations.
 
-   - 🧠 Architecture & Code Structure:
+   - 🧠 **Architecture & Code Structure**:
 
       - ✅ **DONE** Refactored legacy Java into clean MVVM structure.
       - ✅ **DONE** Modularized repositories, DAOs, entities, and mappers with separation of concerns.
       - 🟩 **IN PROGRESS** Manual dependency injection via AppContainer.
 
-   - 🚀 Performance and responsiveness:
+   - 🚀 **Performance and responsiveness**:
    
       - ❌ **NOT IMPLEMENTED** Optimize UI scrolling and animations.
 
@@ -148,6 +153,8 @@ This project is developed using modern Android architecture principles, with a f
    - **Firebase Firestore** : Scalable NoSQL cloud database used for syncing property data online.
    - **Firebase Analytics** : Tracks user engagement and feature usage to inform future improvements.
    - **SHA-256 (MessageDigest)** : Secure local password hashing for authentication.
+   - **SyncManager / UserSyncManager** : Synchronization layer for uploading modified Room data to Firestore.
+   - **MapperUtils** : Convert between model (User) and storage representations (UserEntity, UserOnlineEntity).
    
 
 ## 🚀 **How to Use**

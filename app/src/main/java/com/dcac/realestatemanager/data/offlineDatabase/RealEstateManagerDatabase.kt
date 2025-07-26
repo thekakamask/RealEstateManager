@@ -1,19 +1,19 @@
-package com.dcac.realestatemanager.data.offlinedatabase
+package com.dcac.realestatemanager.data.offlineDatabase
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.dcac.realestatemanager.data.offlinedatabase.photo.PhotoDao
-import com.dcac.realestatemanager.data.offlinedatabase.photo.PhotoEntity
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiDao
-import com.dcac.realestatemanager.data.offlinedatabase.poi.PoiEntity
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyDao
-import com.dcac.realestatemanager.data.offlinedatabase.property.PropertyEntity
-import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossDao
-import com.dcac.realestatemanager.data.offlinedatabase.propertyPoiCross.PropertyPoiCrossEntity
-import com.dcac.realestatemanager.data.offlinedatabase.user.UserDao
-import com.dcac.realestatemanager.data.offlinedatabase.user.UserEntity
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoDao
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyDao
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 
 // Room database definition for the application.
 // - Declares entities used by the database: Property, Photo, POI.
