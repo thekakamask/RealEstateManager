@@ -25,6 +25,9 @@ class OfflineUserRepository(
         return userDao.getUserByEmail(email).map { it?.toModel() }
     }
 
+    override fun getAllUsers(): Flow<List<User>> =
+        userDao.getAllUsers().map { list -> list.map { it.toModel() } }
+
     // AUTHENTICATE A USER BY EMAIL + PASSWORD LOCALLY (OFFLINE LOGIN)
     override fun authenticateUser(email: String, password: String): Flow<User?> {
         val hashed = hashPassword(password) // HASH THE INPUT PASSWORD BEFORE QUERYING

@@ -4,11 +4,15 @@ This project is developed using modern Android architecture principles, with a f
 
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
-  
-   - 🔐 User creation now requires network connectivity and is handled exclusively via Firebase Authentication. Once registered, the user profile (email, agent name) is also uploaded to Firestore under users/{uid}.
-   - 💾 Offline-first authentication: all authenticated users are now securely cached in the Room database with a SHA-256 password hash. Users can log in later without a network connection using local credentials.
-   - 🔄 Introduced a user synchronization system with state tracking (isSynced). Any changes to user data (e.g., email or agent name) are pushed to Firestore when connectivity is available.
-   - ⚙️ Separation of concerns: account creation is decoupled from synchronization logic. SyncManager and UserSyncManager now focus solely on pushing modified offline data to Firebase, not on creating accounts.
+
+   - 🧪 Full fake data setup for testing DAO, Repository, and Model conversion:
+      - FakeEntity includes fake Room-based data for User, Property, Photo, POI, CrossRefs, and Relations.
+      - FakeModel includes full domain-model versions, independently declared to test conversions.
+      - FakeRelationModel includes bidirectional relation mapping (e.g., PropertyWithPoiS, PoiWithProperties).
+   - ✏️ Updated Property model to include a User object instead of just a userId.
+      - Conversion utilities (toModel, toEntity) updated accordingly to map UserEntity <-> User.
+   - 🔄 Updated all toModel() / toEntity() utilities to support nested and relational conversion, including user reference in Property.
+      - Offline repositories now inject UserRepository to support this.
 
 
 ## ❌ **NEXT UPDATES**
@@ -124,7 +128,7 @@ This project is developed using modern Android architecture principles, with a f
       - ❌ **NOT IMPLEMENTED** Unit test for euro to dollar conversion.
       - ❌ **NOT IMPLEMENTED** Unit test for date formatting.
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
-      - ❌ **NOT IMPLEMENTED** DAO and Repository unit tests.
+      - 🟩 **IN PROGRESS** DAO and Repository unit tests.
 
 
 ## 🛠️ **Tech Stack**

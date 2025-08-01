@@ -364,5 +364,26 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - User accounts are now created online-only, authenticated offline, and synchronized intelligently with Firebase when needed. This architecture ensures security, offline resilience, and cloud consistency.
 
 
+### 🔹 **Update #15**
+
+  - 🧪 **Complete Fake Data Setup**
+    - Introduced comprehensive FakeEntity structure with dummy data for:
+      - UserEntity, PropertyEntity, PhotoEntity, PoiEntity, PropertyPoiCrossEntity
+      - Cross-relational data for PropertyWithPoiSRelation and PoiWithPropertiesRelation
+    - Mirrored all data into the FakeModel domain layer for test independence.
+    - Created bidirectional relation models: FakePropertyWithPoiModel, FakePoiWithPropertyModel, and FakePropertyPoiCrossModel.
+
+  - ✏️ **Domain Model Updates**
+    - Property now embeds a User object directly (instead of userId).
+    - Utility methods and Room mappers adapted to support this new structure, enabling full object graph restoration from Room.
+    - Dates (entryDate, saleDate) are now stored as LocalDate.
+
+  - 🔄 **Model Conversion + Repository Updates**
+    - All toModel() and toEntity() functions now handle nested conversion:
+      - Full PropertyEntity → Property conversion including User, Photos, and PoiS.
+      - .toFullModel(...) aggregates cross-refs, user, POIs, and photo data.
+    - Repositories (OfflinePropertyRepository, OfflinePoiRepository) now inject UserRepository to resolve User dependencies during mapping.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

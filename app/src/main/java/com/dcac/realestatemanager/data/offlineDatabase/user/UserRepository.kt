@@ -12,4 +12,5 @@ interface UserRepository {
     suspend fun deleteUser(user: User)
     fun emailExists(email: String): Flow<Boolean>
     fun getUnSyncedUsers(): Flow<List<User>>
+    fun getAllUsers(): Flow<List<User>>
 }

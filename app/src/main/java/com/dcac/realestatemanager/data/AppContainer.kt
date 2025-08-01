@@ -66,9 +66,10 @@ class AppDataContainer(private val context: Context) : AppContainer {
     override val propertyRepository: PropertyRepository by lazy {
         OfflinePropertyRepository(
             RealEstateManagerDatabase.getDatabase(context).propertyDao(),
+            userRepository,
             poiRepository,
             photoRepository,
-            propertyPoiCrossRepository
+            propertyPoiCrossRepository,
         )
     }
 
@@ -85,7 +86,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     // Provides access to POI data via the OfflinePoiRepository
     override val poiRepository: PoiRepository by lazy {
-        OfflinePoiRepository(RealEstateManagerDatabase.getDatabase(context).poiDao())
+        OfflinePoiRepository(
+            RealEstateManagerDatabase.getDatabase(context).poiDao(),
+            userRepository)
     }
 
     override val userRepository: UserRepository by lazy {

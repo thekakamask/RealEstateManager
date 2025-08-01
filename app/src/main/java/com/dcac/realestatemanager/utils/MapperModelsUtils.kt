@@ -17,8 +17,8 @@ import com.dcac.realestatemanager.model.User
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
-
-fun PropertyEntity.toModel(photos: List<Photo> = emptyList(), poiS: List<Poi> = emptyList()): Property {
+// Converts a PropertyEntity to a Property model with its related User, photos and POIs
+fun PropertyEntity.toModel(user: User, photos: List<Photo> = emptyList(), poiS: List<Poi> = emptyList()): Property {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val entryDateLocal = LocalDate.parse(entryDate, formatter)
     val saleDateLocal = saleDate?.let { LocalDate.parse(it, formatter) }
@@ -36,12 +36,15 @@ fun PropertyEntity.toModel(photos: List<Photo> = emptyList(), poiS: List<Poi> = 
         entryDate = entryDateLocal,
         saleDate = saleDateLocal,
         staticMapPath = staticMapPath,
+        user = user,
         photos = photos,
         poiS = poiS
     )
 }
 
+// Builds a full Property model by assembling photos and POIs from provided references, and matching the user
 fun PropertyEntity.toFullModel(
+    allUsers: List<User>,
     photos: List<Photo>,
     crossRefs: List<PropertyPoiCross>,
     allPoiS: List<Poi>
@@ -49,9 +52,11 @@ fun PropertyEntity.toFullModel(
     val propertyPhotos = photos.filter { it.propertyId == this.id }
     val poiIds = crossRefs.filter { it.propertyId == this.id }.map { it.poiId }
     val propertyPoiS = allPoiS.filter { it.id in poiIds }
-    return this.toModel(propertyPhotos, propertyPoiS)
+    val user = allUsers.first { it.id == this.userId }
+    return this.toModel(user, propertyPhotos, propertyPoiS)
 }
 
+// Converts a Property domain model back into a PropertyEntity for database persistence
 fun Property.toEntity(): PropertyEntity {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val entryDateString = entryDate.format(formatter)
@@ -68,11 +73,12 @@ fun Property.toEntity(): PropertyEntity {
         isSold = isSold,
         entryDate = entryDateString,
         saleDate = saleDateString,
-        userId = 0L,
+        userId = user.id,
         staticMapPath = staticMapPath
     )
 }
 
+// Maps a PhotoEntity (from database) to its domain Photo model
 fun PhotoEntity.toModel(): Photo = Photo(
     id = id,
     propertyId = propertyId,
@@ -80,6 +86,7 @@ fun PhotoEntity.toModel(): Photo = Photo(
     description = description,
 )
 
+// Maps a domain Photo model back into its corresponding PhotoEntity (for Room)
 fun Photo.toEntity(): PhotoEntity = PhotoEntity(
     id = id,
     propertyId = propertyId,
@@ -87,18 +94,21 @@ fun Photo.toEntity(): PhotoEntity = PhotoEntity(
     description = description
 )
 
+// Converts a PoiEntity (from DB) to its domain representation Poi
 fun PoiEntity.toModel(): Poi = Poi(
     id = id,
     name = name,
     type = type
 )
 
+// Converts a domain Poi model to its entity format for Room
 fun Poi.toEntity(): PoiEntity = PoiEntity(
     id = id,
     name = name,
     type = type
 )
 
+// Maps a UserEntity (Room) to its domain model User
 fun UserEntity.toModel(): User = User(
     id = id,
     email = email,
@@ -108,6 +118,7 @@ fun UserEntity.toModel(): User = User(
     firebaseUid = firebaseUid
 )
 
+// Maps a User domain model back to its Room entity representation
 fun User.toEntity(): UserEntity = UserEntity(
     id = id,
     email = email,
@@ -117,26 +128,34 @@ fun User.toEntity(): UserEntity = UserEntity(
     firebaseUid = firebaseUid
 )
 
+// Converts a cross-reference entity (Room) into its domain model
 fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
     propertyId = propertyId,
     poiId = poiId
 )
-
+// Converts a domain model of a cross-reference into its Room entity
 fun PropertyPoiCross.toEntity(): PropertyPoiCrossEntity = PropertyPoiCrossEntity(
     propertyId = propertyId,
     poiId = poiId
 )
 
-fun PoiWithPropertiesRelation.toModel(): PoiWithProperties {
+// Maps a full relation object PoiWithPropertiesRelation into a domain model,
+// including resolving each property's user.
+fun PoiWithPropertiesRelation.toModel(allUsers: List<User>): PoiWithProperties {
     return PoiWithProperties(
         poi = poi.toModel(),
-        properties = properties.map { it.toModel() }
+        properties = properties.map { property ->
+            val user = allUsers.first { it.id == property.userId }
+            property.toModel(user = user)
+        }
     )
 }
-
-fun PropertyWithPoiSRelation.toModel(): PropertyWithPoiS {
+// Maps a full relation object PropertyWithPoiSRelation into a domain model,
+// and includes resolving the User for the main Property.
+fun PropertyWithPoiSRelation.toModel(allUsers: List<User>): PropertyWithPoiS {
+    val user = allUsers.first { it.id == property.userId }
     return PropertyWithPoiS(
-        property = property.toModel(),
+        property = property.toModel(user = user),
         poiS = poiS.map { it.toModel() }
     )
 }

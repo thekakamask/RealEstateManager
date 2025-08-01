@@ -15,6 +15,7 @@ data class Property(
     val entryDate: LocalDate,
     val saleDate: LocalDate?,
     val staticMapPath: String? = null,
+    val user: User,
     val photos: List<Photo> = emptyList(),
     val poiS: List<Poi> = emptyList()
 )

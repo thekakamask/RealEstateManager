@@ -1,14 +1,17 @@
 package com.dcac.realestatemanager.data.offlineDatabase.poi
 
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
+import com.dcac.realestatemanager.model.User
 import com.dcac.realestatemanager.utils.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import com.dcac.realestatemanager.utils.toModel
 
 class OfflinePoiRepository(
-    private val poiDao: PoiDao
+    private val poiDao: PoiDao,
+    private val userRepository: UserRepository
 ): PoiRepository {
 
     // Returns a flow of all POI entities stored in the database.
@@ -25,6 +28,12 @@ class OfflinePoiRepository(
     // Deletes a specific POI entity from the database.
     override suspend fun deletePoi(poi: Poi) = poiDao.deletePoi(poi.toEntity())
 
-    override fun getPoiWithProperties(poiId: Long): Flow<PoiWithProperties> =
-        poiDao.getPoiWithProperties(poiId).map { it.toModel() }
+    override fun getPoiWithProperties(poiId: Long): Flow<PoiWithProperties> {
+        val relationFlow = poiDao.getPoiWithProperties(poiId)
+        val usersFlow = userRepository.getAllUsers()
+
+        return kotlinx.coroutines.flow.combine(relationFlow, usersFlow) { relation, users ->
+            relation.toModel(allUsers = users)
+        }
+    }
 }

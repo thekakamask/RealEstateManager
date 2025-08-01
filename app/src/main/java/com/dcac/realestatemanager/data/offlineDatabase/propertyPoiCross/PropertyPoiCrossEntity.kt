@@ -25,6 +25,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
     ],
     indices = [Index(value = ["propertyId"]), Index(value = ["poiId"])]
 )
+
 data class PropertyPoiCrossEntity(
     val propertyId: Long,
     val poiId: Long
