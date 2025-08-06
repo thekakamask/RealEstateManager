@@ -27,4 +27,5 @@ interface PoiDao {
     @Transaction
     @Query("SELECT * FROM poi WHERE id = :poiId")
     fun getPoiWithProperties(poiId: Long): Flow<PoiWithPropertiesRelation>
+
 }

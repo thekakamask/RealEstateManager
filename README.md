@@ -5,14 +5,8 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🧪 Full fake data setup for testing DAO, Repository, and Model conversion:
-      - FakeEntity includes fake Room-based data for User, Property, Photo, POI, CrossRefs, and Relations.
-      - FakeModel includes full domain-model versions, independently declared to test conversions.
-      - FakeRelationModel includes bidirectional relation mapping (e.g., PropertyWithPoiS, PoiWithProperties).
-   - ✏️ Updated Property model to include a User object instead of just a userId.
-      - Conversion utilities (toModel, toEntity) updated accordingly to map UserEntity <-> User.
-   - 🔄 Updated all toModel() / toEntity() utilities to support nested and relational conversion, including user reference in Property.
-      - Offline repositories now inject UserRepository to support this.
+   - ✅ Full DAO test coverage for Property, POI, Photo, User, and junction tables, including CRUD, relations, and custom queries.
+   - 🧪 Robust test setup using shared in-memory Room base, coroutine flows, and isolated, deterministic test environments.
 
 
 ## ❌ **NEXT UPDATES**

@@ -385,5 +385,39 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Repositories (OfflinePropertyRepository, OfflinePoiRepository) now inject UserRepository to resolve User dependencies during mapping.
 
 
+### 🔹 **Update #16**
+
+  - ✅ **DAO Unit Tests Added**
+    - 🧪 PoiDaoTest
+      - Insert single and multiple POIs
+      - Delete POI and associated cross-ref
+      - Retrieve all POIs
+      - Test relation resolution with getPoiWithProperties()
+    - 🧪 PropertyPoiCrossDaoTest (Junction Table)
+      - Insert/delete single and multiple cross refs
+      - Get POI IDs by Property and vice versa
+      - Clean-up test with clearAllCrossRefs()
+      - Test relational queries and mapping logic
+    - 🧪 PropertyDaoTest
+      - Insert, update, delete, and mark property as sold
+      - Filtered search with surface, price, type, and sale status
+      - Sorted fetch by date and alphabetic order
+      - getPropertyWithPoiS() tests complete relation resolution
+    - 🧪 UserDaoTest
+      - Insert multiple users from Firebase
+      - Retrieve users by ID
+      - Clear all users
+    - 🧪 PhotoDaoTest
+      - Insert single and multiple photos
+      - Retrieve photos for a given property ID
+      - Delete photos individually or by property
+      - Full photo list fetch and clean-up
+
+  - 🧩 **Test Infrastructure Improvements**
+    - All DAO tests use a shared DatabaseSetup base class with in-memory Room instance
+    - Coroutines (runBlocking) and Flow.first() ensure deterministic and synchronous test assertions
+    - Every test runs in isolation with a clean database state to ensure accuracy and repeatability
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.
