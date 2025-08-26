@@ -1,12 +1,12 @@
-package com.dcac.realestatemanager.databaseTest.daoTest
+package com.dcac.realestatemanager.daoTest
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.dcac.realestatemanager.daoTest.fakeData.DatabaseSetup
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
-import com.dcac.realestatemanager.databaseTest.DatabaseSetup
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyEntity
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
+import com.dcac.realestatemanager.daoTest.fakeData.fakeEntities.FakePoiEntity
+import com.dcac.realestatemanager.daoTest.fakeData.fakeEntities.FakePropertyEntity
+import com.dcac.realestatemanager.daoTest.fakeData.fakeEntities.FakePropertyPoiCrossEntity
+import com.dcac.realestatemanager.daoTest.fakeData.fakeEntities.FakeUserEntity
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.runner.RunWith

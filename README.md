@@ -5,8 +5,14 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - ✅ Full DAO test coverage for Property, POI, Photo, User, and junction tables, including CRUD, relations, and custom queries.
-   - 🧪 Robust test setup using shared in-memory Room base, coroutine flows, and isolated, deterministic test environments.
+   - ✅ UserRepository fully tested with FakeUserDao
+   - ✅ PhotoRepository fully tested with FakePhotoDao
+   - 🔄 Entity ↔ Model conversion validated in all repository paths
+   - 🧩 Unified test pattern:
+     - Entity-level checks via `entityMap[...]`
+     - Model-level assertions via repository flows
+     - Explicit `expected` values for clarity
+   - 🚀 Reliable, Room-independent tests using deterministic Fake DAOs
 
 
 ## ❌ **NEXT UPDATES**
@@ -122,7 +128,8 @@ This project is developed using modern Android architecture principles, with a f
       - ❌ **NOT IMPLEMENTED** Unit test for euro to dollar conversion.
       - ❌ **NOT IMPLEMENTED** Unit test for date formatting.
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
-      - 🟩 **IN PROGRESS** DAO and Repository unit tests.
+      - ✅ **DONE** DAO tests using instrumented tests for Room database
+      - ✅ **IN PROGRESS** Repository unit tests using fake DAO architecture and model/entity separation
 
 
 ## 🛠️ **Tech Stack**

@@ -419,5 +419,32 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Every test runs in isolation with a clean database state to ensure accuracy and repeatability
 
 
+### 🔹 **Update #17**
+
+  - 🧪 **UserRepository**
+    - Full coverage with FakeUserDao:
+      - getUserById(), getUserByEmail()
+      - authenticateUser() (password hashing verified)
+      - cacheUserFromFirebase()
+      - updateUser(), deleteUser()
+      - emailExists() (true/false)
+      - getAllUsers(), getUnSyncedUsers()
+
+  - 🧪 **PhotoRepository**
+    - Full coverage with FakePhotoDao:
+      - getPhotoById()
+      - getPhotosByPropertyId()
+      - getAllPhotos()
+      - insertPhoto(), insertPhotos()
+      - deletePhoto(), deletePhotosByPropertyId()
+
+  - 🧩 **Shared Test Patterns**
+    - Explicit `expected = ...` values for readability
+    - Entity-level assertions (`fakeDao.entityMap[...]`) for insert/update/delete checks
+    - Model-level assertions (`repository.flow.first()`) for query results
+    - Consistent reuse of FakeEntity and FakeModel datasets
+    - Coroutine isolation via `runTest` for deterministic Flow handling
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

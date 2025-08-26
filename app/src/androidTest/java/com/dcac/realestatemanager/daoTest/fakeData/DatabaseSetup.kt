@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.databaseTest
+package com.dcac.realestatemanager.daoTest.fakeData
 
 import android.content.Context
 import androidx.room.Room

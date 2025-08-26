@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PhotoRepository {
 
+    fun getPhotoById(id: Long): Flow<Photo?>
     fun getPhotosByPropertyId(propertyId: Long): Flow<List<Photo>>
     fun getAllPhotos(): Flow<List<Photo>>
 

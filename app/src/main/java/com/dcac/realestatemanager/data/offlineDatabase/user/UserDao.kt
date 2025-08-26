@@ -4,7 +4,7 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface UserDao {
+interface UserDao{
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveUserFromFirebase(user: UserEntity)

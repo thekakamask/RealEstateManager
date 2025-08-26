@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PhotoDao {
 
+    @Query("SELECT * FROM photos WHERE id = :id")
+    fun getPhotoById(id: Long): Flow<PhotoEntity?>
+
     // Get all photos associated with a specific property ID
     @Query("SELECT * FROM photos WHERE property_id = :propertyId")
     fun getPhotosByPropertyId(propertyId: Long): Flow<List<PhotoEntity>>

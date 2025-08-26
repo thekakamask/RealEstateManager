@@ -119,4 +119,5 @@ dependencies {
     // Android instrumentation testing libraries
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

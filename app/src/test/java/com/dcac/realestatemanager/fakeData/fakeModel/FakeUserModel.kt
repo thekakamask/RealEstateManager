@@ -1,13 +1,14 @@
 package com.dcac.realestatemanager.fakeData.fakeModel
 
 import com.dcac.realestatemanager.model.User
+import com.dcac.realestatemanager.utils.hashPassword
 
 object FakeUserModel {
 
     val user1 = User(
         id = 1L,
         email = "agent1@example.com",
-        password = "hashed_password_1",
+        password = hashPassword("passwordUser1"),
         agentName = "Alice Smith",
         isSynced = true,
         firebaseUid = "firebase_uid_1"
@@ -16,11 +17,11 @@ object FakeUserModel {
     val user2 = User(
         id = 2L,
         email = "agent2@example.com",
-        password = "hashed_password_2",
+        password = hashPassword("passwordUser2"),
         agentName = "Bob Johnson",
         isSynced = false,
         firebaseUid = "firebase_uid_2"
     )
 
-    val userModelList = listOf(user1, user2)
+    //val userModelList = listOf(user1, user2)
 }

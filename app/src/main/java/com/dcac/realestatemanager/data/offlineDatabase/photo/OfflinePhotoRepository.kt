@@ -10,6 +10,9 @@ class OfflinePhotoRepository(
     private val photoDao: PhotoDao
 ) : PhotoRepository {
 
+    override fun getPhotoById(id: Long): Flow<Photo?> =
+        photoDao.getPhotoById(id).map { it?.toModel() }
+
     override fun getPhotosByPropertyId(propertyId: Long): Flow<List<Photo>> =
         photoDao.getPhotosByPropertyId(propertyId).map { list -> list.map { it.toModel() } }
 
