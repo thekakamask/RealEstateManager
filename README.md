@@ -5,13 +5,16 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
+   - 🏗️ FakeDAO + FakeEntity + FakeModel layers created for all domains (User, Photo, Property, Poi, CrossRefs)
    - ✅ UserRepository fully tested with FakeUserDao
    - ✅ PhotoRepository fully tested with FakePhotoDao
+   - ✅ PropertyRepository fully tested with FakePropertyDao + related DAOs
+   - ✅ PoiRepository fully tested with FakePoiDao
    - 🔄 Entity ↔ Model conversion validated in all repository paths
    - 🧩 Unified test pattern:
-     - Entity-level checks via `entityMap[...]`
+     - Entity-level checks via entityMap[...]
      - Model-level assertions via repository flows
-     - Explicit `expected` values for clarity
+     - Explicit expected values for clarity
    - 🚀 Reliable, Room-independent tests using deterministic Fake DAOs
 
 

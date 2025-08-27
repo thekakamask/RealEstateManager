@@ -24,6 +24,10 @@ class OfflinePoiRepository(
     override suspend fun insertAllPoiS(poiS: List<Poi>)=
         poiDao.insertAllPoiS(poiS.map { it.toEntity() })
 
+    override suspend fun updatePoi(poi: Poi) {
+        poiDao.updatePoi(poi.toEntity())
+    }
+
     // Deletes a specific POI entity from the database.
     override suspend fun deletePoi(poi: Poi) = poiDao.deletePoi(poi.toEntity())
 

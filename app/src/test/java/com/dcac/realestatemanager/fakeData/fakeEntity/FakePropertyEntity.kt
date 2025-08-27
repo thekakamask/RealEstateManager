@@ -14,7 +14,7 @@ object FakePropertyEntity {
         description = "Spacious loft near Place de la République.",
         address = "12 Rue du Faubourg du Temple, 75011 Paris",
         isSold = false,
-        entryDate = "01/08/2025",
+        entryDate = "2025-08-01",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
         staticMapPath = null
@@ -29,7 +29,7 @@ object FakePropertyEntity {
         description = "Charming villa with terrace in Montmartre.",
         address = "27 Rue Lepic, 75018 Paris",
         isSold = false,
-        entryDate = "02/08/2025",
+        entryDate = "2025-08-02",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
         staticMapPath = null
@@ -44,8 +44,8 @@ object FakePropertyEntity {
         description = "Bright studio in the heart of the Latin Quarter.",
         address = "5 Rue des Écoles, 75005 Paris",
         isSold = true,
-        entryDate = "03/08/2025",
-        saleDate = "20/08/2025",
+        entryDate = "2025-08-03",
+        saleDate = "2025-08-20",
         userId = FakeUserEntity.user2.id,
         staticMapPath = null
     )
@@ -59,7 +59,7 @@ object FakePropertyEntity {
         description = "Modern flat 2 min from Place de la Bastille.",
         address = "14 Rue de la Roquette, 75011 Paris",
         isSold = false,
-        entryDate = "04/08/2025",
+        entryDate = "2025-08-04",
         saleDate = null,
         userId = FakeUserEntity.user2.id,
         staticMapPath = null
@@ -74,7 +74,7 @@ object FakePropertyEntity {
         description = "Penthouse with view over Place de la Bastille.",
         address = "18 Rue de la Roquette, 75011 Paris",
         isSold = false,
-        entryDate = "05/08/2025",
+        entryDate = "2025-08-05",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
         staticMapPath = null

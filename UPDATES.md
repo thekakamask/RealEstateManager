@@ -419,31 +419,57 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Every test runs in isolation with a clean database state to ensure accuracy and repeatability
 
 
-### 🔹 **Update #17**
+### 🔹 **Update #17 & #18**
 
-  - 🧪 **UserRepository**
+  - 🏗️ **FakeDAO Infrastructure**
+    - Implemented BaseFakeDao with in-memory map + StateFlow
+    - Specialized FakeDAOs for each domain:
+      - FakeUserDao (users, auth, sync flags)
+      - FakePhotoDao (pre-seeded photos by propertyId)
+      - FakePropertyDao (properties + local poiStore + propertyToPoi links)
+      - FakePoiDao (POIs + local propertyStore + poiToProperty links)
+      - FakePropertyPoiCrossDao (propertyId ↔ poiId cross-refs)
+    - Each FakeDAO mirrors the real DAO interface → repositories tested without Room
+
+  - 🗂️ **FakeEntity / FakeModel Datasets**
+    - FakeEntity = predefined DB-like records (UserEntity, PhotoEntity, PropertyEntity, PoiEntity, CrossRefEntity)
+    - FakeModel = domain objects (User, Photo, Property, Poi) with relations (photos + poiS + user)
+    - Entities = DB state, Models = expected test values
+    - Ensures entity ↔ model conversion correctness
+
+  - 🧪 **UserRepository Test**
     - Full coverage with FakeUserDao:
-      - getUserById(), getUserByEmail()
-      - authenticateUser() (password hashing verified)
-      - cacheUserFromFirebase()
-      - updateUser(), deleteUser()
-      - emailExists() (true/false)
-      - getAllUsers(), getUnSyncedUsers()
+      - getUserById(), getUserByEmail(), authenticateUser()
+      - cacheUserFromFirebase(), updateUser(), deleteUser()
+      - emailExists(), getAllUsers(), getUnSyncedUsers()
 
-  - 🧪 **PhotoRepository**
+  - 🧪 **PhotoRepository Test**
     - Full coverage with FakePhotoDao:
-      - getPhotoById()
-      - getPhotosByPropertyId()
-      - getAllPhotos()
-      - insertPhoto(), insertPhotos()
-      - deletePhoto(), deletePhotosByPropertyId()
+      - getPhotoById(), getPhotosByPropertyId(), getAllPhotos()
+      - insertPhoto(s), deletePhoto(s)
+
+  - 🧪 **PropertyRepository Test**
+    - Full coverage with FakePropertyDao, FakePhotoDao, FakeUserDao, FakePoiDao, FakePropertyPoiCrossDao
+    - Validated:
+      - Sorted retrieval (by date, by title)
+      - Filtering (surface, price, type, sold)
+      - CRUD + business logic (insert, update, delete, clearAll, markPropertyAsSold)
+      - Relation queries (getPropertyWithPoiS → cross-refs + user + photos resolved)
+    - DAO-level assertions (entityMap, propertyToPoi) + Model-level assertions (FakePropertyModel)
+
+  - 🧪 **PoiRepository Test**
+    - Full coverage with FakePoiDao + FakeUserDao
+    - Validated:
+    - Retrieval, insert, batch insert, update, delete
+    - Relation queries (getPoiWithProperties) + unlink scenario
+    - DAO-level validation (entityMap`, poiToProperty) + model-level assertions
 
   - 🧩 **Shared Test Patterns**
-    - Explicit `expected = ...` values for readability
-    - Entity-level assertions (`fakeDao.entityMap[...]`) for insert/update/delete checks
-    - Model-level assertions (`repository.flow.first()`) for query results
-    - Consistent reuse of FakeEntity and FakeModel datasets
-    - Coroutine isolation via `runTest` for deterministic Flow handling
+    - Explicit expected = ... values
+    - Dual checks: entity-level (DAO map) + model-level (flow result)
+    - Deterministic datasets → no flaky tests
+    - Coroutine isolation with runTest
+    - Reusable pattern for any future Repository
 
 
 ## 🤝 **Contributions**

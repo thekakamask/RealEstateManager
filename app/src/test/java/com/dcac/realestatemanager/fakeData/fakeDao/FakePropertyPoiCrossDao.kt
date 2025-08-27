@@ -2,11 +2,20 @@ package com.dcac.realestatemanager.fakeData.fakeDao
 
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
+import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
+import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyEntity
+import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class FakePropertyPoiCrossDao : PropertyPoiCrossDao,
     BaseFakeDao<Pair<Long, Long>, PropertyPoiCrossEntity>({ Pair(it.propertyId, it.poiId) }) {
+
+
+    // pre-filling with cross
+    init {
+        seed(FakePropertyPoiCrossEntity.propertyPoiCrossEntityList)
+    }
 
     override suspend fun insertCrossRef(crossRef: PropertyPoiCrossEntity) {
         upsert(crossRef)
