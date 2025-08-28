@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -28,5 +29,8 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 
 data class PropertyPoiCrossEntity(
     val propertyId: Long,
-    val poiId: Long
+    val poiId: Long,
+    @ColumnInfo(name = "is_synced")
+    val isSynced: Boolean = false
+
 )

@@ -38,7 +38,8 @@ fun PropertyEntity.toModel(user: User, photos: List<Photo> = emptyList(), poiS: 
         staticMapPath = staticMapPath,
         user = user,
         photos = photos,
-        poiS = poiS
+        poiS = poiS,
+        isSynced = isSynced
     )
 }
 
@@ -74,7 +75,8 @@ fun Property.toEntity(): PropertyEntity {
         entryDate = entryDateString,
         saleDate = saleDateString,
         userId = user.id,
-        staticMapPath = staticMapPath
+        staticMapPath = staticMapPath,
+        isSynced = isSynced
     )
 }
 
@@ -84,6 +86,7 @@ fun PhotoEntity.toModel(): Photo = Photo(
     propertyId = propertyId,
     uri = uri,
     description = description,
+    isSynced = isSynced
 )
 
 // Maps a domain Photo model back into its corresponding PhotoEntity (for Room)
@@ -91,28 +94,30 @@ fun Photo.toEntity(): PhotoEntity = PhotoEntity(
     id = id,
     propertyId = propertyId,
     uri = uri,
-    description = description
+    description = description,
+    isSynced = isSynced
 )
 
 // Converts a PoiEntity (from DB) to its domain representation Poi
 fun PoiEntity.toModel(): Poi = Poi(
     id = id,
     name = name,
-    type = type
+    type = type,
+    isSynced = isSynced
 )
 
 // Converts a domain Poi model to its entity format for Room
 fun Poi.toEntity(): PoiEntity = PoiEntity(
     id = id,
     name = name,
-    type = type
+    type = type,
+    isSynced = isSynced
 )
 
 // Maps a UserEntity (Room) to its domain model User
 fun UserEntity.toModel(): User = User(
     id = id,
     email = email,
-    password = password,
     agentName = agentName,
     isSynced = isSynced,
     firebaseUid = firebaseUid
@@ -122,7 +127,6 @@ fun UserEntity.toModel(): User = User(
 fun User.toEntity(): UserEntity = UserEntity(
     id = id,
     email = email,
-    password = password,
     agentName = agentName,
     isSynced = isSynced,
     firebaseUid = firebaseUid
@@ -131,12 +135,14 @@ fun User.toEntity(): UserEntity = UserEntity(
 // Converts a cross-reference entity (Room) into its domain model
 fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
     propertyId = propertyId,
-    poiId = poiId
+    poiId = poiId,
+    isSynced = isSynced
 )
 // Converts a domain model of a cross-reference into its Room entity
 fun PropertyPoiCross.toEntity(): PropertyPoiCrossEntity = PropertyPoiCrossEntity(
     propertyId = propertyId,
-    poiId = poiId
+    poiId = poiId,
+    isSynced = isSynced
 )
 
 // Maps a full relation object PoiWithPropertiesRelation into a domain model,

@@ -1,7 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.user
 
 import com.dcac.realestatemanager.model.User
-import com.dcac.realestatemanager.utils.hashPassword
 import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toModel
 import kotlinx.coroutines.flow.Flow
@@ -28,19 +27,9 @@ class OfflineUserRepository(
     override fun getAllUsers(): Flow<List<User>> =
         userDao.getAllUsers().map { list -> list.map { it.toModel() } }
 
-    // AUTHENTICATE A USER BY EMAIL + PASSWORD LOCALLY (OFFLINE LOGIN)
-    override fun authenticateUser(email: String, password: String): Flow<User?> {
-        val hashed = hashPassword(password) // HASH THE INPUT PASSWORD BEFORE QUERYING
-        // PERFORM A ROOM QUERY WITH THE HASHED PASSWORD
-        return userDao.authenticate(email, hashed).map { it?.toModel() }
-    }
-
     // STORE A USER THAT WAS ORIGINALLY CREATED FROM FIREBASE (INCLUDING SYNC INFO)
     override suspend fun cacheUserFromFirebase(user: User) {
-        // HASH THE PASSWORD BEFORE STORING IT LOCALLY
-        val hashedUser = user.copy(password = hashPassword(user.password))
-        // CONVERT TO UserEntity THEN SAVE TO ROOM
-        userDao.saveUserFromFirebase(hashedUser.toEntity())
+        userDao.saveUserFromFirebase(user.toEntity())
     }
 
     // UPDATE AN EXISTING USER LOCALLY

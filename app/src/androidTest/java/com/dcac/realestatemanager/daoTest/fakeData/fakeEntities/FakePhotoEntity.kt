@@ -8,7 +8,8 @@ object FakePhotoEntity {
         id = 1L,
         propertyId = FakePropertyEntity.property1.id,
         uri = "file://photo_1.jpg",
-        description = "Living room of Loft République"
+        description = "Living room of Loft République",
+        isSynced = true
     )
 
     val photo2 = PhotoEntity(

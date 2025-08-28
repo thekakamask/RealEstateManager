@@ -49,4 +49,8 @@ class OfflinePropertyPoiCrossRepository(
     override fun getPropertyIdsForPoi(poiId: Long): Flow<List<Long>> {
         return dao.getPropertyIdsForPoi(poiId)
     }
+
+    override fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCross>> {
+        return dao.getUnSyncedPropertiesPoiSCross().map { list -> list.map { it.toModel() } }
+    }
 }

@@ -180,4 +180,16 @@ class PoiRepositoryTest {
         assertTrue("Properties should be empty after unlink", result.properties.isEmpty())
     }
 
+    @Test
+    fun getUnSyncedPoiS_returnsOnlyUnSynced() = runTest {
+        val expected = FakePoiModel.poiModelList.filter { !it.isSynced }
+        val synced = FakePoiModel.poiModelList.filter { it.isSynced }
+
+        val result = poiRepository.getUnSyncedPoiS().first()
+
+        assertTrue(result.none { synced.contains(it) })
+        assertEquals(expected.size, result.size)
+        assertTrue(result.containsAll(expected))
+    }
+
 }

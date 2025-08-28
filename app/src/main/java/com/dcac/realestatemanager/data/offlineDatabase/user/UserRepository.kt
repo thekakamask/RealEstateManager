@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
     fun getUserById(id: Long): Flow<User?>
     fun getUserByEmail(email: String): Flow<User?>
-    fun authenticateUser(email: String, password: String): Flow<User?>
     suspend fun cacheUserFromFirebase(user: User)
     suspend fun updateUser(user: User)
     suspend fun deleteUser(user: User)

@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.poi
 
+import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
 import kotlinx.coroutines.flow.Flow
@@ -13,4 +14,5 @@ interface PoiRepository {
     suspend fun updatePoi(poi: Poi)
     suspend fun deletePoi(poi: Poi)
     fun getPoiWithProperties(poiId: Long): Flow<PoiWithProperties>
+    fun getUnSyncedPoiS(): Flow<List<Poi>>
 }

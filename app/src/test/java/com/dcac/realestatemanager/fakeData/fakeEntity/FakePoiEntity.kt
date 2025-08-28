@@ -4,7 +4,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
 
 object FakePoiEntity {
 
-    val poi1 = PoiEntity(1L, "Franprix République", "Supermarché")
+    val poi1 = PoiEntity(1L, "Franprix République", "Supermarché", true)
     val poi2 = PoiEntity(2L, "École Primaire Jean Jaurès", "École")
     val poi3 = PoiEntity(3L, "Pharmacie République", "Pharmacie")
     val poi4 = PoiEntity(4L, "Lycée Voltaire", "École")

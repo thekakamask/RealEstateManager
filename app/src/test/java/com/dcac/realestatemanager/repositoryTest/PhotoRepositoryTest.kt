@@ -167,4 +167,17 @@ class PhotoRepositoryTest {
         assertEquals(null, afterDelete)
     }
 
+    @Test
+    fun getUnSyncedPhotos_returnsOnlyUnSynced() = runTest {
+        val expected = FakePhotoModel.photoModelList.filter { !it.isSynced }
+
+
+        val result = photoRepository.getUnSyncedPhotos().first()
+        val synced = FakePhotoModel.photoModelList.filter { it.isSynced }
+
+        assertTrue(result.none { synced.contains(it) })
+        assertEquals(expected.size, result.size)
+        assertTrue(result.containsAll(expected))
+    }
+
 }

@@ -139,4 +139,17 @@ class PropertyDaoTest: DatabaseSetup() {
         val result = propertyDao.getAllPropertiesByDate().first()
         assertTrue(result.isEmpty())
     }
+
+    @Test
+    fun getUnSyncedProperties_shouldReturnOnlyUnsynced() = runBlocking {
+        // Given: property1 is synced, others are not
+        propertyList.forEach { propertyDao.insertProperty(it) }
+
+        // When
+        val result = propertyDao.getUnSyncedProperties().first()
+
+        // Then
+        assertTrue(result.none { it.id == property1.id }) // synced
+        assertTrue(result.all { !it.isSynced })           // only unsynced
+    }
 }

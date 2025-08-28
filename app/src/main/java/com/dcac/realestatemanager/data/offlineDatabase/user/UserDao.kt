@@ -24,9 +24,6 @@ interface UserDao{
     @Query("SELECT * FROM users")
     fun getAllUsers(): Flow<List<UserEntity>>
 
-    @Query("SELECT * FROM users WHERE email = :email AND password = :hashedPassword")
-    fun authenticate(email: String, hashedPassword: String): Flow<UserEntity?>
-
     @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email)")
     fun emailExists(email: String): Flow<Boolean>
 

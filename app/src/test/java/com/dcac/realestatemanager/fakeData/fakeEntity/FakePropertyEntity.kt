@@ -17,7 +17,8 @@ object FakePropertyEntity {
         entryDate = "2025-08-01",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
-        staticMapPath = null
+        staticMapPath = null,
+        isSynced = true
     )
     val property2 = PropertyEntity(
         id = 2L,

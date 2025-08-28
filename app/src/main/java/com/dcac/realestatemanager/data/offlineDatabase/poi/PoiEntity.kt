@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.poi
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -8,5 +9,7 @@ import androidx.room.PrimaryKey
 data class PoiEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String,
-    val type: String
+    val type: String,
+    @ColumnInfo(name = "is_synced")
+    val isSynced: Boolean = false
 )

@@ -30,4 +30,7 @@ class OfflinePhotoRepository(
 
     override suspend fun deletePhoto(photo: Photo) =
         photoDao.deletePhoto(photo.toEntity())
+
+    override fun getUnSyncedPhotos(): Flow<List<Photo>> =
+        photoDao.getUnSyncedPhotos().map { list -> list.map { it.toModel() } }
 }

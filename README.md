@@ -5,17 +5,10 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🏗️ FakeDAO + FakeEntity + FakeModel layers created for all domains (User, Photo, Property, Poi, CrossRefs)
-   - ✅ UserRepository fully tested with FakeUserDao
-   - ✅ PhotoRepository fully tested with FakePhotoDao
-   - ✅ PropertyRepository fully tested with FakePropertyDao + related DAOs
-   - ✅ PoiRepository fully tested with FakePoiDao
-   - 🔄 Entity ↔ Model conversion validated in all repository paths
-   - 🧩 Unified test pattern:
-     - Entity-level checks via entityMap[...]
-     - Model-level assertions via repository flows
-     - Explicit expected values for clarity
-   - 🚀 Reliable, Room-independent tests using deterministic Fake DAOs
+   - ✅ PropertyPoiCrossRepository fully tested with FakePropertyPoiCrossDao
+   - ✅ User stack refactored (Entity, Dao, Repository, Model) → removed password, dropped offline auth, full retesting with FakeUserDao
+   - 🌐 OnlineDatabase: UserOnlineEntity/DAO/Repository implemented (upload/get mapped to domain User)
+   - 🔄 Sync-ready flag added (isSynced) across all entities/models (Property, Photo, Poi, CrossRef) + mappers/tests updated 
 
 
 ## ❌ **NEXT UPDATES**
@@ -132,7 +125,7 @@ This project is developed using modern Android architecture principles, with a f
       - ❌ **NOT IMPLEMENTED** Unit test for date formatting.
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
       - ✅ **DONE** DAO tests using instrumented tests for Room database
-      - ✅ **IN PROGRESS** Repository unit tests using fake DAO architecture and model/entity separation
+      - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation
 
 
 ## 🛠️ **Tech Stack**

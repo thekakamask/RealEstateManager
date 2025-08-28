@@ -1,35 +1,44 @@
 package com.dcac.realestatemanager.data.onlineDatabase.user
 
+import com.dcac.realestatemanager.model.User
+import com.dcac.realestatemanager.utils.toOnlineEntity
+import com.dcac.realestatemanager.utils.toUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-// IMPLEMENTATION OF UserOnlineRepository THAT USES FIREBASE FIRESTORE
+// Repository implementation that manages Users stored in Firestore
 class FirebaseUserOnlineRepository(
-    private val firestore: FirebaseFirestore // FIRESTORE INSTANCE INJECTED VIA CONSTRUCTOR
+    private val firestore: FirebaseFirestore           // Injected Firestore instance
 ) : UserOnlineRepository {
 
-    // UPLOAD A USER OBJECT TO FIRESTORE UNDER THE "users" COLLECTION
-    override suspend fun uploadUser(user: UserOnlineEntity, userId: String) {
+    // Uploads a user to Firestore under collection "users" with the given userId
+    override suspend fun uploadUser(user: User, userId: String): User {
+        val onlineEntity = user.toOnlineEntity()       // Convert domain User -> Firestore DTO
         try {
-            firestore.collection("users")           // SELECT THE "users" COLLECTION
-                .document(userId)                   // CREATE OR OVERWRITE DOCUMENT WITH userId AS ID
-                .set(user)                          // UPLOAD THE USER OBJECT TO FIRESTORE
-                .await()                            // AWAIT FOR COMPLETION (COROUTINE FRIENDLY)
+            firestore.collection("users")              // Access "users" collection in Firestore
+                .document(userId)                      // Select document with given userId (firebaseUid)
+                .set(onlineEntity)                     // Write (create/overwrite) the Firestore DTO
+                .await()                               // Suspend until operation completes
         } catch (e: Exception) {
-            // THROW A CUSTOM EXCEPTION IF UPLOAD FAILS (INCLUDES ORIGINAL ERROR)
+            // If Firestore fails, wrap error in a custom exception
             throw FirebaseUserUploadException("Failed to upload user: ${e.message}", e)
         }
+
+        // Return updated domain User: mark it as synced and set firebaseUid
+        return user.copy(isSynced = true, firebaseUid = userId)
     }
 
-    // FETCH A USER OBJECT FROM FIRESTORE GIVEN ITS userId
-    override suspend fun getUser(userId: String): UserOnlineEntity? {
-        return firestore.collection("users")                         // ACCESS THE COLLECTION
-            .document(userId)                                        // TARGET THE SPECIFIC DOCUMENT
-            .get()                                                   // RETRIEVE IT
-            .await()                                                 // WAIT FOR COMPLETION
-            .toObject(UserOnlineEntity::class.java)                 // CONVERT TO Kotlin DATA CLASS
+    // Fetches a user from Firestore by its userId (firebaseUid)
+    override suspend fun getUser(userId: String): User? {
+        val entity = firestore.collection("users")     // Access "users" collection
+            .document(userId)                          // Select document with given userId
+            .get()                                     // Fetch document snapshot
+            .await()                                   // Suspend until operation completes
+            .toObject(UserOnlineEntity::class.java)    // Deserialize into Firestore DTO
+
+        return entity?.toUser(firebaseUid = userId)    // Map DTO -> domain User (null if not found)
     }
 }
 
-// CUSTOM EXCEPTION USED TO SIGNAL A FIREBASE UPLOAD ERROR
+// Custom exception to signal upload failures to Firestore
 class FirebaseUserUploadException(message: String, cause: Throwable?) : Exception(message, cause)

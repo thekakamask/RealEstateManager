@@ -17,5 +17,6 @@ data class Property(
     val staticMapPath: String? = null,
     val user: User,
     val photos: List<Photo> = emptyList(),
-    val poiS: List<Poi> = emptyList()
+    val poiS: List<Poi> = emptyList(),
+    val isSynced: Boolean = false
 )

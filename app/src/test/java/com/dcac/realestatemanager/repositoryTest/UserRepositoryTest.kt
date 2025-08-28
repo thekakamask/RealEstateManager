@@ -4,7 +4,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.user.OfflineUserRepositor
 import com.dcac.realestatemanager.fakeData.fakeDao.FakeUserDao
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel
-import com.dcac.realestatemanager.utils.hashPassword
+import com.dcac.realestatemanager.model.User
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
@@ -43,35 +43,23 @@ class UserRepositoryTest {
     }
 
     @Test
-    fun authenticatUser_returnsUserIfCredentialsMatch() = runTest {
-        val result = userRepository.authenticateUser(FakeUserEntity.user1.email, "passwordUser1").first()
-        val expected = FakeUserModel.user1
-
-        assertNotNull(result)
-        assertEquals(expected, result)
-    }
-
-    @Test
     fun cacheUserFromFirebase_addsNewUser() = runTest {
-        val expectedNewUser = FakeUserModel.user1.copy(
+        val expectedNewUser = User(
             id = 99L,
             email = "new@user.com",
-            password = "secret",
-            firebaseUid = "firebase999"
+            agentName = "Charlie Test",
+            firebaseUid = "firebase999",
+            isSynced = false
         )
-        val expectedHashedPassword = hashPassword("secret")
+
         userRepository.cacheUserFromFirebase(expectedNewUser)
 
         val resultEntity = fakeUserDao.entityMap[expectedNewUser.id]
-
         assertEquals(expectedNewUser.email, resultEntity?.email)
-        assertEquals(expectedHashedPassword, resultEntity?.password)
 
         val resultInserted = userRepository.getUserById(expectedNewUser.id).first()
-
         assertNotNull(resultInserted)
         assertEquals(expectedNewUser.email, resultInserted?.email)
-        assertEquals(expectedHashedPassword, resultInserted?.password)
     }
 
     @Test
@@ -116,7 +104,7 @@ class UserRepositoryTest {
     @Test
     fun getAllUsers_returnsAllUsers() = runTest {
         val result = userRepository.getAllUsers().first()
-        val expected = listOf(FakeUserModel.user1, FakeUserModel.user2)
+        val expected = FakeUserModel.userModelList
         assertEquals(expected, result)
     }
 }

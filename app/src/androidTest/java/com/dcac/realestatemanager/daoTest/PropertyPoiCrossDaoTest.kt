@@ -113,4 +113,16 @@ class PropertyPoiCrossDaoTest: DatabaseSetup() {
         assertTrue(result.isEmpty())
     }
 
+    @Test
+    fun getUnSyncedPropertiesPoiSCross_shouldReturnOnlyUnSyncedRefs() = runBlocking {
+        // Given: assume only the first N are synced, others are not
+        propertyPoiCrossDao.insertAllCrossRefs(crossList)
+
+        // When
+        val result = propertyPoiCrossDao.getUnSyncedPropertiesPoiSCross().first()
+
+        // Then
+        assertTrue(result.none { it.isSynced })
+    }
+
 }

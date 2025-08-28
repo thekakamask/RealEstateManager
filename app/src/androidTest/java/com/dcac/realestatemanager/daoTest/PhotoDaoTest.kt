@@ -39,6 +39,18 @@ class PhotoDaoTest: DatabaseSetup() {
     }
 
     @Test
+    fun getPhotoById_shouldReturnCorrectPhoto() = runBlocking {
+        // Given
+        photoDao.insertPhoto(photo1)
+
+        // When
+        val result = photoDao.getPhotoById(photo1.id).first()
+
+        // Then
+        assertEquals(photo1, result)
+    }
+
+    @Test
     fun insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos() = runBlocking {
         photoDao.insertPhotos(photoList)
         val result = photoDao.getPhotosByPropertyId(photo1.propertyId).first()
@@ -74,6 +86,20 @@ class PhotoDaoTest: DatabaseSetup() {
         photoDao.deletePhoto(photo2)
         val result = photoDao.getPhotosByPropertyId(photo2.propertyId).first()
         assertEquals(listOf(photo1), result)
+    }
+
+    @Test
+    fun getUnSyncedPhotos_shouldReturnOnlyUnsynced() = runBlocking {
+        // Given
+        photoDao.insertPhotos(photoList) // photo1 = isSynced = true, les autres = false
+
+        // When
+        val result = photoDao.getUnSyncedPhotos().first()
+
+        // Then
+        assertTrue(result.contains(photo2))
+        assertTrue(result.contains(photo3))
+        assertTrue(result.none { it.id == photo1.id })
     }
 
 }

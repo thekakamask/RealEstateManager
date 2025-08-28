@@ -59,10 +59,6 @@ class FakeUserDao : UserDao,
     override fun getAllUsers(): Flow<List<UserEntity>> =
         entityFlow
 
-    // Authenticates a user by matching both email and hashed password
-    override fun authenticate(email: String, hashedPassword: String): Flow<UserEntity?> =
-        entityFlow.map { list -> list.find { it.email == email && it.password == hashedPassword } }
-
     // Checks if a user with the given email exists
     override fun emailExists(email: String): Flow<Boolean> =
         entityFlow.map { list -> list.any { it.email == email } }

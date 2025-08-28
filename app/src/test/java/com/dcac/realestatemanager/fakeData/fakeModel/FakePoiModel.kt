@@ -1,11 +1,10 @@
 package com.dcac.realestatemanager.fakeData.fakeModel
 
-import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
 import com.dcac.realestatemanager.model.Poi
 
 object FakePoiModel {
 
-    val poi1 = Poi(1L, "Franprix République", "Supermarché")
+    val poi1 = Poi(1L, "Franprix République", "Supermarché", true)
     val poi2 = Poi(2L, "École Primaire Jean Jaurès", "École")
     val poi3 = Poi(3L, "Pharmacie République", "Pharmacie")
     val poi4 = Poi(4L, "Lycée Voltaire", "École")

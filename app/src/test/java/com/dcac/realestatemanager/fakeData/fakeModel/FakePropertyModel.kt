@@ -24,7 +24,8 @@ object FakePropertyModel {
         user = user1,
         staticMapPath = null,
         photos = listOf(photoModelList[0], photoModelList[1]),
-        poiS = listOf(poiModelList[0], poiModelList[1], poiModelList[2], poiModelList[3], poiModelList[4])
+        poiS = listOf(poiModelList[0], poiModelList[1], poiModelList[2], poiModelList[3], poiModelList[4]),
+        isSynced = true
     )
 
     val property2 = Property(

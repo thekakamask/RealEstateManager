@@ -116,4 +116,8 @@ class FakePropertyDao : PropertyDao,
             val related = poiS.filter { it.id in poiIds }
             PropertyWithPoiSRelation(property = property, poiS = related)
         }
+
+    override fun getUnSyncedProperties(): Flow<List<PropertyEntity>> =
+        entityFlow.map { list -> list.filter { !it.isSynced } }
+
 }

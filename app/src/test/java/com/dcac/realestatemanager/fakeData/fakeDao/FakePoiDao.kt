@@ -8,6 +8,7 @@ import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 /**
  * In-memory PoiDao:
@@ -78,4 +79,7 @@ class FakePoiDao : PoiDao,
             val related = properties.filter { it.id in ids }
             PoiWithPropertiesRelation(poi = poi, properties = related)
         }
+
+    override fun getUnSyncedPoiS(): Flow<List<PoiEntity>> =
+        entityFlow.map { list -> list.filter { !it.isSynced } }
 }

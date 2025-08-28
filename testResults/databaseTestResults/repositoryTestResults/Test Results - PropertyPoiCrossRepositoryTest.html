@@ -2,7 +2,7 @@
 <html xmlns:str="http://exslt.org/strings" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Test Results &mdash; PhotoRepositoryTest</title>
+        <title>Test Results &mdash; PropertyPoiCrossRepositoryTest</title>
         <style type="text/css">
           html {
             height: 100%
@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">302 ms</div>
+                <div class="time" xmlns="">289 ms</div>
                 <h1>
-                    PhotoRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">8 total, </span><span class="passed">8 passed</span></strong>
+                    PropertyPoiCrossRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">9 total, </span><span class="passed">9 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,48 +593,53 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">302 ms</div>
-                            </em>PhotoRepositoryTest</span>
+                                <div class="time">289 ms</div>
+                            </em>PropertyPoiCrossRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">271 ms</div>
-                                    </em><em class="status">passed</em>insertPhoto_insertsPhoto</span>
+                                        <div class="time">261 ms</div>
+                                    </em><em class="status">passed</em>getUnSyncedPropertiesPoiSCross_returnsOnlyUnSynced</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>getAllPhotos_returnsAllPhotos</span>
+                                    </em><em class="status">passed</em>insertAllCrossRefs_insertsBatch</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>deletePhoto_deletesPhoto</span>
+                                        <div class="time">8 ms</div>
+                                    </em><em class="status">passed</em>getAllCrossRefs_returnsAll</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPhotos_returnsOnlyUnSynced</span>
+                                    </em><em class="status">passed</em>deleteCrossRefsForProperty_removesAll</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">7 ms</div>
-                                    </em><em class="status">passed</em>deletePhotosByPropertyId_deletesPhotos</span>
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>clearAllCrossRefs_removesEverything</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>getPhotoById_returnsCorrectPhoto</span>
+                                    </em><em class="status">passed</em>getPropertyIdsForPoi_returnsCorrectIds</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>getPhotosByPropertyId_returnsCorrectPhotos</span>
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>insertCrossRef_insertsAndIsRetrievable</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>insertPhotos_insertsPhotos</span>
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>getPoiIdsForProperty_returnsCorrectIds</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>deleteCrossRefsForPoi_removesAll</span>
                             </li>
                         </ul>
                     </li>
@@ -642,7 +647,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 28/08/2025 17:02</p>
+            <p>Generated by Android Studio on 28/08/2025 17:06</p>
         </div>
     </body>
 </html>

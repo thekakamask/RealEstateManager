@@ -2,8 +2,6 @@ package com.dcac.realestatemanager.fakeData.fakeDao
 
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -50,4 +48,8 @@ class FakePropertyPoiCrossDao : PropertyPoiCrossDao,
     override suspend fun clearAllCrossRefs() {
         clear()
     }
+
+    override fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>> =
+        entityFlow.map { list -> list.filter { !it.isSynced } }
+
 }

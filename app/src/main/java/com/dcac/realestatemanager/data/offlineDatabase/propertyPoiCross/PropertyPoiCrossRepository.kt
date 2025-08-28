@@ -22,4 +22,6 @@ interface PropertyPoiCrossRepository {
     fun getPoiIdsForProperty(propertyId: Long): Flow<List<Long>>
 
     fun getPropertyIdsForPoi(poiId: Long): Flow<List<Long>>
+
+    fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCross>>
 }

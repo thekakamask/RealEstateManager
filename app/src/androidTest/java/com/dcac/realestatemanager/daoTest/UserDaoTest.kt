@@ -3,7 +3,6 @@ package com.dcac.realestatemanager.daoTest
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dcac.realestatemanager.daoTest.fakeData.DatabaseSetup
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
-import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 import com.dcac.realestatemanager.daoTest.fakeData.fakeEntities.FakeUserEntity
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -18,8 +17,7 @@ class UserDaoTest: DatabaseSetup() {
 
     private lateinit var userDao: UserDao
 
-    private val user1: UserEntity = FakeUserEntity.user1
-    private val user2: UserEntity = FakeUserEntity.user2
+    private val users = FakeUserEntity.userEntityList
 
     @Before
     fun setupDao() {
@@ -28,66 +26,53 @@ class UserDaoTest: DatabaseSetup() {
 
     @Test
     fun insert_and_getUserById_shouldReturnUser() = runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        val retrievedUser = userDao.getUserById(user1.id).first()
-        assertEquals(user1, retrievedUser)
+        userDao.saveUserFromFirebase(users[0])
+        val retrievedUser = userDao.getUserById(users[0].id).first()
+        assertEquals(users[0], retrievedUser)
     }
 
     @Test
-    fun getUserByEmail_shouldReturnCorrectUser()= runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        val retrievedUser = userDao.getUserByEmail(user1.email).first()
-        assertEquals(user1, retrievedUser)
+    fun getUserByEmail_shouldReturnCorrectUser() = runBlocking {
+        userDao.saveUserFromFirebase(users[0])
+        val retrievedUser = userDao.getUserByEmail(users[0].email).first()
+        assertEquals(users[0], retrievedUser)
     }
 
     @Test
     fun getAllUsers_shouldReturnAllInserted() = runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        userDao.saveUserFromFirebase(user2)
+        users.forEach { userDao.saveUserFromFirebase(it) }
         val all = userDao.getAllUsers().first()
-        assertEquals(listOf(user1, user2), all)
+        assertEquals(users, all)
     }
 
     @Test
     fun updateUser_shouldUpdateExisting() = runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        val updatedUser = user1.copy(agentName = "Alice Updated")
+        userDao.saveUserFromFirebase(users[0])
+        val updatedUser = users[0].copy(agentName = "Alice Updated")
         userDao.updateUser(updatedUser)
-        val retrievedUser = userDao.getUserById(user1.id).first()
+        val retrievedUser = userDao.getUserById(users[0].id).first()
         assertEquals("Alice Updated", retrievedUser?.agentName)
     }
 
     @Test
     fun deleteUser_shouldRemoveUser() = runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        userDao.deleteUser(user1)
+        userDao.saveUserFromFirebase(users[0])
+        userDao.deleteUser(users[0])
         val deletedUser = userDao.getAllUsers().first()
         assertTrue(deletedUser.isEmpty())
     }
 
     @Test
     fun emailExists_shouldReturnTrueWhenEmailPresent() = runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        val exists = userDao.emailExists(user1.email).first()
+        userDao.saveUserFromFirebase(users[0])
+        val exists = userDao.emailExists(users[0].email).first()
         assertTrue(exists)
     }
 
     @Test
-    fun authenticate_shouldReturnUserOnMatchingCredentials() = runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        val authenticatedUser = userDao.authenticate(user1.email, user1.password).first()
-        assertEquals(user1, authenticatedUser)
-    }
-
-    @Test
     fun getUnSyncedUsers_shouldReturnOnlyUnsynced() = runBlocking {
-        userDao.saveUserFromFirebase(user1)
-        userDao.saveUserFromFirebase(user2)
+        users.forEach { userDao.saveUserFromFirebase(it) }
         val unSyncedUsers = userDao.getUnSyncedUsers().first()
-        assertEquals(listOf(user2), unSyncedUsers)
-
+        assertEquals(listOf(users[1]), unSyncedUsers)
     }
-
-
-
 }

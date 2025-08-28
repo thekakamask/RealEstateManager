@@ -11,7 +11,6 @@ import androidx.room.PrimaryKey
 data class UserEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val email: String,
-    val password: String,
     @ColumnInfo(name = "agent_name")
     val agentName: String,
     @ColumnInfo(name = "is_synced")

@@ -45,4 +45,8 @@ class FakePhotoDao : PhotoDao,
 
     override fun getAllPhotos(): Flow<List<PhotoEntity>> =
         entityFlow
+
+    override fun getUnSyncedPhotos(): Flow<List<PhotoEntity>> =
+        entityFlow.map { list -> list.filter { !it.isSynced } }
+
 }

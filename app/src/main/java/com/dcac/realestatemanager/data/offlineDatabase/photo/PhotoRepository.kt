@@ -14,4 +14,6 @@ interface PhotoRepository {
     suspend fun deletePhotosByPropertyId(propertyId: Long)
     suspend fun deletePhoto(photo: Photo)
 
+    fun getUnSyncedPhotos(): Flow<List<Photo>>
+
 }

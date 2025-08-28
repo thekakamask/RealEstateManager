@@ -38,5 +38,8 @@ data class PropertyEntity(
     @ColumnInfo(name = "user_id")
     val userId: Long, // FK: links to UserEntity.id
     @ColumnInfo(name = "static_map_path")
-    val staticMapPath: String? = null
+    val staticMapPath: String? = null,
+    @ColumnInfo(name = "is_synced")
+    val isSynced: Boolean = false
+
 )

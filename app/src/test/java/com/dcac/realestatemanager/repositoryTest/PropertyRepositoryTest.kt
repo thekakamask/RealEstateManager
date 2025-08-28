@@ -242,4 +242,19 @@ class PropertyRepositoryTest {
         val all = propertyRepository.getAllPropertiesByDate().first()
         assertTrue(all.isEmpty())
     }
+
+    @Test
+    fun getUnSyncedProperties_returnsOnlyUnSynced() = runTest {
+        // Expected: only properties where isSynced == false
+        val expected = FakePropertyModel.propertyModelList.filter { !it.isSynced }
+        val synced = FakePropertyModel.propertyModelList.filter { it.isSynced }
+
+        // When
+        val result = propertyRepository.getUnSyncedProperties().first()
+
+        // Then
+        assertTrue(result.none { synced.contains(it) })
+        assertEquals(expected.size, result.size)
+        assertTrue(result.containsAll(expected))
+    }
 }

@@ -4,6 +4,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyWithPoiS
 import com.dcac.realestatemanager.utils.toEntity
@@ -11,6 +12,7 @@ import com.dcac.realestatemanager.utils.toFullModel
 import kotlinx.coroutines.flow.Flow
 import com.dcac.realestatemanager.utils.toModel
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 class OfflinePropertyRepository(
     private val propertyDao: PropertyDao,
@@ -102,6 +104,26 @@ class OfflinePropertyRepository(
 
         return combine(propertyWithPoisFlow, usersFlow) { relation, users ->
             relation.toModel(allUsers = users)
+        }
+    }
+
+    override fun getUnSyncedProperties(): Flow<List<Property>> {
+        val usersFlow = userRepository.getAllUsers()
+        val photosFlow = photoRepository.getAllPhotos()
+        val crossRefsFlow = propertyPoiCrossRepository.getAllCrossRefs()
+        val poiSFlow = poiRepository.getAllPoiS()
+        val unSyncedPropertiesFlow = propertyDao.getUnSyncedProperties()
+
+        return combine(unSyncedPropertiesFlow, usersFlow, photosFlow, crossRefsFlow, poiSFlow) {
+                properties, users, photos, crossRefs, poiS ->
+            properties.map { property ->
+                property.toFullModel(
+                    allUsers = users,
+                    photos = photos,
+                    crossRefs = crossRefs,
+                    allPoiS = poiS
+                )
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
+import com.dcac.realestatemanager.model.Property
 import kotlinx.coroutines.flow.Flow
 
 // DAO interface for accessing PropertyEntity data
@@ -59,6 +61,9 @@ interface PropertyDao {
     @Transaction
     @Query("SELECT * FROM properties WHERE id = :propertyId")
     fun getPropertyWithPoiS(propertyId: Long): Flow<PropertyWithPoiSRelation>
+
+    @Query("SELECT * FROM properties WHERE is_synced = 0")
+    fun getUnSyncedProperties(): Flow<List<PropertyEntity>>
 
 
 }

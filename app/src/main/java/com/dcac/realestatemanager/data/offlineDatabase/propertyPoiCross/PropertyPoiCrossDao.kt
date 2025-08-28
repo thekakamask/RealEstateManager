@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -35,4 +36,7 @@ interface PropertyPoiCrossDao {
 
     @Query("DELETE FROM property_poi_cross_ref")
     suspend fun clearAllCrossRefs()
+
+    @Query("SELECT * FROM property_poi_cross_ref WHERE is_synced = 0")
+    fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>>
 }

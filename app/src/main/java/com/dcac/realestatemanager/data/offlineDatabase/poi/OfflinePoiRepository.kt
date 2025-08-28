@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.offlineDatabase.poi
 
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
 import com.dcac.realestatemanager.utils.toEntity
@@ -39,4 +40,7 @@ class OfflinePoiRepository(
             relation.toModel(allUsers = users)
         }
     }
+
+    override fun getUnSyncedPoiS(): Flow<List<Poi>> =
+        poiDao.getUnSyncedPoiS().map { list -> list.map { it.toModel() } }
 }

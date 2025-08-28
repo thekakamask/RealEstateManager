@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import kotlinx.coroutines.flow.Flow
 
 // DAO interface for accessing PhotoEntity data
@@ -36,6 +37,9 @@ interface PhotoDao {
     //get All Photos
     @Query("SELECT * FROM photos")
     fun getAllPhotos(): Flow<List<PhotoEntity>>
+
+    @Query("SELECT * FROM photos WHERE is_synced = 0")
+    fun getUnSyncedPhotos(): Flow<List<PhotoEntity>>
 
 
 }

@@ -4,5 +4,6 @@ data class Photo(
     val id : Long,
     val propertyId: Long,
     val uri : String,
-    val description : String
+    val description : String,
+    val isSynced : Boolean = false
 )

@@ -61,6 +61,18 @@ class PoiDaoTest: DatabaseSetup() {
     }
 
     @Test
+    fun updatePoi_shouldUpdateExistingPoi() = runBlocking {
+        val updatedPoi = poi1.copy(name = "Updated Name", type = "Updated Type")
+
+        poiDao.insertPoi(poi1)
+        poiDao.updatePoi(updatedPoi)
+
+        val result = poiDao.getAllPoiS().first().first()
+        assertEquals("Updated Name", result.name)
+        assertEquals("Updated Type", result.type)
+    }
+
+    @Test
     fun deletePoi_shouldRemovePoiFromDatabase() = runBlocking {
         poiDao.insertAllPoiS(poiList)
         db.propertyCrossDao().insertAllCrossRefs(crossRefList)
@@ -82,5 +94,15 @@ class PoiDaoTest: DatabaseSetup() {
         assertEquals(listOf(property1), result.properties)
     }
 
+    @Test
+    fun getUnSyncedPoiS_shouldReturnOnlyUnSyncedPoi() = runBlocking {
+        // Suppose poi1 isSynced = true, poi2 & poi3 are false
+        poiDao.insertAllPoiS(listOf(poi1, FakePoiEntity.poi2, FakePoiEntity.poi3))
+
+        val result = poiDao.getUnSyncedPoiS().first()
+
+        assertFalse(result.contains(poi1))
+        assertEquals(2, result.size)
+    }
 
 }

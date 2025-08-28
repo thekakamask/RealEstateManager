@@ -472,5 +472,46 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Reusable pattern for any future Repository
 
 
+### 🔹 **Update #19**
+
+  - 🧪 **PropertyPoiCrossRepository Test**
+    - Full coverage with FakePropertyPoiCrossDao
+    - Validated:
+      - Retrieval (getAllCrossRefs)
+      - Insertions (single, batch)
+      - Deletions (by property, by POI) + global clear
+      - Queries (getPoiIdsForProperty, getPropertyIdsForPoi)
+    - DAO-level checks (entityMap) + model-level Flow assertions
+    - Sorted list comparison ensures deterministic results
+
+  - 🏗️ **User Stack Refactor**
+    - UserEntity / User model: password field removed, only firebaseUid kept as identity anchor
+    - UserDao: authenticate() query removed (delegated to FirebaseAuth), simplified API
+    - OfflineUserRepository: updated accordingly, no more local hashing
+    - FakeUserDao / FakeUserEntity / FakeUserModel: aligned with new schema
+    - ✅ UserRepositoryTest (and also UserDaoTest) fully rewritten:
+      - Retrieval (getUserById, getUserByEmail, getAllUsers)
+      - Insert (cacheUserFromFirebase)
+      - Update, delete, email existence
+      - Sync logic (getUnSyncedUsers)
+    - 🔄 Unified usage of userEntityList / userModelList in tests for consistency and maintainability
+
+  - 🌐 **Online User Stack**
+    - Added UserOnlineEntity, UserOnlineRepository interface, and FirebaseUserOnlineRepository implementation
+    - uploadUser(User) → maps to UserOnlineEntity, stores in Firestore, returns domain User (marked isSynced = true)
+    - getUser(uid) → fetches from Firestore, maps back to domain User
+    - Centralized mapping (User ↔ UserOnlineEntity) handled in utils
+    
+  - 🔄 **isSynced Propagation**
+    - Added isSynced field across all Room entities/models: Property, Photo, Poi, and PropertyPoiCross
+    - Updated:
+      - Entities (new column is_synced)
+      - DAOs (added getUnSynced...() queries for each type)
+      - Repositories (flows and save/update methods respect sync state)
+      - Mappers (toEntity, toModel) extended to propagate flag
+      - Tests (Dao + Repository tests updated with synced/unsynced scenarios)
+    - ✅ Enables granular sync tracking: each record can now be individually flagged and synchronized with Firestore
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

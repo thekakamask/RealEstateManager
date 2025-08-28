@@ -2,7 +2,6 @@ package com.dcac.realestatemanager.data.sync
 
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
-import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 // THIS CLASS HANDLES SYNCING LOCAL USER DATA TO THE ONLINE FIRESTORE DATABASE
@@ -37,11 +36,8 @@ class UserSyncManager(
             }
 
             try {
-                // USE CENTRALIZED MAPPING LOGIC TO CONVERT USER TO FIRESTORE ENTITY
-                val firestoreUser = user.toOnlineEntity()
-
                 // UPLOAD THE USER DATA TO FIRESTORE UNDER users/{uid}
-                userOnlineRepository.uploadUser(firestoreUser, user.firebaseUid)
+                userOnlineRepository.uploadUser(user, user.firebaseUid)
 
                 // MARK THE USER AS SYNCED IN THE LOCAL DATABASE
                 userRepository.updateUser(user.copy(isSynced = true))
