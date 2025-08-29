@@ -1,8 +1,9 @@
 package com.dcac.realestatemanager.data.onlineDatabase.user
 
+import com.dcac.realestatemanager.data.onlineDatabase.FirestoreCollections
 import com.dcac.realestatemanager.model.User
+import com.dcac.realestatemanager.utils.toModel
 import com.dcac.realestatemanager.utils.toOnlineEntity
-import com.dcac.realestatemanager.utils.toUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -15,7 +16,7 @@ class FirebaseUserOnlineRepository(
     override suspend fun uploadUser(user: User, userId: String): User {
         val onlineEntity = user.toOnlineEntity()       // Convert domain User -> Firestore DTO
         try {
-            firestore.collection("users")              // Access "users" collection in Firestore
+            firestore.collection(FirestoreCollections.USERS)              // Access "users" collection in Firestore
                 .document(userId)                      // Select document with given userId (firebaseUid)
                 .set(onlineEntity)                     // Write (create/overwrite) the Firestore DTO
                 .await()                               // Suspend until operation completes
@@ -30,15 +31,28 @@ class FirebaseUserOnlineRepository(
 
     // Fetches a user from Firestore by its userId (firebaseUid)
     override suspend fun getUser(userId: String): User? {
-        val entity = firestore.collection("users")     // Access "users" collection
+        val entity = firestore.collection(FirestoreCollections.USERS)     // Access "users" collection
             .document(userId)                          // Select document with given userId
             .get()                                     // Fetch document snapshot
             .await()                                   // Suspend until operation completes
             .toObject(UserOnlineEntity::class.java)    // Deserialize into Firestore DTO
 
-        return entity?.toUser(firebaseUid = userId)    // Map DTO -> domain User (null if not found)
+        return entity?.toModel(firebaseUid = userId)    // Map DTO -> domain User (null if not found)
     }
+    override suspend fun deleteUser(userId: String) {
+        try {
+            firestore.collection(FirestoreCollections.USERS)
+                .document(userId)
+                .delete()
+                .await()
+        } catch (e: Exception) {
+            throw FirebaseUserDeleteException("Failed to delete user: ${e.message}", e)
+        }
+    }
+
 }
 
 // Custom exception to signal upload failures to Firestore
 class FirebaseUserUploadException(message: String, cause: Throwable?) : Exception(message, cause)
+class FirebaseUserDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+

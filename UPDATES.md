@@ -513,5 +513,37 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - ✅ Enables granular sync tracking: each record can now be individually flagged and synchronized with Firestore
 
 
+### 🔹 **Update #20**
+
+  - 🔥 Firestore integration completed for all major domain types (User, Property, Photo, Poi, PropertyPoiCross)  
+    - Full support in:
+      - FirebaseUserOnlineRepository
+      - FirebasePropertyOnlineRepository
+      - FirebasePhotoOnlineRepository
+      - FirebasePoiOnlineRepository
+      - FirebasePropertyPoiCrossOnlineRepository
+    - Each repository provides:
+      - upload<Entity>()
+      - get<Entity>() and/or get<Entity>ByPropertyId()
+      - delete<Entity>() and deleteAllBy<Criteria>() where relevant
+      - Bidirectional mapping via toOnlineEntity() / toModel()
+      - Returns domain model with isSynced = true
+    - Centralized collection paths via FirestoreCollections.kt to avoid naming errors
+
+  - 🛡️ **ProGuard & R8 Compatibility**
+    - Applied @Keep annotation to all OnlineEntity classes (used via Firebase reflection)
+    - Updated proguard-rules.pro:
+      - Keeps Firestore model classes + annotations
+      - Prevents obfuscation of Firestore-bound classes
+      - Ensures runtime parsing via toObject() works correctly in release builds
+
+  - 🔁 **Full Domain ↔ OnlineEntity Mapping**
+    - Implemented bidirectional mappers toOnlineEntity() and toModel() for all synced types: User, Property, Photo, Poi, PropertyPoiCross
+    - Ensures reliable conversion between rich domain models and Firestore-friendly DTOs during upload/download
+    - Centralized in the utils package for maintainability and reuse
+    - Added Log.d("Mapping", ...) statements in all .toModel() functions to trace deserialization and quickly identify malformed Firestore data
+      - Example: Deserialized PropertyOnlineEntity: $this
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

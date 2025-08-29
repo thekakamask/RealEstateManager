@@ -5,4 +5,5 @@ import com.dcac.realestatemanager.model.User
 interface UserOnlineRepository {
     suspend fun uploadUser(user: User, userId: String): User
     suspend fun getUser(userId: String): User?
+    suspend fun deleteUser(userId: String)
 }

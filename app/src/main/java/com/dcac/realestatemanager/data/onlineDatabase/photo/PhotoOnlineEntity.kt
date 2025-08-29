@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.onlineDatabase.user
+package com.dcac.realestatemanager.data.onlineDatabase.photo
 
 import androidx.annotation.Keep
 
@@ -8,7 +8,9 @@ import androidx.annotation.Keep
  */
 
 @Keep
-data class UserOnlineEntity(
-    val email: String = "",
-    val agentName: String = ""
+data class PhotoOnlineEntity(
+    val uri: String = "",
+    val description: String = "",
+    val propertyId: Long = 0L,
+
 )

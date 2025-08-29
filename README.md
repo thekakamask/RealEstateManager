@@ -5,10 +5,9 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - ✅ PropertyPoiCrossRepository fully tested with FakePropertyPoiCrossDao
-   - ✅ User stack refactored (Entity, Dao, Repository, Model) → removed password, dropped offline auth, full retesting with FakeUserDao
-   - 🌐 OnlineDatabase: UserOnlineEntity/DAO/Repository implemented (upload/get mapped to domain User)
-   - 🔄 Sync-ready flag added (isSynced) across all entities/models (Property, Photo, Poi, CrossRef) + mappers/tests updated 
+   - 🔥 Firestore integration completed for all major domain types (User, Property, Photo, Poi, CrossRef) with upload/get/delete methods + FirestoreCollections centralized
+   - 🛡️ R8/ProGuard compatibility ensured via @Keep annotations + custom rules for Firebase deserialization
+   - 🔁 Full mapping logic implemented for all entities (domain ↔ onlineEntity) with centralized toOnlineEntity() / toModel() mappers and Log.d debug tracing for deserialization
 
 
 ## ❌ **NEXT UPDATES**
@@ -69,9 +68,9 @@ This project is developed using modern Android architecture principles, with a f
    - ☁️ **Online mode with Firebase Firestore**
 
       - 🟩 **IN PROGRESS** Firebase sync infrastructure (SyncManager & entity-level managers).
-      - ❌ **NOT IMPLEMENTED** Synchronize property listings and user data with Firestore Cloud Database.
-      - ❌ **NOT IMPLEMENTED** Enable real-time updates and multi-device data consistency.
-      - ❌ **NOT IMPLEMENTED** Prepare seamless offline-to-online data synch for robust user experience.
+      - 🟩 **IN PROGRESS** Synchronize property listings and user data with Firestore Cloud Database.
+      - 🟩 **IN PROGRESS** Enable real-time updates and multi-device data consistency.
+      - 🟩 **IN PROGRESS** Prepare seamless offline-to-online data synch for robust user experience.
 
    - 🧠 **Utilities** :
 
