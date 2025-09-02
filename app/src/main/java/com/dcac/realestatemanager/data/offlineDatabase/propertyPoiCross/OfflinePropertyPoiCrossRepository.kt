@@ -18,6 +18,10 @@ class OfflinePropertyPoiCrossRepository(
         dao.insertAllCrossRefs(crossRefs.map { it.toEntity() })
     }
 
+    override suspend fun updateCrossRef(crossRef: PropertyPoiCross) {
+        dao.updateCrossRef(crossRef.toEntity())
+    }
+
     override suspend fun deleteCrossRefsForProperty(propertyId: Long) {
         dao.deleteCrossRefsForProperty(propertyId)
     }
@@ -53,4 +57,13 @@ class OfflinePropertyPoiCrossRepository(
     override fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCross>> {
         return dao.getUnSyncedPropertiesPoiSCross().map { list -> list.map { it.toModel() } }
     }
+
+    override fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCross?> {
+        return dao.getCrossByIds(propertyId, poiId).map { it?.toModel() }
+    }
+
+    override suspend fun cacheCrossRefFromFirebase(crossRef: PropertyPoiCross) {
+       return dao.saveCrossRefFromFirebase(crossRef.toEntity())
+    }
+
 }

@@ -73,6 +73,39 @@ class PhotoDaoTest: DatabaseSetup() {
     }
 
     @Test
+    fun updatePhoto_shouldModifyPhotoCorrectly() = runBlocking {
+        photoDao.insertPhoto(photo1)
+
+        val updated = photo1.copy(
+            uri = "file://updated_photo.jpg",
+            description = "Updated description",
+            isSynced = true
+        )
+        photoDao.updatePhoto(updated)
+
+        val result = photoDao.getPhotoById(photo1.id).first()
+
+        assertEquals(updated.uri, result?.uri)
+        assertEquals(updated.description, result?.description)
+        assertEquals(true, result?.isSynced)
+    }
+
+    @Test
+    fun savePhotoFromFirebase_shouldInsertOrReplacePhoto() = runBlocking {
+        // Given a new photo with a unique ID
+        val firebasePhoto = photo1.copy(id = 999L, uri = "firebase://photo.jpg")
+
+        // When saving via Firestore
+        photoDao.savePhotoFromFirebase(firebasePhoto)
+
+        // Then it should be retrievable
+        val result = photoDao.getPhotoById(firebasePhoto.id).first()
+
+        assertEquals(firebasePhoto, result)
+    }
+
+
+    @Test
     fun deletePhotosByPropertyId_shouldRemoveAllPhotosForProperty() = runBlocking {
         photoDao.insertPhotos(photoList)
         photoDao.deletePhotosByPropertyId(photo1.propertyId)

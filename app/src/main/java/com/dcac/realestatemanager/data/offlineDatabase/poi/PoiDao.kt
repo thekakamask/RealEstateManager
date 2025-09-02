@@ -14,6 +14,12 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PoiDao {
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun savePoiFromFirebase(poi: PoiEntity)
+
+    @Query("SELECT * FROM poi WHERE id = :id")
+    fun getPoiById(id: Long): Flow<PoiEntity?>
+
     @Query("SELECT * FROM poi")
     fun getAllPoiS(): Flow<List<PoiEntity>>
 

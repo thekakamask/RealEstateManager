@@ -1,7 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.poi
 
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
-import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
 import com.dcac.realestatemanager.utils.toEntity
@@ -18,6 +17,9 @@ class OfflinePoiRepository(
     override fun getAllPoiS(): Flow<List<Poi>> =
         poiDao.getAllPoiS().map { list -> list.map { it.toModel() } }
 
+    override fun getPoiById(id: Long): Flow<Poi?> =
+        poiDao.getPoiById(id).map { it?.toModel() }
+
     // Inserts single POI
     override suspend fun insertPoi(poi: Poi) = poiDao.insertPoi(poi.toEntity())
 
@@ -27,6 +29,10 @@ class OfflinePoiRepository(
 
     override suspend fun updatePoi(poi: Poi) {
         poiDao.updatePoi(poi.toEntity())
+    }
+
+    override suspend fun cachePoiFromFirebase(poi: Poi) {
+        poiDao.savePoiFromFirebase(poi.toEntity())
     }
 
     // Deletes a specific POI entity from the database.

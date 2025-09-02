@@ -5,9 +5,11 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔥 Firestore integration completed for all major domain types (User, Property, Photo, Poi, CrossRef) with upload/get/delete methods + FirestoreCollections centralized
-   - 🛡️ R8/ProGuard compatibility ensured via @Keep annotations + custom rules for Firebase deserialization
-   - 🔁 Full mapping logic implemented for all entities (domain ↔ onlineEntity) with centralized toOnlineEntity() / toModel() mappers and Log.d debug tracing for deserialization
+   - 🔄 Offline ➡️ Online synchronization added for all main domain types (User, Property, Photo, Poi, PropertyPoiCross)
+   - 🔄 Online ➡️ Offline synchronization added for all main domain types (User, Property, Photo, Poi, PropertyPoiCross)
+   - 🧩 Individual SyncManagers (Download/Upload) implemented for each entity type, orchestrated by a global DownloadManager/UploadManager to handle bulk synchronization
+   - 🗃️ upload<Entity>()/download<Entity>() methods added to all Room-based DAO and Repository layers to mark entities as synced after successful Firestore upload/download
+   - ✅ Comprehensive unit & instrumentation tests added for DAO and Repository layers to cover new sync logic, including update operations and sync status tracking
 
 
 ## ❌ **NEXT UPDATES**
@@ -38,17 +40,17 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🔐 **User Authentication with Firebase** :
 
-      - ✅ **DONE** Local user account creation with Room and secure password hashing (offline fallback).
-      - 🟩 **IN PROGRESS** Secure user login and registration using Firebase Authentication.
-      - ✅ **DONE** Online-only account creation using Firebase Authentication.
-      - ✅ **DONE** Room fallback for offline login using SHA-256 hashed password.
+      - ✅ **DONE** Account creation and login exclusively online using Firebase Authentication.
+      - ✅ **DONE** User's profile (ID, email, agent name), once authenticated, is cached locally in Room.
+      - ✅ **DONE** Offline usage supported (if already logged in).
 
-   - 🔁 **User Data Sync** :
+   - 🔁 **Global Data Sync** :
 
-      - ✅ **DONE** Upload user profile (email, agentName) to Firestore after account creation.
-      - ✅ **DONE** Cache Firebase user in Room with password hash (offline authentication).
-      - ✅ **DONE** Detect local modifications and sync changes to Firestore when online.
-      - ❌ **NOT IMPLEMENTED** Conflict handling not yet implemented.
+      - ✅ **DONE** Full sync of all entities: Users, Properties, Photos, POIs, Cross-References.
+      - ✅ **DONE** One-way sync from local to Firebase (upload).
+      - ✅ **DONE** One-way sync from Firebase to local (download).
+      - ✅ **DONE**  Entity-specific managers for modular synchronization logic.
+      - ✅ **DONE** Conflict resolution (e.g. field-level merge or overwrite strategies)
 
    - 📷 **Media Management** :
 
@@ -62,15 +64,16 @@ This project is developed using modern Android architecture principles, with a f
 
    - 💾 **Offline Mode** :
 
-      - ✅ **DONE** One-way sync of offline users to Firebase Auth when online.
-      - ✅ **DONE** One-way sync of local user modifications (agent name, etc.) to Firestore.
+      - ✅ **DONE** Offline access to all data (users, properties, photos, POIs, links)
+      - ✅ **DONE** Full app usability offline (read/write locally, queue for sync).
+      - ✅ **DONE** Changes made offline are queued for upload on next connectivity.
 
    - ☁️ **Online mode with Firebase Firestore**
 
-      - 🟩 **IN PROGRESS** Firebase sync infrastructure (SyncManager & entity-level managers).
-      - 🟩 **IN PROGRESS** Synchronize property listings and user data with Firestore Cloud Database.
-      - 🟩 **IN PROGRESS** Enable real-time updates and multi-device data consistency.
-      - 🟩 **IN PROGRESS** Prepare seamless offline-to-online data synch for robust user experience.
+      - ✅ **DONE** Upload and download of user and property data with Firebase Firestore.
+      - ✅ **DONE** SyncManager to orchestrate entity-level sync logic.
+      - ✅ **DONE** Upload/download of associated entities: photos, POIs, and cross-links.
+      - 🟩 **IN PROGRESS** Real-time Firestore listeners (multi-device live updates).
 
    - 🧠 **Utilities** :
 

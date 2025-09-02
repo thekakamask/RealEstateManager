@@ -9,6 +9,8 @@ interface PropertyPoiCrossRepository {
 
     suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCross>)
 
+    suspend fun updateCrossRef(crossRef: PropertyPoiCross)
+
     suspend fun deleteCrossRefsForProperty(propertyId: Long)
 
     suspend fun deleteCrossRefsForPoi(poiId: Long)
@@ -24,4 +26,9 @@ interface PropertyPoiCrossRepository {
     fun getPropertyIdsForPoi(poiId: Long): Flow<List<Long>>
 
     fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCross>>
+
+    fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCross?>
+
+    suspend fun cacheCrossRefFromFirebase(crossRef: PropertyPoiCross)
+
 }

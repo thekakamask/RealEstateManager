@@ -15,6 +15,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNull
 import kotlinx.coroutines.flow.first
+import org.junit.Assert.assertNotNull
 
 @RunWith(AndroidJUnit4::class)
 class PropertyDaoTest: DatabaseSetup() {
@@ -131,6 +132,46 @@ class PropertyDaoTest: DatabaseSetup() {
 
         assertEquals(expected, result)
     }
+
+    @Test
+    fun savePropertyFromFirebase_shouldInsertCorrectly() = runBlocking {
+        // GIVEN a property coming from Firebase (synced)
+        val firebaseProperty = FakePropertyEntity.property1.copy(
+            id = 777L,  // unique test ID
+            title = "Test Firebase Property",
+            isSynced = true
+        )
+
+        // WHEN we insert it via the dedicated method
+        db.propertyDao().savePropertyFromFirebase(firebaseProperty)
+
+        // THEN we retrieve it and check correctness
+        val result = db.propertyDao().getPropertyById(777L).first()
+
+        assertNotNull(result)
+        assertEquals(firebaseProperty.id, result?.id)
+        assertEquals(firebaseProperty.title, result?.title)
+        assertTrue(result?.isSynced == true)
+    }
+
+    @Test
+    fun savePropertyFromFirebase_shouldUpdateIfAlreadyExists() = runBlocking {
+        // GIVEN a property initially inserted
+        val original = FakePropertyEntity.property1.copy(id = 888L, title = "Old Title")
+        db.propertyDao().insertProperty(original)
+
+        // WHEN we insert a new version with same ID but different data
+        val updated = original.copy(title = "New Firebase Title", isSynced = true)
+        db.propertyDao().savePropertyFromFirebase(updated)
+
+        // THEN we should get the updated version
+        val result = db.propertyDao().getPropertyById(888L).first()
+
+        assertEquals("New Firebase Title", result?.title)
+        assertTrue(result?.isSynced == true)
+    }
+
+
 
     @Test
     fun clearAll_shouldRemoveAllProperties() = runBlocking {

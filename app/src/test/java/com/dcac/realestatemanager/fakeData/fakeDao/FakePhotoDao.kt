@@ -31,6 +31,13 @@ class FakePhotoDao : PhotoDao,
         upsert(photo)
     }
 
+    override suspend fun updatePhoto(photo: PhotoEntity) {
+        upsert(photo)
+    }
+
+    override suspend fun savePhotoFromFirebase(photo: PhotoEntity) {
+        upsert(photo)
+    }
 
     override suspend fun deletePhotosByPropertyId(propertyId: Long) {
         val toDelete = entityMap.values.filter { it.propertyId == propertyId }

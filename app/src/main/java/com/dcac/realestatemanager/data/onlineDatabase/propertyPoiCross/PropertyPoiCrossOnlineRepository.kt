@@ -9,4 +9,5 @@ interface PropertyPoiCrossOnlineRepository {
     suspend fun deleteCrossRef(propertyId: Long, poiId: Long)
     suspend fun deleteAllCrossRefsForProperty(propertyId: Long)
     suspend fun deleteAllCrossRefsForPoi(poiId: Long)
+    suspend fun getAllCrossRefs(): List<PropertyPoiCross>
 }

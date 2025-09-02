@@ -105,4 +105,28 @@ class PoiDaoTest: DatabaseSetup() {
         assertEquals(2, result.size)
     }
 
+    @Test
+    fun savePoiFromFirebase_shouldInsertPoiCorrectly() = runBlocking {
+        // WHEN: we save a POI from Firebase (with isSynced = true)
+        val poiFromFirebase = poi1.copy(name = "Synced POI", type = "Historic", isSynced = true)
+        poiDao.savePoiFromFirebase(poiFromFirebase)
+
+        // THEN: we can retrieve it by ID and verify content
+        val result = poiDao.getPoiById(poiFromFirebase.id).first()
+        assertEquals(poiFromFirebase, result)
+    }
+
+    @Test
+    fun getPoiById_shouldReturnCorrectPoi() = runBlocking {
+        // GIVEN: a POI inserted in DB
+        poiDao.insertPoi(poi1)
+
+        // WHEN: we query it by ID
+        val result = poiDao.getPoiById(poi1.id).first()
+
+        // THEN: we get the expected POI
+        assertEquals(poi1, result)
+    }
+
+
 }

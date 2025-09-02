@@ -23,6 +23,10 @@ class FakePropertyPoiCrossDao : PropertyPoiCrossDao,
         crossRefs.forEach { upsert(it) }
     }
 
+    override suspend fun updateCrossRef(propertyPoiCrossEntity: PropertyPoiCrossEntity) {
+        upsert(propertyPoiCrossEntity)
+    }
+
     override suspend fun deleteCrossRefsForProperty(propertyId: Long) {
         val toDelete = entityMap.values.filter { it.propertyId == propertyId }
         toDelete.forEach { delete(it) }
@@ -51,5 +55,12 @@ class FakePropertyPoiCrossDao : PropertyPoiCrossDao,
 
     override fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>> =
         entityFlow.map { list -> list.filter { !it.isSynced } }
+
+    override fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?> =
+        entityFlow.map { list -> list.find { it.propertyId == propertyId && it.poiId == poiId } }
+
+    override suspend fun saveCrossRefFromFirebase(crossRef: PropertyPoiCrossEntity) {
+        upsert(crossRef)
+    }
 
 }

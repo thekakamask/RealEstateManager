@@ -60,6 +60,17 @@ class PoiRepositoryTest {
     }
 
     @Test
+    fun getPoiById_returnsCorrectPoi() = runTest {
+        val expected = FakePoiModel.poi1
+
+        val result = poiRepository.getPoiById(expected.id).first()
+
+        assertNotNull(result)
+        assertEquals(expected, result)
+    }
+
+
+    @Test
     fun insertPoi_insertsAndIsRetrievable() = runTest {
         val newPoi = Poi(id = 999L, name = "Test Market", type = "Supermarché")
 
@@ -108,6 +119,25 @@ class PoiRepositoryTest {
         val result = poiRepository.getAllPoiS().first()
         assertTrue(result.any { it.id == updated.id && it.name == "Updated POI Name" })
     }
+
+    @Test
+    fun cachePoiFromFirebase_insertsSyncedPoi() = runTest {
+        val syncedPoi = FakePoiModel.poi1.copy(
+            id = 2025L,
+            name = "Synced from Firestore",
+            type = "Transport",
+            isSynced = true
+        )
+
+        poiRepository.cachePoiFromFirebase(syncedPoi)
+
+        val result = poiRepository.getPoiById(syncedPoi.id).first()
+        assertNotNull(result)
+        assertEquals(syncedPoi.name, result?.name)
+        assertEquals(syncedPoi.type, result?.type)
+        assertTrue(result?.isSynced == true)
+    }
+
 
     @Test
     fun deletePoi_removesPoi_andUnlinks() = runTest {

@@ -94,6 +94,7 @@ class OfflinePropertyRepository(
 
     override suspend fun insertProperty(property: Property): Long = propertyDao.insertProperty(property.toEntity())
     override suspend fun updateProperty(property: Property) = propertyDao.updateProperty(property.toEntity())
+    override suspend fun cachePropertyFromFirebase(property: Property) = propertyDao.savePropertyFromFirebase(property.toEntity())
     override suspend fun deleteProperty(property: Property) = propertyDao.deleteProperty(property.toEntity())
     override suspend fun markPropertyAsSold(propertyId: Long, saleDate: String) = propertyDao.markPropertyAsSold(propertyId, saleDate)
     override suspend fun clearAll() = propertyDao.clearAll()

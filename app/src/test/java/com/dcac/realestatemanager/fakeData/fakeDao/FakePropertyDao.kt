@@ -88,6 +88,10 @@ class FakePropertyDao : PropertyDao,
         upsert(property)
     }
 
+    override suspend fun savePropertyFromFirebase(property: PropertyEntity) {
+        upsert(property)
+    }
+
     override suspend fun deleteProperty(property: PropertyEntity) {
         delete(property)
         // Optionally clean links for this Property

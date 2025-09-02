@@ -162,6 +162,28 @@ class PropertyRepositoryTest {
     }
 
     @Test
+    fun cachePropertyFromFirebase_insertsSyncedProperty() = runTest {
+        // GIVEN a property marked as synced from Firebase
+        val syncedProperty = FakePropertyModel.property1.copy(
+            id = 999L,
+            title = "Firebase Synced",
+            isSynced = true
+        )
+
+        // WHEN caching it through the repository
+        propertyRepository.cachePropertyFromFirebase(syncedProperty)
+
+        // THEN it should be stored and marked as synced
+        val result = propertyRepository.getPropertyById(999L).first()
+
+        assertNotNull(result)
+        assertEquals(syncedProperty.id, result?.id)
+        assertEquals(syncedProperty.title, result?.title)
+        assertTrue(result?.isSynced == true)
+    }
+
+
+    @Test
     fun deleteProperty_removesEntity_andUnlinks() = runTest {
         val toDelete = FakePropertyModel.property3
 

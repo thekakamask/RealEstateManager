@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PropertyDao {
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun savePropertyFromFirebase(property: PropertyEntity)
+
     @Query("SELECT * FROM properties ORDER BY entry_date DESC")
     fun getAllPropertiesByDate(): Flow<List<PropertyEntity>>
 

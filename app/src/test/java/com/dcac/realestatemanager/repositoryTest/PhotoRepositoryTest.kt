@@ -126,6 +126,45 @@ class PhotoRepositoryTest {
     }
 
     @Test
+    fun updatePhoto_shouldModifyExistingPhoto() = runTest {
+        val original = FakePhotoModel.photo1
+        val updated = original.copy(
+            uri = "file://updated_uri.jpg",
+            description = "Updated description",
+            isSynced = true
+        )
+
+        photoRepository.updatePhoto(updated)
+
+        val result = photoRepository.getPhotoById(updated.id).first()
+
+        assertNotNull(result)
+        assertEquals(updated.uri, result?.uri)
+        assertEquals(updated.description, result?.description)
+        assertEquals(updated.isSynced, result?.isSynced)
+    }
+
+    @Test
+    fun cachePhotoFromFirebase_savesPhotoCorrectly() = runTest {
+        // Given a photo retrieved from Firestore
+        val firebasePhoto = FakePhotoModel.photo1.copy(
+            id = 999L,
+            uri = "firebase://cached.jpg",
+            description = "From Firebase",
+            isSynced = true
+        )
+
+        // When caching it via repository
+        photoRepository.cachePhotoFromFirebase(firebasePhoto)
+
+        // Then we should retrieve the exact same photo
+        val result = photoRepository.getPhotoById(firebasePhoto.id).first()
+        assertEquals(firebasePhoto, result)
+    }
+
+
+
+    @Test
     fun deletePhotosByPropertyId_deletesPhotos() = runTest {
         // Property whose photos will be deleted
         val propertyId = FakePhotoEntity.photo1.propertyId

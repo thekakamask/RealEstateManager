@@ -71,6 +71,29 @@ class PropertyPoiCrossRepositoryTest {
     }
 
     @Test
+    fun updateCrossRef_updatesEntityCorrectly() = runTest {
+        // Given
+        val original = FakePropertyPoiCrossModel.cross1.copy(isSynced = false)
+        propertyPoiCrossRepository.insertCrossRef(original)
+
+        // When
+        val updated = original.copy(isSynced = true)
+        propertyPoiCrossRepository.updateCrossRef(updated)
+
+        // Then (DAO-level)
+        val stored = fakePropertyPoiCrossDao.entityMap[Pair(updated.propertyId, updated.poiId)]
+        assertNotNull(stored)
+        assertTrue(stored!!.isSynced)
+
+        // Then (Repo-level)
+        val fetched = propertyPoiCrossRepository.getAllCrossRefs().first()
+            .find { it.propertyId == updated.propertyId && it.poiId == updated.poiId }
+
+        assertNotNull(fetched)
+        assertTrue(fetched!!.isSynced)
+    }
+
+    @Test
     fun deleteCrossRefsForProperty_removesAll() = runTest {
         val propertyId = FakePropertyPoiCrossEntity.propertyPoiCross1.propertyId
 
@@ -148,5 +171,40 @@ class PropertyPoiCrossRepositoryTest {
         assertEquals(expected.size, result.size)
         assertTrue(result.containsAll(expected))
     }
+
+    @Test
+    fun cacheCrossRefFromFirebase_insertsSyncedCrossRef() = runTest {
+        // Given
+        val syncedCrossRef = PropertyPoiCross(propertyId = 888L, poiId = 999L, isSynced = true)
+
+        // When
+        propertyPoiCrossRepository.cacheCrossRefFromFirebase(syncedCrossRef)
+
+        // Then (DAO-level)
+        val entity = fakePropertyPoiCrossDao.entityMap[Pair(888L, 999L)]
+        assertNotNull(entity)
+        assertTrue(entity!!.isSynced)
+
+        // Then (Repo-level)
+        val result = propertyPoiCrossRepository.getAllCrossRefs().first()
+        assertTrue(result.any { it.propertyId == 888L && it.poiId == 999L && it.isSynced })
+    }
+
+    @Test
+    fun getCrossByIds_returnsCorrectCrossRef() = runTest {
+        // Given: one known cross-ref
+        val cross = PropertyPoiCross(propertyId = 777L, poiId = 222L)
+        propertyPoiCrossRepository.insertCrossRef(cross)
+
+        // When
+        val result = propertyPoiCrossRepository.getCrossByIds(777L, 222L).first()
+
+        // Then
+        assertNotNull(result)
+        assertEquals(cross.propertyId, result?.propertyId)
+        assertEquals(cross.poiId, result?.poiId)
+    }
+
+
 
 }

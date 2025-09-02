@@ -9,5 +9,6 @@ interface PhotoOnlineRepository {
     suspend fun getPhotosByPropertyId(propertyId: Long) : List<Photo>
     suspend fun deletePhoto(photoId: String)
     suspend fun deletePhotosByPropertyId(propertyId: Long)
+    suspend fun getAllPhotos() : List<Photo>
 
 }

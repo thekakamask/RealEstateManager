@@ -1,12 +1,14 @@
-package com.dcac.realestatemanager.data.sync
+package com.dcac.realestatemanager.data.sync.user
 
+import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
 // THIS CLASS HANDLES SYNCING LOCAL USER DATA TO THE ONLINE FIRESTORE DATABASE
 // IT IS NOT RESPONSIBLE FOR ACCOUNT CREATION — ONLY SYNCING PROFILE DATA TO FIRESTORE
-class UserSyncManager(
+class UserUploadManager(
     private val userRepository: UserRepository,             // LOCAL USER REPOSITORY (ROOM)
     private val userOnlineRepository: UserOnlineRepository  // REMOTE USER REPOSITORY (FIRESTORE)
 ) {
@@ -28,19 +30,21 @@ class UserSyncManager(
                 // WITHOUT A UID, FIRESTORE SYNC IS NOT POSSIBLE
                 results.add(
                     SyncStatus.Failure(
-                        userEmail = user.email,
+                        label = "User ${user.email}",
                         error = Exception("firebaseUid is missing — cannot sync to Firestore")
                     )
                 )
+
                 continue
             }
 
             try {
                 // UPLOAD THE USER DATA TO FIRESTORE UNDER users/{uid}
-                userOnlineRepository.uploadUser(user, user.firebaseUid)
-
                 // MARK THE USER AS SYNCED IN THE LOCAL DATABASE
-                userRepository.updateUser(user.copy(isSynced = true))
+                val syncedUser = userOnlineRepository.uploadUser(user, user.firebaseUid)
+                userRepository.updateUser(syncedUser)
+
+                Log.d("UserSyncManager", "Synced user: ${user.email}")
 
                 // ADD A SUCCESSFUL SYNC RESULT
                 results.add(SyncStatus.Success(user.email))

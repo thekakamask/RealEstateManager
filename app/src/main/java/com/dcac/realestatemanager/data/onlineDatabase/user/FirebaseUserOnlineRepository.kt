@@ -39,6 +39,25 @@ class FirebaseUserOnlineRepository(
 
         return entity?.toModel(firebaseUid = userId)    // Map DTO -> domain User (null if not found)
     }
+
+    override suspend fun getAllUsers(): List<User> {
+        return try {
+            val snapshots = firestore.collection(FirestoreCollections.USERS)
+                .get()
+                .await()
+
+            snapshots.documents.mapNotNull { doc ->
+                val entity = doc.toObject(UserOnlineEntity::class.java)
+                val firebaseUid = doc.id
+
+                entity?.toModel(firebaseUid = firebaseUid)
+            }
+
+        } catch (e: Exception) {
+            throw FirebaseUserDownloadException("Failed to get users: ${e.message}", e)
+        }
+    }
+
     override suspend fun deleteUser(userId: String) {
         try {
             firestore.collection(FirestoreCollections.USERS)
@@ -55,4 +74,6 @@ class FirebaseUserOnlineRepository(
 // Custom exception to signal upload failures to Firestore
 class FirebaseUserUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebaseUserDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+class FirebaseUserDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
+
 

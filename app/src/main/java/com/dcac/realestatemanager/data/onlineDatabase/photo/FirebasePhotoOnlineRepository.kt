@@ -52,6 +52,27 @@ class FirebasePhotoOnlineRepository(
             throw FirebasePhotoDownloadException("Failed to get photos: ${e.message}", e)
         }
     }
+
+    override suspend fun getAllPhotos(): List<Photo> {
+        return try {
+            val snapshots = firestore.collection(FirestoreCollections.PHOTOS)
+                .get()
+                .await()
+
+            snapshots.documents.mapNotNull { doc ->
+                val entity = doc.toObject(PhotoOnlineEntity::class.java)
+                val photoId = doc.id.toLongOrNull()
+                if (entity != null && photoId != null) {
+                    entity.toModel(photoId = photoId)
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            throw FirebasePhotoDownloadException("Failed to download photos: ${e.message}", e)
+        }
+    }
+
     override suspend fun deletePhoto(photoId: String) {
         try {
             firestore.collection(FirestoreCollections.PHOTOS)

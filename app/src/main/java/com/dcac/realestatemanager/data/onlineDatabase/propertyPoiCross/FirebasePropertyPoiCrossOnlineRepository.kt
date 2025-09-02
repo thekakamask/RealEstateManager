@@ -81,6 +81,27 @@ class FirebasePropertyPoiCrossOnlineRepository(
         }
     }
 
+    override suspend fun getAllCrossRefs(): List<PropertyPoiCross> {
+        return try {
+            val snapshots = firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+                .get()
+                .await()
+
+            snapshots.documents.mapNotNull { doc ->
+                val entity = doc.toObject(PropertyPoiCrossOnlineEntity::class.java)
+                entity?.let {
+                    PropertyPoiCross(
+                        propertyId = it.propertyId,
+                        poiId = it.poiId
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            throw FirebasePropertyPoiCrossDownloadException("Failed to fetch cross-references: ${e.message}", e)
+        }
+    }
+
+
 }
 
 class FirebasePropertyPoiCrossUploadException(message: String, cause: Throwable?) : Exception(message, cause)

@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">1.17 s</div>
+                <div class="time" xmlns="">2.01 s</div>
                 <h1>
-                    PropertyPoiCrossDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">10 total, </span><span class="passed">10 passed</span></strong>
+                    PropertyPoiCrossDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">13 total, </span><span class="passed">13 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,56 +593,66 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">1.17 s</div>
+                                <div class="time">2.01 s</div>
                             </em>com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">471 ms</div>
+                                        <div class="time">535 ms</div>
+                                    </em><em class="status">passed</em>saveCrossRefFromFirebase_shouldInsertCorrectly</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-02 18:40:04.043  4559  4577 I TestRunner: started: saveCrossRefFromFirebase_shouldInsertCorrectly(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:04.080  4559  4580 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.&#13;<br/>09-02 18:40:04.113  1451  2211 I HeterodyneSyncScheduler: (REDACTED) Scheduling Phenotype for a %s(%d, %s) one off with window [%d, %d] in seconds&#13;<br/>09-02 18:40:04.215  4335  4341 W System  : A resource failed to call close.&#13;<br/>09-02 18:40:04.217  4335  4341 W System  : A resource failed to call close.&#13;<br/>09-02 18:40:04.349  1956  1956 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.measurement.START xflg=0x4 pkg=com.google.android.gms }&#13;<br/>09-02 18:40:04.349  1956  1956 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.measurement.START xflg=0x4 pkg=com.google.android.gms }&#13;<br/>09-02 18:40:04.438  1956  4597 D AdvertisingIdClient: AdvertisingIdClient already created.&#13;<br/>09-02 18:40:04.438  1956  4597 D AdvertisingIdClient: AdvertisingIdClient is not bounded. Starting to bind it...&#13;<br/>09-02 18:40:04.497  1956  4597 D AdvertisingIdClient: AdvertisingIdClient is bounded&#13;<br/>09-02 18:40:04.569  4559  4577 I TestRunner: finished: saveCrossRefFromFirebase_shouldInsertCorrectly(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">87 ms</div>
                                     </em><em class="status">passed</em>insertCrossRef_shouldInsertOneCrossRef</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:39.698 13013 13032 I TestRunner: started: insertCrossRef_shouldInsertOneCrossRef(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:39.705  9123 12618 I Finsky  : [232] Package com.google.android.gms is verified.&#13;<br/>08-28 14:46:39.710  9010 13043 W FA-SVC  : Service response is missing Install Referrer install timestamp&#13;<br/>08-28 14:46:39.717  9123  9123 I Finsky  : [2] Memory trim requested to level 40&#13;<br/>08-28 14:46:39.717  9123  9123 I Finsky  : [2] Flushing in-memory image cache&#13;<br/>08-28 14:46:40.155 13013 13032 I TestRunner: finished: insertCrossRef_shouldInsertOneCrossRef(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:04.576  4559  4577 I TestRunner: started: insertCrossRef_shouldInsertOneCrossRef(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:04.590  1956  4597 I AdvertisingIdClient: shouldSendLog -1&#13;<br/>09-02 18:40:04.593  1956  4597 I AdvertisingIdClient: GetInfoInternal elapse 152ms&#13;<br/>09-02 18:40:04.639  1956  1956 I AdvertisingIdClient: getting error as 17: API: ClientTelemetry.API is not available on this device. Connection failed with: ConnectionResult{statusCode=API_DISABLED, resolution=null, message=null}&#13;<br/>09-02 18:40:04.714  4559  4577 I TestRunner: finished: insertCrossRef_shouldInsertOneCrossRef(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">82 ms</div>
+                                        <div class="time">111 ms</div>
                                     </em><em class="status">passed</em>deleteCrossRefsForPoi_shouldDeleteCorrectRefs</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.163 13013 13032 I TestRunner: started: deleteCrossRefsForPoi_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.272 13013 13032 I TestRunner: finished: deleteCrossRefsForPoi_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:04.719  4559  4577 I TestRunner: started: deleteCrossRefsForPoi_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:04.816  4559  4577 I TestRunner: finished: deleteCrossRefsForPoi_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">84 ms</div>
+                                        <div class="time">164 ms</div>
                                     </em><em class="status">passed</em>deleteCrossRefsForProperty_shouldDeleteCorrectRefs</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.275 13013 13032 I TestRunner: started: deleteCrossRefsForProperty_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.356 13013 13032 I TestRunner: finished: deleteCrossRefsForProperty_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:04.820  4559  4577 I TestRunner: started: deleteCrossRefsForProperty_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:04.856  2466  4462 I Finsky  : [128] Package com.google.android.gms is verified.&#13;<br/>09-02 18:40:04.894  1956  4597 W FA-SVC  : Service response is missing Install Referrer install timestamp&#13;<br/>09-02 18:40:04.910  2466  2466 I Finsky  : [2] Memory trim requested to level 40&#13;<br/>09-02 18:40:04.910  2466  2466 I Finsky  : [2] Flushing in-memory image cache&#13;<br/>09-02 18:40:04.986  4559  4577 I TestRunner: finished: deleteCrossRefsForProperty_shouldDeleteCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">63 ms</div>
+                                        <div class="time">218 ms</div>
                                     </em><em class="status">passed</em>insertAllCrossRefs_shouldInsertMultipleCrossRefs</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.359 13013 13032 I TestRunner: started: insertAllCrossRefs_shouldInsertMultipleCrossRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.443 13013 13032 I TestRunner: finished: insertAllCrossRefs_shouldInsertMultipleCrossRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:04.994  4559  4577 I TestRunner: started: insertAllCrossRefs_shouldInsertMultipleCrossRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:05.207  4559  4577 I TestRunner: finished: insertAllCrossRefs_shouldInsertMultipleCrossRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">136 ms</div>
+                                        <div class="time">139 ms</div>
                                     </em><em class="status">passed</em>getUnSyncedPropertiesPoiSCross_shouldReturnOnlyUnSyncedRefs</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.449 13013 13032 I TestRunner: started: getUnSyncedPropertiesPoiSCross_shouldReturnOnlyUnSyncedRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.567 13013 13032 I TestRunner: finished: getUnSyncedPropertiesPoiSCross_shouldReturnOnlyUnSyncedRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:05.215  4559  4577 I TestRunner: started: getUnSyncedPropertiesPoiSCross_shouldReturnOnlyUnSyncedRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:05.361  4559  4577 I TestRunner: finished: getUnSyncedPropertiesPoiSCross_shouldReturnOnlyUnSyncedRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
@@ -652,47 +662,67 @@ jQuery.cookie = function(name, value, options) {
                                     </em><em class="status">passed</em>getCrossRefsForProperty_shouldReturnCorrectRefs</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.572 13013 13032 I TestRunner: started: getCrossRefsForProperty_shouldReturnCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.680 13013 13032 I TestRunner: finished: getCrossRefsForProperty_shouldReturnCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:05.365  4559  4577 I TestRunner: started: getCrossRefsForProperty_shouldReturnCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:05.470  4559  4577 I TestRunner: finished: getCrossRefsForProperty_shouldReturnCorrectRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">57 ms</div>
+                                        <div class="time">82 ms</div>
                                     </em><em class="status">passed</em>clearAllCrossRefs_shouldRemoveAllData</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.684 13013 13032 I TestRunner: started: clearAllCrossRefs_shouldRemoveAllData(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.747 13013 13032 I TestRunner: finished: clearAllCrossRefs_shouldRemoveAllData(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:05.473  4559  4577 I TestRunner: started: clearAllCrossRefs_shouldRemoveAllData(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:05.551  4559  4577 I TestRunner: finished: clearAllCrossRefs_shouldRemoveAllData(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">57 ms</div>
+                                        <div class="time">87 ms</div>
+                                    </em><em class="status">passed</em>updateCrossRef_shouldUpdateCorrectly</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-02 18:40:05.554  4559  4577 I TestRunner: started: updateCrossRef_shouldUpdateCorrectly(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:05.638  4559  4577 I TestRunner: finished: updateCrossRef_shouldUpdateCorrectly(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">118 ms</div>
                                     </em><em class="status">passed</em>getPropertyIdsForPoi_shouldReturnCorrectPropertyIds</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.749 13013 13032 I TestRunner: started: getPropertyIdsForPoi_shouldReturnCorrectPropertyIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.804 13013 13032 I TestRunner: finished: getPropertyIdsForPoi_shouldReturnCorrectPropertyIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:05.642  4559  4577 I TestRunner: started: getPropertyIdsForPoi_shouldReturnCorrectPropertyIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:05.763  4559  4577 I TestRunner: finished: getPropertyIdsForPoi_shouldReturnCorrectPropertyIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">57 ms</div>
+                                        <div class="time">112 ms</div>
                                     </em><em class="status">passed</em>getAllCrossRefs_shouldReturnAllRefs</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.807 13013 13032 I TestRunner: started: getAllCrossRefs_shouldReturnAllRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.864 13013 13032 I TestRunner: finished: getAllCrossRefs_shouldReturnAllRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:05.768  4559  4577 I TestRunner: started: getAllCrossRefs_shouldReturnAllRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:05.900  4559  4577 I TestRunner: finished: getAllCrossRefs_shouldReturnAllRefs(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">57 ms</div>
+                                        <div class="time">164 ms</div>
+                                    </em><em class="status">passed</em>getCrossByIds_shouldReturnCorrectCrossRef</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-02 18:40:05.905  4559  4577 I TestRunner: started: getCrossByIds_shouldReturnCorrectCrossRef(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:06.059  4559  4577 I TestRunner: finished: getCrossByIds_shouldReturnCorrectCrossRef(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">84 ms</div>
                                     </em><em class="status">passed</em>getPoiIdsForProperty_shouldReturnCorrectPoiIds</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">08-28 14:46:40.867 13013 13032 I TestRunner: started: getPoiIdsForProperty_shouldReturnCorrectPoiIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>08-28 14:46:40.924 13013 13032 I TestRunner: finished: getPoiIdsForProperty_shouldReturnCorrectPoiIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-02 18:40:06.066  4559  4577 I TestRunner: started: getPoiIdsForProperty_shouldReturnCorrectPoiIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/>09-02 18:40:06.154  4559  4577 I TestRunner: finished: getPoiIdsForProperty_shouldReturnCorrectPoiIds(com.dcac.realestatemanager.daoTest.PropertyPoiCrossDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>

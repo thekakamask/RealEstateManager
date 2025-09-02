@@ -14,6 +14,7 @@ import org.junit.Test
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import kotlinx.coroutines.flow.first
+import org.junit.Assert.assertNotNull
 
 @RunWith(AndroidJUnit4::class)
 class PropertyPoiCrossDaoTest: DatabaseSetup() {
@@ -56,6 +57,24 @@ class PropertyPoiCrossDaoTest: DatabaseSetup() {
         val result = propertyPoiCrossDao.getAllCrossRefs().first()
         assertEquals(crossList.size, result.size)
         assertTrue(result.containsAll(crossList))
+    }
+
+    @Test
+    fun updateCrossRef_shouldUpdateCorrectly() = runBlocking {
+        // Given
+        val original = crossRef1.copy(isSynced = false)
+        propertyPoiCrossDao.insertCrossRef(original)
+
+        // When: update the isSynced flag
+        val updated = original.copy(isSynced = true)
+        propertyPoiCrossDao.updateCrossRef(updated)
+
+        // Then: fetch and verify
+        val result = propertyPoiCrossDao.getAllCrossRefs().first()
+        val match = result.find { it.propertyId == updated.propertyId && it.poiId == updated.poiId }
+
+        assertNotNull(match)
+        assertTrue(match!!.isSynced)
     }
 
     @Test
@@ -124,5 +143,34 @@ class PropertyPoiCrossDaoTest: DatabaseSetup() {
         // Then
         assertTrue(result.none { it.isSynced })
     }
+
+    @Test
+    fun getCrossByIds_shouldReturnCorrectCrossRef() = runBlocking {
+        // Given
+        propertyPoiCrossDao.insertCrossRef(crossRef1)
+
+        // When
+        val result = propertyPoiCrossDao.getCrossByIds(crossRef1.propertyId, crossRef1.poiId).first()
+
+        // Then
+        assertNotNull(result)
+        assertEquals(crossRef1.propertyId, result?.propertyId)
+        assertEquals(crossRef1.poiId, result?.poiId)
+    }
+
+    @Test
+    fun saveCrossRefFromFirebase_shouldInsertCorrectly() = runBlocking {
+        // Given
+        val firebaseCross = crossRef1.copy(isSynced = true)
+
+        // When
+        propertyPoiCrossDao.saveCrossRefFromFirebase(firebaseCross)
+
+        // Then
+        val result = propertyPoiCrossDao.getCrossByIds(firebaseCross.propertyId, firebaseCross.poiId).first()
+        assertNotNull(result)
+        assertTrue(result!!.isSynced)
+    }
+
 
 }

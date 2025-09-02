@@ -25,6 +25,9 @@ class OfflinePhotoRepository(
     override suspend fun insertPhoto(photo: Photo) =
         photoDao.insertPhoto(photo.toEntity())
 
+    override suspend fun updatePhoto(photo: Photo) =
+        photoDao.updatePhoto(photo.toEntity())
+
     override suspend fun deletePhotosByPropertyId(propertyId: Long) =
         photoDao.deletePhotosByPropertyId(propertyId)
 
@@ -33,4 +36,8 @@ class OfflinePhotoRepository(
 
     override fun getUnSyncedPhotos(): Flow<List<Photo>> =
         photoDao.getUnSyncedPhotos().map { list -> list.map { it.toModel() } }
+
+    override suspend fun cachePhotoFromFirebase(photo: Photo) {
+        photoDao.savePhotoFromFirebase(photo.toEntity())
+    }
 }

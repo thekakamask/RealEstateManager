@@ -53,6 +53,9 @@ class FakePoiDao : PoiDao,
 
     override fun getAllPoiS(): Flow<List<PoiEntity>> = entityFlow
 
+    override fun getPoiById(id: Long): Flow<PoiEntity?> =
+        entityFlow.map { list -> list.find { it.id == id } }
+
     override suspend fun insertAllPoiS(poiS: List<PoiEntity>) {
         poiS.forEach { upsert(it) }
     }
@@ -62,6 +65,10 @@ class FakePoiDao : PoiDao,
     }
 
     override suspend fun updatePoi(poi: PoiEntity) {
+        upsert(poi)
+    }
+
+    override suspend fun savePoiFromFirebase(poi: PoiEntity) {
         upsert(poi)
     }
 

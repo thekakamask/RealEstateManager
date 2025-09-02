@@ -5,12 +5,17 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 // DAO interface for accessing PhotoEntity data
 @Dao
 interface PhotoDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun savePhotoFromFirebase(photo: PhotoEntity)
 
     @Query("SELECT * FROM photos WHERE id = :id")
     fun getPhotoById(id: Long): Flow<PhotoEntity?>
@@ -25,6 +30,9 @@ interface PhotoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPhoto(photo: PhotoEntity)
+
+    @Update
+    suspend fun updatePhoto(photo : PhotoEntity)
 
     // Delete all photos linked to a specific property (e.g. when a property is deleted)
     @Query("DELETE FROM photos WHERE property_id = :propertyId")

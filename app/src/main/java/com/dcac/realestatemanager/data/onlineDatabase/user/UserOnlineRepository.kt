@@ -6,4 +6,5 @@ interface UserOnlineRepository {
     suspend fun uploadUser(user: User, userId: String): User
     suspend fun getUser(userId: String): User?
     suspend fun deleteUser(userId: String)
+    suspend fun getAllUsers(): List<User>
 }

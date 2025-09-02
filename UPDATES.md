@@ -545,5 +545,45 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Example: Deserialized PropertyOnlineEntity: $this
 
 
+### 🔹 **Update #21**
+
+  - 🔄 **Offline ➡️ Online Synchronization for All Domain Types**
+    - Implemented synchronization logic for User, Property, Photo, Poi, and PropertyPoiCross entities
+    - Each entity now supports upload to Firestore from Room when isSynced = false
+    - Centralized control via a dedicated SyncManager class that delegates tasks to each specific SyncManager
+
+  - ⬇️ **Online ➡️ Offline Synchronization for All Domain Types**
+    - Implemented Firestore-to-Room download logic for all major entities:
+      - User, Property, Photo, Poi, and PropertyPoiCross
+    - Entities are inserted into Room if missing, or updated only if remote changes are detected
+    - Uses new DownloadManager to coordinate entity-specific downloads
+
+  - 🧩 **Entity-Specific Download/UploadManager Classes**
+    - Created modular sync handlers:
+      - UserDownloadManager/UserUploadManager
+      - PropertyDownloadManager/PropertyUploadManager
+      - PhotoDownloadManager/PhotoUploadManager
+      - PoiDownloadManager/PoiUploadManager
+      - PropertyPoiCrossDownloadManager/PropertyPoiCrossUploadManager
+    - Each class encapsulates logic to detect, upload, download and update Room entities based on sync status
+
+  - 🗃️ **Upload Methods in Room DAO & Repository Layers**
+    - Added update<Entity>() methods in all relevant DAOs to mark items as isSynced = true after upload
+    - Repositories now expose update<Entity>() to allow consistent state updates after Firestore interactions
+    - Enables reliable post-upload state management to prevent redundant sync attempts
+
+  - 🗃️ **Download Methods in Room DAO & Repository Layers**
+    - Added cache<Entity>() methods to safely persist Firestore-fetched data into Room
+    - Local data is only overwritten if the remote entity differs (based on field comparison) 
+    - Prevents unnecessary writes and preserves local I/O performance
+
+  - ✅ **Comprehensive Test Coverage of Room Sync Logic**
+    - Offline ➡️ Online logic (Upload)
+      - Added update<Entity>() methods in DAOs and Repositories to mark entities as synced after upload
+      - Verified in DAO and Repository tests that isSynced flag is correctly updated
+    - Online ➡️ Offline logic (Download)
+      - Added cache<Entity>() methods in DAOs and Repositories to store Firestore-fetched data
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

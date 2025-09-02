@@ -24,4 +24,5 @@ interface PropertyRepository {
     suspend fun clearAll()
     fun getPropertyWithPoiS(id: Long): Flow<PropertyWithPoiS>
     fun getUnSyncedProperties(): Flow<List<Property>>
+    suspend fun cachePropertyFromFirebase(property: Property)
 }
