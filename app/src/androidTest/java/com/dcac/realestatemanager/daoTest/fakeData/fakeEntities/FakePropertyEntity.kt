@@ -4,6 +4,8 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 
 object FakePropertyEntity {
 
+    private const val DEFAULT_TIMESTAMP = 1700000000000L
+
     val property1 = PropertyEntity(
         id = 1L,
         title = "Loft République",
@@ -18,7 +20,8 @@ object FakePropertyEntity {
         saleDate = null,
         userId = FakeUserEntity.user1.id,
         staticMapPath = null,
-        isSynced = true
+        isSynced = true,
+        updatedAt = DEFAULT_TIMESTAMP + 1
     )
     val property2 = PropertyEntity(
         id = 2L,
@@ -33,7 +36,8 @@ object FakePropertyEntity {
         entryDate = "02/08/2025",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 2
     )
     val property3 = PropertyEntity(
         id = 3L,
@@ -48,7 +52,8 @@ object FakePropertyEntity {
         entryDate = "03/08/2025",
         saleDate = "20/08/2025",
         userId = FakeUserEntity.user2.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 3
     )
     val property4 = PropertyEntity(
         id = 4L,
@@ -63,7 +68,8 @@ object FakePropertyEntity {
         entryDate = "04/08/2025",
         saleDate = null,
         userId = FakeUserEntity.user2.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 4
     )
     val property5 = PropertyEntity(
         id = 5L,
@@ -78,7 +84,8 @@ object FakePropertyEntity {
         entryDate = "05/08/2025",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 5
     )
     val propertyEntityList = listOf(property1, property2, property3, property4, property5)
 }

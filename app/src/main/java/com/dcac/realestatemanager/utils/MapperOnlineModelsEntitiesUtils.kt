@@ -17,7 +17,8 @@ import org.threeten.bp.format.DateTimeFormatter
 fun User.toOnlineEntity(): UserOnlineEntity {
     return UserOnlineEntity(
         email = this.email,
-        agentName = this.agentName
+        agentName = this.agentName,
+        updatedAt = updatedAt
     )
 }
 
@@ -28,28 +29,35 @@ fun UserOnlineEntity.toModel(firebaseUid: String, userId: Long = 0L): User {
         email = this.email,
         agentName = this.agentName,
         isSynced = true,
-        firebaseUid = firebaseUid
+        firebaseUid = firebaseUid,
+        updatedAt = updatedAt
     )
 }
 
 fun Photo.toOnlineEntity(): PhotoOnlineEntity {
     return PhotoOnlineEntity(
-        uri = this.uri,
+        uri = "",
         description = this.description,
-        propertyId = this.propertyId
+        propertyId = this.propertyId,
+        updatedAt = this.updatedAt,
+        storageUrl = this.storageUrl
     )
 }
+
 
 fun PhotoOnlineEntity.toModel(photoId : Long): Photo {
     Log.d("Mapping", "Deserialized PhotoOnlineEntity: $this")
     return Photo(
         id = photoId,
         propertyId = this.propertyId,
-        uri = this.uri,
+        uri = "",
+        storageUrl = this.storageUrl,
         description = this.description,
-        isSynced = true
+        isSynced = true,
+        updatedAt = this.updatedAt
     )
 }
+
 
 fun PoiOnlineEntity.toModel(poiId : Long): Poi {
     Log.d("Mapping", "Deserialized PoiOnlineEntity: $this")
@@ -57,14 +65,16 @@ fun PoiOnlineEntity.toModel(poiId : Long): Poi {
         id = poiId,
         name = this.name,
         type = this.type,
-        isSynced = true
+        isSynced = true,
+        updatedAt = updatedAt
     )
 }
 
 fun Poi.toOnlineEntity(): PoiOnlineEntity {
     return PoiOnlineEntity(
         name = this.name,
-        type = this.type
+        type = this.type,
+        updatedAt = updatedAt
     )
 }
 
@@ -87,7 +97,8 @@ fun PropertyOnlineEntity.toModel(propertyId: Long, user: User): Property {
         user = user,
         photos = emptyList(),
         poiS = emptyList(),
-        isSynced = true
+        isSynced = true,
+        updatedAt = updatedAt
     )
 }
 
@@ -105,14 +116,16 @@ fun Property.toOnlineEntity(): PropertyOnlineEntity {
         entryDate = entryDate.format(formatter),
         saleDate = saleDate?.format(formatter),
         userId = user.id,
-        staticMapPath = staticMapPath
+        staticMapPath = staticMapPath,
+        updatedAt = updatedAt
     )
 }
 
 fun PropertyPoiCross.toOnlineEntity(): PropertyPoiCrossOnlineEntity {
     return PropertyPoiCrossOnlineEntity(
         propertyId = this.propertyId,
-        poiId = this.poiId
+        poiId = this.poiId,
+        updatedAt = updatedAt
     )
 }
 
@@ -121,6 +134,7 @@ fun PropertyPoiCrossOnlineEntity.toModel(): PropertyPoiCross {
     return PropertyPoiCross(
         propertyId = this.propertyId,
         poiId = this.poiId,
-        isSynced = true
+        isSynced = true,
+        updatedAt = updatedAt
     )
 }

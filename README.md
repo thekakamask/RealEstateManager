@@ -5,11 +5,9 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔄 Offline ➡️ Online synchronization added for all main domain types (User, Property, Photo, Poi, PropertyPoiCross)
-   - 🔄 Online ➡️ Offline synchronization added for all main domain types (User, Property, Photo, Poi, PropertyPoiCross)
-   - 🧩 Individual SyncManagers (Download/Upload) implemented for each entity type, orchestrated by a global DownloadManager/UploadManager to handle bulk synchronization
-   - 🗃️ upload<Entity>()/download<Entity>() methods added to all Room-based DAO and Repository layers to mark entities as synced after successful Firestore upload/download
-   - ✅ Comprehensive unit & instrumentation tests added for DAO and Repository layers to cover new sync logic, including update operations and sync status tracking
+   - 🛠️ Added updatedAt field to all Room entities, domain models, and Firestore documents to ensure reliable conflict resolution between online and offline states
+   - ♻️ Refactored all UploadManager and DownloadManager classes to compare updatedAt timestamps and avoid overwriting newer data during sync
+   - ☁️ Integrated Firebase Storage for image files: uploaded image files are stored in Storage, while only metadata and download URLs are saved in Firestore
 
 
 ## ❌ **NEXT UPDATES**
@@ -56,6 +54,7 @@ This project is developed using modern Android architecture principles, with a f
 
       - ❌ **NOT IMPLEMENTED** Take or select photos from gallery.
       - 🟩 **IN PROGRESS** Add multiple images per listing.
+      - 🟩 **IN PROGRESS** Downloads images from Firebase Storage and saves them locally on device during sync.
 
    - 🔍 **Search** :
 
@@ -74,6 +73,7 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** SyncManager to orchestrate entity-level sync logic.
       - ✅ **DONE** Upload/download of associated entities: photos, POIs, and cross-links.
       - 🟩 **IN PROGRESS** Real-time Firestore listeners (multi-device live updates).
+      - ✅ **DONE** Integrated Firebase Storage for image file handling; only metadata is stored in Firestore while files are uploaded to Storage.
 
    - 🧠 **Utilities** :
 

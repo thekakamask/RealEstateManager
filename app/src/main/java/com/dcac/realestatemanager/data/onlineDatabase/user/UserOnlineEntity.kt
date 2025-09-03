@@ -10,5 +10,6 @@ import androidx.annotation.Keep
 @Keep
 data class UserOnlineEntity(
     val email: String = "",
-    val agentName: String = ""
+    val agentName: String = "",
+    val updatedAt: Long = System.currentTimeMillis()
 )

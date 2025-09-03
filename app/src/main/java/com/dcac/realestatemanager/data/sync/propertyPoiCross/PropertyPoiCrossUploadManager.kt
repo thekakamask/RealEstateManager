@@ -7,26 +7,33 @@ import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
 class PropertyPoiCrossUploadManager(
-    private val propertyPoiCrossRepository: PropertyPoiCrossRepository,
-    private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository
+    private val propertyPoiCrossRepository: PropertyPoiCrossRepository,             // Local Room repo
+    private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository  // Firestore repo
 ) {
 
-    suspend fun syncUnSyncedPropertyPoiCross() : List<SyncStatus> {
+    // Uploads all unsynced cross-references from Room to Firestore
+    suspend fun syncUnSyncedPropertyPoiCross(): List<SyncStatus> {
+        // Get local crossRefs where isSynced = false
         val unSyncedPropertyPoiCross = propertyPoiCrossRepository.getUnSyncedPropertiesPoiSCross().first()
-        val results = mutableListOf<SyncStatus>()
+        val results = mutableListOf<SyncStatus>()  // List to store sync results
 
-        for (propertyPoiCross in unSyncedPropertyPoiCross) {
+        for (crossRef in unSyncedPropertyPoiCross) {
             try {
-                val syncedPropertyPoiCross = propertyPoiCrossOnlineRepository.uploadCrossRef(propertyPoiCross)
+                // Upload the crossRef to Firestore
+                val syncedCrossRef = propertyPoiCrossOnlineRepository.uploadCrossRef(crossRef)
 
-                propertyPoiCrossRepository.updateCrossRef(syncedPropertyPoiCross)
-                Log.d("CrossSyncManager", "Synced cross: ${propertyPoiCross.propertyId}")
-                results.add(SyncStatus.Success("Cross ${propertyPoiCross.propertyId}"))
+                // Update local entry to mark as synced
+                propertyPoiCrossRepository.updateCrossRef(syncedCrossRef)
+
+                Log.d("CrossSyncManager", "Synced cross: ${crossRef.propertyId}-${crossRef.poiId}")
+                results.add(SyncStatus.Success("Cross ${crossRef.propertyId}-${crossRef.poiId}"))
+
             } catch (e: Exception) {
-                results.add(SyncStatus.Failure("Cross ${propertyPoiCross.propertyId}", e))
-
+                // ❌ Failed to sync this crossRef
+                results.add(SyncStatus.Failure("Cross ${crossRef.propertyId}-${crossRef.poiId}", e))
             }
         }
-        return results
+
+        return results  // Return the list of sync outcomes
     }
 }

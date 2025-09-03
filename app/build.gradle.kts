@@ -110,6 +110,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.storage)
+
 
     // Unit testing framework
     testImplementation(libs.junit)

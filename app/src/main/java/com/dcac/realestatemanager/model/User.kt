@@ -5,5 +5,6 @@ data class User(
     val email: String,
     val agentName: String,
     val isSynced: Boolean = false,
-    val firebaseUid: String
+    val firebaseUid: String,
+    val updatedAt: Long = System.currentTimeMillis()
 )

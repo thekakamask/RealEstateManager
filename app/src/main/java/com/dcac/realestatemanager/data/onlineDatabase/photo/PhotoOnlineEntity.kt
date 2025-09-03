@@ -12,5 +12,7 @@ data class PhotoOnlineEntity(
     val uri: String = "",
     val description: String = "",
     val propertyId: Long = 0L,
+    val updatedAt: Long = System.currentTimeMillis(),
+    val storageUrl: String = "" // ✅ link to firestore
 
 )

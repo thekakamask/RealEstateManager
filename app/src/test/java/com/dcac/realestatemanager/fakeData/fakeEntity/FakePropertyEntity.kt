@@ -4,6 +4,8 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 
 object FakePropertyEntity {
 
+    private const val DEFAULT_TIMESTAMP = 1700000000000L
+
     val property1 = PropertyEntity(
         id = 1L,
         title = "Loft République",
@@ -18,8 +20,10 @@ object FakePropertyEntity {
         saleDate = null,
         userId = FakeUserEntity.user1.id,
         staticMapPath = null,
-        isSynced = true
+        isSynced = true,
+        updatedAt = DEFAULT_TIMESTAMP + 1
     )
+
     val property2 = PropertyEntity(
         id = 2L,
         title = "Villa Montmartre",
@@ -33,8 +37,10 @@ object FakePropertyEntity {
         entryDate = "2025-08-02",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 2
     )
+
     val property3 = PropertyEntity(
         id = 3L,
         title = "Studio Latin Quarter",
@@ -48,8 +54,10 @@ object FakePropertyEntity {
         entryDate = "2025-08-03",
         saleDate = "2025-08-20",
         userId = FakeUserEntity.user2.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 3
     )
+
     val property4 = PropertyEntity(
         id = 4L,
         title = "Flat Bastille",
@@ -63,8 +71,10 @@ object FakePropertyEntity {
         entryDate = "2025-08-04",
         saleDate = null,
         userId = FakeUserEntity.user2.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 4
     )
+
     val property5 = PropertyEntity(
         id = 5L,
         title = "Penthouse Bastille",
@@ -78,7 +88,9 @@ object FakePropertyEntity {
         entryDate = "2025-08-05",
         saleDate = null,
         userId = FakeUserEntity.user1.id,
-        staticMapPath = null
+        staticMapPath = null,
+        updatedAt = DEFAULT_TIMESTAMP + 5
     )
+
     val propertyEntityList = listOf(property1, property2, property3, property4, property5)
 }

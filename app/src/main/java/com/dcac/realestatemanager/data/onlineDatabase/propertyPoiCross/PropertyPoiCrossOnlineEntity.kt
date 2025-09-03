@@ -10,5 +10,6 @@ import androidx.annotation.Keep
 @Keep
 data class PropertyPoiCrossOnlineEntity(
     val propertyId: Long,
-    val poiId: Long
+    val poiId: Long,
+    val updatedAt: Long = System.currentTimeMillis()
 )

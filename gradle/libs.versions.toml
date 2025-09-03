@@ -128,6 +128,8 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 # Allows real-time syncing and querying of property data between local and remote.
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx" }
+
 # 📊 Firebase Analytics: automatically tracks user engagement and navigation in your app.
 # Helps you measure screen views, button clicks, session duration, etc.
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }

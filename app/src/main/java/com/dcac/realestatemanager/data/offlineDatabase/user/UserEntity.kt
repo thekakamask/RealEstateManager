@@ -17,5 +17,7 @@ data class UserEntity(
     @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "firebase_uid")
-    val firebaseUid: String
+    val firebaseUid: String,
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long = System.currentTimeMillis()
 )

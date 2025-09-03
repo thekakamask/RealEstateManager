@@ -8,57 +8,52 @@ import com.dcac.realestatemanager.model.User
 import kotlinx.coroutines.flow.first
 
 class PropertyDownloadManager(
-    private val propertyRepository: PropertyRepository,
-    private val propertyOnlineRepository: PropertyOnlineRepository
+    private val propertyRepository: PropertyRepository,                 // Local Room repository
+    private val propertyOnlineRepository: PropertyOnlineRepository      // Firestore repository
 ) {
 
+    // Downloads all properties from Firestore and syncs to Room
     suspend fun downloadUnSyncedProperties(userList: List<User>): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>()
+        val results = mutableListOf<SyncStatus>()                      // List of success/failure results
 
         try {
+            // Fetch all properties from Firestore, mapped with correct User references
             val onlineProperties = propertyOnlineRepository.getAllProperties(userList)
 
             for (property in onlineProperties) {
                 try {
+                    // Get local version of the property, if any
                     val localProperty = propertyRepository.getPropertyById(property.id).first()
 
                     if (localProperty == null) {
+                        // Local property doesn't exist ➜ insert it
                         propertyRepository.cachePropertyFromFirebase(property.copy(isSynced = true))
                         Log.d("PropertyDownloadManager", "Inserted property: ${property.id}")
                         results.add(SyncStatus.Success("Property ${property.id} inserted"))
 
-                    } else {
-                        val isSame = localProperty.title == property.title &&
-                                localProperty.type == property.type &&
-                                localProperty.price == property.price &&
-                                localProperty.surface == property.surface &&
-                                localProperty.rooms == property.rooms &&
-                                localProperty.description == property.description &&
-                                localProperty.address == property.address &&
-                                localProperty.isSold == property.isSold &&
-                                localProperty.entryDate == property.entryDate &&
-                                localProperty.saleDate == property.saleDate &&
-                                localProperty.staticMapPath == property.staticMapPath &&
-                                localProperty.user.id == property.user.id
+                    } else if (property.updatedAt > localProperty.updatedAt) {
+                        // Firestore property is newer ➜ update local version
+                        propertyRepository.updateProperty(property.copy(isSynced = true))
+                        Log.d("PropertyDownloadManager", "Updated property: ${property.id}")
+                        results.add(SyncStatus.Success("Property ${property.id} updated"))
 
-                        if (!isSame) {
-                            propertyRepository.updateProperty(property.copy(isSynced = true))
-                            Log.d("PropertyDownloadManager", "Updated property: ${property.id}")
-                            results.add(SyncStatus.Success("Property ${property.id} updated"))
-                        } else {
-                            results.add(SyncStatus.Success("Property ${property.id} already up-to-date"))
-                        }
+                    } else {
+                        // Already up-to-date ➜ no change needed
+                        Log.d("PropertyDownloadManager", "Property already up-to-date: ${property.id}")
+                        results.add(SyncStatus.Success("Property ${property.id} already up-to-date"))
                     }
 
                 } catch (e: Exception) {
+                    // Handle error syncing individual property
                     results.add(SyncStatus.Failure("Property ${property.id}", e))
                 }
             }
 
         } catch (e: Exception) {
+            // Handle general Firestore fetch failure
             results.add(SyncStatus.Failure("PropertyDownload (fetch failed)", e))
         }
 
-        return results
+        return results  // Return all success/failure sync results
     }
 }

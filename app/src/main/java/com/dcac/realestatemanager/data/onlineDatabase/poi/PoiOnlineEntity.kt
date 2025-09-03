@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.onlineDatabase.poi
 
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
 
 /**
  * @Keep ensures that this data class and its fields are not removed or renamed by R8/ProGuard.
@@ -10,5 +11,6 @@ import androidx.annotation.Keep
 @Keep
 data class PoiOnlineEntity(
     val name: String = "",
-    val type: String = ""
+    val type: String = "",
+    val updatedAt: Long = System.currentTimeMillis()
 )

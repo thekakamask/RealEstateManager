@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.onlineDatabase.property
 
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
 
 /**
  * @Keep ensures that this data class and its fields are not removed or renamed by R8/ProGuard.
@@ -20,5 +21,6 @@ data class PropertyOnlineEntity(
     val entryDate: String = "",       // format "yyyy-MM-dd"
     val saleDate: String? = null,     // nullable
     val userId: Long = 0L,            // same id than Room
-    val staticMapPath: String? = null
+    val staticMapPath: String? = null,
+    val updatedAt: Long = System.currentTimeMillis()
 )

@@ -6,36 +6,39 @@ import com.dcac.realestatemanager.data.onlineDatabase.photo.PhotoOnlineRepositor
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
-// THIS CLASS HANDLES SYNCING LOCAL PHOTO DATA TO THE ONLINE FIRESTORE DATABASE
-// ONLY PHOTOS MARKED ARE NOT SYNCED (ISSYNCED = FALSE) WILL BE UPLOADED.
-
 class PhotoUploadManager(
-    private val photoRepository: PhotoRepository,  // LOCAL PHOTO REPOSITORY (ROOM)
-    private val photoOnlineRepository: PhotoOnlineRepository // REMOTE PHOTO REPOSITORY (FIRESTORE)
+    private val photoRepository: PhotoRepository,                // Local (Room) photo repository
+    private val photoOnlineRepository: PhotoOnlineRepository     // Remote (Firestore) photo repository
 ) {
 
-    // SYNCHRONIZES ALL LOCAL PHOTOS THAT ARE MARKED AS NOT SYNCED
-    suspend fun syncUnSyncedPhotos(): List <SyncStatus> {
-
-        // FETCH THE LIST OF PHOTOS FROM ROOM THAT HAVE isSynced = false
+    // Uploads all unsynced photos (isSynced = false) to Firestore
+    suspend fun syncUnSyncedPhotos(): List<SyncStatus> {
+        // Fetch all unsynced photos from Room
         val unSyncedPhotos = photoRepository.getUnSyncedPhotos().first()
-
-        // CREATE A LIST TO STORE SUCCESS OR FAILURE RESULTS FOR EACH PHOTO SYNC
-        val results = mutableListOf<SyncStatus>()
+        val results = mutableListOf<SyncStatus>()                // To track success/failure of each upload
 
         for (photo in unSyncedPhotos) {
             try {
-                //UPLOAD PHOTO TO FIRESTORE
-                val syncedPhoto = photoOnlineRepository.uploadPhoto(photo, photo.id.toString())
-                //MARK AS SYNCED IN LOCAL DATABASE
-                photoRepository.updatePhoto(syncedPhoto)
-                Log.d("PhotoSyncManager", "Synced photo: ${photo.uri}")
+                // Update the photo with the current timestamp for sync tracking
+                val updatedPhoto = photo.copy(updatedAt = System.currentTimeMillis())
 
+                // Upload the updated photo to Firestore
+                val syncedPhoto = photoOnlineRepository.uploadPhoto(updatedPhoto, updatedPhoto.id.toString())
+
+                // Save the synced photo back to Room with isSynced = true
+                photoRepository.updatePhoto(syncedPhoto)
+
+                // Log and record successful sync
+                Log.d("PhotoUploadManager", "Synced photo: ${photo.uri}")
                 results.add(SyncStatus.Success("Photo ${photo.id}"))
+
             } catch (e: Exception) {
+                // Record failure for this specific photo
                 results.add(SyncStatus.Failure("Photo ${photo.id}", e))
             }
         }
-        return results
+
+        return results  // Return list of sync results
     }
+
 }

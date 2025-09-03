@@ -39,7 +39,8 @@ fun PropertyEntity.toModel(user: User, photos: List<Photo> = emptyList(), poiS: 
         user = user,
         photos = photos,
         poiS = poiS,
-        isSynced = isSynced
+        isSynced = isSynced,
+        updatedAt = updatedAt
     )
 }
 
@@ -76,7 +77,8 @@ fun Property.toEntity(): PropertyEntity {
         saleDate = saleDateString,
         userId = user.id,
         staticMapPath = staticMapPath,
-        isSynced = isSynced
+        isSynced = isSynced,
+        updatedAt = updatedAt
     )
 }
 
@@ -86,7 +88,8 @@ fun PhotoEntity.toModel(): Photo = Photo(
     propertyId = propertyId,
     uri = uri,
     description = description,
-    isSynced = isSynced
+    isSynced = isSynced,
+    updatedAt = updatedAt
 )
 
 // Maps a domain Photo model back into its corresponding PhotoEntity (for Room)
@@ -95,7 +98,8 @@ fun Photo.toEntity(): PhotoEntity = PhotoEntity(
     propertyId = propertyId,
     uri = uri,
     description = description,
-    isSynced = isSynced
+    isSynced = isSynced,
+    updatedAt = updatedAt
 )
 
 // Converts a PoiEntity (from DB) to its domain representation Poi
@@ -103,7 +107,8 @@ fun PoiEntity.toModel(): Poi = Poi(
     id = id,
     name = name,
     type = type,
-    isSynced = isSynced
+    isSynced = isSynced,
+    updatedAt = updatedAt
 )
 
 // Converts a domain Poi model to its entity format for Room
@@ -111,7 +116,8 @@ fun Poi.toEntity(): PoiEntity = PoiEntity(
     id = id,
     name = name,
     type = type,
-    isSynced = isSynced
+    isSynced = isSynced,
+    updatedAt = updatedAt
 )
 
 // Maps a UserEntity (Room) to its domain model User
@@ -120,7 +126,8 @@ fun UserEntity.toModel(): User = User(
     email = email,
     agentName = agentName,
     isSynced = isSynced,
-    firebaseUid = firebaseUid
+    firebaseUid = firebaseUid,
+    updatedAt = updatedAt
 )
 
 // Maps a User domain model back to its Room entity representation
@@ -129,20 +136,23 @@ fun User.toEntity(): UserEntity = UserEntity(
     email = email,
     agentName = agentName,
     isSynced = isSynced,
-    firebaseUid = firebaseUid
+    firebaseUid = firebaseUid,
+    updatedAt = updatedAt
 )
 
 // Converts a cross-reference entity (Room) into its domain model
 fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
     propertyId = propertyId,
     poiId = poiId,
-    isSynced = isSynced
+    isSynced = isSynced,
+    updatedAt = updatedAt
 )
 // Converts a domain model of a cross-reference into its Room entity
 fun PropertyPoiCross.toEntity(): PropertyPoiCrossEntity = PropertyPoiCrossEntity(
     propertyId = propertyId,
     poiId = poiId,
-    isSynced = isSynced
+    isSynced = isSynced,
+    updatedAt = updatedAt
 )
 
 // Maps a full relation object PoiWithPropertiesRelation into a domain model,

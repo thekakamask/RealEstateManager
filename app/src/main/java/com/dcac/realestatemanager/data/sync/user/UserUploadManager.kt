@@ -6,56 +6,45 @@ import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
-// THIS CLASS HANDLES SYNCING LOCAL USER DATA TO THE ONLINE FIRESTORE DATABASE
-// IT IS NOT RESPONSIBLE FOR ACCOUNT CREATION — ONLY SYNCING PROFILE DATA TO FIRESTORE
 class UserUploadManager(
-    private val userRepository: UserRepository,             // LOCAL USER REPOSITORY (ROOM)
-    private val userOnlineRepository: UserOnlineRepository  // REMOTE USER REPOSITORY (FIRESTORE)
+    private val userRepository: UserRepository,              // Room repository (local)
+    private val userOnlineRepository: UserOnlineRepository   // Firestore repository (remote)
 ) {
 
-    // SYNCHRONIZES ALL LOCAL USERS THAT ARE MARKED AS NOT SYNCED
+    // Uploads all local users that are not yet synced (isSynced == false)
     suspend fun syncUnSyncedUsers(): List<SyncStatus> {
-
-        // FETCH THE LIST OF USERS FROM ROOM THAT HAVE isSynced = false
+        // 🔍 Get users from Room where isSynced == false
         val unSyncedUsers = userRepository.getUnSyncedUsers().first()
+        val results = mutableListOf<SyncStatus>()  // Result list to track each upload
 
-        // CREATE A LIST TO STORE SUCCESS OR FAILURE RESULTS FOR EACH USER SYNC
-        val results = mutableListOf<SyncStatus>()
-
-        // LOOP THROUGH EACH UNSYNCED USER
         for (user in unSyncedUsers) {
-
-            // CHECK IF USER HAS A VALID FIREBASE UID
+            // ❗ Cannot sync if firebaseUid is missing
             if (user.firebaseUid.isBlank()) {
-                // WITHOUT A UID, FIRESTORE SYNC IS NOT POSSIBLE
                 results.add(
                     SyncStatus.Failure(
                         label = "User ${user.email}",
                         error = Exception("firebaseUid is missing — cannot sync to Firestore")
                     )
                 )
-
                 continue
             }
 
             try {
-                // UPLOAD THE USER DATA TO FIRESTORE UNDER users/{uid}
-                // MARK THE USER AS SYNCED IN THE LOCAL DATABASE
+                // ☁️ Upload user to Firestore (under users/{firebaseUid})
                 val syncedUser = userOnlineRepository.uploadUser(user, user.firebaseUid)
-                userRepository.updateUser(syncedUser)
 
+                // ✅ Update local user as synced
+                userRepository.updateUser(syncedUser)
                 Log.d("UserSyncManager", "Synced user: ${user.email}")
 
-                // ADD A SUCCESSFUL SYNC RESULT
                 results.add(SyncStatus.Success(user.email))
 
             } catch (e: Exception) {
-                // IF UPLOAD FAILS, STORE FAILURE RESULT
+                // ❌ Upload failed
                 results.add(SyncStatus.Failure(user.email, e))
             }
         }
 
-        // RETURN THE COMPLETE RESULT LIST FOR LOGGING OR RETRYING
-        return results
+        return results  // Return success/failure list
     }
 }

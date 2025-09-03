@@ -6,59 +6,59 @@ import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
-// HANDLES DOWNLOADING USERS FROM FIRESTORE TO LOCAL ROOM DATABASE
 class UserDownloadManager(
-    private val userRepository: UserRepository,  // LOCAL ROOM REPOSITORY
-    private val userOnlineRepository: UserOnlineRepository  // LOCAL ROOM REPOSITORY
+    private val userRepository: UserRepository,               // Room repository (local)
+    private val userOnlineRepository: UserOnlineRepository    // Firestore repository (remote)
 ) {
 
-    // DOWNLOADS USERS FROM FIRESTORE, COMPARES WITH LOCAL DATA, INSERTS/UPDATES IF NECESSARY
+    // Downloads users from Firestore and syncs them into Room
     suspend fun downloadUnSyncedUsers(): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>()  // INITIALIZE LIST TO STORE SYNC RESULTS
+        val results = mutableListOf<SyncStatus>()  // Result list for tracking sync status
 
         try {
+            // 🔽 Get all users stored in Firestore
+            val onlineUsers = userOnlineRepository.getAllUsers()
 
-            val onlineUsers = userOnlineRepository.getAllUsers() // FETCH ALL USERS FROM FIRESTORE
-
-            for (user in onlineUsers) {   // ITERATE OVER EACH FIRESTORE USER
+            // Loop through each Firestore user
+            for (user in onlineUsers) {
                 try {
-                    val localUser = userRepository.getUserById(user.id).first()   // FETCH LOCAL USER BY ID
+                    // 🔍 Try to find corresponding local user
+                    val localUser = userRepository.getUserById(user.id).first()
 
                     if (localUser == null) {
-                        // USER DOES NOT EXIST LOCALLY → INSERT IT
+                        // ➕ New user → insert into Room
                         userRepository.cacheUserFromFirebase(user.copy(isSynced = true))
                         Log.d("UserDownloadManager", "Inserted user: ${user.email}")
                         results.add(SyncStatus.Success("User ${user.email} inserted"))
-
                     } else {
-                        // USER EXISTS LOCALLY → COMPARE FIELDS TO CHECK FOR DIFFERENCES
+                        // 🔁 Compare fields to detect changes
                         val isSame = localUser.email == user.email &&
                                 localUser.agentName == user.agentName &&
                                 localUser.firebaseUid == user.firebaseUid
 
                         if (!isSame) {
-                            // LOCAL USER IS DIFFERENT → UPDATE LOCAL RECORD
+                            // 📝 Data mismatch → update Room
                             userRepository.updateUser(user.copy(isSynced = true))
                             Log.d("UserDownloadManager", "Updated user: ${user.email}")
                             results.add(SyncStatus.Success("User ${user.email} updated"))
                         } else {
-                            // USER IS IDENTICAL → NO NEED TO UPDATE
+                            // ✅ User already up-to-date
                             Log.d("UserDownloadManager", "User already up-to-date: ${user.email}")
                             results.add(SyncStatus.Success("User ${user.email} already up-to-date"))
                         }
                     }
 
                 } catch (e: Exception) {
-                    // ERROR OCCURRED FOR A SPECIFIC USER → ADD FAILURE RESULT
+                    // ❌ Error while handling individual user
                     results.add(SyncStatus.Failure("User ${user.email}", e))
                 }
             }
 
         } catch (e: Exception) {
-            // ERROR OCCURRED WHILE FETCHING USERS FROM FIRESTORE
+            // ❌ Error during global Firestore fetch
             results.add(SyncStatus.Failure("UserDownload (fetch failed)", e))
         }
 
-        return results // RETURN FINAL LIST OF SYNC STATUSES
+        return results  // Return overall sync result
     }
 }

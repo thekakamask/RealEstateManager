@@ -31,6 +31,8 @@ data class PropertyPoiCrossEntity(
     val propertyId: Long,
     val poiId: Long,
     @ColumnInfo(name = "is_synced")
-    val isSynced: Boolean = false
+    val isSynced: Boolean = false,
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long = System.currentTimeMillis()
 
 )

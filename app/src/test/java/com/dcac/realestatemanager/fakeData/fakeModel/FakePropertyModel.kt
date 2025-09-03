@@ -9,6 +9,8 @@ import org.threeten.bp.LocalDate
 
 object FakePropertyModel {
 
+    private const val DEFAULT_TIMESTAMP = 1700000000000L
+
     val property1 = Property(
         id = 1L,
         title = "Loft République",
@@ -25,7 +27,8 @@ object FakePropertyModel {
         staticMapPath = null,
         photos = listOf(photoModelList[0], photoModelList[1]),
         poiS = listOf(poiModelList[0], poiModelList[1], poiModelList[2], poiModelList[3], poiModelList[4]),
-        isSynced = true
+        isSynced = true,
+        updatedAt = DEFAULT_TIMESTAMP + 1
     )
 
     val property2 = Property(
@@ -43,7 +46,8 @@ object FakePropertyModel {
         user = user1,
         staticMapPath = null,
         photos = listOf(photoModelList[2], photoModelList[3]),
-        poiS = listOf(poiModelList[5], poiModelList[6], poiModelList[7], poiModelList[8], poiModelList[9])
+        poiS = listOf(poiModelList[5], poiModelList[6], poiModelList[7], poiModelList[8], poiModelList[9]),
+        updatedAt = DEFAULT_TIMESTAMP + 2
     )
 
     val property3 = Property(
@@ -61,7 +65,8 @@ object FakePropertyModel {
         user = user2,
         staticMapPath = null,
         photos = listOf(photoModelList[4], photoModelList[5]),
-        poiS = listOf(poiModelList[10], poiModelList[11], poiModelList[12], poiModelList[13], poiModelList[14])
+        poiS = listOf(poiModelList[10], poiModelList[11], poiModelList[12], poiModelList[13], poiModelList[14]),
+        updatedAt = DEFAULT_TIMESTAMP + 3
     )
 
     val property4 = Property(
@@ -79,7 +84,8 @@ object FakePropertyModel {
         user = user2,
         staticMapPath = null,
         photos = listOf(photoModelList[6], photoModelList[7]),
-        poiS = listOf(poiModelList[15], poiModelList[16], poiModelList[17], poiModelList[18], poiModelList[19])
+        poiS = listOf(poiModelList[15], poiModelList[16], poiModelList[17], poiModelList[18], poiModelList[19]),
+        updatedAt = DEFAULT_TIMESTAMP + 4
     )
 
     val property5 = Property(
@@ -97,7 +103,8 @@ object FakePropertyModel {
         user = user1,
         staticMapPath = null,
         photos = listOf(photoModelList[8], photoModelList[9]),
-        poiS = listOf(poiModelList[15], poiModelList[16], poiModelList[17], poiModelList[18], poiModelList[19])
+        poiS = listOf(poiModelList[15], poiModelList[16], poiModelList[17], poiModelList[18], poiModelList[19]),
+        updatedAt = DEFAULT_TIMESTAMP + 5
     )
 
     val propertyModelList = listOf(property1, property2, property3, property4, property5)

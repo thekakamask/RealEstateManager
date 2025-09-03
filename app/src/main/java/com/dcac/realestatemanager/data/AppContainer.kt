@@ -42,6 +42,7 @@ import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.data.userConnection.OnlineAuthRepository
 import com.dcac.realestatemanager.network.StaticMapApiService
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -163,7 +164,10 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val photoOnlineRepository: PhotoOnlineRepository by lazy {
-        FirebasePhotoOnlineRepository(FirebaseFirestore.getInstance())
+        FirebasePhotoOnlineRepository(
+            firestore = FirebaseFirestore.getInstance(),
+            storage = FirebaseStorage.getInstance()
+        )
     }
 
     override val photoUploadManager: PhotoUploadManager by lazy {

@@ -585,5 +585,33 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Added cache<Entity>() methods in DAOs and Repositories to store Firestore-fetched data
 
 
+### 🔹 **Update #22**
+
+  - 🛠️ **Added updatedAt Timestamps for Conflict Resolution**
+    - Introduced updatedAt: Long field across all major data layers:
+      - Room entity classes (e.g. PropertyEntity)
+      - Domain model classes (e.g. Property)
+      - Firestore document structure
+    - Purpose: ensure reliable conflict resolution between offline and online states
+      - During sync, remote data is only written locally if it is more recent than the local version
+      - Prevents overwriting local edits with outdated server data and vice versa
+      
+  - ♻️ **Improved Sync Logic with updatedAt Comparison**
+    - Refactored all DownloadManager and UploadManager classes for User, Property, Photo, Poi, and PropertyPoiCross entities
+    - Each DownloadManager now checks if the incoming Firestore document has a more recent updatedAt than the local version before updating Room
+    - Avoids redundant Room writes and protects recent local edits from being overwritten by older cloud data
+    - Makes synchronization behavior more deterministic, efficient, and safe for concurrent data changes across devices
+
+  - ☁️ **Integrated Firebase Storage for Image Synchronization**
+    - Replaced Firestore-only photo storage logic with a hybrid approach using Firebase Storage for file handling
+    - Photo upload process now:
+      - Uploads image files to Firebase Storage using putFile(uri)
+      - Retrieves the public downloadUrl
+      - Saves image metadata and storageUrl to Firestore (via PhotoOnlineEntity)
+    - During download:
+      - Firestore provides the storageUrl, and the app downloads the image locally
+      - The local uri is regenerated via a temp file for Room storage
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.
