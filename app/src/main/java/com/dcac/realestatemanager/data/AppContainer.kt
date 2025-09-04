@@ -48,6 +48,10 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
+interface AppContainerProvider {
+    val container: AppContainer
+}
+
 // Dependency container interface for the app.
 // Used to expose the different repositories to be injected into ViewModels or other components.
 // Promotes a clean separation of concerns and easy testing/mocking.

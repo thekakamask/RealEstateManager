@@ -33,6 +33,9 @@ coroutinesPlayServices = "1.7.3"
 firebaseBom = "32.7.3"
 googleServices = "4.4.3"
 
+work = "2.9.0"
+
+
 [libraries]
 # Declare libraries using group, name, and version references
 
@@ -133,6 +136,9 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx
 # 📊 Firebase Analytics: automatically tracks user engagement and navigation in your app.
 # Helps you measure screen views, button clicks, session duration, etc.
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+
+# 📦 Android WorkManager for executing background tasks (off-app uploads/downloads, scheduling, network constraints, etc.)
+work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 
 
 [plugins]

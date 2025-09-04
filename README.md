@@ -5,9 +5,8 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🛠️ Added updatedAt field to all Room entities, domain models, and Firestore documents to ensure reliable conflict resolution between online and offline states
-   - ♻️ Refactored all UploadManager and DownloadManager classes to compare updatedAt timestamps and avoid overwriting newer data during sync
-   - ☁️ Integrated Firebase Storage for image files: uploaded image files are stored in Storage, while only metadata and download URLs are saved in Firestore
+   - 🌐 Added NetworkMonitor utility to safely check internet availability on all Android API levels
+   - 🔁 Created SyncWorker with WorkManager to automate data sync + introduced AppContainerProvider interface to access DI from background workers
 
 
 ## ❌ **NEXT UPDATES**
@@ -49,6 +48,7 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** One-way sync from Firebase to local (download).
       - ✅ **DONE**  Entity-specific managers for modular synchronization logic.
       - ✅ **DONE** Conflict resolution (e.g. field-level merge or overwrite strategies)
+      - ✅ **DONE** Background sync using WorkManager + SyncWorker, enabled via AppContainerProvider.
 
    - 📷 **Media Management** :
 
@@ -80,7 +80,7 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Convert dollar to euro.
       - ❌ **NOT IMPLEMENTED** Convert euro to dollar.
       - ✅ **DONE** Get today's date (format to be improved).
-      - ❌ **NOT IMPLEMENTED** Better network availability check.
+      - ✅ **DONE** Reliable internet check using NetworkMonitor (supports API 21+ with fallbacks).
       - ❌ **NOT IMPLEMENTED** Add unit and integration tests.
 
    - 🧭 **Navigation** :

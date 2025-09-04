@@ -112,6 +112,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.storage)
 
+    // Allows you to use CoroutineWorker, WorkerParameters, and deferred task management.
+    implementation(libs.work.runtime.ktx)
 
     // Unit testing framework
     testImplementation(libs.junit)
@@ -122,4 +124,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.kotlinx.coroutines.test)
+
+
 }

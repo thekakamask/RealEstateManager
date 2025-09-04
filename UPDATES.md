@@ -613,5 +613,27 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - The local uri is regenerated via a temp file for Room storage
 
 
+### 🔹 **Update #23**
+
+  - 🌐 **Network Monitor Utility**
+    - Introduced a reusable NetworkMonitor class to verify internet availability across all Android API levels.
+    - Used internally before triggering upload/download operations to avoid failed sync attempts while offline.
+    - Compatible with API 21+:
+      - Uses NetworkCapabilities on Android M (API 23) and above.
+      - Falls back to deprecated but functional activeNetworkInfo on lower versions.
+    - Will serve as a foundation for future connectivity-aware features (e.g. observing real-time connection changes).
+
+  - 🔁 **SyncWorker & Background Dependency Injection**
+    - Implemented a new SyncWorker based on CoroutineWorker for automatic bidirectional sync between Room and Firebase (upload + download).
+    - The worker:
+      - Uploads local unsynced entities (users, properties, photos, POIs, cross-links).
+      - Downloads and updates local database with cloud data when newer.
+      - Ensures network availability using the existing NetworkMonitor utility before launching any sync.
+    - Introduced an AppContainerProvider interface:
+      - Exposes the application-wide AppContainer (dependency container) from Context.
+      - Allows dependency access in SyncWorker, which is not tied to any activity/fragment lifecycle.
+      - The application class RealEstateManagerApplication now implements this provider.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.
