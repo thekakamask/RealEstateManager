@@ -19,20 +19,19 @@ class UploadManager(
 ) {
 
     // SYNCHRONIZES ALL UNSYNCED ENTITIES (CURRENTLY ONLY USERS)
-    suspend fun syncAll() {
-        // TRIGGERS SYNC OF UNSYNCED USERS FROM ROOM TO FIRESTORE
+    suspend fun syncAll(): List<SyncStatus> {
         val userResults = userUploadManager.syncUnSyncedUsers()
         val photoResults = photoUploadManager.syncUnSyncedPhotos()
         val poiResults = poiUploadManager.syncUnSyncedPoiS()
         val crossResults = crossSyncManager.syncUnSyncedPropertyPoiCross()
         val propertyResults = propertyUploadManager.syncUnSyncedProperties()
 
-        // Ex : Log or analyze failures
-        (userResults + photoResults + poiResults + crossResults + propertyResults)
-            .filterIsInstance<SyncStatus.Failure>()
-            .forEach {
-                Log.e("UploadManager", "Failed to upload: ${it.label} — ${it.error.message}")
-            }
+        val allResults = userResults + photoResults + poiResults + crossResults + propertyResults
 
+        allResults.filterIsInstance<SyncStatus.Failure>().forEach {
+            Log.e("UploadManager", "Failed to upload: ${it.label} — ${it.error.message}")
+        }
+
+        return allResults
     }
 }

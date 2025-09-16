@@ -1,9 +1,9 @@
 package com.dcac.realestatemanager.data.sync.user
 
-import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
-import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 class UserUploadManager(
@@ -13,38 +13,34 @@ class UserUploadManager(
 
     // Uploads all local users that are not yet synced (isSynced == false)
     suspend fun syncUnSyncedUsers(): List<SyncStatus> {
-        // 🔍 Get users from Room where isSynced == false
-        val unSyncedUsers = userRepository.getUnSyncedUsers().first()
-        val results = mutableListOf<SyncStatus>()  // Result list to track each upload
 
-        for (user in unSyncedUsers) {
-            // ❗ Cannot sync if firebaseUid is missing
-            if (user.firebaseUid.isBlank()) {
-                results.add(
-                    SyncStatus.Failure(
-                        label = "User ${user.email}",
-                        error = Exception("firebaseUid is missing — cannot sync to Firestore")
+        val results = mutableListOf<SyncStatus>()
+
+        try {
+            val unSyncedUsers = userRepository.uploadUnSyncedUsers().first()
+
+            for (userEntity in unSyncedUsers) {
+                val userId = userEntity.id
+
+                if (userEntity.isDeleted) {
+                    userOnlineRepository.deleteUser(userId.toString())
+                    userRepository.deleteUser(userEntity)
+                    results.add(SyncStatus.Success("User $userId deleted"))
+                } else {
+                    val updatedUser = userEntity.copy(updatedAt = System.currentTimeMillis())
+                    val uploadedUser = userOnlineRepository.uploadUser(
+                        user = updatedUser.toOnlineEntity(),
+                        userId = userId.toString()
                     )
-                )
-                continue
+                    userRepository.downloadUserFromFirebase(
+                        uploadedUser
+                    )
+                    results.add(SyncStatus.Success("User $userId uploaded"))
+                }
             }
-
-            try {
-                // ☁️ Upload user to Firestore (under users/{firebaseUid})
-                val syncedUser = userOnlineRepository.uploadUser(user, user.firebaseUid)
-
-                // ✅ Update local user as synced
-                userRepository.updateUser(syncedUser)
-                Log.d("UserSyncManager", "Synced user: ${user.email}")
-
-                results.add(SyncStatus.Success(user.email))
-
-            } catch (e: Exception) {
-                // ❌ Upload failed
-                results.add(SyncStatus.Failure(user.email, e))
-            }
+        } catch (e: Exception) {
+            results.add(SyncStatus.Failure("Global upload sync failed", e))
         }
-
-        return results  // Return success/failure list
+        return results
     }
 }

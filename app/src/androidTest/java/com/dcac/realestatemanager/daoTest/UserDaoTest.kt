@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.daoTest
 
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dcac.realestatemanager.daoTest.fakeData.DatabaseSetup
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
@@ -10,6 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 
 @RunWith(AndroidJUnit4::class)
@@ -75,4 +77,19 @@ class UserDaoTest: DatabaseSetup() {
         val unSyncedUsers = userDao.getUnSyncedUsers().first()
         assertEquals(listOf(users[1]), unSyncedUsers)
     }
+
+    //This test ensures that:
+    //the Cursor is not null,
+    //it contains data (when the database is not empty),
+    //it is closed correctly (good practice).
+    @Test
+    fun getAllUsersAsCursor_shouldReturnValidCursor() = runBlocking {
+        users.forEach { userDao.saveUserFromFirebase(it) }
+        val query = SimpleSQLiteQuery("SELECT * FROM users")
+        val cursor = userDao.getAllUsersAsCursor(query)
+        assertNotNull(cursor)
+        assertTrue(cursor.count > 0)
+        cursor.close()
+    }
+
 }

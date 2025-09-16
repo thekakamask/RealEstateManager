@@ -1,10 +1,15 @@
 package com.dcac.realestatemanager.repositoryTest
 
 import com.dcac.realestatemanager.data.offlineDatabase.photo.OfflinePhotoRepository
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.OfflinePoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlineDatabase.property.OfflinePropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.OfflinePropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.OfflineUserRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePhotoDao
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePoiDao
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePropertyDao
@@ -35,11 +40,11 @@ class PropertyRepositoryTest {
     private lateinit var fakePhotoDao: FakePhotoDao
     private lateinit var fakePropertyPoiCrossDao: FakePropertyPoiCrossDao
 
-    private lateinit var userRepository: OfflineUserRepository
-    private lateinit var propertyRepository: OfflinePropertyRepository
-    private lateinit var poiRepository: OfflinePoiRepository
-    private lateinit var photoRepository: OfflinePhotoRepository
-    private lateinit var propertyPoiCrossRepository: OfflinePropertyPoiCrossRepository
+    private lateinit var userRepository: UserRepository
+    private lateinit var propertyRepository: PropertyRepository
+    private lateinit var poiRepository: PoiRepository
+    private lateinit var photoRepository: PhotoRepository
+    private lateinit var propertyPoiCrossRepository: PropertyPoiCrossRepository
 
     @Before
     fun setup() {

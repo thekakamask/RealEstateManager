@@ -1,8 +1,7 @@
 package com.dcac.realestatemanager.data.sync.propertyPoiCross
 
-import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
-import com.dcac.realestatemanager.data.onlineDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
@@ -13,52 +12,35 @@ class PropertyPoiCrossDownloadManager(
 
     // Downloads all cross-references (Property ↔ POI) from Firestore to Room
     suspend fun downloadUnSyncedPropertyPoiCross(): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>()  // List of success/failure logs
+
+        val results = mutableListOf<SyncStatus>()
 
         try {
-            // Fetch all cross-references from Firestore
             val onlineCrossRefs = propertyPoiCrossOnlineRepository.getAllCrossRefs()
 
-            for (crossRef in onlineCrossRefs) {
+            for (onlineCrossRef in onlineCrossRefs) {
                 try {
-                    // Check if the crossRef exists locally
-                    val localCross = propertyPoiCrossRepository
-                        .getCrossByIds(crossRef.propertyId, crossRef.poiId)
-                        .first()
+                    val propertyId = onlineCrossRef.propertyId
+                    val poiId = onlineCrossRef.poiId
 
-                    if (localCross == null) {
-                        // 🔽 New link: insert it into Room
-                        propertyPoiCrossRepository.cacheCrossRefFromFirebase(
-                            crossRef.copy(isSynced = true)
-                        )
-                        Log.d("CrossDL", "Inserted crossRef: ${crossRef.propertyId}-${crossRef.poiId}")
-                        results.add(SyncStatus.Success("Inserted ${crossRef.propertyId}-${crossRef.poiId}"))
+                    val localCrossRef = propertyPoiCrossRepository.getCrossEntityByIds(propertyId, poiId).first()
 
-                    } else if (!localCross.isSynced) {
-                        // 🔁 Existing but not marked as synced ➜ update it
-                        propertyPoiCrossRepository.updateCrossRef(
-                            crossRef.copy(isSynced = true)
-                        )
-                        Log.d("CrossDL", "Updated crossRef: ${crossRef.propertyId}-${crossRef.poiId}")
-                        results.add(SyncStatus.Success("Updated ${crossRef.propertyId}-${crossRef.poiId}"))
+                    val shouldDownload = localCrossRef == null || onlineCrossRef.updatedAt > localCrossRef.updatedAt
 
+                    if (shouldDownload) {
+                        propertyPoiCrossRepository.downloadCrossRefFromFirebase(onlineCrossRef)
+                        results.add(SyncStatus.Success("CrossRef ($propertyId, $poiId) downloaded"))
                     } else {
-                        // ✅ Already synced ➜ nothing to do
-                        Log.d("CrossDL", "Already up-to-date: ${crossRef.propertyId}-${crossRef.poiId}")
-                        results.add(SyncStatus.Success("Already up-to-date: ${crossRef.propertyId}-${crossRef.poiId}"))
+                        results.add(SyncStatus.Success("CrossRef ($propertyId, $poiId) already up-to-date"))
                     }
-
                 } catch (e: Exception) {
-                    // ❌ Error during sync of specific crossRef
-                    results.add(SyncStatus.Failure("CrossRef ${crossRef.propertyId}-${crossRef.poiId}", e))
+                    results.add(SyncStatus.Failure("CrossRef (${onlineCrossRef.propertyId}, ${onlineCrossRef.poiId}) failed to sync", e))
                 }
             }
-
         } catch (e: Exception) {
-            // ❌ General error fetching from Firestore
-            results.add(SyncStatus.Failure("CrossRefDownload (fetch failed)", e))
-        }
+            results.add(SyncStatus.Failure("Global cross-reference download failed", e))
 
-        return results  // Return sync status list
+        }
+        return results
     }
 }

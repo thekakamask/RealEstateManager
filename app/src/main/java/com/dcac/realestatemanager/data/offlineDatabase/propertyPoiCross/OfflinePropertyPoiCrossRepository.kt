@@ -1,8 +1,10 @@
 package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
 import com.dcac.realestatemanager.model.PropertyPoiCross
 import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toModel
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -10,29 +12,7 @@ class OfflinePropertyPoiCrossRepository(
     private val dao: PropertyPoiCrossDao
 ) : PropertyPoiCrossRepository {
 
-    override suspend fun insertCrossRef(crossRef: PropertyPoiCross) {
-        dao.insertCrossRef(crossRef.toEntity())
-    }
-
-    override suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCross>) {
-        dao.insertAllCrossRefs(crossRefs.map { it.toEntity() })
-    }
-
-    override suspend fun updateCrossRef(crossRef: PropertyPoiCross) {
-        dao.updateCrossRef(crossRef.toEntity())
-    }
-
-    override suspend fun deleteCrossRefsForProperty(propertyId: Long) {
-        dao.deleteCrossRefsForProperty(propertyId)
-    }
-
-    override suspend fun deleteCrossRefsForPoi(poiId: Long) {
-        dao.deleteCrossRefsForPoi(poiId)
-    }
-
-    override suspend fun clearAllCrossRefs() {
-        dao.clearAllCrossRefs()
-    }
+    //FOR UI
 
     override fun getCrossRefsForProperty(propertyId: Long): Flow<List<PropertyPoiCross>> {
         return dao.getCrossRefsForProperty(propertyId).map { list ->
@@ -54,16 +34,66 @@ class OfflinePropertyPoiCrossRepository(
         return dao.getPropertyIdsForPoi(poiId)
     }
 
-    override fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCross>> {
-        return dao.getUnSyncedPropertiesPoiSCross().map { list -> list.map { it.toModel() } }
-    }
-
     override fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCross?> {
         return dao.getCrossByIds(propertyId, poiId).map { it?.toModel() }
     }
 
-    override suspend fun cacheCrossRefFromFirebase(crossRef: PropertyPoiCross) {
-       return dao.saveCrossRefFromFirebase(crossRef.toEntity())
+    override suspend fun insertCrossRef(crossRef: PropertyPoiCross) {
+        dao.insertCrossRef(crossRef.toEntity())
+    }
+
+    override suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCross>) {
+        dao.insertAllCrossRefs(crossRefs.map { it.toEntity() })
+    }
+
+    override suspend fun updateCrossRef(crossRef: PropertyPoiCross) {
+        dao.updateCrossRef(crossRef.toEntity())
+    }
+
+    override suspend fun markCrossRefAsDeleted(propertyId: Long, poiId: Long) {
+        dao.markCrossRefAsDeleted(propertyId, poiId, System.currentTimeMillis())
+    }
+
+    override suspend fun markCrossRefsAsDeletedForProperty(propertyId: Long) {
+        dao.markCrossRefsAsDeletedForProperty(propertyId, System.currentTimeMillis())
+    }
+
+    override suspend fun markCrossRefsAsDeletedForPoi(poiId: Long) {
+        dao.markCrossRefsAsDeletedForPoi(poiId, System.currentTimeMillis())
+    }
+
+    override suspend fun markAllCrossRefsAsDeleted() {
+        dao.markAllCrossRefsAsDeleted(System.currentTimeMillis())
+    }
+
+    // FOR FIREBASE SYNC
+
+    override fun getCrossEntityByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?> {
+        return dao.getCrossByIds(propertyId, poiId)
+    }
+
+    override suspend fun deleteCrossRefsForProperty(propertyId: Long) {
+        dao.deleteCrossRefsForProperty(propertyId)
+    }
+
+    override suspend fun deleteCrossRefsForPoi(poiId: Long) {
+        dao.deleteCrossRefsForPoi(poiId)
+    }
+
+    override suspend fun deleteCrossRef(crossRef: PropertyPoiCrossEntity) {
+        dao.deleteCrossRef(crossRef)
+    }
+
+    override suspend fun clearAllCrossRefs() {
+        dao.clearAllCrossRefs()
+    }
+
+    override fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>> {
+        return dao.uploadUnSyncedPropertiesPoiSCross()
+    }
+
+    override suspend fun downloadCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity) {
+        dao.saveCrossRefFromFirebase(crossRef.toEntity())
     }
 
 }

@@ -634,6 +634,59 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Allows dependency access in SyncWorker, which is not tied to any activity/fragment lifecycle.
       - The application class RealEstateManagerApplication now implements this provider.
 
+### 🔹 **Update #24**
+
+  - 📤 **Read-only ContentProvider for Room database**
+    - Added OfflineDatabaseContentProvider to expose internal Room tables (properties, photos, POIs, users, and cross-references) to other apps or components via standard Android ContentProvider mechanism.
+    - Registered in the AndroidManifest.xml with proper authority and read permission.
+    - Supports only read access (query()), no insert/update/delete, ensuring data integrity and safety.
+    - Each DAO now includes a getAllAsCursor() method (e.g. getAllPhotosAsCursor()) to support low-level cursor access from the provider.
+    - Useful for:
+      - Widgets or services running in separate processes.
+      - External apps accessing real estate data through contract-based URIs.
+    - Fully tested with new instrumentation tests for each DAO cursor method.
+
+  - 🧠 **Utils Enhancements**
+    - Added convertEuroToDollar() utility method to complement the existing convertDollarToEuro() for full bidirectional currency conversion.
+    - Updated getTodayDate() to return the date in dd/MM/yyyy format (e.g., "15/09/2025") for improved readability.
+    - Deprecated Utils.isInternetAvailable() in favor of the more robust NetworkMonitor.isConnected(), which uses NetworkCapabilities to check for true internet access.
+    - All new methods are now covered by unit tests.
+
+  - 🗄️ **Entity ↔ OnlineEntity Mappers Refactor**
+    - Replaced old Model ↔ OnlineEntity mappers with direct Entity ↔ OnlineEntity conversions.
+    - Each entity (User, Property, Photo, Poi, CrossRef) now has its dedicated bidirectional mapping function.
+    - UI continues to consume Models only, while Firebase sync relies exclusively on Entities.
+
+  - ❌ **Soft & Hard Delete Implementation**
+    - Introduced is_deleted flag in Room entities.
+    - Soft delete: marks an entity as deleted locally, pending Firebase sync.
+    - Hard delete: permanent removal from Room after confirmation.
+    - DAOs updated with new markAsDeleted queries for each entity type.
+
+  - 🔗 **DAO, Repository & SyncManager Refactor**
+    - Room repositories now expose:
+      - Classic CRUD operations on Models for the UI layer.
+      - New methods dedicated to synchronization: uploadUnSynced…() and download…FromFirebase() → these methods use Room Entities directly, without going through Models.
+    - Firebase repositories:
+      - Work only with OnlineEntities, linked to Firestore.
+      - Mapping to Room Entities is done via toEntity() (and vice versa with toOnlineEntity()).
+      - The roomId identifier is systematically used to preserve the Room ↔ Firestore correspondence.
+    - SyncManagers (UploadManager / DownloadManager):
+      - Centralize the unidirectional synchronization logic (upload or download) for each entity type.
+      - No longer go through Models, but only use:
+        - RoomEntity ↔ OnlineEntity
+        - updatedAt to decide if resynchronization is necessary
+        - isDeleted to manage soft deletions
+      - Each SyncManager follows a clear pattern:
+        - Read unsynchronized data from Room
+        - Compare with Firestore (or upload directly)
+        - Rewrite to Room with isSynced = true if successful
+    - ✅ This guarantees:
+      - Clear separation of layers:
+      - UI ↔ Models / Room ↔ Entities / Firebase ↔ OnlineEntities
+      - Isolated, testable, and reusable synchronization logic
+      - Reduction of unnecessary conversions and improved data consistency
+
 
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

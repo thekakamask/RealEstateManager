@@ -1,5 +1,7 @@
 package com.dcac.realestatemanager.fakeData.fakeDao
 
+import android.database.Cursor
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoDao
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
@@ -55,5 +57,9 @@ class FakePhotoDao : PhotoDao,
 
     override fun getUnSyncedPhotos(): Flow<List<PhotoEntity>> =
         entityFlow.map { list -> list.filter { !it.isSynced } }
+
+    override fun getAllPhotosAsCursor(query: SupportSQLiteQuery): Cursor {
+        throw NotImplementedError("getAllPhotosAsCursor is not used in unit tests.")
+    }
 
 }

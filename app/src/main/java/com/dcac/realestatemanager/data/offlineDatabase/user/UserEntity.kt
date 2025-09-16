@@ -16,6 +16,8 @@ data class UserEntity(
     val agentName: String,
     @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
+    @ColumnInfo(name = "is_deleted")
+    val isDeleted: Boolean = false,
     @ColumnInfo(name = "firebase_uid")
     val firebaseUid: String,
     @ColumnInfo(name = "updated_at")

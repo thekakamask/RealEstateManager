@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.repositoryTest
 
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.OfflinePropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePropertyPoiCrossDao
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePropertyPoiCrossModel
@@ -17,7 +18,7 @@ import org.junit.Test
 class PropertyPoiCrossRepositoryTest {
 
     private lateinit var fakePropertyPoiCrossDao: FakePropertyPoiCrossDao
-    private lateinit var propertyPoiCrossRepository: OfflinePropertyPoiCrossRepository
+    private lateinit var propertyPoiCrossRepository: PropertyPoiCrossRepository
 
     @Before
     fun setup(){

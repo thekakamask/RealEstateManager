@@ -73,9 +73,9 @@
             <AndroidTestResultsTableState>
               <option name="preferredColumnWidths">
                 <map>
-                  <entry key="Duration" value="90" />
-                  <entry key="Medium_Phone_API_36.0" value="120" />
-                  <entry key="Tests" value="360" />
+                  <entry key="Duration" value="96" />
+                  <entry key="Medium_Phone_API_36.0" value="126" />
+                  <entry key="Tests" value="366" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

@@ -41,6 +41,8 @@ data class PropertyEntity(
     val staticMapPath: String? = null,
     @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
+    @ColumnInfo(name = "is_deleted")
+    val isDeleted: Boolean = false,
     @ColumnInfo(name = "updated_at")
     val updatedAt: Long = System.currentTimeMillis()
 

@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.daoTest
 
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dcac.realestatemanager.daoTest.fakeData.DatabaseSetup
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoDao
@@ -12,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 
 @RunWith(AndroidJUnit4::class)
@@ -134,5 +136,20 @@ class PhotoDaoTest: DatabaseSetup() {
         assertTrue(result.contains(photo3))
         assertTrue(result.none { it.id == photo1.id })
     }
+
+    //This test ensures that:
+    //the Cursor is not null,
+    //it contains data (when the database is not empty),
+    //it is closed correctly (good practice).
+    @Test
+    fun getAllPhotosAsCursor_shouldReturnValidCursor() = runBlocking {
+        photoDao.insertPhotos(photoList)
+        val query = SimpleSQLiteQuery("SELECT * FROM photos")
+        val cursor = photoDao.getAllPhotosAsCursor(query)
+        assertNotNull(cursor)
+        assertTrue(cursor.count > 0)
+        cursor.close()
+    }
+
 
 }

@@ -1,10 +1,10 @@
 package com.dcac.realestatemanager.data.offlineDatabase.property
 
+import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
-import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyWithPoiS
 import com.dcac.realestatemanager.utils.toEntity
@@ -12,7 +12,6 @@ import com.dcac.realestatemanager.utils.toFullModel
 import kotlinx.coroutines.flow.Flow
 import com.dcac.realestatemanager.utils.toModel
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 
 class OfflinePropertyRepository(
     private val propertyDao: PropertyDao,
@@ -21,6 +20,8 @@ class OfflinePropertyRepository(
     private val photoRepository: PhotoRepository,
     private val propertyPoiCrossRepository: PropertyPoiCrossRepository
 ): PropertyRepository {
+
+    // FOR UI
 
     private fun combinePropertiesWithDetails(
         propertiesFlow: Flow<List<PropertyEntity>>
@@ -92,12 +93,20 @@ class OfflinePropertyRepository(
         }
     }
 
-    override suspend fun insertProperty(property: Property): Long = propertyDao.insertProperty(property.toEntity())
-    override suspend fun updateProperty(property: Property) = propertyDao.updateProperty(property.toEntity())
-    override suspend fun cachePropertyFromFirebase(property: Property) = propertyDao.savePropertyFromFirebase(property.toEntity())
-    override suspend fun deleteProperty(property: Property) = propertyDao.deleteProperty(property.toEntity())
-    override suspend fun markPropertyAsSold(propertyId: Long, saleDate: String) = propertyDao.markPropertyAsSold(propertyId, saleDate)
-    override suspend fun clearAll() = propertyDao.clearAll()
+    override suspend fun insertProperty(property: Property): Long
+    = propertyDao.insertProperty(property.toEntity())
+
+    override suspend fun updateProperty(property: Property)
+    = propertyDao.updateProperty(property.toEntity())
+
+    override suspend fun markPropertyAsDeleted(property: Property) =
+        propertyDao.markPropertyAsDeleted(property.id, System.currentTimeMillis())
+
+    override suspend fun markPropertyAsSold(propertyId: Long, saleDate: String)
+    = propertyDao.markPropertyAsSold(propertyId, saleDate)
+
+    override suspend fun markAllPropertyAsDeleted()
+    = propertyDao.markAllPropertiesAsDeleted(System.currentTimeMillis())
 
     override fun getPropertyWithPoiS(id: Long): Flow<PropertyWithPoiS> {
         val usersFlow = userRepository.getAllUsers()
@@ -108,23 +117,21 @@ class OfflinePropertyRepository(
         }
     }
 
-    override fun getUnSyncedProperties(): Flow<List<Property>> {
-        val usersFlow = userRepository.getAllUsers()
-        val photosFlow = photoRepository.getAllPhotos()
-        val crossRefsFlow = propertyPoiCrossRepository.getAllCrossRefs()
-        val poiSFlow = poiRepository.getAllPoiS()
-        val unSyncedPropertiesFlow = propertyDao.getUnSyncedProperties()
+    //FOR FIREBASE SYNC
 
-        return combine(unSyncedPropertiesFlow, usersFlow, photosFlow, crossRefsFlow, poiSFlow) {
-                properties, users, photos, crossRefs, poiS ->
-            properties.map { property ->
-                property.toFullModel(
-                    allUsers = users,
-                    photos = photos,
-                    crossRefs = crossRefs,
-                    allPoiS = poiS
-                )
-            }
-        }
-    }
+    override fun getPropertyEntityById(id: Long): Flow<PropertyEntity?> =
+        propertyDao.getPropertyById(id)
+
+    override suspend fun deleteProperty(property: PropertyEntity)
+            = propertyDao.deleteProperty(property)
+
+    override suspend fun clearAll()
+            = propertyDao.clearAll()
+
+    override fun uploadUnSyncedPropertiesToFirebase(): Flow<List<PropertyEntity>>
+    = propertyDao.uploadUnSyncedPropertiesToFirebase()
+
+    override suspend fun downloadPropertyFromFirebase(property: PropertyOnlineEntity)
+    = propertyDao.savePropertyFromFirebase(property.toEntity(propertyId = property.roomId))
+
 }

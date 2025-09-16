@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.photo
 
+import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineEntity
 import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.utils.toEntity
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,8 @@ import com.dcac.realestatemanager.utils.toModel
 class OfflinePhotoRepository(
     private val photoDao: PhotoDao
 ) : PhotoRepository {
+
+    //FOR UI
 
     override fun getPhotoById(id: Long): Flow<Photo?> =
         photoDao.getPhotoById(id).map { it?.toModel() }
@@ -28,16 +31,29 @@ class OfflinePhotoRepository(
     override suspend fun updatePhoto(photo: Photo) =
         photoDao.updatePhoto(photo.toEntity())
 
+    override suspend fun markPhotosAsDeletedByProperty(propertyId: Long) =
+        photoDao.markPhotosAsDeletedByProperty(propertyId, System.currentTimeMillis())
+
+    override suspend fun markPhotoAsDelete(photo: Photo) {
+        photoDao.markPhotoAsDeleted(photo.id, System.currentTimeMillis())
+    }
+
+    //FOR FIREBASE SYNC
+
+    override fun getPhotoEntityById(id: Long): Flow<PhotoEntity?> =
+        photoDao.getPhotoById(id)
+
+    override suspend fun deletePhoto(photo: PhotoEntity) =
+        photoDao.deletePhoto(photo)
+
     override suspend fun deletePhotosByPropertyId(propertyId: Long) =
         photoDao.deletePhotosByPropertyId(propertyId)
 
-    override suspend fun deletePhoto(photo: Photo) =
-        photoDao.deletePhoto(photo.toEntity())
+    override fun uploadUnSyncedPhotosToFirebase(): Flow<List<PhotoEntity>> =
+        photoDao.getUnSyncedPhotos()
 
-    override fun getUnSyncedPhotos(): Flow<List<Photo>> =
-        photoDao.getUnSyncedPhotos().map { list -> list.map { it.toModel() } }
-
-    override suspend fun cachePhotoFromFirebase(photo: Photo) {
-        photoDao.savePhotoFromFirebase(photo.toEntity())
+    override suspend fun downloadPhotoFromFirebase(photo: PhotoOnlineEntity, localUri: String) {
+        val entity = photo.toEntity(photoId = photo.roomId).copy(uri = localUri)
+        photoDao.savePhotoFromFirebase(entity)
     }
 }

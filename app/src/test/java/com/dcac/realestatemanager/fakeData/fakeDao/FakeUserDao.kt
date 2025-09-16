@@ -1,5 +1,7 @@
 package com.dcac.realestatemanager.fakeData.fakeDao
 
+import android.database.Cursor
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
@@ -66,4 +68,8 @@ class FakeUserDao : UserDao,
     // Returns a list of users that are not yet synced with Firebase
     override fun getUnSyncedUsers(): Flow<List<UserEntity>> =
         entityFlow.map { list -> list.filter { !it.isSynced } }
+
+    override fun getAllUsersAsCursor(query: SupportSQLiteQuery): Cursor {
+        throw NotImplementedError("getAllUsersAsCursor is not used in unit tests.")
+    }
 }

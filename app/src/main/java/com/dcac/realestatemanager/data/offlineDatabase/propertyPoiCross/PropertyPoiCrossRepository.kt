@@ -1,34 +1,34 @@
 package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
 import com.dcac.realestatemanager.model.PropertyPoiCross
 import kotlinx.coroutines.flow.Flow
 
 interface PropertyPoiCrossRepository {
 
-    suspend fun insertCrossRef(crossRef: PropertyPoiCross)
-
-    suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCross>)
-
-    suspend fun updateCrossRef(crossRef: PropertyPoiCross)
-
-    suspend fun deleteCrossRefsForProperty(propertyId: Long)
-
-    suspend fun deleteCrossRefsForPoi(poiId: Long)
-
-    suspend fun clearAllCrossRefs()
+    // FOR UI
 
     fun getCrossRefsForProperty(propertyId: Long): Flow<List<PropertyPoiCross>>
-
     fun getAllCrossRefs(): Flow<List<PropertyPoiCross>>
-
     fun getPoiIdsForProperty(propertyId: Long): Flow<List<Long>>
-
     fun getPropertyIdsForPoi(poiId: Long): Flow<List<Long>>
-
-    fun getUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCross>>
-
     fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCross?>
+    suspend fun insertCrossRef(crossRef: PropertyPoiCross)
+    suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCross>)
+    suspend fun updateCrossRef(crossRef: PropertyPoiCross)
+    suspend fun markCrossRefAsDeleted(propertyId: Long, poiId: Long)
+    suspend fun markCrossRefsAsDeletedForProperty(propertyId: Long)
+    suspend fun markCrossRefsAsDeletedForPoi(poiId: Long)
+    suspend fun markAllCrossRefsAsDeleted()
 
-    suspend fun cacheCrossRefFromFirebase(crossRef: PropertyPoiCross)
+    //FOR FIREBASE SYNC
+
+    fun getCrossEntityByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?>
+    suspend fun deleteCrossRef(crossRef: PropertyPoiCrossEntity)
+    suspend fun deleteCrossRefsForProperty(propertyId: Long)
+    suspend fun deleteCrossRefsForPoi(poiId: Long)
+    suspend fun clearAllCrossRefs()
+    fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>>
+    suspend fun downloadCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity)
 
 }

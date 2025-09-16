@@ -25,20 +25,28 @@ object Utils {
         return (dollars * 0.812).roundToInt()
     }
 
+    fun convertEuroToDollar(euros: Int): Int {
+        return (euros / 0.812).roundToInt()
+    }
+
     /**
      * 📅 Returns today's date in "yyyy/MM/dd" format.
      * NOTE: Must be shown during the exam.
      * @return Formatted date string.
      */
     fun getTodayDate(): String {
-        val format = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return format.format(Date())
     }
+
+    fun getTodayDateLegacy(): String = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date())
+
 
     /**
      * 🌐 Checks if device has an active internet connection (Wi-Fi or cellular).
      * Compatible with API 21+.
      */
+    @Deprecated("Use NetworkMonitor.isConnected() instead")
     fun isInternetAvailable(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

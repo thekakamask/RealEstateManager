@@ -19,5 +19,6 @@ data class Property(
     val photos: List<Photo> = emptyList(),
     val poiS: List<Poi> = emptyList(),
     val isSynced: Boolean = false,
+    val isDeleted: Boolean = false,
     val updatedAt: Long = System.currentTimeMillis()
 )

@@ -5,5 +5,6 @@ data class Poi(
     val name: String,
     val type: String,
     val isSynced : Boolean = false,
+    val isDeleted : Boolean = false,
     val updatedAt: Long = System.currentTimeMillis()
 )

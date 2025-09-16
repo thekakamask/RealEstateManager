@@ -1,8 +1,7 @@
 package com.dcac.realestatemanager.data.sync.user
 
-import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
-import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
@@ -13,52 +12,30 @@ class UserDownloadManager(
 
     // Downloads users from Firestore and syncs them into Room
     suspend fun downloadUnSyncedUsers(): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>()  // Result list for tracking sync status
-
+        val results = mutableListOf<SyncStatus>()
         try {
-            // 🔽 Get all users stored in Firestore
             val onlineUsers = userOnlineRepository.getAllUsers()
 
-            // Loop through each Firestore user
-            for (user in onlineUsers) {
+            for (onlineUser in onlineUsers) {
                 try {
-                    // 🔍 Try to find corresponding local user
-                    val localUser = userRepository.getUserById(user.id).first()
+                    val roomId = onlineUser.roomId
+                    val localUser = userRepository.getUserEntityById(roomId).first()
 
-                    if (localUser == null) {
-                        // ➕ New user → insert into Room
-                        userRepository.cacheUserFromFirebase(user.copy(isSynced = true))
-                        Log.d("UserDownloadManager", "Inserted user: ${user.email}")
-                        results.add(SyncStatus.Success("User ${user.email} inserted"))
+                    val shouldDownload = localUser == null || onlineUser.updatedAt > localUser.updatedAt
+
+                    if (shouldDownload) {
+                        userRepository.downloadUserFromFirebase(onlineUser)
+                        results.add(SyncStatus.Success("User $roomId downloaded"))
                     } else {
-                        // 🔁 Compare fields to detect changes
-                        val isSame = localUser.email == user.email &&
-                                localUser.agentName == user.agentName &&
-                                localUser.firebaseUid == user.firebaseUid
-
-                        if (!isSame) {
-                            // 📝 Data mismatch → update Room
-                            userRepository.updateUser(user.copy(isSynced = true))
-                            Log.d("UserDownloadManager", "Updated user: ${user.email}")
-                            results.add(SyncStatus.Success("User ${user.email} updated"))
-                        } else {
-                            // ✅ User already up-to-date
-                            Log.d("UserDownloadManager", "User already up-to-date: ${user.email}")
-                            results.add(SyncStatus.Success("User ${user.email} already up-to-date"))
-                        }
+                        results.add(SyncStatus.Success("User $roomId already up-to-date"))
                     }
-
-                } catch (e: Exception) {
-                    // ❌ Error while handling individual user
-                    results.add(SyncStatus.Failure("User ${user.email}", e))
+                } catch (e : Exception) {
+                    results.add(SyncStatus.Failure("User ${onlineUser.roomId} failed to sync", e))
                 }
             }
-
         } catch (e: Exception) {
-            // ❌ Error during global Firestore fetch
-            results.add(SyncStatus.Failure("UserDownload (fetch failed)", e))
+            results.add(SyncStatus.Failure("Global user download failed", e))
         }
-
-        return results  // Return overall sync result
+        return results
     }
 }

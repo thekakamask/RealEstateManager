@@ -5,8 +5,11 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🌐 Added NetworkMonitor utility to safely check internet availability on all Android API levels
-   - 🔁 Created SyncWorker with WorkManager to automate data sync + introduced AppContainerProvider interface to access DI from background workers
+   - 📤 Exposed local Room database via a read-only ContentProvider for external access using standard Android URI queries
+   - 🧠 Added new utility methods: Euro-to-Dollar conversion, improved date formatting, and deprecated old internet check in favor of NetworkMonitor.
+   - 🗄️ Refactored mappers to support Room Entities ↔ Firebase OnlineEntities conversion without intermediate Models.
+   - ❌ Implemented soft delete (is_deleted flag) across entities, with hard delete kept for irreversible removals.
+   - 🔗 Refactored DAOs, Repositories & SyncManager to create a direct bridge between Room and Firebase, simplifying synchronization.
 
 
 ## ❌ **NEXT UPDATES**
@@ -75,6 +78,12 @@ This project is developed using modern Android architecture principles, with a f
       - 🟩 **IN PROGRESS** Real-time Firestore listeners (multi-device live updates).
       - ✅ **DONE** Integrated Firebase Storage for image file handling; only metadata is stored in Firestore while files are uploaded to Storage.
 
+   - 📡 **Interoperability** :
+
+      - ✅ **DONE** Exposed Room database via a read-only ContentProvider.
+      - ✅ **DONE** Supports standard URI-based queries from external components or apps.
+      - ✅ **DONE** Grants permission-controlled access (read-only) to data tables: properties, photos, users, POIs, and cross-links.
+
    - 🧠 **Utilities** :
 
       - ✅ **DONE** Convert dollar to euro.
@@ -128,6 +137,7 @@ This project is developed using modern Android architecture principles, with a f
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
       - ✅ **DONE** DAO tests using instrumented tests for Room database
       - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation
+      - ✅ **DONE** Firebase Repository unit tests using model/online entity separation
 
 
 ## 🛠️ **Tech Stack**
@@ -158,6 +168,8 @@ This project is developed using modern Android architecture principles, with a f
    - **SHA-256 (MessageDigest)** : Secure local password hashing for authentication.
    - **SyncManager / UserSyncManager** : Synchronization layer for uploading modified Room data to Firestore.
    - **MapperUtils** : Convert between model (User) and storage representations (UserEntity, UserOnlineEntity).
+   - **ContentProvider** : External data access layer.
+   - **Room Cursor Support** : Custom DAO queries returning Cursor for inter-process access through ContentProvider.
    
 
 ## 🚀 **How to Use**

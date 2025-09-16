@@ -58,6 +58,25 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+
+    // ✅ JVM unit test configuration
+    // By default, unit tests do not have access to Android resources (layouts, drawables, strings.xml, etc.).
+    // With “isIncludeAndroidResources = true,” we allow access to APK resources
+    // so that Android classes (e.g., android.net.Uri, Resources, R.string...) work
+    // even in “pure JVM” unit tests (without instrumentation).
+
+    // ⚠️ The “testOptions” API is marked @Incubating by the AGP team.
+    // This means that its DSL is not yet considered stable
+    // and may change in future versions of the Android Gradle plugin.
+    // 👉 It's fine to use it in production: it's the only official way
+    // to configure test options (here: including Android resources
+    // in JVM unit tests).
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     // Set JVM target for Kotlin to Java 11
     kotlinOptions {
         jvmTarget = "11"
@@ -124,6 +143,18 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.kotlinx.coroutines.test)
-
+    // For mocking Firebase Storage await() extensions + tasks
+    testImplementation (libs.firebase.storage.ktx)
+    testImplementation (libs.kotlinx.coroutines.play.services)
 
 }
+
+// 🔧 Display println() into unitary tests
+tasks.withType<Test> {
+    testLogging {
+        showStandardStreams = true
+        events("passed", "failed", "skipped", "standardOut", "standardError")
+    }
+}
+
+

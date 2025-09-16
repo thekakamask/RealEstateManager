@@ -1,8 +1,10 @@
 package com.dcac.realestatemanager.data.offlineDatabase.user
 
+import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineEntity
 import com.dcac.realestatemanager.model.User
 import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toModel
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -11,6 +13,8 @@ import kotlinx.coroutines.flow.map
 class OfflineUserRepository(
     private val userDao: UserDao // DAO INTERFACE TO ACCESS THE USER TABLE IN THE ROOM DATABASE
 ) : UserRepository {
+
+    //FOR UI
 
     // RETRIEVE A USER BY THEIR LOCAL ID FROM THE ROOM DATABASE
     override fun getUserById(id: Long): Flow<User?> {
@@ -27,9 +31,12 @@ class OfflineUserRepository(
     override fun getAllUsers(): Flow<List<User>> =
         userDao.getAllUsers().map { list -> list.map { it.toModel() } }
 
-    // STORE A USER THAT WAS ORIGINALLY CREATED FROM FIREBASE (INCLUDING SYNC INFO)
-    override suspend fun cacheUserFromFirebase(user: User) {
-        userDao.saveUserFromFirebase(user.toEntity())
+    override suspend fun insertUser(user: User) {
+        userDao.insertUser(user.toEntity())
+    }
+
+    override suspend fun insertAllUsers(users: List<User>) {
+        userDao.insertAllUsers(users.map { it.toEntity() })
     }
 
     // UPDATE AN EXISTING USER LOCALLY
@@ -38,10 +45,12 @@ class OfflineUserRepository(
         userDao.updateUser(user.toEntity())
     }
 
-    // DELETE A USER FROM LOCAL ROOM DATABASE
-    override suspend fun deleteUser(user: User) {
-        // CONVERT TO ENTITY THEN DELETE
-        userDao.deleteUser(user.toEntity())
+    override suspend fun markUserAsDeleted(user: User) {
+        userDao.markUserAsDeleted(user.id, System.currentTimeMillis())
+    }
+
+    override suspend fun markAllUsersAsDeleted() {
+        userDao.markAllUsersAsDeleted(System.currentTimeMillis())
     }
 
     // CHECK IF AN EMAIL IS ALREADY REGISTERED LOCALLY
@@ -50,9 +59,30 @@ class OfflineUserRepository(
         return userDao.emailExists(email)
     }
 
+    //FOR FIREBASE SYNC
+
+    override fun getUserEntityById(id: Long): Flow<UserEntity?> =
+        userDao.getUserById(id)
+
+    // DELETE A USER FROM LOCAL ROOM DATABASE
+    override suspend fun deleteUser(user: UserEntity) {
+        // CONVERT TO ENTITY THEN DELETE
+        userDao.deleteUser(user)
+    }
+
+    override suspend fun clearAllUsers() {
+        userDao.clearAllUsers()
+    }
+
     // RETURN ALL USERS WHO ARE MARKED AS NOT SYNCED WITH FIREBASE YET (isSynced = false)
-    override fun getUnSyncedUsers(): Flow<List<User>> {
+    override fun uploadUnSyncedUsers(): Flow<List<UserEntity>> {
         // MAP EACH UserEntity TO THE DOMAIN MODEL User
-        return userDao.getUnSyncedUsers().map { list -> list.map { it.toModel() } }
+        return userDao.uploadUnSyncedUsers()
+    }
+
+    // STORE A USER THAT WAS ORIGINALLY CREATED FROM FIREBASE (INCLUDING SYNC INFO)
+    override suspend fun downloadUserFromFirebase(user: UserOnlineEntity) {
+        userDao.downloadUserFromFirebase(user.toEntity(userId = user.roomId))
+
     }
 }

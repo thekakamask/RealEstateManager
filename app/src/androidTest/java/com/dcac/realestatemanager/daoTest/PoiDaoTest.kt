@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.daoTest
 
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dcac.realestatemanager.daoTest.fakeData.DatabaseSetup
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
@@ -14,6 +15,8 @@ import org.junit.Test
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import kotlinx.coroutines.flow.first
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 
 @RunWith(AndroidJUnit4::class)
 class PoiDaoTest: DatabaseSetup() {
@@ -126,6 +129,20 @@ class PoiDaoTest: DatabaseSetup() {
 
         // THEN: we get the expected POI
         assertEquals(poi1, result)
+    }
+
+    //This test ensures that:
+    //the Cursor is not null,
+    //it contains data (when the database is not empty),
+    //it is closed correctly (good practice).
+    @Test
+    fun getAllPoiSAsCursor_shouldReturnValidCursor() = runBlocking {
+        poiDao.insertAllPoiS(poiList)
+        val query = SimpleSQLiteQuery("SELECT * FROM poi")
+        val cursor = poiDao.getAllPoiSAsCursor(query)
+        assertNotNull(cursor)
+        assertTrue(cursor.count > 0)
+        cursor.close()
     }
 
 

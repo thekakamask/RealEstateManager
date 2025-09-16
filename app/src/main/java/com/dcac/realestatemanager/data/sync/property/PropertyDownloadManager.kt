@@ -2,9 +2,10 @@ package com.dcac.realestatemanager.data.sync.property
 
 import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
-import com.dcac.realestatemanager.data.onlineDatabase.property.PropertyOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.model.User
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 class PropertyDownloadManager(
@@ -13,47 +14,34 @@ class PropertyDownloadManager(
 ) {
 
     // Downloads all properties from Firestore and syncs to Room
-    suspend fun downloadUnSyncedProperties(userList: List<User>): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>()                      // List of success/failure results
+    suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
+        val results = mutableListOf<SyncStatus>()
 
         try {
-            // Fetch all properties from Firestore, mapped with correct User references
-            val onlineProperties = propertyOnlineRepository.getAllProperties(userList)
+            val onlineProperties = propertyOnlineRepository.getAllProperties()
 
-            for (property in onlineProperties) {
+            for (onlineProperty in onlineProperties) {
                 try {
-                    // Get local version of the property, if any
-                    val localProperty = propertyRepository.getPropertyById(property.id).first()
+                    val roomId = onlineProperty.roomId
+                    val localProperty = propertyRepository.getPropertyEntityById(roomId).first()
 
-                    if (localProperty == null) {
-                        // Local property doesn't exist ➜ insert it
-                        propertyRepository.cachePropertyFromFirebase(property.copy(isSynced = true))
-                        Log.d("PropertyDownloadManager", "Inserted property: ${property.id}")
-                        results.add(SyncStatus.Success("Property ${property.id} inserted"))
+                    val shouldDownload = localProperty == null || onlineProperty.updatedAt > localProperty.updatedAt
 
-                    } else if (property.updatedAt > localProperty.updatedAt) {
-                        // Firestore property is newer ➜ update local version
-                        propertyRepository.updateProperty(property.copy(isSynced = true))
-                        Log.d("PropertyDownloadManager", "Updated property: ${property.id}")
-                        results.add(SyncStatus.Success("Property ${property.id} updated"))
-
+                    if (shouldDownload) {
+                        propertyRepository.downloadPropertyFromFirebase(onlineProperty)
+                        results.add(SyncStatus.Success("Property $roomId downloaded"))
                     } else {
-                        // Already up-to-date ➜ no change needed
-                        Log.d("PropertyDownloadManager", "Property already up-to-date: ${property.id}")
-                        results.add(SyncStatus.Success("Property ${property.id} already up-to-date"))
+                        results.add(SyncStatus.Success("Property $roomId already up-to-date"))
                     }
-
                 } catch (e: Exception) {
-                    // Handle error syncing individual property
-                    results.add(SyncStatus.Failure("Property ${property.id}", e))
+                    results.add(SyncStatus.Failure("Property ${onlineProperty.roomId} failed to sync", e))
                 }
             }
-
-        } catch (e: Exception) {
-            // Handle general Firestore fetch failure
-            results.add(SyncStatus.Failure("PropertyDownload (fetch failed)", e))
+        } catch (e:Exception){
+            results.add(SyncStatus.Failure("Global PROPERTY download failed", e))
         }
+        return results
 
-        return results  // Return all success/failure sync results
     }
+
 }

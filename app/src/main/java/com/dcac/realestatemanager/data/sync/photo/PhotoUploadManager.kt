@@ -1,44 +1,64 @@
 package com.dcac.realestatemanager.data.sync.photo
 
-import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
-import com.dcac.realestatemanager.data.onlineDatabase.photo.PhotoOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
+
 class PhotoUploadManager(
-    private val photoRepository: PhotoRepository,                // Local (Room) photo repository
-    private val photoOnlineRepository: PhotoOnlineRepository     // Remote (Firestore) photo repository
+    private val photoRepository: PhotoRepository, // Local Room repository for photos
+    private val photoOnlineRepository: PhotoOnlineRepository // Firebase repository for photos
 ) {
 
-    // Uploads all unsynced photos (isSynced = false) to Firestore
     suspend fun syncUnSyncedPhotos(): List<SyncStatus> {
-        // Fetch all unsynced photos from Room
-        val unSyncedPhotos = photoRepository.getUnSyncedPhotos().first()
-        val results = mutableListOf<SyncStatus>()                // To track success/failure of each upload
+        val results = mutableListOf<SyncStatus>() // List to collect sync results
 
-        for (photo in unSyncedPhotos) {
-            try {
-                // Update the photo with the current timestamp for sync tracking
-                val updatedPhoto = photo.copy(updatedAt = System.currentTimeMillis())
+        try {
+            // 🔽 Fetch all photos that are not yet synced (from Room)
+            val unSyncedPhotos = photoRepository.uploadUnSyncedPhotosToFirebase().first()
 
-                // Upload the updated photo to Firestore
-                val syncedPhoto = photoOnlineRepository.uploadPhoto(updatedPhoto, updatedPhoto.id.toString())
+            for (photoEntity in unSyncedPhotos) {
+                val roomId = photoEntity.id // Local database ID (used as Firebase document ID)
 
-                // Save the synced photo back to Room with isSynced = true
-                photoRepository.updatePhoto(syncedPhoto)
+                if (photoEntity.isDeleted) {
+                    // ❌ If the photo is marked as deleted locally, delete it from Firebase
+                    photoOnlineRepository.deletePhoto(roomId.toString())
 
-                // Log and record successful sync
-                Log.d("PhotoUploadManager", "Synced photo: ${photo.uri}")
-                results.add(SyncStatus.Success("Photo ${photo.id}"))
+                    // ❌ Then delete it from Room
+                    photoRepository.deletePhoto(photoEntity)
 
-            } catch (e: Exception) {
-                // Record failure for this specific photo
-                results.add(SyncStatus.Failure("Photo ${photo.id}", e))
+                    // ✅ Add success status for deletion
+                    results.add(SyncStatus.Success("Photo $roomId deleted"))
+
+                } else {
+                    // 🕒 Update the `updatedAt` timestamp before uploading
+                    val updatedPhoto = photoEntity.copy(updatedAt = System.currentTimeMillis())
+
+                    // ⬆️ Upload the photo to Firebase (Storage + Firestore)
+                    val uploadedPhoto = photoOnlineRepository.uploadPhoto(
+                        photo = updatedPhoto.toOnlineEntity(), // Map Room entity to Firebase model
+                        photoId = roomId.toString() // Use local ID as Firebase document ID
+                    )
+
+                    // 💾 Save the uploaded Firebase photo to Room, keeping the local URI
+                    photoRepository.downloadPhotoFromFirebase(
+                        photo = uploadedPhoto,
+                        localUri = photoEntity.uri // Retain the existing local image path
+                    )
+
+                    // ✅ Add success status for upload
+                    results.add(SyncStatus.Success("Photo $roomId uploaded"))
+                }
             }
+
+        } catch (e: Exception) {
+            // ❗ Catch any global error (e.g. fetch or general sync failure)
+            results.add(SyncStatus.Failure("Global upload sync failed", e))
         }
 
-        return results  // Return list of sync results
+        // ⏎ Return the list of results (success/failure for each photo)
+        return results
     }
-
 }

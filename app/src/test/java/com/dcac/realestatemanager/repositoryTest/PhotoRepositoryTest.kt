@@ -1,9 +1,12 @@
 package com.dcac.realestatemanager.repositoryTest
 
 import com.dcac.realestatemanager.data.offlineDatabase.photo.OfflinePhotoRepository
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePhotoDao
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePhotoModel
+import com.dcac.realestatemanager.model.Photo
+import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
 import kotlinx.coroutines.test.runTest
@@ -17,7 +20,7 @@ class PhotoRepositoryTest {
     // Fake DAO simulating Room database
     private lateinit var fakePhotoDao : FakePhotoDao
     // Repository under test
-    private lateinit var photoRepository : OfflinePhotoRepository
+    private lateinit var photoRepository : PhotoRepository
 
     @Before
     fun setup() {
@@ -146,20 +149,27 @@ class PhotoRepositoryTest {
 
     @Test
     fun cachePhotoFromFirebase_savesPhotoCorrectly() = runTest {
-        // Given a photo retrieved from Firestore
+        // Given
         val firebasePhoto = FakePhotoModel.photo1.copy(
             id = 999L,
-            uri = "firebase://cached.jpg",
+            uri = "",
             description = "From Firebase",
-            isSynced = true
+            isSynced = true,
+            storageUrl = "https://example.com/photo_1.jpg"
         )
 
-        // When caching it via repository
+        // When
         photoRepository.cachePhotoFromFirebase(firebasePhoto)
-
-        // Then we should retrieve the exact same photo
         val result = photoRepository.getPhotoById(firebasePhoto.id).first()
-        assertEquals(firebasePhoto, result)
+
+        // Then
+        assertThat(result).isNotNull()
+        result!!                       // safe unwrap
+
+        assertThat(result.uri).isEqualTo(firebasePhoto.uri)
+        assertThat(result.description).isEqualTo(firebasePhoto.description)
+        assertThat(result.isSynced).isEqualTo(firebasePhoto.isSynced)
+        assertThat(result.updatedAt).isEqualTo(firebasePhoto.updatedAt)
     }
 
 

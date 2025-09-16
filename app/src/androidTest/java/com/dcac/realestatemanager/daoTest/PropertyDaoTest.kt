@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.daoTest
 
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dcac.realestatemanager.daoTest.fakeData.DatabaseSetup
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyDao
@@ -193,4 +194,19 @@ class PropertyDaoTest: DatabaseSetup() {
         assertTrue(result.none { it.id == property1.id }) // synced
         assertTrue(result.all { !it.isSynced })           // only unsynced
     }
+
+    //This test ensures that:
+    //the Cursor is not null,
+    //it contains data (when the database is not empty),
+    //it is closed correctly (good practice).
+    @Test
+    fun getAllPropertiesAsCursor_shouldReturnValidCursor() = runBlocking {
+        propertyList.forEach { propertyDao.insertProperty(it) }
+        val query = SimpleSQLiteQuery("SELECT * FROM properties")
+        val cursor = propertyDao.getAllPropertiesAsCursor(query)
+        assertNotNull(cursor)
+        assertTrue(cursor.count > 0)
+        cursor.close()
+    }
+
 }

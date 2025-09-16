@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.poi
 
+import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
@@ -13,7 +14,8 @@ class OfflinePoiRepository(
     private val userRepository: UserRepository
 ): PoiRepository {
 
-    // Returns a flow of all POI entities stored in the database.
+    // FOR UI
+
     override fun getAllPoiS(): Flow<List<Poi>> =
         poiDao.getAllPoiS().map { list -> list.map { it.toModel() } }
 
@@ -31,12 +33,9 @@ class OfflinePoiRepository(
         poiDao.updatePoi(poi.toEntity())
     }
 
-    override suspend fun cachePoiFromFirebase(poi: Poi) {
-        poiDao.savePoiFromFirebase(poi.toEntity())
+    override suspend fun markPoiAsDeleted(poi: Poi) {
+        poiDao.markPoiAsDeleted(poi.id, System.currentTimeMillis())
     }
-
-    // Deletes a specific POI entity from the database.
-    override suspend fun deletePoi(poi: Poi) = poiDao.deletePoi(poi.toEntity())
 
     override fun getPoiWithProperties(poiId: Long): Flow<PoiWithProperties> {
         val relationFlow = poiDao.getPoiWithProperties(poiId)
@@ -47,6 +46,19 @@ class OfflinePoiRepository(
         }
     }
 
-    override fun getUnSyncedPoiS(): Flow<List<Poi>> =
-        poiDao.getUnSyncedPoiS().map { list -> list.map { it.toModel() } }
+
+    //FOR FIREBASE SYNC
+
+    override fun getPoiEntityById(id: Long): Flow<PoiEntity?> =
+        poiDao.getPoiById(id)
+
+    override suspend fun deletePoi(poi: PoiEntity) =
+        poiDao.deletePoi(poi)
+
+    override fun uploadUnSyncedPoiSToFirebase(): Flow<List<PoiEntity>> =
+        poiDao.uploadUnSyncedPoiSToFirebase()
+
+    override suspend fun downloadPoiFromFirebase(poi: PoiOnlineEntity) {
+        poiDao.savePoiFromFirebase(poi.toEntity(poiId = poi.roomId))
+    }
 }

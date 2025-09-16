@@ -1,9 +1,9 @@
 package com.dcac.realestatemanager.data.sync.property
 
-import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
-import com.dcac.realestatemanager.data.onlineDatabase.property.PropertyOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 class PropertyUploadManager(
@@ -13,30 +13,34 @@ class PropertyUploadManager(
 
     // Uploads all unsynced local properties to Firestore
     suspend fun syncUnSyncedProperties(): List<SyncStatus> {
-        // Get local properties with isSynced = false
-        val unSyncedProperties = propertyRepository.getUnSyncedProperties().first()
-        val results = mutableListOf<SyncStatus>()                      // To store result of each sync
+        val results = mutableListOf<SyncStatus>()                      // List of success/failure results
 
-        for (property in unSyncedProperties) {
-            try {
-                // Update timestamp before uploading
-                val updatedProperty = property.copy(updatedAt = System.currentTimeMillis())
+        try {
+            val unSyncedProperties = propertyRepository.uploadUnSyncedPropertiesToFirebase().first()
 
-                // Upload to Firestore
-                val syncedProperty = propertyOnlineRepository.uploadProperty(updatedProperty, property.id.toString())
+            for (propertyEntity in unSyncedProperties) {
+                val propertyId = propertyEntity.id
 
-                // Mark local copy as synced
-                propertyRepository.updateProperty(syncedProperty)
+                if (propertyEntity.isDeleted) {
+                    propertyOnlineRepository.deleteProperty(propertyId.toString())
+                    propertyRepository.deleteProperty(propertyEntity)
+                    results.add(SyncStatus.Success("Property $propertyId deleted"))
+                } else {
+                    val updatedProperty = propertyEntity.copy(updatedAt = System.currentTimeMillis())
+                    val uploadedProperty = propertyOnlineRepository.uploadProperty(
+                        property = updatedProperty.toOnlineEntity(),
+                        propertyId = propertyId.toString()
+                    )
+                    propertyRepository.downloadPropertyFromFirebase(
+                        uploadedProperty
+                    )
 
-                Log.d("PropertyUploadManager", "Synced property: ${property.title}")
-                results.add(SyncStatus.Success("Property ${property.id}"))
-
-            } catch (e: Exception) {
-                // Handle individual upload failure
-                results.add(SyncStatus.Failure("Property ${property.id}", e))
+                    results.add(SyncStatus.Success("Property $propertyId uploaded"))
+                }
             }
+        } catch (e: Exception) {
+            results.add(SyncStatus.Failure("Global download sync failed", e))
         }
-
-        return results  // Return list of all sync attempts
+        return results
     }
 }

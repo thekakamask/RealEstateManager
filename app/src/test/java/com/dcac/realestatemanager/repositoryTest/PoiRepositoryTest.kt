@@ -1,7 +1,9 @@
 package com.dcac.realestatemanager.repositoryTest
 
 import com.dcac.realestatemanager.data.offlineDatabase.poi.OfflinePoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.OfflineUserRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePoiDao
 import com.dcac.realestatemanager.fakeData.fakeDao.FakeUserDao
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
@@ -23,8 +25,8 @@ class PoiRepositoryTest {
 
     private lateinit var fakePoiDao: FakePoiDao
     private lateinit var fakeUserDao: FakeUserDao
-    private lateinit var userRepository: OfflineUserRepository
-    private lateinit var poiRepository: OfflinePoiRepository
+    private lateinit var userRepository: UserRepository
+    private lateinit var poiRepository: PoiRepository
 
     @Before
     fun setup() {

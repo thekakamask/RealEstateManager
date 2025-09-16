@@ -4,5 +4,6 @@ data class PropertyPoiCross(
     val propertyId: Long,
     val poiId: Long,
     val isSynced: Boolean = false,
+    val isDeleted: Boolean = false,
     val updatedAt: Long = System.currentTimeMillis()
 )

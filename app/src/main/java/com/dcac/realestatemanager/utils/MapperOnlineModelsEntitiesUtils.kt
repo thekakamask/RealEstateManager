@@ -1,11 +1,16 @@
 package com.dcac.realestatemanager.utils
 
 import android.util.Log
-import com.dcac.realestatemanager.data.onlineDatabase.photo.PhotoOnlineEntity
-import com.dcac.realestatemanager.data.onlineDatabase.poi.PoiOnlineEntity
-import com.dcac.realestatemanager.data.onlineDatabase.property.PropertyOnlineEntity
-import com.dcac.realestatemanager.data.onlineDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
-import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineEntity
+import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineEntity
+import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
+import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
+import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineEntity
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.Property
@@ -14,127 +19,122 @@ import com.dcac.realestatemanager.model.User
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
-fun User.toOnlineEntity(): UserOnlineEntity {
+fun UserEntity.toOnlineEntity(): UserOnlineEntity {
     return UserOnlineEntity(
         email = this.email,
         agentName = this.agentName,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        roomId = this.id
     )
 }
 
-fun UserOnlineEntity.toModel(firebaseUid: String, userId: Long = 0L): User {
-    Log.d("Mapping", "Deserialized UserOnlineEntity: $this")
-    return User(
+fun UserOnlineEntity.toEntity(userId: Long): UserEntity {
+    return UserEntity(
         id = userId,
         email = this.email,
         agentName = this.agentName,
         isSynced = true,
-        firebaseUid = firebaseUid,
-        updatedAt = updatedAt
+        firebaseUid = this.firebaseUid,
+        updatedAt = this.updatedAt,
+        isDeleted = false
     )
 }
 
-fun Photo.toOnlineEntity(): PhotoOnlineEntity {
+fun PhotoEntity.toOnlineEntity(): PhotoOnlineEntity {
     return PhotoOnlineEntity(
-        uri = "",
         description = this.description,
         propertyId = this.propertyId,
         updatedAt = this.updatedAt,
-        storageUrl = this.storageUrl
+        roomId = this.id
     )
 }
 
-
-fun PhotoOnlineEntity.toModel(photoId : Long): Photo {
-    Log.d("Mapping", "Deserialized PhotoOnlineEntity: $this")
-    return Photo(
+fun PhotoOnlineEntity.toEntity(photoId : Long): PhotoEntity {
+    return PhotoEntity(
         id = photoId,
         propertyId = this.propertyId,
-        uri = "",
-        storageUrl = this.storageUrl,
         description = this.description,
         isSynced = true,
-        updatedAt = this.updatedAt
+        updatedAt = this.updatedAt,
+        isDeleted = false
     )
 }
 
+fun PoiEntity.toOnlineEntity(): PoiOnlineEntity {
+    return PoiOnlineEntity(
+        name = this.name,
+        type = this.type,
+        updatedAt = this.updatedAt,
+        roomId = this.id
+    )
+}
 
-fun PoiOnlineEntity.toModel(poiId : Long): Poi {
-    Log.d("Mapping", "Deserialized PoiOnlineEntity: $this")
-    return Poi(
+fun PoiOnlineEntity.toEntity(poiId : Long): PoiEntity {
+    return PoiEntity(
         id = poiId,
         name = this.name,
         type = this.type,
         isSynced = true,
-        updatedAt = updatedAt
+        updatedAt = this.updatedAt,
+        isDeleted = false,
     )
 }
 
-fun Poi.toOnlineEntity(): PoiOnlineEntity {
-    return PoiOnlineEntity(
-        name = this.name,
-        type = this.type,
-        updatedAt = updatedAt
-    )
-}
 
-fun PropertyOnlineEntity.toModel(propertyId: Long, user: User): Property {
-    Log.d("Mapping", "Deserialized PropertyOnlineEntity: $this")
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    return Property(
-        id = propertyId,
-        title = title,
-        type = type,
-        price = price,
-        surface = surface,
-        rooms = rooms,
-        description = description,
-        address = address,
-        isSold = isSold,
-        entryDate = LocalDate.parse(entryDate, formatter),
-        saleDate = saleDate?.let { LocalDate.parse(it, formatter) },
-        staticMapPath = staticMapPath,
-        user = user,
-        photos = emptyList(),
-        poiS = emptyList(),
-        isSynced = true,
-        updatedAt = updatedAt
-    )
-}
-
-fun Property.toOnlineEntity(): PropertyOnlineEntity {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+fun PropertyEntity.toOnlineEntity(): PropertyOnlineEntity {
     return PropertyOnlineEntity(
-        title = title,
-        type = type,
-        price = price,
-        surface = surface,
-        rooms = rooms,
-        description = description,
-        address = address,
-        isSold = isSold,
-        entryDate = entryDate.format(formatter),
-        saleDate = saleDate?.format(formatter),
-        userId = user.id,
-        staticMapPath = staticMapPath,
-        updatedAt = updatedAt
+        title = this.title,
+        type = this.type,
+        price = this.price,
+        surface = this.surface,
+        rooms = this.rooms,
+        description = this.description,
+        address = this.address,
+        isSold = this.isSold,
+        entryDate = this.entryDate,
+        saleDate = this.saleDate,
+        userId = this.userId,
+        staticMapPath = this.staticMapPath,
+        updatedAt = this.updatedAt,
+        roomId = this.id
     )
 }
 
-fun PropertyPoiCross.toOnlineEntity(): PropertyPoiCrossOnlineEntity {
+fun PropertyOnlineEntity.toEntity(propertyId: Long): PropertyEntity {
+    return PropertyEntity(
+        id = propertyId,
+        title = this.title,
+        type = this.type,
+        price = this.price,
+        surface = this.surface,
+        rooms = this.rooms,
+        description = this.description,
+        address = this.address,
+        isSold = this.isSold,
+        entryDate = this.entryDate, // déjà String "yyyy-MM-dd"
+        saleDate = this.saleDate,
+        userId = this.userId,
+        staticMapPath = this.staticMapPath,
+        isSynced = true,
+        updatedAt = this.updatedAt,
+        isDeleted = false
+    )
+}
+
+fun PropertyPoiCrossEntity.toOnlineEntity(): PropertyPoiCrossOnlineEntity {
     return PropertyPoiCrossOnlineEntity(
         propertyId = this.propertyId,
         poiId = this.poiId,
-        updatedAt = updatedAt
+        updatedAt = this.updatedAt,
     )
 }
 
-fun PropertyPoiCrossOnlineEntity.toModel(): PropertyPoiCross {
-    Log.d("Mapping", "Deserialized PropertyPoiCrossOnlineEntity: $this")
-    return PropertyPoiCross(
+fun PropertyPoiCrossOnlineEntity.toEntity(): PropertyPoiCrossEntity {
+    return PropertyPoiCrossEntity(
         propertyId = this.propertyId,
         poiId = this.poiId,
         isSynced = true,
-        updatedAt = updatedAt
+        updatedAt = this.updatedAt,
+        isDeleted = false
     )
 }

@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.repositoryTest
 
 import com.dcac.realestatemanager.data.offlineDatabase.user.OfflineUserRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakeUserDao
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel
@@ -18,7 +19,7 @@ import org.junit.Test
 class UserRepositoryTest {
 
     private lateinit var fakeUserDao: FakeUserDao
-    private lateinit var userRepository: OfflineUserRepository
+    private lateinit var userRepository: UserRepository
 
     @Before
     fun setup() {

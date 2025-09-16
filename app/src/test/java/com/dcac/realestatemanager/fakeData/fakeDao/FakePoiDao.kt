@@ -1,5 +1,7 @@
 package com.dcac.realestatemanager.fakeData.fakeDao
 
+import android.database.Cursor
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiWithPropertiesRelation
@@ -89,4 +91,8 @@ class FakePoiDao : PoiDao,
 
     override fun getUnSyncedPoiS(): Flow<List<PoiEntity>> =
         entityFlow.map { list -> list.filter { !it.isSynced } }
+
+    override fun getAllPoiSAsCursor(query: SupportSQLiteQuery): Cursor {
+        throw NotImplementedError("getAllPoiSAsCursor is not used in unit tests.")
+    }
 }

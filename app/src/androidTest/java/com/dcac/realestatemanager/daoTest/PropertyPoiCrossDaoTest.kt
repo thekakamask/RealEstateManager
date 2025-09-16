@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.daoTest
 
+import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dcac.realestatemanager.daoTest.fakeData.DatabaseSetup
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
@@ -170,6 +171,20 @@ class PropertyPoiCrossDaoTest: DatabaseSetup() {
         val result = propertyPoiCrossDao.getCrossByIds(firebaseCross.propertyId, firebaseCross.poiId).first()
         assertNotNull(result)
         assertTrue(result!!.isSynced)
+    }
+
+    //This test ensures that:
+    //the Cursor is not null,
+    //it contains data (when the database is not empty),
+    //it is closed correctly (good practice).
+    @Test
+    fun getAllCrossRefsAsCursor_shouldReturnValidCursor() = runBlocking {
+        propertyPoiCrossDao.insertAllCrossRefs(crossList)
+        val query = SimpleSQLiteQuery("SELECT * FROM property_poi_cross_ref")
+        val cursor = propertyPoiCrossDao.getAllCrossRefsAsCursor(query)
+        assertNotNull(cursor)
+        assertTrue(cursor.count > 0)
+        cursor.close()
     }
 
 

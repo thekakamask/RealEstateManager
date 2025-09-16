@@ -1,5 +1,7 @@
 package com.dcac.realestatemanager.fakeData.fakeDao
 
+import android.database.Cursor
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
@@ -61,6 +63,10 @@ class FakePropertyPoiCrossDao : PropertyPoiCrossDao,
 
     override suspend fun saveCrossRefFromFirebase(crossRef: PropertyPoiCrossEntity) {
         upsert(crossRef)
+    }
+
+    override fun getAllCrossRefsAsCursor(query: SupportSQLiteQuery): Cursor {
+        throw NotImplementedError("getAllCrossRefsAsCursor is not used in unit tests.")
     }
 
 }

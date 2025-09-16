@@ -16,16 +16,16 @@ import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.OfflineP
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.OfflineUserRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
-import com.dcac.realestatemanager.data.onlineDatabase.photo.FirebasePhotoOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.photo.PhotoOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.poi.FirebasePoiOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.poi.PoiOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.property.FirebasePropertyOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.property.PropertyOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.propertyPoiCross.FirebasePropertyPoiCrossOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.user.FirebaseUserOnlineRepository
-import com.dcac.realestatemanager.data.onlineDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.photo.FirebasePhotoOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.poi.FirebasePoiOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.property.FirebasePropertyOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.FirebasePropertyPoiCrossOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.sync.DownloadManager
 import com.dcac.realestatemanager.data.sync.photo.PhotoUploadManager
 import com.dcac.realestatemanager.data.sync.poi.PoiUploadManager
@@ -87,6 +87,8 @@ interface AppContainer{
 // Acts as a central place to create and provide all the repositories (in this case, Offline ones).
 // Uses lazy initialization to ensure each repository is created only once when first accessed.
 class AppDataContainer(private val context: Context) : AppContainer {
+
+    private val firestore by lazy { FirebaseFirestore.getInstance() }
 
     // Base URL for all Google Maps API requests (Static Maps, Directions, etc.)
     // This generic root allows us to reuse the Retrofit instance across multiple Maps-related services.
@@ -157,7 +159,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val userOnlineRepository: UserOnlineRepository by lazy {
-        FirebaseUserOnlineRepository(FirebaseFirestore.getInstance())
+        FirebaseUserOnlineRepository(firestore)
     }
 
     override val userUploadManager: UserUploadManager by lazy {
@@ -169,7 +171,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val photoOnlineRepository: PhotoOnlineRepository by lazy {
         FirebasePhotoOnlineRepository(
-            firestore = FirebaseFirestore.getInstance(),
+            firestore = firestore,
             storage = FirebaseStorage.getInstance()
         )
     }
@@ -182,7 +184,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val poiOnlineRepository: PoiOnlineRepository by lazy {
-        FirebasePoiOnlineRepository(FirebaseFirestore.getInstance())
+        FirebasePoiOnlineRepository(firestore)
     }
 
     override val poiUploadManager: PoiUploadManager by lazy {
@@ -193,7 +195,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository by lazy {
-        FirebasePropertyPoiCrossOnlineRepository(FirebaseFirestore.getInstance())
+        FirebasePropertyPoiCrossOnlineRepository(firestore)
     }
 
     override val crossSyncManager: PropertyPoiCrossUploadManager by lazy {
@@ -204,7 +206,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val propertyOnlineRepository: PropertyOnlineRepository by lazy {
-        FirebasePropertyOnlineRepository(FirebaseFirestore.getInstance())
+        FirebasePropertyOnlineRepository(
+            firestore
+        )
     }
 
     override val propertyUploadManager: PropertyUploadManager by lazy {
@@ -265,8 +269,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
             photoDownloadManager = photoDownloadManager,
             propertyDownloadManager = propertyDownloadManager,
             poiDownloadManager = poiDownloadManager,
-            propertyPoiCrossDownloadManager = propertyPoiCrossDownloadManager,
-            userRepository = userRepository
+            propertyPoiCrossDownloadManager = propertyPoiCrossDownloadManager
         )
     }
 }

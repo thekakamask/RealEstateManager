@@ -1,9 +1,9 @@
 package com.dcac.realestatemanager.data.sync.poi
 
-import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
-import com.dcac.realestatemanager.data.onlineDatabase.poi.PoiOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 class PoiUploadManager(
@@ -13,30 +13,36 @@ class PoiUploadManager(
 
     // Uploads all unsynced POIs to Firestore
     suspend fun syncUnSyncedPoiS(): List<SyncStatus> {
-        // Get all POIs from Room that are not yet synced (isSynced = false)
-        val unSyncedPoiS = poiRepository.getUnSyncedPoiS().first()
-        val results = mutableListOf<SyncStatus>()             // To collect sync status
 
-        for (poi in unSyncedPoiS) {
-            try {
-                // Update the timestamp for sync
-                val updatedPoi = poi.copy(updatedAt = System.currentTimeMillis())
+        val results = mutableListOf<SyncStatus>()
 
-                // Upload to Firestore
-                val syncedPoi = poiOnlineRepository.uploadPoi(updatedPoi, updatedPoi.id.toString())
+        try {
+            val unSyncedPoiS = poiRepository.uploadUnSyncedPoiSToFirebase().first()
 
-                // Update local Room POI as synced
-                poiRepository.updatePoi(syncedPoi)
+            for (poiEntity in unSyncedPoiS) {
+                val poiId = poiEntity.id
 
-                Log.d("PoiUploadManager", "Synced poi: ${poi.name}")
-                results.add(SyncStatus.Success("Poi ${poi.id}"))
+                if (poiEntity.isDeleted) {
+                    poiOnlineRepository.deletePoi(poiId.toString())
+                    poiRepository.deletePoi(poiEntity)
+                    results.add(SyncStatus.Success("Poi $poiId deleted"))
+                } else {
+                    val updatedPoi = poiEntity.copy(updatedAt = System.currentTimeMillis())
+                    val uploadedPoi = poiOnlineRepository.uploadPoi(
+                        poi = updatedPoi.toOnlineEntity(),
+                        poiId = poiId.toString()
+                    )
+                    poiRepository.downloadPoiFromFirebase(
+                        uploadedPoi
+                    )
 
-            } catch (e: Exception) {
-                // Handle individual sync failure
-                results.add(SyncStatus.Failure("Poi ${poi.id}", e))
+                    results.add(SyncStatus.Success("Poi $poiId uploaded"))
+
+                }
             }
+        } catch (e: Exception) {
+            results.add(SyncStatus.Failure("Global upload sync failed", e))
         }
-
-        return results  // Return all success/failure sync results
+        return results
     }
 }
