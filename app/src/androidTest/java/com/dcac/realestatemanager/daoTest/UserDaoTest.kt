@@ -11,6 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 
@@ -19,63 +20,152 @@ class UserDaoTest: DatabaseSetup() {
 
     private lateinit var userDao: UserDao
 
-    private val users = FakeUserEntity.userEntityList
+    private val user1 = FakeUserEntity.user1
+    private val user2 = FakeUserEntity.user2
+    private val user3 = FakeUserEntity.user3
+    private val allUsersNotDeleted = FakeUserEntity.userEntityListNotDeleted
+    private val allUsers = FakeUserEntity.userEntityList
 
     @Before
     fun setupDao() {
+
         userDao = db.userDao()
     }
 
     @Test
-    fun insert_and_getUserById_shouldReturnUser() = runBlocking {
-        userDao.saveUserFromFirebase(users[0])
-        val retrievedUser = userDao.getUserById(users[0].id).first()
-        assertEquals(users[0], retrievedUser)
+    fun getUserById_shouldReturnCorrectUser() = runBlocking {
+        userDao.insertUser(user1)
+        val result = userDao.getUserById(user1.id).first()
+        assertEquals(user1, result)
     }
 
     @Test
     fun getUserByEmail_shouldReturnCorrectUser() = runBlocking {
-        userDao.saveUserFromFirebase(users[0])
-        val retrievedUser = userDao.getUserByEmail(users[0].email).first()
-        assertEquals(users[0], retrievedUser)
+        userDao.insertUser(user2)
+        val result = userDao.getUserByEmail(user2.email).first()
+        val expected = user2.copy(isSynced = false)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun getAllUsers_shouldReturnAllInserted() = runBlocking {
-        users.forEach { userDao.saveUserFromFirebase(it) }
-        val all = userDao.getAllUsers().first()
-        assertEquals(users, all)
+    fun getAllUsers_shouldReturnAllUsersNotMarkAsDeleted() = runBlocking {
+        userDao.insertAllUsers(allUsers)
+        val result = userDao.getAllUsers().first()
+        val expected = allUsersNotDeleted.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
     }
 
     @Test
-    fun updateUser_shouldUpdateExisting() = runBlocking {
-        userDao.saveUserFromFirebase(users[0])
-        val updatedUser = users[0].copy(agentName = "Alice Updated")
-        userDao.updateUser(updatedUser)
-        val retrievedUser = userDao.getUserById(users[0].id).first()
-        assertEquals("Alice Updated", retrievedUser?.agentName)
+    fun getUserByIdIncludeDeleted_shouldReturnCorrectUser() = runBlocking {
+        userDao.insertUser(user3)
+        val result = userDao.getUserByIdIncludeDeleted(user3.id).first()
+        assertEquals(user3, result)
     }
 
     @Test
-    fun deleteUser_shouldRemoveUser() = runBlocking {
-        userDao.saveUserFromFirebase(users[0])
-        userDao.deleteUser(users[0])
-        val deletedUser = userDao.getAllUsers().first()
-        assertTrue(deletedUser.isEmpty())
+    fun getAllUserIncludeDeleted_shouldReturnAllUsers() = runBlocking {
+        userDao.insertAllUsers(allUsers)
+        val result = userDao.getAllUserIncludeDeleted().first()
+        val expected = allUsers.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
     }
 
     @Test
     fun emailExists_shouldReturnTrueWhenEmailPresent() = runBlocking {
-        userDao.saveUserFromFirebase(users[0])
-        val exists = userDao.emailExists(users[0].email).first()
-        assertTrue(exists)
+        userDao.insertAllUsers(allUsers)
+        val result = userDao.emailExists("agent2@example.com").first()
+        val expected = true
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun insertUser_shouldInsertUser() = runBlocking {
+        userDao.insertUser(user1)
+        val result = userDao.getUserById(user1.id).first()
+        assertEquals(user1, result)
+    }
+
+    @Test
+    fun insertAllUsers_shouldInsertAllUsers() = runBlocking {
+        userDao.insertAllUsers(allUsers)
+        val result = userDao.getAllUsers().first()
+        val expected = allUsersNotDeleted.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun updateUser_shouldUpdateUser() = runBlocking {
+        userDao.insertUser(user2)
+        val updatedUser = user2.copy(
+            agentName = "Updated Name",
+            email = "Updated Email",
+            updatedAt = System.currentTimeMillis()
+        )
+        userDao.updateUser(updatedUser)
+        val result = userDao.getUserById(user2.id).first()
+
+        assertEquals("Updated Name", result?.agentName)
+        assertEquals("Updated Email", result?.email)
+        assertEquals(false, result?.isSynced)
+        assertEquals(updatedUser.updatedAt, result?.updatedAt)
+    }
+
+    @Test
+    fun markUserAsDeleted_shouldMarkUserAsDeleted() = runBlocking {
+        userDao.insertUser(user2)
+        userDao.markUserAsDeleted(user2.id, System.currentTimeMillis())
+        val result = userDao.getUserById(user2.id).first()
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun markAllUsersAsDeleted_shouldMarkAllUsersAsDeleted() = runBlocking {
+        userDao.insertAllUsers(allUsers)
+        userDao.markAllUsersAsDeleted(System.currentTimeMillis())
+        val result = userDao.getAllUsers().first()
+        assertTrue(result.all { it.isDeleted })
+    }
+
+    @Test
+    fun deleteUser_shouldDeleteUser() = runBlocking {
+        userDao.insertUser(user3)
+        userDao.deleteUser(user3)
+        val result = userDao.getUserByIdIncludeDeleted(user3.id).first()
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun clearAllUsers_shouldClearAllUsers() = runBlocking {
+        userDao.insertAllUsers(allUsers)
+        userDao.markUserAsDeleted(allUsers[0].id, System.currentTimeMillis())
+
+        userDao.clearAllUsersDeleted()
+
+        val result = userDao.getAllUserIncludeDeleted().first()
+
+        assertFalse(result.any { it.id == allUsers[0].id})
+        assertFalse(result.any { it.id == allUsers[2].id })
+
+        assertTrue(result.any { it.id == allUsers[1].id })
+
+        assertEquals(1 , result.size)
     }
 
     @Test
     fun getUnSyncedUsers_shouldReturnOnlyUnsynced() = runBlocking {
-        users.forEach { userDao.saveUserFromFirebase(it) }
-        val unSyncedUsers = userDao.getUnSyncedUsers().first()
-        assertEquals(listOf(users[1]), unSyncedUsers)
+        userDao.insertAllUsers(allUsers)
+
+        val result = userDao.uploadUnSyncedUsers().first()
+        val expected = allUsers.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun downloadUserFromFirebase_shouldInsertUser() = runBlocking {
+        userDao.downloadUserFromFirebase(user1)
+        val result = userDao.getUserById(user1.id).first()
+        val expected = user1.copy(isSynced = true)
+        assertEquals(expected, result)
     }
 
     //This test ensures that:
@@ -83,8 +173,8 @@ class UserDaoTest: DatabaseSetup() {
     //it contains data (when the database is not empty),
     //it is closed correctly (good practice).
     @Test
-    fun getAllUsersAsCursor_shouldReturnValidCursor() = runBlocking {
-        users.forEach { userDao.saveUserFromFirebase(it) }
+    fun getAllUserAsCursor_shouldReturnValidCursor() = runBlocking {
+        userDao.insertAllUsers(allUsers)
         val query = SimpleSQLiteQuery("SELECT * FROM users")
         val cursor = userDao.getAllUsersAsCursor(query)
         assertNotNull(cursor)

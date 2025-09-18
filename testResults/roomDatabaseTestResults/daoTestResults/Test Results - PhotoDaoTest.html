@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">445 ms</div>
+                <div class="time" xmlns="">775 ms</div>
                 <h1>
-                    PhotoDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">10 total, </span><span class="passed">10 passed</span></strong>
+                    PhotoDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">14 total, </span><span class="passed">14 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,106 +593,146 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">445 ms</div>
+                                <div class="time">775 ms</div>
                             </em>com.dcac.realestatemanager.daoTest.PhotoDaoTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">122 ms</div>
+                                        <div class="time">176 ms</div>
                                     </em><em class="status">passed</em>insertPhoto_shouldInsertSinglePhoto</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.411  4352  4379 I TestRunner: started: insertPhoto_shouldInsertSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.427  1954  4383 I AdvertisingIdClient: shouldSendLog -1&#13;<br/>09-05 15:35:52.431  1954  4383 I AdvertisingIdClient: GetInfoInternal elapse 42ms&#13;<br/>09-05 15:35:52.435  1954  1954 I AdvertisingIdClient: getting error as 17: API: ClientTelemetry.API is not available on this device. Connection failed with: ConnectionResult{statusCode=API_DISABLED, resolution=null, message=null}&#13;<br/>09-05 15:35:52.571  4352  4379 I TestRunner: finished: insertPhoto_shouldInsertSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:35.740 30211 30239 I TestRunner: started: insertPhoto_shouldInsertSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:35.910 30211 30239 I TestRunner: finished: insertPhoto_shouldInsertSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">31 ms</div>
+                                        <div class="time">9 ms</div>
+                                    </em><em class="status">passed</em>getPhotosByPropertyIdIncludeDeleted_shouldReturnCorrectPhotos</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-18 16:33:35.922 30211 30239 I TestRunner: started: getPhotosByPropertyIdIncludeDeleted_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:35.976 30211 30239 I TestRunner: finished: getPhotosByPropertyIdIncludeDeleted_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">56 ms</div>
+                                    </em><em class="status">passed</em>deletePhoto_shouldRemoveDeletedPhotoFromDatabase</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-18 16:33:35.981 30211 30239 I TestRunner: started: deletePhoto_shouldRemoveDeletedPhotoFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.030 30211 30239 I TestRunner: finished: deletePhoto_shouldRemoveDeletedPhotoFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">84 ms</div>
+                                    </em><em class="status">passed</em>markPhotosAsDeletedByProperty_shouldHidePhotosFromQueries</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-18 16:33:36.036 30211 30239 I TestRunner: started: markPhotosAsDeletedByProperty_shouldHidePhotosFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.046   714   837 I RoleService: Granting default roles...&#13;<br/>09-18 16:33:36.057  1158  1158 D CarrierSvcBindHelper: onPackageModified: com.dcac.realestatemanager&#13;<br/>09-18 16:33:36.058   989   989 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0&#13;<br/>09-18 16:33:36.062  1158  1158 D CarrierSvcBindHelper: No carrier app for: 0&#13;<br/>09-18 16:33:36.067  1527  1527 I AiAiEcho: AppFetcherImpl onPackageChanged com.dcac.realestatemanager.&#13;<br/>09-18 16:33:36.067   714  1096 W Role    : Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80&#13;<br/>09-18 16:33:36.068  1226  1299 D PackageUpdatedTask: Package updated: mOp=UPDATE packages=[com.dcac.realestatemanager]&#13;<br/>09-18 16:33:36.070  1527 30141 I AiAiEcho: AppIndexer Package:[com.dcac.realestatemanager] UserProfile:[0] Enabled:[true].&#13;<br/>09-18 16:33:36.071  1527 30141 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.dcac.realestatemanager], userId:[0], reason:[package is updated.].&#13;<br/>09-18 16:33:36.074  1158  1158 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>09-18 16:33:36.078   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION&#13;<br/>09-18 16:33:36.079  1158  1158 E CellBroadcastUtils: getDefaultCellBroadcastReceiverPackageName: no package found&#13;<br/>09-18 16:33:36.091   714  1096 W Role    : Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58&#13;<br/>09-18 16:33:36.099 16759 18380 I PermissionControllerServiceImpl: Updating user sensitive for uid 10287&#13;<br/>09-18 16:33:36.108   714   714 W IPCThreadState: Sending oneway calls to frozen process.&#13;<br/>09-18 16:33:36.110  1226  1226 D StatsLog: LAUNCHER_ALLAPPS_COUNT&#13;<br/>09-18 16:33:36.113  1158  1357 D ImsResolver: maybeAddedImsService, packageName: com.dcac.realestatemanager&#13;<br/>09-18 16:33:36.117 30211 30239 I TestRunner: finished: markPhotosAsDeletedByProperty_shouldHidePhotosFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">61 ms</div>
+                                    </em><em class="status">passed</em>markPhotoAsDeleted_shouldHidePhotoFromQueries</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-18 16:33:36.120 30211 30239 I TestRunner: started: markPhotoAsDeleted_shouldHidePhotoFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.126  1226  1699 D EGL_emulation: app_time_stats: avg=199.69ms min=11.00ms max=4221.98ms count=23&#13;<br/>09-18 16:33:36.165   405 30248 I resolv  : GetAddrInfoHandler::run: {107 786539 107 983147 10143 0}&#13;<br/>09-18 16:33:36.165   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET&#13;<br/>09-18 16:33:36.167   405 30250 I resolv  : res_nmkquery: (QUERY, IN, A)&#13;<br/>09-18 16:33:36.167   405 30249 I resolv  : res_nmkquery: (QUERY, IN, AAAA)&#13;<br/>09-18 16:33:36.178   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER&#13;<br/>09-18 16:33:36.187 30211 30239 I TestRunner: finished: markPhotoAsDeleted_shouldHidePhotoFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">37 ms</div>
                                     </em><em class="status">passed</em>insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.574  4352  4379 I TestRunner: started: insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.591  1911  4273 I Finsky  : [156] Package com.google.android.gms is verified.&#13;<br/>09-05 15:35:52.620  4352  4379 I TestRunner: finished: insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">30 ms</div>
-                                    </em><em class="status">passed</em>deletePhotosByPropertyId_shouldRemoveAllPhotosForProperty</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-05 15:35:52.623  4352  4379 I TestRunner: started: deletePhotosByPropertyId_shouldRemoveAllPhotosForProperty(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.645  1954  4383 W FA-SVC  : Service response is missing Install Referrer install timestamp&#13;<br/>09-05 15:35:52.652  1911  1911 I Finsky  : [2] Memory trim requested to level 40&#13;<br/>09-05 15:35:52.653  2570  2570 I Finsky:background: [2] Memory trim requested to level 40&#13;<br/>09-05 15:35:52.654  1911  1911 I Finsky  : [2] Flushing in-memory image cache&#13;<br/>09-05 15:35:52.669  4352  4379 I TestRunner: finished: deletePhotosByPropertyId_shouldRemoveAllPhotosForProperty(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:36.192 30211 30239 I TestRunner: started: insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.194  1550 30247 D TrafficStats: tagSocket(115) with statsTag=0x30003300, statsUid=10287&#13;<br/>09-18 16:33:36.243 30211 30239 I TestRunner: finished: insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">57 ms</div>
-                                    </em><em class="status">passed</em>deletePhoto_shouldRemoveSinglePhoto</span>
+                                    </em><em class="status">passed</em>deletePhotosByPropertyId_shouldRemoveDeletedPhotosFromDatabase</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.671  4352  4379 I TestRunner: started: deletePhoto_shouldRemoveSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.704  4352  4379 I TestRunner: finished: deletePhoto_shouldRemoveSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:36.247 30211 30239 I TestRunner: started: deletePhotosByPropertyId_shouldRemoveDeletedPhotosFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.272   405 30251 I resolv  : GetAddrInfoHandler::run: {107 786539 107 983147 10143 0}&#13;<br/>09-18 16:33:36.274   405 30253 I resolv  : res_nmkquery: (QUERY, IN, A)&#13;<br/>09-18 16:33:36.274   405 30252 I resolv  : res_nmkquery: (QUERY, IN, AAAA)&#13;<br/>09-18 16:33:36.299   405 30253 I resolv  : res_nsend: used send_dg 77 terrno: 0&#13;<br/>09-18 16:33:36.299   405 30252 I resolv  : res_nsend: used send_dg 101 terrno: 0&#13;<br/>09-18 16:33:36.299   405 30253 I resolv  : doQuery: rcode=0, ancount=2, return value=77&#13;<br/>09-18 16:33:36.299   405 30252 I resolv  : doQuery: rcode=0, ancount=2, return value=101&#13;<br/>09-18 16:33:36.300  1550 30247 D TrafficStats: tagSocket(119) with statsTag=0x30003300, statsUid=10287&#13;<br/>09-18 16:33:36.306 30211 30239 I TestRunner: finished: deletePhotosByPropertyId_shouldRemoveDeletedPhotosFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">29 ms</div>
+                                        <div class="time">57 ms</div>
                                     </em><em class="status">passed</em>getAllPhotosAsCursor_shouldReturnValidCursor</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.706  4352  4379 I TestRunner: started: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.728  1624  2019 I IPCThreadState: oneway function results for code 2 on binder at 0x74cbf4583470 will be dropped but finished with status UNKNOWN_TRANSACTION&#13;<br/>09-05 15:35:52.738  4352  4379 I TestRunner: finished: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:36.311 30211 30239 I TestRunner: started: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.345 30211 30239 I TestRunner: finished: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">31 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPhotos_shouldReturnOnlyUnsynced</span>
+                                        <div class="time">34 ms</div>
+                                    </em><em class="status">passed</em>savePhotoFromFirebase_shouldSetIsSyncedToTrue</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.741  4352  4379 I TestRunner: started: getUnSyncedPhotos_shouldReturnOnlyUnsynced(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.778  4352  4379 I TestRunner: finished: getUnSyncedPhotos_shouldReturnOnlyUnsynced(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:36.348 30211 30239 I TestRunner: started: savePhotoFromFirebase_shouldSetIsSyncedToTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.391 30211 30239 I TestRunner: finished: savePhotoFromFirebase_shouldSetIsSyncedToTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">31 ms</div>
-                                    </em><em class="status">passed</em>getAllPhotos_shouldReturnAllInsertedPhotos</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-05 15:35:52.780  4352  4379 I TestRunner: started: getAllPhotos_shouldReturnAllInsertedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.797  1709  1709 W TimedProcessReaper: Memory state is: 400&#13;<br/>09-05 15:35:52.799  1709  1709 W TimedProcessReaper: onTrimMemory=40. Killing process to refresh configuration&#13;<br/>09-05 15:35:52.800  1709  1709 I Process : Sending signal. PID: 1709 SIG: 9&#13;<br/>09-05 15:35:52.812  4352  4379 I TestRunner: finished: getAllPhotos_shouldReturnAllInsertedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">30 ms</div>
+                                        <div class="time">35 ms</div>
                                     </em><em class="status">passed</em>getPhotoById_shouldReturnCorrectPhoto</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.814  4352  4379 I TestRunner: started: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.820   487   487 I Zygote  : Process 1709 exited due to signal 9 (Killed)&#13;<br/>09-05 15:35:52.824   736   905 D ConnectivityService: releasing NetworkRequest [ REQUEST id=93, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10149 RequestorUid: 10149 RequestorPkg: com.google.android.googlequicksearchbox UnderlyingNetworks: Null] ] (release request)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: Uncaught exception from death notification&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: java.lang.SecurityException: Specified package "com.google.android.googlequicksearchbox" under uid 1000 but it is not&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at com.android.server.appop.AppOpsService.verifyAndGetBypass(AppOpsService.java:5036)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at com.android.server.appop.AppOpsService.verifyAndGetBypass(AppOpsService.java:4881)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at com.android.server.appop.AppOpsService.verifyAndGetBypass(AppOpsService.java:4873)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at com.android.server.appop.AppOpsService.stopWatchingAsyncNoted(AppOpsService.java:3815)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at com.android.server.appop.AppOpsService.lambda$startWatchingAsyncNoted$8(AppOpsService.java:3791)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at com.android.server.appop.AppOpsService.$r8$lambda$8-LvphSu5hQo1Pm8R22O3seI00E(AppOpsService.java:0)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at com.android.server.appop.AppOpsService$$ExternalSyntheticLambda1.onInterfaceDied(R8$$SyntheticClass:0)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at android.os.RemoteCallbackList$Builder$1.onCallbackDied(RemoteCallbackList.java:337)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at android.os.RemoteCallbackList$Interface.binderDied(RemoteCallbackList.java:229)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at android.os.IBinder$DeathRecipient.binderDied(IBinder.java:340)&#13;<br/>09-05 15:35:52.832   736  1379 W BinderNative: 	at android.os.BinderProxy.sendDeathNotice(BinderProxy.java:780)&#13;<br/>09-05 15:35:52.834   736   780 I libprocessgroup: Removed cgroup /sys/fs/cgroup/apps/uid_10149/pid_1709&#13;<br/>09-05 15:35:52.836   736   905 D ConnectivityService: releasing NetworkRequest [ REQUEST id=100, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10149 RequestorUid: 10149 RequestorPkg: com.google.android.googlequicksearchbox UnderlyingNetworks: Null] ] (release request)&#13;<br/>09-05 15:35:52.837   736   905 D ConnectivityService: releasing NetworkRequest [ REQUEST id=173, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10149 RequestorUid: 10149 RequestorPkg: com.google.android.googlequicksearchbox UnderlyingNetworks: Null] ] (release request)&#13;<br/>09-05 15:35:52.837   736   905 D ConnectivityService: releasing NetworkRequest [ REQUEST id=175, [ Transports: CELLULAR Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VPN&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10149 RequestorUid: 10149 RequestorPkg: com.google.android.googlequicksearchbox UnderlyingNetworks: Null] ] (release request)&#13;<br/>09-05 15:35:52.842   736   905 I ConnectivityService: Update capabilities for net 101 : -FOREGROUND&#13;<br/>09-05 15:35:52.857  1624  2067 I xyq     : processToken binder died, :search process likely died&#13;<br/>09-05 15:35:52.859  4352  4379 I TestRunner: finished: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:36.394 30211 30239 I TestRunner: started: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.429 30211 30239 I TestRunner: finished: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">30 ms</div>
-                                    </em><em class="status">passed</em>savePhotoFromFirebase_shouldInsertOrReplacePhoto</span>
+                                        <div class="time">37 ms</div>
+                                    </em><em class="status">passed</em>getAllPhotos_shouldReturnAllInsertedPhotosNotMarkAsDeleted</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.862  4352  4379 I TestRunner: started: savePhotoFromFirebase_shouldInsertOrReplacePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.890   736   905 E IPCThreadState: Binder transaction failure. id: 212081, BR_*: 29189, error: -22 (Invalid argument)&#13;<br/>09-05 15:35:52.894   736   905 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ LISTEN id=101, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10149 RequestorUid: 10149 RequestorPkg: com.google.android.googlequicksearchbox UnderlyingNetworks: Null] ]&#13;<br/>09-05 15:35:52.896  4352  4379 I TestRunner: finished: savePhotoFromFirebase_shouldInsertOrReplacePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:36.433 30211 30239 I TestRunner: started: getAllPhotos_shouldReturnAllInsertedPhotosNotMarkAsDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.471 30211 30239 I TestRunner: finished: getAllPhotos_shouldReturnAllInsertedPhotosNotMarkAsDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">54 ms</div>
+                                        <div class="time">60 ms</div>
+                                    </em><em class="status">passed</em>getUnSyncedPhotos_shouldReturnUnSyncedPhotos</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-18 16:33:36.475 30211 30239 I TestRunner: started: getUnSyncedPhotos_shouldReturnUnSyncedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.531 30211 30239 I TestRunner: finished: getUnSyncedPhotos_shouldReturnUnSyncedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">35 ms</div>
+                                    </em><em class="status">passed</em>getPhotoIncludeDeletedById_shouldReturnCorrectPhoto</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">09-18 16:33:36.535 30211 30239 I TestRunner: started: getPhotoIncludeDeletedById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.542 15051 15089 I Bugle   : BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of buoi@cd3b7b3&#13;<br/>09-18 16:33:36.570 30211 30239 I TestRunner: finished: getPhotoIncludeDeletedById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">37 ms</div>
                                     </em><em class="status">passed</em>updatePhoto_shouldModifyPhotoCorrectly</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-05 15:35:52.899  4352  4379 I TestRunner: started: updatePhoto_shouldModifyPhotoCorrectly(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-05 15:35:52.936  4352  4379 I TestRunner: finished: updatePhoto_shouldModifyPhotoCorrectly(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">09-18 16:33:36.574 30211 30239 I TestRunner: started: updatePhoto_shouldModifyPhotoCorrectly(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.618 30211 30239 I TestRunner: finished: updatePhoto_shouldModifyPhotoCorrectly(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>

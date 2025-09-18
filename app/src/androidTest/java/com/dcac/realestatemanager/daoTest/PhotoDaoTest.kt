@@ -24,19 +24,19 @@ class PhotoDaoTest: DatabaseSetup() {
     private val photo1 = FakePhotoEntity.photo1
     private val photo2 = FakePhotoEntity.photo2
     private val photo3 = FakePhotoEntity.photo3
-    private val photoList = listOf(photo1, photo2, photo3)
+    private val allPhotosNotDeleted = FakePhotoEntity.photoEntityListNotDeleted
     private val allPhotos = FakePhotoEntity.photoEntityList
 
 
     @Before
     fun setup() = runBlocking {
         // insert related users and properties before using PhotoDao
-        db.userDao().saveUserFromFirebase(FakeUserEntity.user1)
-        db.userDao().saveUserFromFirebase(FakeUserEntity.user2)
+        FakeUserEntity.userEntityList.forEach{
+            db.userDao().insertUser(it)
+        }
         FakePropertyEntity.propertyEntityList.forEach {
             db.propertyDao().insertProperty(it)
         }
-
         photoDao = db.photoDao()
     }
 
@@ -44,97 +44,122 @@ class PhotoDaoTest: DatabaseSetup() {
     fun getPhotoById_shouldReturnCorrectPhoto() = runBlocking {
         // Given
         photoDao.insertPhoto(photo1)
-
         // When
         val result = photoDao.getPhotoById(photo1.id).first()
-
         // Then
         assertEquals(photo1, result)
     }
 
     @Test
     fun insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos() = runBlocking {
-        photoDao.insertPhotos(photoList)
-        val result = photoDao.getPhotosByPropertyId(photo1.propertyId).first()
-        val expected = listOf(photo1, photo2) // photo1 & photo2 share same propertyId
+        photoDao.insertPhotos(allPhotos)
+        val result = photoDao.getPhotosByPropertyId(photo2.propertyId).first()
+        val expected = allPhotos
+            .filter { it.propertyId == photo2.propertyId }
+            .map { it.copy(isSynced = false) }
         assertEquals(expected, result)
     }
 
     @Test
     fun insertPhoto_shouldInsertSinglePhoto() = runBlocking {
         photoDao.insertPhoto(photo1)
-        val result = photoDao.getPhotosByPropertyId(photo1.propertyId).first()
+        val result = photoDao.getAllPhotos().first()
         assertEquals(listOf(photo1), result)
     }
 
     @Test
-    fun getAllPhotos_shouldReturnAllInsertedPhotos() = runBlocking {
+    fun getAllPhotos_shouldReturnAllInsertedPhotosNotMarkAsDeleted() = runBlocking {
         photoDao.insertPhotos(allPhotos)
         val result = photoDao.getAllPhotos().first()
-        assertEquals(allPhotos, result)
+        val expected = allPhotosNotDeleted.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun getPhotoIncludeDeletedById_shouldReturnCorrectPhoto() = runBlocking {
+        photoDao.insertPhoto(photo3)
+        val result = photoDao.getPhotoByIdIncludeDeleted(photo3.id).first()
+        assertEquals(photo3, result)
+    }
+
+    @Test
+    fun getPhotosByPropertyIdIncludeDeleted_shouldReturnCorrectPhotos() = runBlocking {
+        photoDao.insertPhotos(allPhotos)
+        val result = photoDao.getPhotosByPropertyIdIncludeDeleted(photo3.propertyId).first()
+        val expected = allPhotos.filter { it.propertyId == photo3.propertyId }
+        assertEquals(expected, result)
     }
 
     @Test
     fun updatePhoto_shouldModifyPhotoCorrectly() = runBlocking {
-        photoDao.insertPhoto(photo1)
+        photoDao.insertPhoto(photo2)
 
-        val updated = photo1.copy(
+        val updated = photo2.copy(
             uri = "file://updated_photo.jpg",
             description = "Updated description",
-            isSynced = true
+            updatedAt = System.currentTimeMillis()
         )
         photoDao.updatePhoto(updated)
 
-        val result = photoDao.getPhotoById(photo1.id).first()
+        val result = photoDao.getPhotoById(photo2.id).first()
 
         assertEquals(updated.uri, result?.uri)
         assertEquals(updated.description, result?.description)
-        assertEquals(true, result?.isSynced)
+        assertEquals(false, result?.isSynced)
+        assertEquals(updated.updatedAt, result?.updatedAt)
     }
 
     @Test
-    fun savePhotoFromFirebase_shouldInsertOrReplacePhoto() = runBlocking {
-        // Given a new photo with a unique ID
-        val firebasePhoto = photo1.copy(id = 999L, uri = "firebase://photo.jpg")
+    fun markPhotoAsDeleted_shouldHidePhotoFromQueries() = runBlocking {
+        photoDao.insertPhoto(photo2)
+        photoDao.markPhotoAsDeleted(photo2.id, System.currentTimeMillis())
 
-        // When saving via Firestore
-        photoDao.savePhotoFromFirebase(firebasePhoto)
+        val result = photoDao.getPhotoById(photo2.id).first()
 
-        // Then it should be retrievable
-        val result = photoDao.getPhotoById(firebasePhoto.id).first()
-
-        assertEquals(firebasePhoto, result)
-    }
-
-
-    @Test
-    fun deletePhotosByPropertyId_shouldRemoveAllPhotosForProperty() = runBlocking {
-        photoDao.insertPhotos(photoList)
-        photoDao.deletePhotosByPropertyId(photo1.propertyId)
-        val result = photoDao.getPhotosByPropertyId(photo1.propertyId).first()
-        assertTrue(result.isEmpty())
+        assertEquals(null, result)
     }
 
     @Test
-    fun deletePhoto_shouldRemoveSinglePhoto() = runBlocking {
-        photoDao.insertPhotos(photoList)
-        photoDao.deletePhoto(photo2)
-        val result = photoDao.getPhotosByPropertyId(photo2.propertyId).first()
+    fun markPhotosAsDeletedByProperty_shouldHidePhotosFromQueries() = runBlocking {
+        photoDao.insertPhotos(allPhotosNotDeleted)
+        photoDao.markPhotosAsDeletedByProperty(photo2.propertyId, System.currentTimeMillis())
+
+        val result = photoDao.getAllPhotos().first()
         assertEquals(listOf(photo1), result)
     }
 
     @Test
-    fun getUnSyncedPhotos_shouldReturnOnlyUnsynced() = runBlocking {
-        // Given
-        photoDao.insertPhotos(photoList) // photo1 = isSynced = true, les autres = false
+    fun deletePhoto_shouldRemoveDeletedPhotoFromDatabase() = runBlocking {
+        photoDao.savePhotoFromFirebase(photo3)
+        photoDao.deletePhoto(photo3)
+        val result = photoDao.getPhotoByIdIncludeDeleted(photo3.id).first()
+        assertEquals(null, result)
+    }
 
-        // When
+    @Test
+    fun deletePhotosByPropertyId_shouldRemoveDeletedPhotosFromDatabase() = runBlocking {
+        allPhotos.forEach {
+            photoDao.savePhotoFromFirebase(it)
+        }
+        photoDao.deletePhotosByPropertyId(photo3.propertyId)
+        val result = photoDao.getPhotosByPropertyIdIncludeDeleted(photo3.propertyId).first()
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun getUnSyncedPhotos_shouldReturnUnSyncedPhotos() = runBlocking {
+        photoDao.insertPhotos(allPhotos)
         val result = photoDao.getUnSyncedPhotos().first()
+        val expected = allPhotos.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
+    }
 
-        // Then
-        assertTrue(result.contains(photo2))
-        assertTrue(result.contains(photo3))
-        assertTrue(result.none { it.id == photo1.id })
+    @Test
+    fun savePhotoFromFirebase_shouldSetIsSyncedToTrue() = runBlocking {
+        photoDao.savePhotoFromFirebase(photo1)
+        val result = photoDao.getPhotoById(photo1.id).first()
+        val expected = photo1.copy(isSynced = true)
+        assertEquals(expected, result)
     }
 
     //This test ensures that:
@@ -143,7 +168,7 @@ class PhotoDaoTest: DatabaseSetup() {
     //it is closed correctly (good practice).
     @Test
     fun getAllPhotosAsCursor_shouldReturnValidCursor() = runBlocking {
-        photoDao.insertPhotos(photoList)
+        photoDao.insertPhotos(allPhotos)
         val query = SimpleSQLiteQuery("SELECT * FROM photos")
         val cursor = photoDao.getAllPhotosAsCursor(query)
         assertNotNull(cursor)

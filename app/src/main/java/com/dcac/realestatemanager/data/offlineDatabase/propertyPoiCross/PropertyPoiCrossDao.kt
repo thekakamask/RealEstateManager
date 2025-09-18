@@ -3,11 +3,8 @@ package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
-import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 
@@ -30,14 +27,58 @@ interface PropertyPoiCrossDao {
     @Query("SELECT * FROM property_poi_cross_ref WHERE propertyId = :propertyId AND poiId = :poiId AND is_deleted = 0")
     fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCrossRef(crossRef: PropertyPoiCrossEntity)
+    @Query("""
+        INSERT OR REPLACE INTO property_poi_cross_ref (
+            propertyId, poiId, is_deleted, is_synced, updated_at
+        ) VALUES (
+            :propertyId, :poiId, :isDeleted, 0, :updatedAt
+        )
+    """)
+    suspend fun insertCrossRefForcedSyncFalse(
+        propertyId: Long,
+        poiId: Long,
+        isDeleted: Boolean,
+        updatedAt: Long
+    )
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCrossEntity>)
+    // --- Wrapper insert ---
+    suspend fun insertCrossRef(crossRef: PropertyPoiCrossEntity) {
+        insertCrossRefForcedSyncFalse(
+            propertyId = crossRef.propertyId,
+            poiId = crossRef.poiId,
+            isDeleted = crossRef.isDeleted,
+            updatedAt = crossRef.updatedAt
+        )
+    }
 
-    @Update
-    suspend fun updateCrossRef(propertyPoiCrossEntity: PropertyPoiCrossEntity)
+    // --- Wrapper insert all ---
+    suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCrossEntity>) {
+        crossRefs.forEach { insertCrossRef(it) }
+    }
+
+    @Query("""
+        UPDATE property_poi_cross_ref SET 
+            is_deleted = :isDeleted,
+            is_synced = 0,
+            updated_at = :updatedAt
+        WHERE propertyId = :propertyId AND poiId = :poiId
+    """)
+    suspend fun updateCrossRefForcedSyncFalse(
+        propertyId: Long,
+        poiId: Long,
+        isDeleted: Boolean,
+        updatedAt: Long
+    )
+
+    // --- Wrapper update ---
+    suspend fun updateCrossRef(propertyPoiCrossEntity: PropertyPoiCrossEntity) {
+        updateCrossRefForcedSyncFalse(
+            propertyId = propertyPoiCrossEntity.propertyId,
+            poiId = propertyPoiCrossEntity.poiId,
+            isDeleted = propertyPoiCrossEntity.isDeleted,
+            updatedAt = propertyPoiCrossEntity.updatedAt
+        )
+    }
 
     @Query("UPDATE property_poi_cross_ref SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt WHERE propertyId = :propertyId AND poiId = :poiId")
     suspend fun markCrossRefAsDeleted(propertyId: Long, poiId: Long, updatedAt: Long)
@@ -64,15 +105,40 @@ interface PropertyPoiCrossDao {
     @Query("UPDATE property_poi_cross_ref SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt")
     suspend fun markAllCrossRefsAsDeleted(updatedAt: Long)
 
-    @Query("DELETE FROM property_poi_cross_ref")
-    suspend fun clearAllCrossRefs()
+    @Query("DELETE FROM property_poi_cross_ref WHERE is_deleted = 1")
+    suspend fun clearAllDeleted()
+
+    //for test check hard delete
+    @Query("SELECT * FROM property_poi_cross_ref")
+    fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>>
 
     // Sync
     @Query("SELECT * FROM property_poi_cross_ref WHERE is_synced = 0")
     fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveCrossRefFromFirebase(crossRef: PropertyPoiCrossEntity)
+    @Query("""
+        INSERT OR REPLACE INTO property_poi_cross_ref (
+            propertyId, poiId, is_deleted, is_synced, updated_at
+        ) VALUES (
+            :propertyId, :poiId, :isDeleted, 1, :updatedAt
+        )
+    """)
+    suspend fun saveCrossRefFromFirebaseForcedSyncTrue(
+        propertyId: Long,
+        poiId: Long,
+        isDeleted: Boolean,
+        updatedAt: Long
+    )
+
+    // --- Wrapper Firebase insert ---
+    suspend fun saveCrossRefFromFirebase(crossRef: PropertyPoiCrossEntity) {
+        saveCrossRefFromFirebaseForcedSyncTrue(
+            propertyId = crossRef.propertyId,
+            poiId = crossRef.poiId,
+            isDeleted = crossRef.isDeleted,
+            updatedAt = crossRef.updatedAt
+        )
+    }
 
     // ContentProvider support
     @RawQuery(observedEntities = [PropertyPoiCrossEntity::class])

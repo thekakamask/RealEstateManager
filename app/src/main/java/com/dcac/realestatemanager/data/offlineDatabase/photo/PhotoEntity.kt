@@ -24,7 +24,7 @@ data class PhotoEntity(
     @ColumnInfo(name = "property_id")
     val propertyId: Long,  // FK: links to PropertyEntity.id
     val uri: String = "",
-    val description: String,
+    val description: String? = null,
     @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "is_deleted")

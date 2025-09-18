@@ -27,7 +27,7 @@ interface PropertyPoiCrossRepository {
     suspend fun deleteCrossRef(crossRef: PropertyPoiCrossEntity)
     suspend fun deleteCrossRefsForProperty(propertyId: Long)
     suspend fun deleteCrossRefsForPoi(poiId: Long)
-    suspend fun clearAllCrossRefs()
+    suspend fun clearAllDeleted()
     fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>>
     suspend fun downloadCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity)
 

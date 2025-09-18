@@ -9,7 +9,7 @@ import androidx.annotation.Keep
 
 @Keep
 data class PhotoOnlineEntity(
-    val description: String = "",
+    val description: String? = null,
     val propertyId: Long = 0L,
     val updatedAt: Long = System.currentTimeMillis(),
     val storageUrl: String = "", // ✅ link to firestore

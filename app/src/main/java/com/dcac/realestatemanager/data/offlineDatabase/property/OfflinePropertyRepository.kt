@@ -12,6 +12,8 @@ import com.dcac.realestatemanager.utils.toFullModel
 import kotlinx.coroutines.flow.Flow
 import com.dcac.realestatemanager.utils.toModel
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 class OfflinePropertyRepository(
     private val propertyDao: PropertyDao,
@@ -65,6 +67,15 @@ class OfflinePropertyRepository(
         }
     }
 
+    override fun getPropertiesByUserId(userId: Long): Flow<List<Property>> =
+        propertyDao.getPropertyByUserId(userId)
+            .map { list ->
+                list.map { entity ->
+                    val user = userRepository.getUserById(entity.userId).first()!!
+                    entity.toModel(user)
+                }
+            }
+
     override fun searchProperties(
         minSurface: Int?,
         maxSurface: Int?,
@@ -102,8 +113,8 @@ class OfflinePropertyRepository(
     override suspend fun markPropertyAsDeleted(property: Property) =
         propertyDao.markPropertyAsDeleted(property.id, System.currentTimeMillis())
 
-    override suspend fun markPropertyAsSold(propertyId: Long, saleDate: String)
-    = propertyDao.markPropertyAsSold(propertyId, saleDate)
+    /*override suspend fun markPropertyAsSold(propertyId: Long, saleDate: String)
+    = propertyDao.markPropertyAsSold(propertyId, saleDate)*/
 
     override suspend fun markAllPropertyAsDeleted()
     = propertyDao.markAllPropertiesAsDeleted(System.currentTimeMillis())
@@ -125,8 +136,8 @@ class OfflinePropertyRepository(
     override suspend fun deleteProperty(property: PropertyEntity)
             = propertyDao.deleteProperty(property)
 
-    override suspend fun clearAll()
-            = propertyDao.clearAll()
+    override suspend fun clearAllDeleted()
+            = propertyDao.clearAllDeleted()
 
     override fun uploadUnSyncedPropertiesToFirebase(): Flow<List<PropertyEntity>>
     = propertyDao.uploadUnSyncedPropertiesToFirebase()

@@ -5,11 +5,7 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 📤 Exposed local Room database via a read-only ContentProvider for external access using standard Android URI queries
-   - 🧠 Added new utility methods: Euro-to-Dollar conversion, improved date formatting, and deprecated old internet check in favor of NetworkMonitor.
-   - 🗄️ Refactored mappers to support Room Entities ↔ Firebase OnlineEntities conversion without intermediate Models.
-   - ❌ Implemented soft delete (is_deleted flag) across entities, with hard delete kept for irreversible removals.
-   - 🔗 Refactored DAOs, Repositories & SyncManager to create a direct bridge between Room and Firebase, simplifying synchronization.
+   - 🧪 Refactored and expanded instrumented test coverage for the DAO layer (Photo, Property, POI, PropertyPoiCross, User) to align with the new DAO refactoring, including CRUD, soft/hard delete, and sync behavior validations.
 
 
 ## ❌ **NEXT UPDATES**

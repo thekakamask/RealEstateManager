@@ -20,157 +20,250 @@ import org.junit.Assert.assertNotNull
 @RunWith(AndroidJUnit4::class)
 class PropertyPoiCrossDaoTest: DatabaseSetup() {
 
-    private lateinit var propertyPoiCrossDao: PropertyPoiCrossDao
+    private lateinit var crossRefDao: PropertyPoiCrossDao
 
-    private val poi1 = FakePoiEntity.poi1
     private val crossRef1 = FakePropertyPoiCrossEntity.propertyPoiCross1
+    private val crossRef2 = FakePropertyPoiCrossEntity.propertyPoiCross2
+    private val crossRef3 = FakePropertyPoiCrossEntity.propertyPoiCross3
+    private val crossRef4 = FakePropertyPoiCrossEntity.propertyPoiCross4
+    private val crossRef5 = FakePropertyPoiCrossEntity.propertyPoiCross5
+    private val crossRef6 = FakePropertyPoiCrossEntity.propertyPoiCross6
     private val property1 = FakePropertyEntity.property1
+    private val property2 = FakePropertyEntity.property2
+    private val poi2 = FakePoiEntity.poi2
+    private val allCrossRefsNotDeleted = FakePropertyPoiCrossEntity.allCrossRefsNotDeleted
+    private val allCrossRefs = FakePropertyPoiCrossEntity.allCrossRefs
 
-    private val crossList = FakePropertyPoiCrossEntity.propertyPoiCrossEntityList
+
+
 
     @Before
     fun setup() = runBlocking {
 
-        // Insert base required data for all tests
-        db.userDao().saveUserFromFirebase(FakeUserEntity.user1)
-        db.userDao().saveUserFromFirebase(FakeUserEntity.user2)
+        FakeUserEntity.userEntityList.forEach {
+            db.userDao().insertUser(it)
+        }
         FakePropertyEntity.propertyEntityList.forEach {
             db.propertyDao().insertProperty(it)
         }
-        FakePoiEntity.poiEntityList.forEach{
+        FakePoiEntity.poiEntityList.forEach {
             db.poiDao().insertPoi(it)
         }
 
-        propertyPoiCrossDao = db.propertyCrossDao()
+        crossRefDao = db.propertyCrossDao()
 
-    }
-
-    @Test
-    fun insertCrossRef_shouldInsertOneCrossRef() = runBlocking {
-        propertyPoiCrossDao.insertCrossRef(crossRef1)
-        val result = propertyPoiCrossDao.getAllCrossRefs().first()
-        assertTrue(result.contains(crossRef1))
-    }
-
-    @Test
-    fun insertAllCrossRefs_shouldInsertMultipleCrossRefs() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        val result = propertyPoiCrossDao.getAllCrossRefs().first()
-        assertEquals(crossList.size, result.size)
-        assertTrue(result.containsAll(crossList))
-    }
-
-    @Test
-    fun updateCrossRef_shouldUpdateCorrectly() = runBlocking {
-        // Given
-        val original = crossRef1.copy(isSynced = false)
-        propertyPoiCrossDao.insertCrossRef(original)
-
-        // When: update the isSynced flag
-        val updated = original.copy(isSynced = true)
-        propertyPoiCrossDao.updateCrossRef(updated)
-
-        // Then: fetch and verify
-        val result = propertyPoiCrossDao.getAllCrossRefs().first()
-        val match = result.find { it.propertyId == updated.propertyId && it.poiId == updated.poiId }
-
-        assertNotNull(match)
-        assertTrue(match!!.isSynced)
-    }
-
-    @Test
-    fun deleteCrossRefsForProperty_shouldDeleteCorrectRefs() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        propertyPoiCrossDao.deleteCrossRefsForProperty(property1.id)
-        val result = propertyPoiCrossDao.getCrossRefsForProperty(property1.id).first()
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun deleteCrossRefsForPoi_shouldDeleteCorrectRefs() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        propertyPoiCrossDao.deleteCrossRefsForPoi(poi1.id)
-        val result = propertyPoiCrossDao.getPropertyIdsForPoi(poi1.id).first()
-        assertTrue(result.isEmpty())
     }
 
     @Test
     fun getCrossRefsForProperty_shouldReturnCorrectRefs() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        val expected = crossList.filter { it.propertyId == property1.id }
-        val result = propertyPoiCrossDao.getCrossRefsForProperty(property1.id).first()
+        // Insert all crossRefs
+        allCrossRefs.forEach {
+            crossRefDao.insertCrossRef(it)
+        }
+
+        val result = crossRefDao.getCrossRefsForProperty(property1.id).first()
+
+        val expected = allCrossRefsNotDeleted.filter { it.propertyId == property1.id }
+
         assertEquals(expected, result)
     }
 
     @Test
     fun getPoiIdsForProperty_shouldReturnCorrectPoiIds() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        val expected = crossList.filter { it.propertyId == property1.id }.map { it.poiId }
-        val result = propertyPoiCrossDao.getPoiIdsForProperty(property1.id).first()
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+
+
+        val expected = allCrossRefsNotDeleted.filter { it.propertyId == property2.id }.map { it.poiId }
+        val result = crossRefDao.getPoiIdsForProperty(property2.id).first()
         assertEquals(expected, result)
     }
 
     @Test
     fun getPropertyIdsForPoi_shouldReturnCorrectPropertyIds() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        val expected = crossList.filter { it.poiId == poi1.id }.map { it.propertyId }
-        val result = propertyPoiCrossDao.getPropertyIdsForPoi(poi1.id).first()
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+
+        val expected = allCrossRefsNotDeleted.filter { it.poiId == poi2.id }.map { it.propertyId }
+        val result = crossRefDao.getPropertyIdsForPoi(poi2.id).first()
         assertEquals(expected, result)
     }
 
     @Test
     fun getAllCrossRefs_shouldReturnAllRefs() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        val result = propertyPoiCrossDao.getAllCrossRefs().first()
-        assertEquals(crossList.size, result.size)
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+
+        val result = crossRefDao.getAllCrossRefs().first()
+
+        val expected = allCrossRefsNotDeleted.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
     }
 
     @Test
-    fun clearAllCrossRefs_shouldRemoveAllData() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
-        propertyPoiCrossDao.clearAllCrossRefs()
-        val result = propertyPoiCrossDao.getAllCrossRefs().first()
+    fun getCrossByIds_shouldReturnCorrectCrossRef() = runBlocking {
+        crossRefDao.insertCrossRef(crossRef1)
+
+        val result = crossRefDao.getCrossByIds(crossRef1.propertyId, crossRef1.poiId).first()
+
+        assertEquals(crossRef1.propertyId, result?.propertyId)
+        assertEquals(crossRef1.poiId, result?.poiId)
+    }
+
+    @Test
+    fun getAllCrossRefsIncludeDeleted_shouldReturnAllRefs() = runBlocking {
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+        val result = crossRefDao.getAllCrossRefsIncludeDeleted().first()
+        val expected = allCrossRefs.map { it.copy(isSynced = false) }
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun insertCrossRef_shouldInsertOneCrossRef() = runBlocking {
+        crossRefDao.insertCrossRef(crossRef2)
+
+        val result = crossRefDao.getAllCrossRefs().first()
+        assertEquals(listOf(crossRef2), result)
+    }
+
+    @Test
+    fun insertAllCrossRefs_shouldInsertMultipleCrossRefs() = runBlocking {
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+
+        val result = crossRefDao.getAllCrossRefs().first()
+        val expected = allCrossRefsNotDeleted.map { it.copy(isSynced = false) }
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun updateCrossRef_shouldUpdateCorrectly() = runBlocking {
+        crossRefDao.insertCrossRef(crossRef3)
+
+        val updated = crossRef3.copy(
+            isSynced = false,
+            updatedAt = System.currentTimeMillis()
+        )
+        crossRefDao.updateCrossRef(updated)
+
+        val result = crossRefDao.getCrossByIds(crossRef3.propertyId, crossRef3.poiId).first()
+
+        assertEquals(updated.isSynced, result?.isSynced)
+        assertEquals(updated.updatedAt, result?.updatedAt)
+
+    }
+
+    @Test
+    fun markCrossRefAsDeleted_shouldHideCrossRefFromQueries() = runBlocking {
+        crossRefDao.insertCrossRef(crossRef4)
+        crossRefDao.markCrossRefAsDeleted(
+            crossRef4.propertyId,
+            crossRef4.poiId,
+            System.currentTimeMillis()
+            )
+        val result = crossRefDao.getCrossByIds(
+            crossRef4.propertyId,
+            crossRef4.poiId).first()
+
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun markCrossRefsAsDeletedForProperty_shouldHideCrossRefsFromQueries() = runBlocking {
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+        crossRefDao.markCrossRefsAsDeletedForProperty(
+            crossRef1.propertyId,
+            System.currentTimeMillis()
+        )
+
+        val result = crossRefDao.getCrossRefsForProperty(crossRef1.propertyId).first()
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun markCrossRefsAsDeletedForPoi_shouldHideCrossRefsFromQueries() = runBlocking {
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+        crossRefDao.markCrossRefsAsDeletedForPoi(
+            crossRef2.poiId,
+            System.currentTimeMillis()
+        )
+        val result = crossRefDao.getPropertyIdsForPoi(crossRef2.poiId).first()
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun markAllCrossRefsAsDeleted_shouldHideCrossRefsFromQueries() = runBlocking {
+        crossRefDao.insertAllCrossRefs(allCrossRefsNotDeleted)
+        crossRefDao.markAllCrossRefsAsDeleted(System.currentTimeMillis())
+        val result = crossRefDao.getAllCrossRefs().first()
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun deleteCrossRef_shouldDeleteCorrectly() = runBlocking {
+        crossRefDao.saveCrossRefFromFirebase(crossRef5)
+        crossRefDao.deleteCrossRef(crossRef5)
+        val result = crossRefDao.getCrossByIds(crossRef5.propertyId, crossRef5.poiId).first()
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun deleteCrossRefsForProperty_shouldDeleteCorrectRefs() = runBlocking {
+        allCrossRefs.forEach {
+            crossRefDao.saveCrossRefFromFirebase(it)
+        }
+        crossRefDao.deleteCrossRefsForProperty(crossRef6.propertyId)
+        val result = crossRefDao.getCrossRefsForProperty(crossRef6.propertyId).first()
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun deleteCrossRefsForPoi_shouldDeleteCorrectRefs() = runBlocking {
+        crossRefDao.saveCrossRefFromFirebase(crossRef4)
+        val updated = crossRef4.copy(
+            isDeleted = true,
+            updatedAt = System.currentTimeMillis()
+        )
+        crossRefDao.updateCrossRef(updated)
+        crossRefDao.saveCrossRefFromFirebase(crossRef6)
+
+        crossRefDao.deleteCrossRefsForPoi(crossRef6.poiId)
+        val result = crossRefDao.getPropertyIdsForPoi(crossRef6.poiId).first()
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun clearAllCrossRefsDeleted_shouldRemoveAllData() = runBlocking {
+        allCrossRefs.forEach {
+            crossRefDao.saveCrossRefFromFirebase(it)
+        }
+
+        crossRefDao.markCrossRefsAsDeletedForProperty(crossRef1.propertyId, System.currentTimeMillis())
+        crossRefDao.markCrossRefsAsDeletedForProperty(crossRef3.propertyId, System.currentTimeMillis())
+
+        crossRefDao.clearAllDeleted()
+
+        val result = crossRefDao.getAllCrossRefs().first()
+
         assertTrue(result.isEmpty())
     }
 
     @Test
     fun getUnSyncedPropertiesPoiSCross_shouldReturnOnlyUnSyncedRefs() = runBlocking {
         // Given: assume only the first N are synced, others are not
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
 
         // When
-        val result = propertyPoiCrossDao.getUnSyncedPropertiesPoiSCross().first()
-
+        val result = crossRefDao.uploadUnSyncedPropertiesPoiSCross().first()
+        val expected = allCrossRefs.map { it.copy(isSynced = false) }
         // Then
-        assertTrue(result.none { it.isSynced })
-    }
-
-    @Test
-    fun getCrossByIds_shouldReturnCorrectCrossRef() = runBlocking {
-        // Given
-        propertyPoiCrossDao.insertCrossRef(crossRef1)
-
-        // When
-        val result = propertyPoiCrossDao.getCrossByIds(crossRef1.propertyId, crossRef1.poiId).first()
-
-        // Then
-        assertNotNull(result)
-        assertEquals(crossRef1.propertyId, result?.propertyId)
-        assertEquals(crossRef1.poiId, result?.poiId)
+        assertEquals(expected, result)
     }
 
     @Test
     fun saveCrossRefFromFirebase_shouldInsertCorrectly() = runBlocking {
         // Given
-        val firebaseCross = crossRef1.copy(isSynced = true)
-
-        // When
-        propertyPoiCrossDao.saveCrossRefFromFirebase(firebaseCross)
-
-        // Then
-        val result = propertyPoiCrossDao.getCrossByIds(firebaseCross.propertyId, firebaseCross.poiId).first()
-        assertNotNull(result)
-        assertTrue(result!!.isSynced)
+        crossRefDao.saveCrossRefFromFirebase(crossRef1)
+        val result = crossRefDao.getCrossByIds(crossRef1.propertyId, crossRef1.poiId).first()
+        val expected = crossRef1.copy(isSynced = true)
+        assertEquals(expected, result)
     }
 
     //This test ensures that:
@@ -179,13 +272,12 @@ class PropertyPoiCrossDaoTest: DatabaseSetup() {
     //it is closed correctly (good practice).
     @Test
     fun getAllCrossRefsAsCursor_shouldReturnValidCursor() = runBlocking {
-        propertyPoiCrossDao.insertAllCrossRefs(crossList)
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
         val query = SimpleSQLiteQuery("SELECT * FROM property_poi_cross_ref")
-        val cursor = propertyPoiCrossDao.getAllCrossRefsAsCursor(query)
+        val cursor = crossRefDao.getAllCrossRefsAsCursor(query)
         assertNotNull(cursor)
         assertTrue(cursor.count > 0)
         cursor.close()
     }
-
 
 }

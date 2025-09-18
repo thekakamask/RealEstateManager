@@ -634,6 +634,7 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Allows dependency access in SyncWorker, which is not tied to any activity/fragment lifecycle.
       - The application class RealEstateManagerApplication now implements this provider.
 
+
 ### 🔹 **Update #24**
 
   - 📤 **Read-only ContentProvider for Room database**
@@ -686,6 +687,18 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - UI ↔ Models / Room ↔ Entities / Firebase ↔ OnlineEntities
       - Isolated, testable, and reusable synchronization logic
       - Reduction of unnecessary conversions and improved data consistency
+
+
+### 🔹 **Update #25**
+
+  - 🧪 **DAO Instrumented Test Refactor**
+    - All DAO tests (PhotoDao, PropertyDao, PoiDao, PropertyPoiCrossDao, UserDao) were rewritten and expanded to match the new DAO refactoring.
+    - Each DAO is now tested with:
+      - CRUD operations (insert, update, query, delete).
+      - Soft delete (mark…AsDeleted) ensuring entities are hidden logically but preserved in DB.
+      - Hard delete (delete…, clearAllDeleted) ensuring soft-deleted rows are physically removed.
+      - Synchronization queries (uploadUnSynced…(), downloadFromFirebase…()) validating offline-first behavior.
+      - ContentProvider support (getAll…AsCursor) to ensure compatibility with external access.
 
 
 ## 🤝 **Contributions**

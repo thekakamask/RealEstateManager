@@ -21,22 +21,81 @@ interface UserDao{
     @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email AND is_deleted = 0)")
     fun emailExists(email: String): Flow<Boolean>
 
-    // --- Insert & Update ---
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: UserEntity): Long
+    @Query("""
+        INSERT OR REPLACE INTO users (
+            id, email, agent_name, firebase_uid, is_deleted, is_synced, updated_at
+        ) VALUES (
+            :id, :email, :agentName, :firebaseUid, :isDeleted, 0, :updatedAt
+        )
+    """)
+    suspend fun insertUserForcedSyncFalse(
+        id: Long,
+        email: String,
+        agentName: String,
+        firebaseUid: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    )
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllUsers(users: List<UserEntity>)
+    // --- Wrapper insert ---
+    suspend fun insertUser(user: UserEntity): Long {
+        insertUserForcedSyncFalse(
+            id = user.id,
+            email = user.email,
+            agentName = user.agentName,
+            firebaseUid = user.firebaseUid,
+            isDeleted = user.isDeleted,
+            updatedAt = user.updatedAt
+        )
+        return user.id
+    }
 
-    @Update
-    suspend fun updateUser(user: UserEntity)
+    // --- Wrapper insert all ---
+    suspend fun insertAllUsers(users: List<UserEntity>) {
+        users.forEach { insertUser(it) }
+    }
+
+
+    @Query("""
+        UPDATE users SET 
+            email = :email,
+            agent_name = :agentName,
+            firebase_uid = :firebaseUid,
+            is_deleted = :isDeleted,
+            is_synced = 0,
+            updated_at = :updatedAt
+        WHERE id = :id
+    """)
+    suspend fun updateUserForcedSyncFalse(
+        id: Long,
+        email: String,
+        agentName: String,
+        firebaseUid: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    )
+
+    // --- Wrapper update ---
+    suspend fun updateUser(user: UserEntity) {
+        updateUserForcedSyncFalse(
+            id = user.id,
+            email = user.email,
+            agentName = user.agentName,
+            firebaseUid = user.firebaseUid,
+            isDeleted = user.isDeleted,
+            updatedAt = user.updatedAt
+        )
+    }
 
     // --- Hard delete ---
     @Delete
     suspend fun deleteUser(user: UserEntity)
 
-    @Query("DELETE FROM users")
-    suspend fun clearAllUsers()
+    @Query("SELECT * FROM users WHERE id = :id")
+    fun getUserByIdIncludeDeleted(id: Long): Flow<UserEntity?>
+
+    @Query("DELETE FROM users WHERE is_deleted = 1")
+    suspend fun clearAllUsersDeleted()
 
     // --- Soft delete ---
     @Query("UPDATE users SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt WHERE id = :id")
@@ -45,12 +104,41 @@ interface UserDao{
     @Query("UPDATE users SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt")
     suspend fun markAllUsersAsDeleted(updatedAt: Long)
 
+    //for test check hard delete
+    @Query("SELECT * FROM users")
+    fun getAllUserIncludeDeleted(): Flow<List<UserEntity>>
+
     // --- Sync ---
     @Query("SELECT * FROM users WHERE is_synced = 0")
     fun uploadUnSyncedUsers(): Flow<List<UserEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun downloadUserFromFirebase(user: UserEntity)
+    @Query("""
+        INSERT OR REPLACE INTO users (
+            id, email, agent_name, firebase_uid, is_deleted, is_synced, updated_at
+        ) VALUES (
+            :id, :email, :agentName, :firebaseUid, :isDeleted, 1, :updatedAt
+        )
+    """)
+    suspend fun downloadUserFromFirebaseForcedSyncTrue(
+        id: Long,
+        email: String,
+        agentName: String,
+        firebaseUid: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    )
+
+    // --- Wrapper Firebase insert ---
+    suspend fun downloadUserFromFirebase(user: UserEntity) {
+        downloadUserFromFirebaseForcedSyncTrue(
+            id = user.id,
+            email = user.email,
+            agentName = user.agentName,
+            firebaseUid = user.firebaseUid,
+            isDeleted = user.isDeleted,
+            updatedAt = user.updatedAt
+        )
+    }
 
     // --- ContentProvider support ---
     @RawQuery(observedEntities = [UserEntity::class])

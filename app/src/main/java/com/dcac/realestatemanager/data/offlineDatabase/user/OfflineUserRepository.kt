@@ -70,8 +70,8 @@ class OfflineUserRepository(
         userDao.deleteUser(user)
     }
 
-    override suspend fun clearAllUsers() {
-        userDao.clearAllUsers()
+    override suspend fun clearAllUsersDeleted() {
+        userDao.clearAllUsersDeleted()
     }
 
     // RETURN ALL USERS WHO ARE MARKED AS NOT SYNCED WITH FIREBASE YET (isSynced = false)
