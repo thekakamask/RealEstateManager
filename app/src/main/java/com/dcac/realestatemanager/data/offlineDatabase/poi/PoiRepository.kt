@@ -24,4 +24,8 @@ interface PoiRepository {
     fun uploadUnSyncedPoiSToFirebase(): Flow<List<PoiEntity>>
     suspend fun downloadPoiFromFirebase(poi: PoiOnlineEntity)
 
+    //FOR TEST HARD DELETE
+    fun getPoiByIdIncludeDeleted(id: Long): Flow<PoiEntity?>
+    fun getAllPoiIncludeDeleted(): Flow<List<PoiEntity>>
+
 }

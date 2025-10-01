@@ -61,4 +61,10 @@ class OfflinePoiRepository(
     override suspend fun downloadPoiFromFirebase(poi: PoiOnlineEntity) {
         poiDao.savePoiFromFirebase(poi.toEntity(poiId = poi.roomId))
     }
+
+    //FOR TEST HARD DELETE
+    override fun getPoiByIdIncludeDeleted(id: Long): Flow<PoiEntity?> =
+        poiDao.getPoiByIdIncludeDeleted(id)
+    override fun getAllPoiIncludeDeleted(): Flow<List<PoiEntity>> =
+        poiDao.getAllPoiIncludeDeleted()
 }

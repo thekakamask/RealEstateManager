@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 /**
  * In-memory PoiDao:
@@ -21,75 +22,147 @@ import kotlinx.coroutines.flow.map
 class FakePoiDao : PoiDao,
     BaseFakeDao<Long, PoiEntity>({ it.id }) {
 
-    // Local snapshot of properties (to build relations)
-    internal val propertyStore = MutableStateFlow<List<PropertyEntity>>(emptyList())
+    private val propertyStore = MutableStateFlow<List<PropertyEntity>>(emptyList())
+    private val poiToProperty = MutableStateFlow<Map<Long, Set<Long>>>(emptyMap())
 
-    // Cross-refs: poiId -> set of propertyIds
-    internal val poiToProperty = MutableStateFlow<Map<Long, Set<Long>>>(emptyMap())
+    init {
+        seed(FakePoiEntity.poiEntityList)
+    }
 
-    // Pre-fill with fake POIs
-    init { seed(FakePoiEntity.poiEntityList) }
+    // --- Helpers (Test only) ---
 
-    // ---- Helpers for tests ----------------------------------------------------
-
-    /** Seed properties snapshot used when building relations. */
     fun seedProperties(properties: List<PropertyEntity>) {
         propertyStore.value = properties
     }
 
-    /** Link a POI to one or many properties. */
     fun linkPoiToProperties(poiId: Long, vararg propertyIds: Long) {
-        val current = poiToProperty.value.toMutableMap()
-        val merged = (current[poiId].orEmpty() + propertyIds.toSet()).toSet()
-        current[poiId] = merged
-        poiToProperty.value = current
+        poiToProperty.update { current ->
+            current + (poiId to ((current[poiId].orEmpty() + propertyIds.toSet()).toSet()))
+        }
     }
 
-    /** Remove all links for a given poiId. */
     fun unlinkAllForPoi(poiId: Long) {
         poiToProperty.value -= poiId
-        //poiToProperty.value = poiToProperty.value - poiId
     }
 
-    // ---- PoiDao implementation -----------------------------------------------
-
-    override fun getAllPoiS(): Flow<List<PoiEntity>> = entityFlow
+    // --- DAO Implementation ---
 
     override fun getPoiById(id: Long): Flow<PoiEntity?> =
-        entityFlow.map { list -> list.find { it.id == id } }
+        entityFlow.map { list -> list.find { it.id == id && !it.isDeleted } }
 
-    override suspend fun insertAllPoiS(poiS: List<PoiEntity>) {
-        poiS.forEach { upsert(it) }
+    override fun getAllPoiS(): Flow<List<PoiEntity>> =
+        entityFlow.map { list -> list.filter { !it.isDeleted } }
+
+    override suspend fun insertPoiForcedSyncFalse(
+        id: Long,
+        name: String,
+        type: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        upsert(
+            PoiEntity(
+                id = id,
+                name = name,
+                type = type,
+                isDeleted = isDeleted,
+                isSynced = false, // 🟢 forced
+                updatedAt = updatedAt
+            )
+        )
     }
 
     override suspend fun insertPoi(poi: PoiEntity) {
-        upsert(poi)
+        insertPoiForcedSyncFalse(
+            id = poi.id,
+            name = poi.name,
+            type = poi.type,
+            isDeleted = poi.isDeleted,
+            updatedAt = poi.updatedAt
+        )
+    }
+
+    override suspend fun insertAllPoiS(poiS: List<PoiEntity>) {
+        poiS.forEach { insertPoi(it) } // 🟢 same as real DAO
+    }
+
+    override suspend fun updatePoiForcedSyncFalse(
+        id: Long,
+        name: String,
+        type: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        insertPoiForcedSyncFalse(id, name, type, isDeleted, updatedAt)
     }
 
     override suspend fun updatePoi(poi: PoiEntity) {
-        upsert(poi)
+        updatePoiForcedSyncFalse(
+            id = poi.id,
+            name = poi.name,
+            type = poi.type,
+            isDeleted = poi.isDeleted,
+            updatedAt = poi.updatedAt
+        )
+    }
+
+    override suspend fun markPoiAsDeleted(id: Long, updatedAt: Long) {
+        entityMap[id]?.let { poi ->
+            val updated = poi.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
+            upsert(updated)
+        }
+    }
+
+    override suspend fun savePoiFromFirebaseForcedSyncTrue(
+        id: Long,
+        name: String,
+        type: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        upsert(
+            PoiEntity(
+                id = id,
+                name = name,
+                type = type,
+                isDeleted = isDeleted,
+                isSynced = true, // 🟢 from Firebase
+                updatedAt = updatedAt
+            )
+        )
     }
 
     override suspend fun savePoiFromFirebase(poi: PoiEntity) {
-        upsert(poi)
+        savePoiFromFirebaseForcedSyncTrue(
+            id = poi.id,
+            name = poi.name,
+            type = poi.type,
+            isDeleted = poi.isDeleted,
+            updatedAt = poi.updatedAt
+        )
     }
 
     override suspend fun deletePoi(poi: PoiEntity) {
         delete(poi)
-        // Optionally clean links for this POI
-        unlinkAllForPoi(poi.id)
+        unlinkAllForPoi(poi.id) // 🧹 simulate foreign key behavior
     }
 
+    override fun getPoiByIdIncludeDeleted(id: Long): Flow<PoiEntity?> =
+        entityFlow.map { list -> list.find { it.id == id } }
+
+    override fun getAllPoiIncludeDeleted(): Flow<List<PoiEntity>> =
+        entityFlow
+
     override fun getPoiWithProperties(poiId: Long): Flow<PoiWithPropertiesRelation> =
-        combine(entityFlow, propertyStore, poiToProperty) { poiS, properties, links ->
-            val poi = poiS.firstOrNull { it.id == poiId }
+        combine(entityFlow, propertyStore, poiToProperty) { pois, properties, links ->
+            val poi = pois.firstOrNull { it.id == poiId && !it.isDeleted }
                 ?: error("POI not found for ID: $poiId")
             val ids = links[poiId].orEmpty()
             val related = properties.filter { it.id in ids }
             PoiWithPropertiesRelation(poi = poi, properties = related)
         }
 
-    override fun getUnSyncedPoiS(): Flow<List<PoiEntity>> =
+    override fun uploadUnSyncedPoiSToFirebase(): Flow<List<PoiEntity>> =
         entityFlow.map { list -> list.filter { !it.isSynced } }
 
     override fun getAllPoiSAsCursor(query: SupportSQLiteQuery): Cursor {

@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">328 ms</div>
+                <div class="time" xmlns="">372 ms</div>
                 <h1>
-                    PoiRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">11 total, </span><span class="passed">11 passed</span></strong>
+                    PoiRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">17 total, </span><span class="passed">17 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,48 +593,78 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">328 ms</div>
+                                <div class="time">372 ms</div>
                             </em>PoiRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">296 ms</div>
-                                    </em><em class="status">passed</em>getPoiWithProperties_poi1_hasOnlyProperty1</span>
+                                        <div class="time">255 ms</div>
+                                    </em><em class="status">passed</em>markPoiAsDeleted_shouldHidePoiFromQueries</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
+                                        <div class="time">29 ms</div>
                                     </em><em class="status">passed</em>getPoiWithProperties_whenUnlinked_returnsEmpty</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">5 ms</div>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>markPoiAsDeleted_calledTwice_staysDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
                                     </em><em class="status">passed</em>getAllPoiS_returnsAll</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>updatePoi_shouldReflectChange</span>
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>updatePoi_shouldModifyExistingPoi</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>deletePoi_deletesPoi</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
                                     </em><em class="status">passed</em>getUnSyncedPoiS_returnsOnlyUnSynced</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>cachePoiFromFirebase_insertsSyncedPoi</span>
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>downloadPoiFromFirebase_updatesExistingPoi</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>getPoiWithProperties_poi16_hasProperty4_and_5</span>
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>updatePoi_onNonExistingPoi_shouldInsertIt</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>downloadPoiFromFirebase_savesPoiCorrectly</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">52 ms</div>
+                                    </em><em class="status">passed</em>getPoiWithProperties_returnsLinkedProperties</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>insertAllPoiS_insertsBatch</span>
+                                    </em><em class="status">passed</em>insertAllPoiS_insertsNewPoiS</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getPoiByIdIncludeDeleted_returnsDeletedPoi</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPoi_insertsPoi</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
@@ -644,12 +674,12 @@ jQuery.cookie = function(name, value, options) {
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>deletePoi_removesPoi_andUnlinks</span>
+                                    </em><em class="status">passed</em>getAllPoiIncludeDeleted_returnsAllIncludingDeleted</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>insertPoi_insertsAndIsRetrievable</span>
+                                    </em><em class="status">passed</em>getPoiEntityById_returnsCorrectEntity</span>
                             </li>
                         </ul>
                     </li>
@@ -657,7 +687,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 05/09/2025 19:20</p>
+            <p>Generated by Android Studio on 01/10/2025 17:57</p>
         </div>
     </body>
 </html>

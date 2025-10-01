@@ -701,5 +701,16 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - ContentProvider support (getAll…AsCursor) to ensure compatibility with external access.
 
 
+### 🔹 **Update #26**
+
+  - 🧪 **Room Unit Test Refactor**
+    - All unit tests for Room-based repositories (PhotoRepository, PropertyRepository, PoiRepository, PropertyPoiCrossRepository, UserRepository) have been fully rewritten and expanded following the latest repository refactor.
+    - Each repository is now thoroughly tested for:
+      - CRUD operations: insert, update, query, delete logic validation.
+      - Soft deletes: mark…AsDeleted ensures logical deletion without data loss.
+      - Hard deletes: delete… and clearAllDeleted remove data physically from local storage.
+      - Synchronization logic: uploadUnSynced…() and downloadFromFirebase…() ensure offline-first consistency with Firebase.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

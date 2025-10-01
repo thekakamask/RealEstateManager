@@ -95,4 +95,17 @@ class OfflinePropertyPoiCrossRepository(
         dao.saveCrossRefFromFirebase(crossRef.toEntity())
     }
 
+    //FOR TEST HARD DELETE
+    override fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PropertyPoiCrossEntity>> =
+        dao.getCrossRefsByPropertyIdIncludeDeleted(propertyId)
+
+    override fun getCrossRefsByPoiIdIncludeDeleted(poiId: Long): Flow<List<PropertyPoiCrossEntity>> =
+        dao.getCrossRefsByPoiIdIncludeDeleted(poiId)
+
+    override fun getCrossRefsByIdsIncludedDeleted(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?> =
+        dao.getCrossRefsByIdsIncludedDeleted(propertyId, poiId)
+
+    override fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>> =
+        dao.getAllCrossRefsIncludeDeleted()
+
 }

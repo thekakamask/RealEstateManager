@@ -182,7 +182,7 @@ interface PropertyDao {
 
     @Transaction
     @Query("SELECT * FROM properties WHERE id = :propertyId AND is_deleted = 0")
-    fun getPropertyWithPoiS(propertyId: Long): Flow<PropertyWithPoiSRelation>
+    fun getPropertyWithPoiS(propertyId: Long): Flow<PropertyWithPoiSRelation?>
 
     @Query("SELECT * FROM properties WHERE is_synced = 0")
     fun uploadUnSyncedPropertiesToFirebase(): Flow<List<PropertyEntity>>

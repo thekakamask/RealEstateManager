@@ -25,4 +25,7 @@ interface UserRepository {
     fun uploadUnSyncedUsers(): Flow<List<UserEntity>>
     suspend fun downloadUserFromFirebase(user: UserOnlineEntity)
 
+    fun getUserByIdIncludeDeleted(id: Long): Flow<UserEntity?>
+    fun getAllUsersIncludeDeleted(): Flow<List<UserEntity>>
+
 }

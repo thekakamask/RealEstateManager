@@ -85,4 +85,12 @@ class OfflineUserRepository(
         userDao.downloadUserFromFirebase(user.toEntity(userId = user.roomId))
 
     }
+
+    // --- FOR TEST / HARD DELETE CHECK ---
+
+    override fun getUserByIdIncludeDeleted(id: Long): Flow<UserEntity?> =
+        userDao.getUserByIdIncludeDeleted(id)
+
+    override fun getAllUsersIncludeDeleted(): Flow<List<UserEntity>> =
+        userDao.getAllUserIncludeDeleted()
 }

@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">298 ms</div>
+                <div class="time" xmlns="">348 ms</div>
                 <h1>
-                    PhotoRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">10 total, </span><span class="passed">10 passed</span></strong>
+                    PhotoRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">16 total, </span><span class="passed">16 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,23 +593,28 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">298 ms</div>
+                                <div class="time">348 ms</div>
                             </em>PhotoRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">256 ms</div>
+                                        <div class="time">301 ms</div>
+                                    </em><em class="status">passed</em>markPhotoAsDelete_shouldHidePhotoFromQueries</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">6 ms</div>
                                     </em><em class="status">passed</em>insertPhoto_insertsPhoto</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
+                                        <div class="time">2 ms</div>
                                     </em><em class="status">passed</em>getAllPhotos_returnsAllPhotos</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">22 ms</div>
-                                    </em><em class="status">passed</em>cachePhotoFromFirebase_savesPhotoCorrectly</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>downloadPhotoFromFirebase_savesPhotoCorrectly</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
@@ -619,32 +624,57 @@ jQuery.cookie = function(name, value, options) {
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPhotos_returnsOnlyUnSynced</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
                                     </em><em class="status">passed</em>deletePhotosByPropertyId_deletesPhotos</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">1 ms</div>
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>updatePhoto_onNonExistingPhoto_shouldInsertIt</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>markPhotoAsDelete_calledTwice_shouldRemainDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
                                     </em><em class="status">passed</em>getPhotoById_returnsCorrectPhoto</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">2 ms</div>
+                                        <div class="time">4 ms</div>
                                     </em><em class="status">passed</em>getPhotosByPropertyId_returnsCorrectPhotos</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">2 ms</div>
+                                        <div class="time">1 ms</div>
                                     </em><em class="status">passed</em>updatePhoto_shouldModifyExistingPhoto</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>insertPhotos_insertsPhotos</span>
+                                    </em><em class="status">passed</em>downloadPhotoFromFirebase_shouldUpdateExistingPhoto</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPhotos_insertsNewPhotos</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>getPhotoEntityById_returnsCorrectEntity</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>markPhotosAsDeletedByProperty_shouldHidePhotoFromQueries</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">6 ms</div>
+                                    </em><em class="status">passed</em>getUnSyncedPhotoEntities_returnsOnlyUnSynced</span>
                             </li>
                         </ul>
                     </li>
@@ -652,7 +682,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 12/09/2025 17:53</p>
+            <p>Generated by Android Studio on 01/10/2025 17:57</p>
         </div>
     </body>
 </html>

@@ -12,84 +12,29 @@ object FakePhotoModel {
         propertyId = FakePropertyEntity.property1.id,
         uri = "file://photo_1.jpg",
         description = "Living room of Loft République",
-        isSynced = true,
         updatedAt = DEFAULT_TIMESTAMP + 1
     )
 
     val photo2 = Photo(
         id = 2L,
-        propertyId = FakePropertyEntity.property1.id,
+        propertyId = FakePropertyEntity.property2.id,
         uri = "file://photo_2.jpg",
         description = "Kitchen of Loft République",
+        isSynced = true,
         updatedAt = DEFAULT_TIMESTAMP + 2
     )
 
     val photo3 = Photo(
         id = 3L,
-        propertyId = FakePropertyEntity.property2.id,
+        propertyId = FakePropertyEntity.property3.id,
         uri = "file://photo_3.jpg",
         description = "Garden view of Villa Montmartre",
+        isDeleted = true,
         updatedAt = DEFAULT_TIMESTAMP + 3
     )
 
-    val photo4 = Photo(
-        id = 4L,
-        propertyId = FakePropertyEntity.property2.id,
-        uri = "file://photo_4.jpg",
-        description = "Terrace of Villa Montmartre",
-        updatedAt = DEFAULT_TIMESTAMP + 4
-    )
-
-    val photo5 = Photo(
-        id = 5L,
-        propertyId = FakePropertyEntity.property3.id,
-        uri = "file://photo_5.jpg",
-        description = "Studio view - Latin Quarter",
-        updatedAt = DEFAULT_TIMESTAMP + 5
-    )
-
-    val photo6 = Photo(
-        id = 6L,
-        propertyId = FakePropertyEntity.property3.id,
-        uri = "file://photo_6.jpg",
-        description = "Bathroom - Latin Quarter",
-        updatedAt = DEFAULT_TIMESTAMP + 6
-    )
-
-    val photo7 = Photo(
-        id = 7L,
-        propertyId = FakePropertyEntity.property4.id,
-        uri = "file://photo_7.jpg",
-        description = "Living area - Flat Bastille",
-        updatedAt = DEFAULT_TIMESTAMP + 7
-    )
-
-    val photo8 = Photo(
-        id = 8L,
-        propertyId = FakePropertyEntity.property4.id,
-        uri = "file://photo_8.jpg",
-        description = "Balcony - Flat Bastille",
-        updatedAt = DEFAULT_TIMESTAMP + 8
-    )
-
-    val photo9 = Photo(
-        id = 9L,
-        propertyId = FakePropertyEntity.property5.id,
-        uri = "file://photo_9.jpg",
-        description = "Panoramic view - Penthouse Bastille",
-        updatedAt = DEFAULT_TIMESTAMP + 9
-    )
-
-    val photo10 = Photo(
-        id = 10L,
-        propertyId = FakePropertyEntity.property5.id,
-        uri = "file://photo_10.jpg",
-        description = "Bedroom - Penthouse Bastille",
-        updatedAt = DEFAULT_TIMESTAMP + 10
-    )
-
     val photoModelList = listOf(
-        photo1, photo2, photo3, photo4, photo5,
-        photo6, photo7, photo8, photo9, photo10
+        photo1, photo2, photo3
     )
+    val photoModelListNotDeleted = listOf(photo1, photo2)
 }

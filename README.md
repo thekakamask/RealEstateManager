@@ -5,7 +5,7 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🧪 Refactored and expanded instrumented test coverage for the DAO layer (Photo, Property, POI, PropertyPoiCross, User) to align with the new DAO refactoring, including CRUD, soft/hard delete, and sync behavior validations.
+   - 🧪 Refactored and expanded unit test coverage for the Room repository layer (Photo, Property, POI, PropertyPoiCross, User) to align with the new repository refactoring, including CRUD, soft/hard delete, and sync behavior validations.
 
 
 ## ❌ **NEXT UPDATES**
@@ -133,7 +133,7 @@ This project is developed using modern Android architecture principles, with a f
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
       - ✅ **DONE** DAO tests using instrumented tests for Room database
       - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation
-      - ✅ **DONE** Firebase Repository unit tests using model/online entity separation
+      - 🟩 **IN PROGRESS** Firebase Repository unit tests using model/online entity separation
 
 
 ## 🛠️ **Tech Stack**

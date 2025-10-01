@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">488 ms</div>
+                <div class="time" xmlns="">513 ms</div>
                 <h1>
-                    PropertyRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">13 total, </span><span class="passed">13 passed</span></strong>
+                    PropertyRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">24 total, </span><span class="passed">24 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,78 +593,128 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">488 ms</div>
+                                <div class="time">513 ms</div>
                             </em>PropertyRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">348 ms</div>
-                                    </em><em class="status">passed</em>getPropertyWithPoiS_property4_hasPoi16_to_20</span>
+                                        <div class="time">415 ms</div>
+                                    </em><em class="status">passed</em>markAllPropertyAsDeleted_shouldHideAllProperties</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">16 ms</div>
-                                    </em><em class="status">passed</em>insertProperty_insertsAndIsRetrievable</span>
+                                        <div class="time">11 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertiesByAlphabetic_returnsAllSortedAlphabetically</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">62 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertiesByAlphabetic_returnsSortedByTitle</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">Expected:<br/>[Property(id=4, title=Flat Bastille, type=Apartment, price=400000, surface=95, rooms=4, description=Modern flat 2 min from Place de la Bastille., address=14 Rue de la Roquette, 75011 Paris, isSold=false, entryDate=2025-08-04, saleDate=null, staticMapPath=null, user=User(id=2, email=agent2@example.com, agentName=Bob Johnson, isSynced=false, firebaseUid=firebase_uid_2, updatedAt=1700000000002), photos=[Photo(id=7, propertyId=4, uri=file://photo_7.jpg, storageUrl=, description=Living area - Flat Bastille, isSynced=false, updatedAt=1700000000007), Photo(id=8, propertyId=4, uri=file://photo_8.jpg, storageUrl=, description=Balcony - Flat Bastille, isSynced=false, updatedAt=1700000000008)], poiS=[Poi(id=16, name=Franprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000016), Poi(id=17, name=&Eacute;cole Maternelle Roquette, type=&Eacute;cole, isSynced=false, updatedAt=1700000000017), Poi(id=18, name=Pharmacie Roquette, type=Pharmacie, isSynced=false, updatedAt=1700000000018), Poi(id=19, name=Lyc&eacute;e Charlemagne, type=&Eacute;cole, isSynced=false, updatedAt=1700000000019), Poi(id=20, name=Monoprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000020)], isSynced=false, updatedAt=1700000000004), Property(id=1, title=Loft R&eacute;publique, type=Loft, price=300000, surface=85, rooms=3, description=Spacious loft near Place de la R&eacute;publique., address=12 Rue du Faubourg du Temple, 75011 Paris, isSold=false, entryDate=2025-08-01, saleDate=null, staticMapPath=null, user=User(id=1, email=agent1@example.com, agentName=Alice Smith, isSynced=true, firebaseUid=firebase_uid_1, updatedAt=1700000000001), photos=[Photo(id=1, propertyId=1, uri=file://photo_1.jpg, storageUrl=, description=Living room of Loft R&eacute;publique, isSynced=true, updatedAt=1700000000001), Photo(id=2, propertyId=1, uri=file://photo_2.jpg, storageUrl=, description=Kitchen of Loft R&eacute;publique, isSynced=false, updatedAt=1700000000002)], poiS=[Poi(id=1, name=Franprix R&eacute;publique, type=Supermarch&eacute;, isSynced=true, updatedAt=1700000000001), Poi(id=2, name=&Eacute;cole Primaire Jean Jaur&egrave;s, type=&Eacute;cole, isSynced=false, updatedAt=1700000000002), Poi(id=3, name=Pharmacie R&eacute;publique, type=Pharmacie, isSynced=false, updatedAt=1700000000003), Poi(id=4, name=Lyc&eacute;e Voltaire, type=&Eacute;cole, isSynced=false, updatedAt=1700000000004), Poi(id=5, name=Carrefour Express, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000005)], isSynced=true, updatedAt=1700000000001), Property(id=5, title=Penthouse Bastille, type=Apartment, price=750000, surface=140, rooms=5, description=Penthouse with view over Place de la Bastille., address=18 Rue de la Roquette, 75011 Paris, isSold=false, entryDate=2025-08-05, saleDate=null, staticMapPath=null, user=User(id=1, email=agent1@example.com, agentName=Alice Smith, isSynced=true, firebaseUid=firebase_uid_1, updatedAt=1700000000001), photos=[Photo(id=9, propertyId=5, uri=file://photo_9.jpg, storageUrl=, description=Panoramic view - Penthouse Bastille, isSynced=false, updatedAt=1700000000009), Photo(id=10, propertyId=5, uri=file://photo_10.jpg, storageUrl=, description=Bedroom - Penthouse Bastille, isSynced=false, updatedAt=1700000000010)], poiS=[Poi(id=16, name=Franprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000016), Poi(id=17, name=&Eacute;cole Maternelle Roquette, type=&Eacute;cole, isSynced=false, updatedAt=1700000000017), Poi(id=18, name=Pharmacie Roquette, type=Pharmacie, isSynced=false, updatedAt=1700000000018), Poi(id=19, name=Lyc&eacute;e Charlemagne, type=&Eacute;cole, isSynced=false, updatedAt=1700000000019), Poi(id=20, name=Monoprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000020)], isSynced=false, updatedAt=1700000000005), Property(id=3, title=Studio Latin Quarter, type=Studio, price=180000, surface=40, rooms=1, description=Bright studio in the heart of the Latin Quarter., address=5 Rue des &Eacute;coles, 75005 Paris, isSold=true, entryDate=2025-08-03, saleDate=2025-08-20, staticMapPath=null, user=User(id=2, email=agent2@example.com, agentName=Bob Johnson, isSynced=false, firebaseUid=firebase_uid_2, updatedAt=1700000000002), photos=[Photo(id=5, propertyId=3, uri=file://photo_5.jpg, storageUrl=, description=Studio view - Latin Quarter, isSynced=false, updatedAt=1700000000005), Photo(id=6, propertyId=3, uri=file://photo_6.jpg, storageUrl=, description=Bathroom - Latin Quarter, isSynced=false, updatedAt=1700000000006)], poiS=[Poi(id=11, name=Casino Market Mouffetard, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000011), Poi(id=12, name=&Eacute;cole des Mines, type=&Eacute;cole, isSynced=false, updatedAt=1700000000012), Poi(id=13, name=Pharmacie Mouffetard, type=Pharmacie, isSynced=false, updatedAt=1700000000013), Poi(id=14, name=Lyc&eacute;e Henri-IV, type=&Eacute;cole, isSynced=false, updatedAt=1700000000014), Poi(id=15, name=Franprix Rue Monge, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000015)], isSynced=false, updatedAt=1700000000003), Property(id=2, title=Villa Montmartre, type=House, price=550000, surface=200, rooms=6, description=Charming villa with terrace in Montmartre., address=27 Rue Lepic, 75018 Paris, isSold=false, entryDate=2025-08-02, saleDate=null, staticMapPath=null, user=User(id=1, email=agent1@example.com, agentName=Alice Smith, isSynced=true, firebaseUid=firebase_uid_1, updatedAt=1700000000001), photos=[Photo(id=3, propertyId=2, uri=file://photo_3.jpg, storageUrl=, description=Garden view of Villa Montmartre, isSynced=false, updatedAt=1700000000003), Photo(id=4, propertyId=2, uri=file://photo_4.jpg, storageUrl=, description=Terrace of Villa Montmartre, isSynced=false, updatedAt=1700000000004)], poiS=[Poi(id=6, name=Intermarch&eacute; Montmartre, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000006), Poi(id=7, name=&Eacute;cole Jules Ferry, type=&Eacute;cole, isSynced=false, updatedAt=1700000000007), Poi(id=8, name=Pharmacie Montmartre, type=Pharmacie, isSynced=false, updatedAt=1700000000008), Poi(id=9, name=Lyc&eacute;e Renoir, type=&Eacute;cole, isSynced=false, updatedAt=1700000000009), Poi(id=10, name=Monoprix Pigalle, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000010)], isSynced=false, updatedAt=1700000000002)]&#13;<br/>Actual:<br/>[Property(id=4, title=Flat Bastille, type=Apartment, price=400000, surface=95, rooms=4, description=Modern flat 2 min from Place de la Bastille., address=14 Rue de la Roquette, 75011 Paris, isSold=false, entryDate=2025-08-04, saleDate=null, staticMapPath=null, user=User(id=2, email=agent2@example.com, agentName=Bob Johnson, isSynced=false, firebaseUid=firebase_uid_2, updatedAt=1700000000002), photos=[Photo(id=7, propertyId=4, uri=file://photo_7.jpg, storageUrl=, description=Living area - Flat Bastille, isSynced=false, updatedAt=1700000000007), Photo(id=8, propertyId=4, uri=file://photo_8.jpg, storageUrl=, description=Balcony - Flat Bastille, isSynced=false, updatedAt=1700000000008)], poiS=[Poi(id=16, name=Franprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000016), Poi(id=17, name=&Eacute;cole Maternelle Roquette, type=&Eacute;cole, isSynced=false, updatedAt=1700000000017), Poi(id=18, name=Pharmacie Roquette, type=Pharmacie, isSynced=false, updatedAt=1700000000018), Poi(id=19, name=Lyc&eacute;e Charlemagne, type=&Eacute;cole, isSynced=false, updatedAt=1700000000019), Poi(id=20, name=Monoprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000020)], isSynced=false, updatedAt=1700000000004), Property(id=1, title=Loft R&eacute;publique, type=Loft, price=300000, surface=85, rooms=3, description=Spacious loft near Place de la R&eacute;publique., address=12 Rue du Faubourg du Temple, 75011 Paris, isSold=false, entryDate=2025-08-01, saleDate=null, staticMapPath=null, user=User(id=1, email=agent1@example.com, agentName=Alice Smith, isSynced=true, firebaseUid=firebase_uid_1, updatedAt=1700000000001), photos=[Photo(id=1, propertyId=1, uri=file://photo_1.jpg, storageUrl=, description=Living room of Loft R&eacute;publique, isSynced=true, updatedAt=1700000000001), Photo(id=2, propertyId=1, uri=file://photo_2.jpg, storageUrl=, description=Kitchen of Loft R&eacute;publique, isSynced=false, updatedAt=1700000000002)], poiS=[Poi(id=1, name=Franprix R&eacute;publique, type=Supermarch&eacute;, isSynced=true, updatedAt=1700000000001), Poi(id=2, name=&Eacute;cole Primaire Jean Jaur&egrave;s, type=&Eacute;cole, isSynced=false, updatedAt=1700000000002), Poi(id=3, name=Pharmacie R&eacute;publique, type=Pharmacie, isSynced=false, updatedAt=1700000000003), Poi(id=4, name=Lyc&eacute;e Voltaire, type=&Eacute;cole, isSynced=false, updatedAt=1700000000004), Poi(id=5, name=Carrefour Express, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000005)], isSynced=true, updatedAt=1700000000001), Property(id=5, title=Penthouse Bastille, type=Apartment, price=750000, surface=140, rooms=5, description=Penthouse with view over Place de la Bastille., address=18 Rue de la Roquette, 75011 Paris, isSold=false, entryDate=2025-08-05, saleDate=null, staticMapPath=null, user=User(id=1, email=agent1@example.com, agentName=Alice Smith, isSynced=true, firebaseUid=firebase_uid_1, updatedAt=1700000000001), photos=[Photo(id=9, propertyId=5, uri=file://photo_9.jpg, storageUrl=, description=Panoramic view - Penthouse Bastille, isSynced=false, updatedAt=1700000000009), Photo(id=10, propertyId=5, uri=file://photo_10.jpg, storageUrl=, description=Bedroom - Penthouse Bastille, isSynced=false, updatedAt=1700000000010)], poiS=[Poi(id=16, name=Franprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000016), Poi(id=17, name=&Eacute;cole Maternelle Roquette, type=&Eacute;cole, isSynced=false, updatedAt=1700000000017), Poi(id=18, name=Pharmacie Roquette, type=Pharmacie, isSynced=false, updatedAt=1700000000018), Poi(id=19, name=Lyc&eacute;e Charlemagne, type=&Eacute;cole, isSynced=false, updatedAt=1700000000019), Poi(id=20, name=Monoprix Bastille, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000020)], isSynced=false, updatedAt=1700000000005), Property(id=3, title=Studio Latin Quarter, type=Studio, price=180000, surface=40, rooms=1, description=Bright studio in the heart of the Latin Quarter., address=5 Rue des &Eacute;coles, 75005 Paris, isSold=true, entryDate=2025-08-03, saleDate=2025-08-20, staticMapPath=null, user=User(id=2, email=agent2@example.com, agentName=Bob Johnson, isSynced=false, firebaseUid=firebase_uid_2, updatedAt=1700000000002), photos=[Photo(id=5, propertyId=3, uri=file://photo_5.jpg, storageUrl=, description=Studio view - Latin Quarter, isSynced=false, updatedAt=1700000000005), Photo(id=6, propertyId=3, uri=file://photo_6.jpg, storageUrl=, description=Bathroom - Latin Quarter, isSynced=false, updatedAt=1700000000006)], poiS=[Poi(id=11, name=Casino Market Mouffetard, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000011), Poi(id=12, name=&Eacute;cole des Mines, type=&Eacute;cole, isSynced=false, updatedAt=1700000000012), Poi(id=13, name=Pharmacie Mouffetard, type=Pharmacie, isSynced=false, updatedAt=1700000000013), Poi(id=14, name=Lyc&eacute;e Henri-IV, type=&Eacute;cole, isSynced=false, updatedAt=1700000000014), Poi(id=15, name=Franprix Rue Monge, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000015)], isSynced=false, updatedAt=1700000000003), Property(id=2, title=Villa Montmartre, type=House, price=550000, surface=200, rooms=6, description=Charming villa with terrace in Montmartre., address=27 Rue Lepic, 75018 Paris, isSold=false, entryDate=2025-08-02, saleDate=null, staticMapPath=null, user=User(id=1, email=agent1@example.com, agentName=Alice Smith, isSynced=true, firebaseUid=firebase_uid_1, updatedAt=1700000000001), photos=[Photo(id=3, propertyId=2, uri=file://photo_3.jpg, storageUrl=, description=Garden view of Villa Montmartre, isSynced=false, updatedAt=1700000000003), Photo(id=4, propertyId=2, uri=file://photo_4.jpg, storageUrl=, description=Terrace of Villa Montmartre, isSynced=false, updatedAt=1700000000004)], poiS=[Poi(id=6, name=Intermarch&eacute; Montmartre, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000006), Poi(id=7, name=&Eacute;cole Jules Ferry, type=&Eacute;cole, isSynced=false, updatedAt=1700000000007), Poi(id=8, name=Pharmacie Montmartre, type=Pharmacie, isSynced=false, updatedAt=1700000000008), Poi(id=9, name=Lyc&eacute;e Renoir, type=&Eacute;cole, isSynced=false, updatedAt=1700000000009), Poi(id=10, name=Monoprix Pigalle, type=Supermarch&eacute;, isSynced=false, updatedAt=1700000000010)], isSynced=false, updatedAt=1700000000002)]&#13;<br/></span>
-                                    </li>
-                                </ul>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>deleteProperty_deletesEntity</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">8 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertiesByDate_returnsSortedDesc</span>
+                                        <div class="time">9 ms</div>
+                                    </em><em class="status">passed</em>getPropertyWithPoiS_returnsLinkedPoiS</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>updateProperty_updatesFields</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">7 ms</div>
-                                    </em><em class="status">passed</em>getPropertyById_returnsCorrectProperty</span>
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>updateProperty_shouldModifyExistingProperty</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">5 ms</div>
-                                    </em><em class="status">passed</em>deleteProperty_removesEntity_andUnlinks</span>
+                                    </em><em class="status">passed</em>searchProperties_withTypeFilter_returnsCorrectType</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>cachePropertyFromFirebase_insertsSyncedProperty</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>markPropertyAsDeleted_calledTwice_staysDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>downloadPropertyFromFirebase_savesNewPropertyCorrectly</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">10 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedProperties_returnsOnlyUnSynced</span>
+                                    </em><em class="status">passed</em>getPropertyById_returnsCorrectProperty</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">10 ms</div>
-                                    </em><em class="status">passed</em>searchProperties_filtersCorrectly</span>
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>searchProperties_withIsSoldTrue_returnsOnlySoldProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>insertProperty_shouldInsertNewPropertyInDao</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertiesByDate_returnsAllSortedByDate</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>uploadUnSyncedPropertiesToFirebase_returnsOnlyUnSynced</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>markPropertyAsSold_setsFlagAndDate</span>
+                                    </em><em class="status">passed</em>getPropertyEntityById_returnsCorrectEntity</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>clearAllDeleted_removesOnlyDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">8 ms</div>
+                                    </em><em class="status">passed</em>getPropertiesByUserId_returnsCorrectProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertyIncludeDeleted_returnsAllIncludingDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>getPropertyById_whenUnknownId_returnsNull</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>getPropertyWithPoiS_whenUnlinked_returnsEmpty</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>getPropertyWithPoiS_property1_hasPoi1_to_5</span>
+                                    </em><em class="status">passed</em>updateProperty_onNonExistingProperty_shouldInsertIt</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>searchProperties_withMinSurfaceAndMaxPrice_returnsMatchingProperties</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>clearAll_removesEveryProperty_andLinks</span>
+                                    </em><em class="status">passed</em>markPropertyAsDeleted_shouldHidePropertyFromQueries</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>downloadPropertyFromFirebase_updatesExisting</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>getPropertyByIdIncludeDeleted_returnsDeletedProperty</span>
                             </li>
                         </ul>
                     </li>
@@ -672,7 +722,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 05/09/2025 19:20</p>
+            <p>Generated by Android Studio on 01/10/2025 19:03</p>
         </div>
     </body>
 </html>

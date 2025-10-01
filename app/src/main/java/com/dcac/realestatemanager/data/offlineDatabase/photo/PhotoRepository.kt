@@ -25,4 +25,8 @@ interface PhotoRepository {
     fun uploadUnSyncedPhotosToFirebase(): Flow<List<PhotoEntity>>
     suspend fun downloadPhotoFromFirebase(photo: PhotoOnlineEntity, localUri: String)
 
+    // FOR TEST HARD DELETE CHECK
+    fun getPhotoByIdIncludeDeleted(id: Long): Flow<PhotoEntity?>
+    fun getPhotosByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PhotoEntity>>
+
 }

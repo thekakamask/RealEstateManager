@@ -238,15 +238,16 @@ class PropertyDaoTest: DatabaseSetup() {
         val result = propertyDao.getPropertyWithPoiS(property1.id).first()
 
         assertNotNull(result)
-        assertEquals(property1, result.property)
+
+        assertEquals(property1, result!!.property)   // ✅ safe unwrap
 
         val expectedPoiS = listOf(
             poi1,
             poi2.copy(isSynced = false)
         )
+
         assertEquals(expectedPoiS.toSet(), result.poiS.toSet())
         assertEquals(2, result.poiS.size)
-
     }
 
     @Test

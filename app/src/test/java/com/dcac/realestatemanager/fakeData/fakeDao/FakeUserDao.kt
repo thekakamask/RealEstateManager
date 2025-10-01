@@ -13,61 +13,143 @@ import kotlinx.coroutines.flow.map
 class FakeUserDao : UserDao,
     BaseFakeDao<Long, UserEntity>({ it.id }) {
 
-    // ^ Inherits all in-memory storage logic from BaseFakeDao.
-    //   - ENTITY = UserEntity
-    //   - ID = Long
-    //   - { it.id } tells BaseFakeDao how to extract the ID from a UserEntity
-
-    // Initialize the fake DAO with pre-defined users from FakeUserEntity
     init {
-        // 'seed()' is defined in BaseFakeDao
-        // It pre-populates the in-memory storage with fake users
-
-        //seed(listOf(FakeUserEntity.user1, FakeUserEntity.user2))
         seed(FakeUserEntity.userEntityList)
     }
 
-    // Inserts or replaces a user in the fake database (from Firebase sync)
-    // 'upsert()' comes from BaseFakeDao — insert or update based on ID
-    override suspend fun saveUserFromFirebase(user: UserEntity) {
-        upsert(user)
+    override fun getUserById(id: Long): Flow<UserEntity?> =
+        entityFlow.map { list -> list.find { it.id == id && !it.isDeleted } }
+
+    override fun getUserByEmail(email: String): Flow<UserEntity?> =
+        entityFlow.map { list -> list.find { it.email == email && !it.isDeleted } }
+
+    override fun getAllUsers(): Flow<List<UserEntity>> =
+        entityFlow.map { list -> list.filter { !it.isDeleted } }
+
+    override fun emailExists(email: String): Flow<Boolean> =
+        entityFlow.map { list -> list.any { it.email == email && !it.isDeleted } }
+
+    override suspend fun insertUserForcedSyncFalse(
+        id: Long,
+        email: String,
+        agentName: String,
+        firebaseUid: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        upsert(
+            UserEntity(
+                id = id,
+                email = email,
+                agentName = agentName,
+                firebaseUid = firebaseUid,
+                isDeleted = isDeleted,
+                isSynced = false,
+                updatedAt = updatedAt
+            )
+        )
     }
 
-    // Updates an existing user
-    // Uses the same 'upsert' since update logic is identical in this case
+    override suspend fun insertUser(user: UserEntity): Long {
+        insertUserForcedSyncFalse(
+            id = user.id,
+            email = user.email,
+            agentName = user.agentName,
+            firebaseUid = user.firebaseUid,
+            isDeleted = user.isDeleted,
+            updatedAt = user.updatedAt
+        )
+        return user.id
+    }
+
+    override suspend fun insertAllUsers(users: List<UserEntity>) {
+        users.forEach { insertUser(it) }
+    }
+
+    override suspend fun updateUserForcedSyncFalse(
+        id: Long,
+        email: String,
+        agentName: String,
+        firebaseUid: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        insertUserForcedSyncFalse(id, email, agentName, firebaseUid, isDeleted, updatedAt)
+    }
+
     override suspend fun updateUser(user: UserEntity) {
-        upsert(user)
+        updateUserForcedSyncFalse(
+            id = user.id,
+            email = user.email,
+            agentName = user.agentName,
+            firebaseUid = user.firebaseUid,
+            isDeleted = user.isDeleted,
+            updatedAt = user.updatedAt
+        )
     }
 
-    // Deletes a user from the fake database
-    // 'delete()' is inherited from BaseFakeDao
-    // It removes the user based on its ID
     override suspend fun deleteUser(user: UserEntity) {
         delete(user)
     }
 
-    // Returns a flow that emits a user by ID (or null if not found)
-    // 'entityFlow' is a MutableStateFlow<List<UserEntity>> from BaseFakeDao
-    // 'map' transforms the flow to emit only the matching user
-    override fun getUserById(id: Long): Flow<UserEntity?> =
+    override fun getUserByIdIncludeDeleted(id: Long): Flow<UserEntity?> =
         entityFlow.map { list -> list.find { it.id == id } }
 
-    // Returns a flow that emits a user by email
-    override fun getUserByEmail(email: String): Flow<UserEntity?> =
-        entityFlow.map { list -> list.find { it.email == email } }
+    override suspend fun clearAllUsersDeleted() {
+        val toDelete = entityMap.values.filter { it.isDeleted }
+        toDelete.forEach { delete(it) }
+    }
 
-    // Returns a flow that emits the full list of users
-    // No transformation needed — we just expose the full flow as-is
-    override fun getAllUsers(): Flow<List<UserEntity>> =
-        entityFlow
+    override suspend fun markUserAsDeleted(id: Long, updatedAt: Long) {
+        entityMap[id]?.let {
+            val updated = it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
+            upsert(updated)
+        }
+    }
 
-    // Checks if a user with the given email exists
-    override fun emailExists(email: String): Flow<Boolean> =
-        entityFlow.map { list -> list.any { it.email == email } }
+    override suspend fun markAllUsersAsDeleted(updatedAt: Long) {
+        val updated = entityMap.values.map {
+            it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
+        }
+        seed(updated)
+    }
 
-    // Returns a list of users that are not yet synced with Firebase
-    override fun getUnSyncedUsers(): Flow<List<UserEntity>> =
+    override fun getAllUserIncludeDeleted(): Flow<List<UserEntity>> = entityFlow
+
+    override fun uploadUnSyncedUsers(): Flow<List<UserEntity>> =
         entityFlow.map { list -> list.filter { !it.isSynced } }
+
+    override suspend fun downloadUserFromFirebaseForcedSyncTrue(
+        id: Long,
+        email: String,
+        agentName: String,
+        firebaseUid: String,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        upsert(
+            UserEntity(
+                id = id,
+                email = email,
+                agentName = agentName,
+                firebaseUid = firebaseUid,
+                isDeleted = isDeleted,
+                isSynced = true,
+                updatedAt = updatedAt
+            )
+        )
+    }
+
+    override suspend fun downloadUserFromFirebase(user: UserEntity) {
+        downloadUserFromFirebaseForcedSyncTrue(
+            id = user.id,
+            email = user.email,
+            agentName = user.agentName,
+            firebaseUid = user.firebaseUid,
+            isDeleted = user.isDeleted,
+            updatedAt = user.updatedAt
+        )
+    }
 
     override fun getAllUsersAsCursor(query: SupportSQLiteQuery): Cursor {
         throw NotImplementedError("getAllUsersAsCursor is not used in unit tests.")

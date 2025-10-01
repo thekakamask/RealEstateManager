@@ -105,12 +105,21 @@ interface PropertyPoiCrossDao {
     @Query("UPDATE property_poi_cross_ref SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt")
     suspend fun markAllCrossRefsAsDeleted(updatedAt: Long)
 
-    @Query("DELETE FROM property_poi_cross_ref WHERE is_deleted = 1")
-    suspend fun clearAllDeleted()
-
     //for test check hard delete
+    @Query("SELECT * FROM property_poi_cross_ref WHERE propertyId = :propertyId")
+    fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PropertyPoiCrossEntity>>
+
+    @Query("SELECT * FROM property_poi_cross_ref WHERE poiId = :poiId")
+    fun getCrossRefsByPoiIdIncludeDeleted(poiId: Long): Flow<List<PropertyPoiCrossEntity>>
+
+    @Query("SELECT * FROM property_poi_cross_ref WHERE propertyId = :propertyId AND poiId = :poiId")
+    fun getCrossRefsByIdsIncludedDeleted(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?>
+
     @Query("SELECT * FROM property_poi_cross_ref")
     fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>>
+
+    @Query("DELETE FROM property_poi_cross_ref WHERE is_deleted = 1")
+    suspend fun clearAllDeleted()
 
     // Sync
     @Query("SELECT * FROM property_poi_cross_ref WHERE is_synced = 0")

@@ -24,7 +24,7 @@ interface PropertyRepository {
     suspend fun insertProperty(property: Property): Long
     suspend fun updateProperty(property: Property)
     //suspend fun markPropertyAsSold(propertyId: Long, saleDate: String)
-    fun getPropertyWithPoiS(id: Long): Flow<PropertyWithPoiS>
+    fun getPropertyWithPoiS(id: Long): Flow<PropertyWithPoiS?>
     suspend fun markPropertyAsDeleted(property: Property)
     suspend fun markAllPropertyAsDeleted()
 
@@ -35,4 +35,9 @@ interface PropertyRepository {
     suspend fun clearAllDeleted()
     fun uploadUnSyncedPropertiesToFirebase(): Flow<List<PropertyEntity>>
     suspend fun downloadPropertyFromFirebase(property: PropertyOnlineEntity)
+
+    //FOR TEST HARD DELETE
+    fun getPropertyByIdIncludeDeleted(id: Long): Flow<PropertyEntity?>
+    fun getAllPropertyIncludeDeleted(): Flow<List<PropertyEntity>>
+
 }

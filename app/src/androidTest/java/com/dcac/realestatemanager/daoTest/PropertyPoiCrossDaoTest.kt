@@ -266,6 +266,25 @@ class PropertyPoiCrossDaoTest: DatabaseSetup() {
         assertEquals(expected, result)
     }
 
+    @Test
+    fun getCrossRefsByPropertyIdIncludeDeleted_shouldReturnDeletedAndNotDeleted() = runBlocking {
+        crossRefDao.insertAllCrossRefs(allCrossRefs)
+
+        val result = crossRefDao.getCrossRefsByPropertyIdIncludeDeleted(crossRef5.propertyId).first()
+
+        assertTrue(result.contains(crossRef5.copy(isSynced = false)))
+    }
+
+    @Test
+    fun markCrossRefsAsDeletedForProperty_shouldKeepRefsInIncludeDeleted() = runBlocking {
+        crossRefDao.insertCrossRef(crossRef1)
+
+        crossRefDao.markCrossRefsAsDeletedForProperty(crossRef1.propertyId, System.currentTimeMillis())
+
+        val result = crossRefDao.getCrossRefsByPropertyIdIncludeDeleted(crossRef1.propertyId).first()
+        assertTrue(result.any { it.isDeleted })
+    }
+
     //This test ensures that:
     //the Cursor is not null,
     //it contains data (when the database is not empty),

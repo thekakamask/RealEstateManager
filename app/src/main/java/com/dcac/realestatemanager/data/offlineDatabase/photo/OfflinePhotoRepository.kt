@@ -56,4 +56,11 @@ class OfflinePhotoRepository(
         val entity = photo.toEntity(photoId = photo.roomId).copy(uri = localUri)
         photoDao.savePhotoFromFirebase(entity)
     }
+
+    // --- FOR TEST / HARD DELETE CHECK ---
+    override fun getPhotoByIdIncludeDeleted(id: Long): Flow<PhotoEntity?> =
+        photoDao.getPhotoByIdIncludeDeleted(id)
+
+    override fun getPhotosByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PhotoEntity>> =
+        photoDao.getPhotosByPropertyIdIncludeDeleted(propertyId)
 }

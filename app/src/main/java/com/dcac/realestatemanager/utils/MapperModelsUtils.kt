@@ -25,9 +25,20 @@ fun PropertyEntity.toModel(
     poiS: List<Poi> = emptyList()
 ): Property {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val entryDateLocal = LocalDate.parse(entryDate, formatter)
-    val saleDateLocal = saleDate?.let { LocalDate.parse(it, formatter) }
 
+    val entryDateLocal = if (entryDate.isNotBlank()) {
+        LocalDate.parse(entryDate, formatter)
+    } else {
+        // throw explicit error or log
+        throw IllegalArgumentException("entryDate is blank and LocalDate.now() cannot be used in JVM test without time-zone data.")
+    }
+
+
+    val saleDateLocal = if (!saleDate.isNullOrBlank()) {
+        LocalDate.parse(saleDate, formatter)
+    } else {
+        null
+    }
     return Property(
         id = id,
         title = title,
@@ -54,11 +65,13 @@ fun PropertyEntity.toFullModel(
     photos: List<Photo>,
     crossRefs: List<PropertyPoiCross>,
     allPoiS: List<Poi>
-): Property {
+): Property? {
     val propertyPhotos = photos.filter { it.propertyId == this.id }
     val poiIds = crossRefs.filter { it.propertyId == this.id }.map { it.poiId }
     val propertyPoiS = allPoiS.filter { it.id in poiIds }
-    val user = allUsers.first { it.id == this.userId }
+    val user = allUsers.firstOrNull { it.id == this.userId }
+        ?: return@toFullModel null
+
     return this.toModel(user, propertyPhotos, propertyPoiS)
 }
 
@@ -92,6 +105,7 @@ fun PhotoEntity.toModel(): Photo = Photo(
     propertyId = propertyId,
     uri = uri,
     description = description,
+    isDeleted = isDeleted,
     isSynced = isSynced,
     updatedAt = updatedAt
 )
@@ -101,6 +115,7 @@ fun Photo.toEntity(): PhotoEntity = PhotoEntity(
     propertyId = propertyId,
     uri = uri,
     description = description,
+    isDeleted = isDeleted,
     isSynced = isSynced,
     updatedAt = updatedAt
 )
@@ -171,8 +186,9 @@ fun PoiWithPropertiesRelation.toModel(allUsers: List<User>): PoiWithProperties {
     )
 }
 
-fun PropertyWithPoiSRelation.toModel(allUsers: List<User>): PropertyWithPoiS {
-    val user = allUsers.first { it.id == property.userId }
+fun PropertyWithPoiSRelation.toModel(allUsers: List<User>): PropertyWithPoiS? {
+    val user = allUsers.firstOrNull { it.id == property.userId } ?: return null
+
     return PropertyWithPoiS(
         property = property.toModel(user = user),
         poiS = poiS.map { it.toModel() }

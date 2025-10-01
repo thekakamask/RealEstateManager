@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.model.PropertyPoiCross
 import kotlinx.coroutines.flow.Flow
 
@@ -31,4 +32,9 @@ interface PropertyPoiCrossRepository {
     fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>>
     suspend fun downloadCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity)
 
+    //FOR TEST HARD DELETE
+    fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PropertyPoiCrossEntity>>
+    fun getCrossRefsByPoiIdIncludeDeleted(poiId: Long): Flow<List<PropertyPoiCrossEntity>>
+    fun getCrossRefsByIdsIncludedDeleted(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?>
+    fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>>
 }

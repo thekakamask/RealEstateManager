@@ -10,7 +10,6 @@ object FakeUserEntity {
         id = 1L,
         email = "agent1@example.com",
         agentName = "Alice Smith",
-        isSynced = true,
         firebaseUid = "firebase_uid_1",
         updatedAt = DEFAULT_TIMESTAMP + 1
     )
@@ -19,10 +18,20 @@ object FakeUserEntity {
         id = 2L,
         email = "agent2@example.com",
         agentName = "Bob Johnson",
-        isSynced = false,
+        isSynced = true,
         firebaseUid = "firebase_uid_2",
         updatedAt = DEFAULT_TIMESTAMP + 2
     )
 
-    val userEntityList = listOf(user1, user2)
+    val user3 = UserEntity(
+        id = 3L,
+        email = "agent3@example.com",
+        agentName = "Mounette Valco",
+        isDeleted = true,
+        firebaseUid = "firebase_uid_3",
+        updatedAt = DEFAULT_TIMESTAMP + 3
+    )
+
+    val userEntityList = listOf(user1, user2, user3)
+    val userEntityListNotDeleted = listOf(user1, user2)
 }

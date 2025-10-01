@@ -11,34 +11,127 @@ import kotlinx.coroutines.flow.map
 class FakePhotoDao : PhotoDao,
     BaseFakeDao<Long, PhotoEntity>({ it.id }) {
 
-
-    // pre-filling with photos
     init {
         seed(FakePhotoEntity.photoEntityList)
     }
 
-    // Return a single photo by its ID, or null if not found
     override fun getPhotoById(id: Long): Flow<PhotoEntity?> =
-        entityFlow.map { list -> list.find { it.id == id } }
+        entityFlow.map { list -> list.find { it.id == id && !it.isDeleted } }
 
     override fun getPhotosByPropertyId(propertyId: Long): Flow<List<PhotoEntity>> =
-        entityFlow.map { list -> list.filter { it.propertyId == propertyId } }
+        entityFlow.map { list -> list.filter { it.propertyId == propertyId && !it.isDeleted } }
+
+    override fun getAllPhotos(): Flow<List<PhotoEntity>> =
+        entityFlow.map { list -> list.filter { !it.isDeleted } }
 
     override suspend fun insertPhotos(photos: List<PhotoEntity>) {
-        photos.forEach { upsert(it) }
+        photos.forEach { insertPhoto(it) }
     }
 
-
     override suspend fun insertPhoto(photo: PhotoEntity) {
-        upsert(photo)
+        insertPhotoForcedSyncFalse(
+            id = photo.id,
+            propertyId = photo.propertyId,
+            uri = photo.uri,
+            description = photo.description,
+            isDeleted = photo.isDeleted,
+            updatedAt = photo.updatedAt
+        )
+    }
+
+    override suspend fun insertPhotoForcedSyncFalse(
+        id: Long,
+        propertyId: Long,
+        uri: String,
+        description: String?,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        upsert(
+            PhotoEntity(
+                id = id,
+                propertyId = propertyId,
+                uri = uri,
+                description = description,
+                isDeleted = isDeleted,
+                isSynced = false,
+                updatedAt = updatedAt
+            )
+        )
+    }
+
+    override suspend fun updatePhotoForcedSyncFalse(
+        id: Long,
+        propertyId: Long,
+        uri: String,
+        description: String?,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        insertPhotoForcedSyncFalse(id, propertyId, uri, description, isDeleted, updatedAt)
     }
 
     override suspend fun updatePhoto(photo: PhotoEntity) {
-        upsert(photo)
+        updatePhotoForcedSyncFalse(
+            id = photo.id,
+            propertyId = photo.propertyId,
+            uri = photo.uri,
+            description = photo.description,
+            isDeleted = photo.isDeleted,
+            updatedAt = photo.updatedAt
+        )
+    }
+
+    override suspend fun savePhotoFromFirebaseForcedSyncTrue(
+        id: Long,
+        propertyId: Long,
+        uri: String,
+        description: String?,
+        isDeleted: Boolean,
+        updatedAt: Long
+    ) {
+        upsert(
+            PhotoEntity(
+                id = id,
+                propertyId = propertyId,
+                uri = uri,
+                description = description,
+                isDeleted = isDeleted,
+                isSynced = true,
+                updatedAt = updatedAt
+            )
+        )
     }
 
     override suspend fun savePhotoFromFirebase(photo: PhotoEntity) {
-        upsert(photo)
+        savePhotoFromFirebaseForcedSyncTrue(
+            id = photo.id,
+            propertyId = photo.propertyId,
+            uri = photo.uri,
+            description = photo.description,
+            isDeleted = photo.isDeleted,
+            updatedAt = photo.updatedAt
+        )
+    }
+
+    override suspend fun markPhotosAsDeletedByProperty(propertyId: Long, updatedAt: Long) {
+        val updated = entityMap.values.map {
+            if (it.propertyId == propertyId)
+                it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
+            else it
+        }
+        seed(updated)
+    }
+
+    override suspend fun markPhotoAsDeleted(id: Long, updatedAt: Long) {
+        entityMap[id]?.let {
+            val updated = it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
+            upsert(updated)
+        }
+    }
+
+    override suspend fun deletePhoto(photo: PhotoEntity) {
+        delete(photo)
     }
 
     override suspend fun deletePhotosByPropertyId(propertyId: Long) {
@@ -46,14 +139,11 @@ class FakePhotoDao : PhotoDao,
         toDelete.forEach { delete(it) }
     }
 
+    override fun getPhotoByIdIncludeDeleted(id: Long): Flow<PhotoEntity?> =
+        entityFlow.map { list -> list.find { it.id == id } }
 
-    override suspend fun deletePhoto(photo: PhotoEntity) {
-        delete(photo)
-    }
-
-
-    override fun getAllPhotos(): Flow<List<PhotoEntity>> =
-        entityFlow
+    override fun getPhotosByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PhotoEntity>> =
+        entityFlow.map { list -> list.filter { it.propertyId == propertyId } }
 
     override fun getUnSyncedPhotos(): Flow<List<PhotoEntity>> =
         entityFlow.map { list -> list.filter { !it.isSynced } }
@@ -61,5 +151,4 @@ class FakePhotoDao : PhotoDao,
     override fun getAllPhotosAsCursor(query: SupportSQLiteQuery): Cursor {
         throw NotImplementedError("getAllPhotosAsCursor is not used in unit tests.")
     }
-
 }

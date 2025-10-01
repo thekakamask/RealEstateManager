@@ -4,6 +4,7 @@ import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel.user1
 import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel.user2
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePhotoModel.photoModelList
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePoiModel.poiModelList
+import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel.user3
 import com.dcac.realestatemanager.model.Property
 import org.threeten.bp.LocalDate
 
@@ -20,14 +21,13 @@ object FakePropertyModel {
         rooms = 3,
         description = "Spacious loft near Place de la République.",
         address = "12 Rue du Faubourg du Temple, 75011 Paris",
-        isSold = false,
+        isSold = true,
         entryDate = LocalDate.parse("2025-08-01"),
-        saleDate = null,
+        saleDate = LocalDate.parse("2025-08-20"),
         user = user1,
         staticMapPath = null,
-        photos = listOf(photoModelList[0], photoModelList[1]),
-        poiS = listOf(poiModelList[0], poiModelList[1], poiModelList[2], poiModelList[3], poiModelList[4]),
-        isSynced = true,
+        photos = listOf(photoModelList[0]),
+        poiS = listOf(poiModelList[0], poiModelList[1]),
         updatedAt = DEFAULT_TIMESTAMP + 1
     )
 
@@ -43,10 +43,11 @@ object FakePropertyModel {
         isSold = false,
         entryDate = LocalDate.parse("2025-08-02"),
         saleDate = null,
-        user = user1,
+        user = user2,
         staticMapPath = null,
-        photos = listOf(photoModelList[2], photoModelList[3]),
-        poiS = listOf(poiModelList[5], poiModelList[6], poiModelList[7], poiModelList[8], poiModelList[9]),
+        photos = listOf(photoModelList[1]),
+        poiS = listOf(poiModelList[1]),
+        isSynced = true,
         updatedAt = DEFAULT_TIMESTAMP + 2
     )
 
@@ -59,53 +60,17 @@ object FakePropertyModel {
         rooms = 1,
         description = "Bright studio in the heart of the Latin Quarter.",
         address = "5 Rue des Écoles, 75005 Paris",
-        isSold = true,
+        isSold = false,
         entryDate = LocalDate.parse("2025-08-03"),
         saleDate = LocalDate.parse("2025-08-20"),
-        user = user2,
+        user = user3,
         staticMapPath = null,
-        photos = listOf(photoModelList[4], photoModelList[5]),
-        poiS = listOf(poiModelList[10], poiModelList[11], poiModelList[12], poiModelList[13], poiModelList[14]),
+        photos = listOf(photoModelList[2]),
+        poiS = emptyList(),
+        isDeleted = true,
         updatedAt = DEFAULT_TIMESTAMP + 3
     )
 
-    val property4 = Property(
-        id = 4L,
-        title = "Flat Bastille",
-        type = "Apartment",
-        price = 400_000,
-        surface = 95,
-        rooms = 4,
-        description = "Modern flat 2 min from Place de la Bastille.",
-        address = "14 Rue de la Roquette, 75011 Paris",
-        isSold = false,
-        entryDate = LocalDate.parse("2025-08-04"),
-        saleDate = null,
-        user = user2,
-        staticMapPath = null,
-        photos = listOf(photoModelList[6], photoModelList[7]),
-        poiS = listOf(poiModelList[15], poiModelList[16], poiModelList[17], poiModelList[18], poiModelList[19]),
-        updatedAt = DEFAULT_TIMESTAMP + 4
-    )
-
-    val property5 = Property(
-        id = 5L,
-        title = "Penthouse Bastille",
-        type = "Apartment",
-        price = 750_000,
-        surface = 140,
-        rooms = 5,
-        description = "Penthouse with view over Place de la Bastille.",
-        address = "18 Rue de la Roquette, 75011 Paris",
-        isSold = false,
-        entryDate = LocalDate.parse("2025-08-05"),
-        saleDate = null,
-        user = user1,
-        staticMapPath = null,
-        photos = listOf(photoModelList[8], photoModelList[9]),
-        poiS = listOf(poiModelList[15], poiModelList[16], poiModelList[17], poiModelList[18], poiModelList[19]),
-        updatedAt = DEFAULT_TIMESTAMP + 5
-    )
-
-    val propertyModelList = listOf(property1, property2, property3, property4, property5)
+    val propertyModelList = listOf(property1, property2, property3)
+    val propertyModelListNotDeleted = listOf(property1, property2)
 }
