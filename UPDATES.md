@@ -712,5 +712,15 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Synchronization logic: uploadUnSynced…() and downloadFromFirebase…() ensure offline-first consistency with Firebase.
 
 
+### 🔹 **Update #27**
+
+  - 🧪 **Firebase Unit Test Coverage**
+    - All Firebase repositories (PhotoRepository, PropertyRepository, PoiRepository, PropertyPoiCrossRepository, UserRepository) now have full unit test coverage.
+    - Tests cover:
+      - Successful Firestore operations (upload, get, getAll, delete, deleteAllFor…).
+      - Failure scenarios, ensuring proper exception wrapping (Firebase…UploadException, Firebase…DownloadException, Firebase…DeleteException).
+      - Synchronization consistency between Room entities and their Firebase equivalents, ensuring bidirectional sync via the new UploadManager/DownloadManager layers.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

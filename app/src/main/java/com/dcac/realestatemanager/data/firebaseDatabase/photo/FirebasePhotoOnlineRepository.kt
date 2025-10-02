@@ -15,16 +15,19 @@ class FirebasePhotoOnlineRepository(
 
     override suspend fun uploadPhoto(photo: PhotoOnlineEntity, photoId: String): PhotoOnlineEntity {
         try {
-            val storageRef = storage.reference.child("photos/${photoId}.jpg")
+            if (photo.storageUrl.isBlank()) {
+                throw FirebasePhotoUploadException(
+                    "Photo URI is empty",
+                    IllegalArgumentException("Photo URI is empty")
+                )
+            }
+
             val uri = photo.storageUrl.toUri()
+            val storageRef = storage.reference.child("photos/${photoId}.jpg")
 
-            // 🔽 Upload to Firebase Storage
             storageRef.putFile(uri).await()
-
-            // 🔁 Get download URL
             val downloadUrl = storageRef.downloadUrl.await().toString()
 
-            // ⬆️ Save entity in Firestore with updated URL
             val updatedPhoto = photo.copy(storageUrl = downloadUrl)
 
             firestore.collection(FirestoreCollections.PHOTOS)
@@ -34,6 +37,9 @@ class FirebasePhotoOnlineRepository(
 
             return updatedPhoto
         } catch (e: Exception) {
+            // if it is already a FirebasePhotoUploadException, we re-throw it as is
+            if (e is FirebasePhotoUploadException) throw e
+
             throw FirebasePhotoUploadException("Failed to upload photo: ${e.message}", e)
         }
     }

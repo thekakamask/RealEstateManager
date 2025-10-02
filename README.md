@@ -5,11 +5,12 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🧪 Refactored and expanded unit test coverage for the Room repository layer (Photo, Property, POI, PropertyPoiCross, User) to align with the new repository refactoring, including CRUD, soft/hard delete, and sync behavior validations.
+   - 🔥 Added complete unit test coverage for the Firebase repository layer (Photo, Property, POI, PropertyPoiCross, User), ensuring robust validation of Firestore operations, exception handling, and synchronization workflows.
 
 
 ## ❌ **NEXT UPDATES**
 
+   - 🔄 Sync layer (download/upload managers) unit tests
    - 🧠 ViewModel Implementation
    - 🔄 State Management with LiveData / StateFlow
    - 💾 Prepopulate sample data
@@ -131,9 +132,10 @@ This project is developed using modern Android architecture principles, with a f
       - ❌ **NOT IMPLEMENTED** Unit test for euro to dollar conversion.
       - ❌ **NOT IMPLEMENTED** Unit test for date formatting.
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
-      - ✅ **DONE** DAO tests using instrumented tests for Room database
-      - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation
-      - 🟩 **IN PROGRESS** Firebase Repository unit tests using model/online entity separation
+      - ✅ **DONE** DAO tests using instrumented tests for Room database.
+      - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation.
+      - ✅ **DONE** Firebase Repository unit tests using offline/online entities separation.
+      - ❌ **NOT IMPLEMENTED** Sync layer (download/upload managers) unit tests between Room and Firebase Repositories.
 
 
 ## 🛠️ **Tech Stack**
