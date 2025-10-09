@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.first
 class PhotoUploadManager(
     private val photoRepository: PhotoRepository, // Local Room repository for photos
     private val photoOnlineRepository: PhotoOnlineRepository // Firebase repository for photos
-) {
+): PhotoUploadInterfaceManager {
 
-    suspend fun syncUnSyncedPhotos(): List<SyncStatus> {
+    override suspend fun syncUnSyncedPhotos(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>() // List to collect sync results
 
         try {

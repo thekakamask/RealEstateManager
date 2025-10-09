@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.first
 class PoiDownloadManager(
     private val poiRepository: PoiRepository,                // Local (Room) POI repository
     private val poiOnlineRepository: PoiOnlineRepository     // Remote (Firestore) POI repository
-) {
+): PoiDownloadInterfaceManager {
 
     // Downloads all POIs from Firestore and updates Room if needed
-    suspend fun downloadUnSyncedPoiS(): List<SyncStatus> {
+    override suspend fun downloadUnSyncedPoiS(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>() // Collects the sync results
 
         try {

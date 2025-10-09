@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.first
 class UserUploadManager(
     private val userRepository: UserRepository,              // Room repository (local)
     private val userOnlineRepository: UserOnlineRepository   // Firestore repository (remote)
-) {
+): UserUploadInterfaceManager {
 
     // Uploads all local users that are not yet synced (isSynced == false)
-    suspend fun syncUnSyncedUsers(): List<SyncStatus> {
+    override suspend fun syncUnSyncedUsers(): List<SyncStatus> {
 
         val results = mutableListOf<SyncStatus>()
 

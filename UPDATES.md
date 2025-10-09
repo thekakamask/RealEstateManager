@@ -722,5 +722,37 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Synchronization consistency between Room entities and their Firebase equivalents, ensuring bidirectional sync via the new UploadManager/DownloadManager layers.
 
 
+### 🔹 **Update #28**
+
+  - 🧩 **Model & Room/Firebase Entity Mapping Tests**
+    - Comprehensive unit tests added for all mapping extensions between:
+      - Room Entity ↔ Domain Model
+      - Room Entity ↔ Firebase OnlineEntity
+    - This includes all major models:
+      - Property, Photo, POI, User, PropertyPoiCross
+    - Tests verify:
+      - Field-by-field conversion accuracy.
+      - Default sync states (e.g. isSynced = true, isDeleted = false) during deserialization from Firebase.
+      - Compatibility with existing fake data for isolated testing.
+  
+  - 🔄 **Synchronization layer Unit Testing (Offline ↔ Online)**
+    - UploadManager & DownloadManager (Each specific manager is tested individually):
+      - UserManager
+      - PhotoManager
+      - POIManager
+      - PropertyManager
+      - PropertyPoiCrossRefManager
+    - Covered test cases for each manager:
+      - Full success (returns SyncStatus.Success)
+      - Partial failure (some items return SyncStatus.Failure)
+      - Total failure (all items fail)
+      - Empty sync (no unsynced items)
+    - SyncWorker
+      - WorkManager background integration tested with:
+        - No internet → returns Result.retry()
+        - Successful upload & download → returns Result.success()
+        - Exception thrown during sync → returns Result.retry()
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

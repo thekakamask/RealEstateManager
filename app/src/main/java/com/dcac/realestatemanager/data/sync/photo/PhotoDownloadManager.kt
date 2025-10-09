@@ -13,10 +13,10 @@ import java.io.File
 class PhotoDownloadManager(
     private val photoRepository: PhotoRepository,                // Local Room repository
     private val photoOnlineRepository: PhotoOnlineRepository     // Remote Firebase repository
-) {
+)  : PhotoDownloadInterfaceManager {
 
     // Syncs all online photos to local database if they are new or updated
-    suspend fun downloadUnSyncedPhotos(): List<SyncStatus> {
+    override suspend fun downloadUnSyncedPhotos(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>() // Holds the result for each photo sync
 
         try {

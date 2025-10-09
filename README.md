@@ -5,7 +5,8 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔥 Added complete unit test coverage for the Firebase repository layer (Photo, Property, POI, PropertyPoiCross, User), ensuring robust validation of Firestore operations, exception handling, and synchronization workflows.
+   - 🧪 Added unit tests for all mappers between local models/entities and their Firebase/Room equivalents (Photo, Property, User, POI, CrossRefs), ensuring data consistency across sync layers.
+   - 🧪 Added unit tests for the entire synchronization layer (UploadManagers, DownloadManagers, SyncWorker), covering all success/failure cases, empty sync states, and offline retries.
 
 
 ## ❌ **NEXT UPDATES**
@@ -120,7 +121,7 @@ This project is developed using modern Android architecture principles, with a f
 
       - ✅ **DONE** Refactored legacy Java into clean MVVM structure.
       - ✅ **DONE** Modularized repositories, DAOs, entities, and mappers with separation of concerns.
-      - 🟩 **IN PROGRESS** Manual dependency injection via AppContainer.
+      - ✅ **DONE** Manual dependency injection via AppContainer.
 
    - 🚀 **Performance and responsiveness**:
    
@@ -128,14 +129,15 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🧪 **Testing & Quality Assurance** :
 
-      - ❌ **NOT IMPLEMENTED** Unit test for dollar to euro conversion.
-      - ❌ **NOT IMPLEMENTED** Unit test for euro to dollar conversion.
-      - ❌ **NOT IMPLEMENTED** Unit test for date formatting.
+      - ✅ **DONE** Unit test for dollar to euro conversion.
+      - ✅ **DONE** Unit test for euro to dollar conversion.
+      - ✅ **DONE** Unit test for date formatting.
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
+      - ✅ **DONE** Unit test for Models/Entities/OnlineEntities mappers.
       - ✅ **DONE** DAO tests using instrumented tests for Room database.
       - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation.
       - ✅ **DONE** Firebase Repository unit tests using offline/online entities separation.
-      - ❌ **NOT IMPLEMENTED** Sync layer (download/upload managers) unit tests between Room and Firebase Repositories.
+      - ✅ **DONE** Unit test for Sync layer (download/upload managers) unit tests between Room and Firebase Repositories.
 
 
 ## 🛠️ **Tech Stack**

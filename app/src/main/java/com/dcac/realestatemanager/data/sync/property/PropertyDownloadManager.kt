@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.first
 class PropertyDownloadManager(
     private val propertyRepository: PropertyRepository,                 // Local Room repository
     private val propertyOnlineRepository: PropertyOnlineRepository      // Firestore repository
-) {
+): PropertyDownloadInterfaceManager {
 
     // Downloads all properties from Firestore and syncs to Room
-    suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
+    override suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
 
         try {

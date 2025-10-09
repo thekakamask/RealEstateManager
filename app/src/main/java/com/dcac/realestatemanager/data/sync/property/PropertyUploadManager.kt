@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.first
 class PropertyUploadManager(
     private val propertyRepository: PropertyRepository,                 // Local Room repository
     private val propertyOnlineRepository: PropertyOnlineRepository      // Firestore repository
-) {
+) : PropertyUploadInterfaceManager {
 
     // Uploads all unsynced local properties to Firestore
-    suspend fun syncUnSyncedProperties(): List<SyncStatus> {
+    override suspend fun syncUnSyncedProperties(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()                      // List of success/failure results
 
         try {

@@ -1,6 +1,5 @@
 package com.dcac.realestatemanager.utils
 
-import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
@@ -11,13 +10,6 @@ import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
-import com.dcac.realestatemanager.model.Photo
-import com.dcac.realestatemanager.model.Poi
-import com.dcac.realestatemanager.model.Property
-import com.dcac.realestatemanager.model.PropertyPoiCross
-import com.dcac.realestatemanager.model.User
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
 
 fun UserEntity.toOnlineEntity(): UserOnlineEntity {
     return UserOnlineEntity(

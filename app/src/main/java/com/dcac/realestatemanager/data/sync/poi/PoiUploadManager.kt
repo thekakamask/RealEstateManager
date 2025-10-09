@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.first
 class PoiUploadManager(
     private val poiRepository: PoiRepository,                 // Local (Room) POI repository
     private val poiOnlineRepository: PoiOnlineRepository      // Remote (Firestore) POI repository
-) {
+): PoiUploadInterfaceManager {
 
     // Uploads all unsynced POIs to Firestore
-    suspend fun syncUnSyncedPoiS(): List<SyncStatus> {
+    override suspend fun syncUnSyncedPoiS(): List<SyncStatus> {
 
         val results = mutableListOf<SyncStatus>()
 

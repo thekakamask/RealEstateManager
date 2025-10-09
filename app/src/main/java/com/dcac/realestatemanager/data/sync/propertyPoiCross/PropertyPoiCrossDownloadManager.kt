@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.first
 class PropertyPoiCrossDownloadManager(
     private val propertyPoiCrossRepository: PropertyPoiCrossRepository,             // Local Room repo
     private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository  // Firestore repo
-) {
+): PropertyPoiCrossDownloadInterfaceManager {
 
     // Downloads all cross-references (Property ↔ POI) from Firestore to Room
-    suspend fun downloadUnSyncedPropertyPoiCross(): List<SyncStatus> {
+    override suspend fun downloadUnSyncedPropertyPoiCross(): List<SyncStatus> {
 
         val results = mutableListOf<SyncStatus>()
 

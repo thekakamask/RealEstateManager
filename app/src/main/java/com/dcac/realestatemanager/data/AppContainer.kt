@@ -26,17 +26,29 @@ import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.Firebas
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
-import com.dcac.realestatemanager.data.sync.DownloadManager
+import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
+import com.dcac.realestatemanager.data.sync.globalManager.DownloadManager
+import com.dcac.realestatemanager.data.sync.globalManager.UploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.photo.PhotoUploadManager
 import com.dcac.realestatemanager.data.sync.poi.PoiUploadManager
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossUploadManager
 import com.dcac.realestatemanager.data.sync.property.PropertyUploadManager
-import com.dcac.realestatemanager.data.sync.UploadManager
+import com.dcac.realestatemanager.data.sync.globalManager.UploadManager
+import com.dcac.realestatemanager.data.sync.photo.PhotoDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.photo.PhotoDownloadManager
+import com.dcac.realestatemanager.data.sync.photo.PhotoUploadInterfaceManager
+import com.dcac.realestatemanager.data.sync.poi.PoiDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.poi.PoiDownloadManager
+import com.dcac.realestatemanager.data.sync.poi.PoiUploadInterfaceManager
+import com.dcac.realestatemanager.data.sync.property.PropertyDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.property.PropertyDownloadManager
+import com.dcac.realestatemanager.data.sync.property.PropertyUploadInterfaceManager
+import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossDownloadManager
+import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossUploadInterfaceManager
+import com.dcac.realestatemanager.data.sync.user.UserDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserDownloadManager
+import com.dcac.realestatemanager.data.sync.user.UserUploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserUploadManager
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.data.userConnection.OnlineAuthRepository
@@ -69,18 +81,21 @@ interface AppContainer{
     val poiOnlineRepository: PoiOnlineRepository
     val propertyPoiCrossOnlineRepository : PropertyPoiCrossOnlineRepository
     val propertyOnlineRepository: PropertyOnlineRepository
-    val userUploadManager: UserUploadManager
-    val photoUploadManager : PhotoUploadManager
-    val poiUploadManager : PoiUploadManager
-    val crossSyncManager : PropertyPoiCrossUploadManager
-    val propertyUploadManager: PropertyUploadManager
-    val uploadManager: UploadManager
-    val downloadManager: DownloadManager
-    val userDownloadManager: UserDownloadManager
-    val photoDownloadManager: PhotoDownloadManager
-    val poiDownloadManager: PoiDownloadManager
-    val propertyDownloadManager: PropertyDownloadManager
-    val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadManager
+
+    val uploadManager: UploadInterfaceManager
+    val downloadManager: DownloadInterfaceManager
+
+    val userDownloadManager: UserDownloadInterfaceManager
+    val photoDownloadManager: PhotoDownloadInterfaceManager
+    val poiDownloadManager: PoiDownloadInterfaceManager
+    val propertyDownloadManager: PropertyDownloadInterfaceManager
+    val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager
+
+    val userUploadManager: UserUploadInterfaceManager
+    val photoUploadManager : PhotoUploadInterfaceManager
+    val poiUploadManager : PoiUploadInterfaceManager
+    val crossSyncManager : PropertyPoiCrossUploadInterfaceManager
+    val propertyUploadManager: PropertyUploadInterfaceManager
 }
 
 //Default implementation of AppContainer.
@@ -162,7 +177,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
         FirebaseUserOnlineRepository(firestore)
     }
 
-    override val userUploadManager: UserUploadManager by lazy {
+    override val userUploadManager: UserUploadInterfaceManager by lazy {
         UserUploadManager(
             userRepository = userRepository,
             userOnlineRepository = userOnlineRepository
@@ -176,7 +191,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
         )
     }
 
-    override val photoUploadManager: PhotoUploadManager by lazy {
+    override val photoUploadManager: PhotoUploadInterfaceManager by lazy {
         PhotoUploadManager(
             photoRepository = photoRepository,
             photoOnlineRepository = photoOnlineRepository
@@ -187,7 +202,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
         FirebasePoiOnlineRepository(firestore)
     }
 
-    override val poiUploadManager: PoiUploadManager by lazy {
+    override val poiUploadManager: PoiUploadInterfaceManager by lazy {
         PoiUploadManager(
             poiRepository = poiRepository,
             poiOnlineRepository = poiOnlineRepository
@@ -198,7 +213,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
         FirebasePropertyPoiCrossOnlineRepository(firestore)
     }
 
-    override val crossSyncManager: PropertyPoiCrossUploadManager by lazy {
+    override val crossSyncManager: PropertyPoiCrossUploadInterfaceManager by lazy {
         PropertyPoiCrossUploadManager(
             propertyPoiCrossRepository = propertyPoiCrossRepository,
             propertyPoiCrossOnlineRepository = propertyPoiCrossOnlineRepository
@@ -211,65 +226,65 @@ class AppDataContainer(private val context: Context) : AppContainer {
         )
     }
 
-    override val propertyUploadManager: PropertyUploadManager by lazy {
+    override val propertyUploadManager: PropertyUploadInterfaceManager by lazy {
         PropertyUploadManager(
             propertyRepository = propertyRepository,
             propertyOnlineRepository = propertyOnlineRepository
         )
     }
 
-    override val uploadManager: UploadManager by lazy {
-        UploadManager(
-            userUploadManager = userUploadManager,
-            photoUploadManager = photoUploadManager,
-            poiUploadManager = poiUploadManager,
-            crossSyncManager = crossSyncManager,
-            propertyUploadManager = propertyUploadManager
-        )
-    }
-
-    override val userDownloadManager: UserDownloadManager by lazy {
+    override val userDownloadManager: UserDownloadInterfaceManager by lazy {
         UserDownloadManager(
             userRepository = userRepository,
             userOnlineRepository = userOnlineRepository
         )
     }
 
-    override val photoDownloadManager: PhotoDownloadManager by lazy {
+    override val photoDownloadManager: PhotoDownloadInterfaceManager by lazy {
         PhotoDownloadManager(
             photoRepository = photoRepository,
             photoOnlineRepository = photoOnlineRepository
         )
     }
 
-    override val poiDownloadManager: PoiDownloadManager by lazy {
+    override val poiDownloadManager: PoiDownloadInterfaceManager by lazy {
         PoiDownloadManager(
             poiRepository = poiRepository,
             poiOnlineRepository = poiOnlineRepository
         )
     }
 
-    override val propertyDownloadManager: PropertyDownloadManager by lazy {
+    override val propertyDownloadManager: PropertyDownloadInterfaceManager by lazy {
         PropertyDownloadManager(
             propertyRepository = propertyRepository,
             propertyOnlineRepository = propertyOnlineRepository
         )
     }
 
-    override val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadManager by lazy {
+    override val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager by lazy {
         PropertyPoiCrossDownloadManager(
             propertyPoiCrossRepository = propertyPoiCrossRepository,
             propertyPoiCrossOnlineRepository = propertyPoiCrossOnlineRepository
         )
     }
 
-    override val downloadManager: DownloadManager by lazy {
+    override val downloadManager: DownloadInterfaceManager by lazy {
         DownloadManager(
             userDownloadManager = userDownloadManager,
             photoDownloadManager = photoDownloadManager,
             propertyDownloadManager = propertyDownloadManager,
             poiDownloadManager = poiDownloadManager,
             propertyPoiCrossDownloadManager = propertyPoiCrossDownloadManager
+        )
+    }
+
+    override val uploadManager: UploadInterfaceManager by lazy {
+        UploadManager(
+            userUploadManager = userUploadManager,
+            photoUploadManager = photoUploadManager,
+            poiUploadManager = poiUploadManager,
+            crossSyncManager = crossSyncManager,
+            propertyUploadManager = propertyUploadManager
         )
     }
 }

@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.first
 class PropertyPoiCrossUploadManager(
     private val propertyPoiCrossRepository: PropertyPoiCrossRepository,             // Local Room repo
     private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository  // Firestore repo
-) {
+): PropertyPoiCrossUploadInterfaceManager {
 
     // Uploads all unsynced cross-references from Room to Firestore
-    suspend fun syncUnSyncedPropertyPoiCross(): List<SyncStatus> {
+    override suspend fun syncUnSyncedPropertyPoiCross(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
 
         try {

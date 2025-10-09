@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.first
 class UserDownloadManager(
     private val userRepository: UserRepository,               // Room repository (local)
     private val userOnlineRepository: UserOnlineRepository    // Firestore repository (remote)
-) {
+) : UserDownloadInterfaceManager {
 
     // Downloads users from Firestore and syncs them into Room
-    suspend fun downloadUnSyncedUsers(): List<SyncStatus> {
+    override suspend fun downloadUnSyncedUsers(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
         try {
             val onlineUsers = userOnlineRepository.getAllUsers()
