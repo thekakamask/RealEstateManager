@@ -4,7 +4,6 @@ import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineEntity
 import com.dcac.realestatemanager.model.User
 import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toModel
-import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -20,6 +19,10 @@ class OfflineUserRepository(
     override fun getUserById(id: Long): Flow<User?> {
         // MAP THE RESULTING UserEntity TO THE DOMAIN MODEL User
         return userDao.getUserById(id).map { it?.toModel() }
+    }
+
+    override fun getUserByFirebaseUid(firebaseUid: String) : Flow<User?> {
+        return userDao.getUserByFirebaseUid(firebaseUid).map { it?.toModel() }
     }
 
     // RETRIEVE A USER BY EMAIL ADDRESS

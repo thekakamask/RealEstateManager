@@ -12,6 +12,9 @@ interface UserDao{
     @Query("SELECT * FROM users WHERE id = :id AND is_deleted = 0")
     fun getUserById(id: Long): Flow<UserEntity?>
 
+    @Query("SELECT * FROM users WHERE firebase_uid = :firebaseUid AND is_deleted = 0")
+    fun getUserByFirebaseUid(firebaseUid: String): Flow<UserEntity?>
+
     @Query("SELECT * FROM users WHERE email = :email AND is_deleted = 0")
     fun getUserByEmail(email: String): Flow<UserEntity?>
 

@@ -55,6 +55,18 @@ class UserRepositoryTest {
     }
 
     @Test
+    fun getUserByFirebaseUid_returnsCorrectUser() = runTest {
+        val result = userRepository.getUserByFirebaseUid(userEntity1.firebaseUid).first()
+        assertNotNull(result)
+        assertEquals(userModel1, result)
+        assertEquals(userModel1.id, result?.id)
+        assertEquals(userModel1.email, result?.email)
+        assertEquals(userModel1.agentName, result?.agentName)
+        assertEquals(userModel1.firebaseUid, result?.firebaseUid)
+        assertEquals(userModel1.updatedAt, result?.updatedAt)
+    }
+
+    @Test
     fun getUserByEmail_returnsCorrectUser() = runTest {
         val result = userRepository.getUserByEmail(userEntity2.email).first()
         assertNotNull(result)

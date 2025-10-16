@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.hilt.gradle)
 }
 
 // Load the mapsApiKe from the local.properties file (not committed to VCS)
@@ -109,6 +110,11 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+    ksp(libs.hilt.compiler)
+
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
+
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization)
@@ -156,5 +162,3 @@ tasks.withType<Test> {
         events("passed", "failed", "skipped", "standardOut", "standardError")
     }
 }
-
-

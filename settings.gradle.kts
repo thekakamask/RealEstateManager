@@ -2,14 +2,15 @@
 pluginManagement {
     // Define plugin repositories
     repositories {
-        google {
+        /*google {
             content {
                 // Limit plugin resolution to specific groups to improve performance and clarity
                 includeGroupByRegex("com\\.android.*")
                 includeGroupByRegex("com\\.google.*")
                 includeGroupByRegex("androidx.*")
             }
-        }
+        }*/
+        google()
         mavenCentral()
         gradlePluginPortal() // Provides access to community plugins
     }

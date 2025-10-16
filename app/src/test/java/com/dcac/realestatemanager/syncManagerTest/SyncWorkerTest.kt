@@ -3,13 +3,13 @@ package com.dcac.realestatemanager.syncManagerTest
 import android.content.Context
 import android.util.Log
 import androidx.work.WorkerParameters
-import com.dcac.realestatemanager.data.AppContainer
+import com.dcac.realestatemanager.dI.AppContainer
 import com.dcac.realestatemanager.data.sync.SyncWorker
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.globalManager.UploadInterfaceManager
 import com.dcac.realestatemanager.network.NetworkMonitor
 import com.dcac.realestatemanager.data.sync.SyncStatus
-import com.dcac.realestatemanager.data.AppContainerProvider
+import com.dcac.realestatemanager.dI.AppContainerProvider
 import io.mockk.mockkConstructor
 import io.mockk.mockk
 import io.mockk.mockkStatic

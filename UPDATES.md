@@ -754,5 +754,57 @@ This file documents key technical updates applied to the RealEstateManager Andro
         - Exception thrown during sync → returns Result.retry()
 
 
+### 🔹 **Update #29**
+
+  - 🏛️ **Unified Dependency Injection Architecture**
+    - Refactored the entire DI system to establish a single source of truth managed exclusively by Hilt, solving potential "split-brain" issues between Hilt and non-Hilt components. The new implementation is based on three core pillars within the dI package:
+      - AppModule as the Centralized Provider:
+        - This Hilt module is now the sole authority for creating all application dependencies (Repositories, Managers, DAOs, etc.).
+        - It contains all the @Provides functions, acting as a complete recipe book for Hilt.
+      - AppContainer as the Abstraction:
+        - An interface that defines the complete set of dependencies available to the application.
+        - Consumers (like WorkManager) depend on this interface, not on a concrete class, which improves decoupling and testability.
+      - AppDataContainer as the Concrete Holder:
+        - A data class that implements the AppContainer interface.
+        - It has no creation logic; its only role is to hold the dependency instances it receives via its constructor.
+    - Hilt now assembles the AppDataContainer by injecting the same @Singleton instances it provides to the rest of the app, guaranteeing a single, consistent dependency graph.
+
+  - 🧩 **Complete ViewModel Architecture**
+    - All feature screens now have:
+      - A ViewModel class implementing an IViewModel interface (for separation of concerns and easier mocking).
+      - A dedicated UiState sealed interface/class to clearly represent screen states: Loading, Success, Error, etc.
+    - Improves maintainability, readability, and decouples the UI from internal logic/state.
+
+  - ⚙️ **SharedPreferences with Hilt**
+    - Created a UserPreferencesRepository using DataStore to manage:
+      - Theme mode (light/dark)
+      - Language
+    - Repository is injected with Hilt via a dedicated module (UserPreferencesModule).
+    - Used in ParametersViewModel.
+
+    - 🧠 **Hilt Integration for ViewModels and Preferences Repository**
+    - Migrated all ViewModels to use @HiltViewModel and constructor injection.
+    - Hilt modules provide the necessary bindings for repositories (notably PreferencesRepository).
+    - Reduces boilerplate and improves testability with proper lifecycle-scoped DI.
+
+  - 🔍 **getUserByFirebaseUid() added to UserRepository**
+    - Allows fetching a user from local Room DB using their Firebase UID.
+    - Simplifies logic for onboarding, login, or syncing flows.
+    - Unit tests cover:
+      - Existing UID
+      - Missing UID
+      - DB empty state
+
+  - 🧭 **Navigation Architecture using NavHost + Sealed Destinations**
+    - Introduced a centralized navigation system based on:
+      - A NavDestination interface (for route + title abstraction).
+      - A RealEstateDestination sealed class that defines all navigation routes with arguments and string resources.
+    - This approach improves:
+      - Type safety (e.g. createRoute(propertyId) for dynamic paths).
+      - Scalability when adding new screens.
+      - Consistency and reusability across the app.
+    - The NavGraph and NavHost will be implemented based on this foundation to complete navigation flow.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

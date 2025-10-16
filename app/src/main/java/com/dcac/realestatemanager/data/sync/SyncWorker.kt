@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.dcac.realestatemanager.data.AppContainerProvider
+import com.dcac.realestatemanager.dI.AppContainerProvider
 import com.dcac.realestatemanager.network.NetworkMonitor
 
 // Worker responsible for syncing data between offline Room DB and online Firebase.

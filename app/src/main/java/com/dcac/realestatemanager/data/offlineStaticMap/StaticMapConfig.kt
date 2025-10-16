@@ -8,4 +8,6 @@ data class StaticMapConfig(
     val size: String = "600x400",       // Width x Height in pixels
     val mapType: String = "roadmap",    // roadmap | satellite | hybrid | terrain
     val markers: List<String>           // Example: ["color:red|label:P|lat,lng", ...]
-)
+) {
+    companion object
+}

@@ -20,6 +20,9 @@ class FakeUserDao : UserDao,
     override fun getUserById(id: Long): Flow<UserEntity?> =
         entityFlow.map { list -> list.find { it.id == id && !it.isDeleted } }
 
+    override fun getUserByFirebaseUid(firebaseUid: String): Flow<UserEntity?> =
+        entityFlow.map { list -> list.find { it.firebaseUid == firebaseUid && !it.isDeleted } }
+
     override fun getUserByEmail(email: String): Flow<UserEntity?> =
         entityFlow.map { list -> list.find { it.email == email && !it.isDeleted } }
 

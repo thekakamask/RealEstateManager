@@ -1,27 +1,34 @@
 package com.dcac.realestatemanager
 
 import android.app.Application
-import com.dcac.realestatemanager.data.AppContainer
-import com.dcac.realestatemanager.data.AppContainerProvider
-import com.dcac.realestatemanager.data.AppDataContainer
+import com.dcac.realestatemanager.dI.AppContainer
+import com.dcac.realestatemanager.dI.AppContainerProvider
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.google.firebase.FirebaseApp
+import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 //Custom Application class for the RealEstateManager app.
 // Acts as the global entry point for initializing application-wide dependencies.
-// Used to hold a singleton instance of the AppContainer (dependency container).
+
+//“This application uses Hilt. It will create the dependency graph on startup.”
+// Hilt will scan the code for modules (@Module) to figure out how to build the objects.
+@HiltAndroidApp
 class RealEstateManagerApplication : Application(), AppContainerProvider {
 
-    // Declares the AppContainer instance that will provide access to repositories.
-    // `lateinit` means this variable will be initialized *later* (in onCreate),and NOT at the time of declaration.
-    //  This avoids needing to make it nullable, and tells the compiler:  “trust me, I’ll initialize it before using it.”
-    //  If accessed before being initialized, a runtime exception will occur.
-    override lateinit var container: AppContainer
+    //  Hilt will automatically inject the container
+    // thanks to provideAppContainer from the AppModule
+    @Inject
+    lateinit var injectedHiltContainer: AppContainer
+
+    // ✅ redefine container from AppDataProvider to provide injectedHiltContainer
+    // (from provideAppContainer of AppModule) to Hilt incompatible class
+    override val container: AppContainer
+        get() = injectedHiltContainer
 
     override fun onCreate() {
         super.onCreate()
-        // Initialize the dependency container (repositories) once for the entire app lifecycle.
-        container = AppDataContainer(this)
+        // Global init
         AndroidThreeTen.init(this)
         FirebaseApp.initializeApp(this)
     }

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Real Estate Manager</string>
+
+    <!-- Navigation Titles -->
+    <string name="login">Login</string>
+    <string name="home">Home</string>
+    <string name="property_details">Property Details</string>
+    <string name="create_property">Create Property</string>
+    <string name="account">Account</string>
+    <string name="settings">Settings</string>
+    <string name="user_properties">My Properties</string>
+
 </resources>

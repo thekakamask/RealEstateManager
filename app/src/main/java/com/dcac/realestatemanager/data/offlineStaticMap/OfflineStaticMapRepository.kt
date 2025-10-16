@@ -10,6 +10,7 @@ class OfflineStaticMapRepository(
     private val staticMapApiService: StaticMapApiService
 ): StaticMapRepository {
 
+    // Call API retrofit to get map image
     override suspend fun getStaticMapImage(config: StaticMapConfig): ByteArray? {
         return try {
             val response = staticMapApiService.getStaticMapImage(
@@ -34,6 +35,7 @@ class OfflineStaticMapRepository(
         }
     }
 
+    // Save all bytes received into a PNG file in the internal storage
     override fun saveStaticMapToLocal(context: Context, fileName: String, bytes: ByteArray): String? {
         return try {
             val mapsDir = File(context.filesDir, "maps")

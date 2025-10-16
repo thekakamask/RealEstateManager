@@ -5,19 +5,21 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🧪 Added unit tests for all mappers between local models/entities and their Firebase/Room equivalents (Photo, Property, User, POI, CrossRefs), ensuring data consistency across sync layers.
-   - 🧪 Added unit tests for the entire synchronization layer (UploadManagers, DownloadManagers, SyncWorker), covering all success/failure cases, empty sync states, and offline retries.
-
+   - 🏛️ Refactored DI to use a single Hilt-managed AppContainer, solving double-injection issues for non-Hilt components.
+   - 🧩 Implemented all ViewModels across the app with clean architecture: each ViewModel has its own interface (contract) and sealed UI state for robust state handling.
+   - ⚙️ Created a PreferencesRepository with SharedPreferences abstraction, now injected via Hilt and used by ViewModels.
+   - 🧠 Integrated Hilt for dependency injection in all ViewModels and for Preferences Repository, improving modularity, lifecycle management, and testability.
+   - 🔍 Added getUserByFirebaseUid() in UserRepository + unit tests for mapping Firebase UID to local User.
+   - 🧭 Adopted a centralized NavHost architecture using a sealed NavDestination system, improving navigation scalability and screen decoupling.
+   
 
 ## ❌ **NEXT UPDATES**
 
-   - 🔄 Sync layer (download/upload managers) unit tests
-   - 🧠 ViewModel Implementation
-   - 🔄 State Management with LiveData / StateFlow
+   - 🎨 Nav Host final implementation
+   - 🎨 UI implementatation
    - 💾 Prepopulate sample data
    - 📤 ContentProvider setup (for external data access)
    - 🔔 Notification on property creation
-   - 🧰 Improve Utils.java methods
    - 🛡️ Permission & Error Handling Layer.
 
 
@@ -55,7 +57,7 @@ This project is developed using modern Android architecture principles, with a f
 
       - ❌ **NOT IMPLEMENTED** Take or select photos from gallery.
       - 🟩 **IN PROGRESS** Add multiple images per listing.
-      - 🟩 **IN PROGRESS** Downloads images from Firebase Storage and saves them locally on device during sync.
+      - ✅ **DONE** Downloads images from Firebase Storage and saves them locally on device during sync.
 
    - 🔍 **Search** :
 
@@ -85,14 +87,19 @@ This project is developed using modern Android architecture principles, with a f
    - 🧠 **Utilities** :
 
       - ✅ **DONE** Convert dollar to euro.
-      - ❌ **NOT IMPLEMENTED** Convert euro to dollar.
+      - ✅ **DONE** Convert euro to dollar.
       - ✅ **DONE** Get today's date (format to be improved).
       - ✅ **DONE** Reliable internet check using NetworkMonitor (supports API 21+ with fallbacks).
-      - ❌ **NOT IMPLEMENTED** Add unit and integration tests.
+      - ✅ **DONE** Add unit and integration tests.
 
    - 🧭 **Navigation** :
 
       - ❌ **NOT IMPLEMENTED** Navigation between list and detail.
+      - ❌ **NOT IMPLEMENTED** Two-pane mode support for tablets.
+      - 🟩 **IN PROGRESS** Setting up core navigation components:
+        - Implementing a central NavHost in the main activity.
+        - Defining the NavGraph with all destinations and actions.
+        - Using a single NavController to manage navigation events.
       - ❌ **NOT IMPLEMENTED** Two-pane mode support for tablets.
 
    - 🎨 **Modern and Fluid Interface**:
@@ -113,15 +120,15 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🔄 **Real-time status management**:
 
-      - ❌ **NOT IMPLEMENTED** Use of StateFlow for UI state handling.
-      - 🟩 **IN PROGRESS** ViewModel for lifecycle-aware logic.
-      - 🟩 **IN PROGRESS** Coroutines for async data operations.
+      - ✅ **DONE** Use of StateFlow for UI state handling.
+      - ✅ **DONE** ViewModel for lifecycle-aware logic.
+      - ✅ **DONE** Coroutines for async data operations.
 
    - 🧠 **Architecture & Code Structure**:
 
       - ✅ **DONE** Refactored legacy Java into clean MVVM structure.
       - ✅ **DONE** Modularized repositories, DAOs, entities, and mappers with separation of concerns.
-      - ✅ **DONE** Manual dependency injection via AppContainer.
+      - ✅ **DONE** Migrated dependency injection from manual AppContainer to Dagger Hilt.
 
    - 🚀 **Performance and responsiveness**:
    
@@ -156,7 +163,8 @@ This project is developed using modern Android architecture principles, with a f
    - **Retrofit** : Networking client for API calls.
    - **Kotlinx Serialization** : JSON serialization/deserialization with Kotlin.
    - **Google Maps Static API** : Used to render static images of property locations.
-   - **AppContainer (Manual DI)** : Centralized dependency management without external DI framework (e.g., Hilt).
+   - **AppContainer (Manual DI)** : `DEPRECATED` Centralized dependency management without external DI framework.
+   - **Dagger Hilt** : `CURRENT` Dependency injection framework for the entire app.
    - **Internal Storage API** : Used to persist static map images locally for offline access.
    - **BuildConfig / Secure API Key Handling** : Prevent exposing secrets via Gradle-based injection.
    - **Google Play Services (Maps & Location)** : For real-time location tracking and interactive map display.

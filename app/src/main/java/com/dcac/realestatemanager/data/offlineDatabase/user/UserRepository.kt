@@ -16,6 +16,7 @@ interface UserRepository {
     suspend fun markUserAsDeleted(user: User)
     suspend fun markAllUsersAsDeleted()
     fun emailExists(email: String): Flow<Boolean>
+    fun getUserByFirebaseUid(firebaseUid: String): Flow<User?>
 
     // FOR FIREBASE SYNC
 

@@ -40,6 +40,14 @@ class UserDaoTest: DatabaseSetup() {
     }
 
     @Test
+    fun getUserByFirebaseUid_shouldReturnCorrectUser() = runBlocking {
+        userDao.insertUser(user1)
+        val result = userDao.getUserByFirebaseUid(user1.firebaseUid).first()
+        assertEquals(user1, result)
+    }
+
+
+    @Test
     fun getUserByEmail_shouldReturnCorrectUser() = runBlocking {
         userDao.insertUser(user2)
         val result = userDao.getUserByEmail(user2.email).first()
