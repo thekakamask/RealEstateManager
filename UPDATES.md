@@ -782,7 +782,7 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Repository is injected with Hilt via a dedicated module (UserPreferencesModule).
     - Used in ParametersViewModel.
 
-    - 🧠 **Hilt Integration for ViewModels and Preferences Repository**
+  - 🧠 **Hilt Integration for ViewModels and Preferences Repository**
     - Migrated all ViewModels to use @HiltViewModel and constructor injection.
     - Hilt modules provide the necessary bindings for repositories (notably PreferencesRepository).
     - Reduces boilerplate and improves testability with proper lifecycle-scoped DI.
@@ -804,6 +804,59 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Scalability when adding new screens.
       - Consistency and reusability across the app.
     - The NavGraph and NavHost will be implemented based on this foundation to complete navigation flow.
+
+
+### 🔹 **Update #30**
+
+  - 🧭 **Complete Graph Navigation**
+    - Implementation of a centralized NavGraph using NavHost and NavController.
+    - Each screen now has a route defined via a sealed class (RealEstateDestination), ensuring better maintainability and type safety.
+      - The user flow starts on the Welcome page if the user is not logged in, otherwise on the Home page.
+    - Transitions are handled cleanly with popBackStack() and popUpTo() to avoid residual screens in the backstack.
+    - This foundation makes it easy to add new screens or modify user paths without breaking existing navigation.
+  
+  - 🚀 **Welcome Screen with integrated navigation**
+    - Added a complete welcome screen with a background image, a login button, a sign-up button, and a help button.
+    - The screen acts as the entry point to the application and redirects to the various feeds.
+    - The design was created using Jetpack Compose and complies with the application's overall visual style guide.
+
+  - 🔐 **Login screen**
+    - The login screen includes an email field, a password field with controlled visibility, and a link to the “Forgot your password” page.
+    - A login button redirects to the Home page after validation.
+    - The actual authentication is not yet connected, but navigation is fully operational.
+
+  - 🆕 **Account creation screen**
+    - Addition of a complete form: email, agent name, password, and confirmation.
+    - Form validity check on the UI side (password matching, non-empty fields).
+    - Redirection to the Home page after success (simulated).
+    - The registration backend will be connected in a future iteration.
+
+  - 📨 **Forgot password screen**
+    - Implementation of an email field with validation.
+    - Action button ready to be connected to a password reset logic.
+    - Integrated back navigation via a Back button.
+
+  - ☎️ **Contact screens**
+    - Addition of a Contact Info screen allowing users to choose between contacting by email or chat.
+    - The EmailContact screen has a complete form (email, subject, message).
+    - The ChatContact screen displays an information message (placeholder for future real-time messaging).
+
+  - 🆘 **Global help button**
+    - Integrated into several key screens (Welcome, Login), it provides quick access to the contact screen.
+    - Ensures a smooth and consistent UX for user support.
+
+  - 🧭 **Smooth post-authentication navigation**
+    - After a simulated login or registration, the user is automatically redirected to the Home page.
+    - The popUpTo clears the backstack to prevent any unintended return to the authentication screens.
+
+  - 🖼️ **Complete UI in Jetpack Compose**
+    - All screens are now built with Compose: forms, buttons, icons, and navigation.
+    - The design is consistent, responsive, and follows Material 3 principles.
+    - Placeholders and interactions are ready to be connected to business logic.
+
+  - ⚠️ **Business logic coming soon**
+    - The UI is functional, but no persistence or backend logic is connected yet.
+    - The integration of authentication, account registration, and email/chat messaging will be part of future updates.
 
 
 ## 🤝 **Contributions**

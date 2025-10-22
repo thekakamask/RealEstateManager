@@ -5,20 +5,27 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🏛️ Refactored DI to use a single Hilt-managed AppContainer, solving double-injection issues for non-Hilt components.
-   - 🧩 Implemented all ViewModels across the app with clean architecture: each ViewModel has its own interface (contract) and sealed UI state for robust state handling.
-   - ⚙️ Created a PreferencesRepository with SharedPreferences abstraction, now injected via Hilt and used by ViewModels.
-   - 🧠 Integrated Hilt for dependency injection in all ViewModels and for Preferences Repository, improving modularity, lifecycle management, and testability.
-   - 🔍 Added getUserByFirebaseUid() in UserRepository + unit tests for mapping Firebase UID to local User.
-   - 🧭 Adopted a centralized NavHost architecture using a sealed NavDestination system, improving navigation scalability and screen decoupling.
+   - 🧭 Full navigation implemented with NavGraph and NavHostController.
+   - 🚀 Welcome screen with navigation to Login, Registration, and Help.
+   - 🔐 Login screen with email/password fields and navigation to forgotten password.
+   - 🆕 Account creation screen with field validation.
+   - 📨 Forgotten password screen with email entry.
+   - ☎️ Contact screen (Contact Info) with navigation to email or chat.
+   - 📧 Email contact screen with complete form (email, subject, message).
+   - 💬 Chat contact screen with information message.
+   - 🆘 Help button on the main pages leading to the contact section.
+   - 🏠 Navigation to the home page after successful login or registration.
+   - 🖼️ Page UI implemented with Jetpack Compose (complete design).
+   - 🧭 Functional button behavior (navigation only for now).
+
+   - ⚠️ Business behaviors (registration, authentication) not yet implemented.
    
 
 ## ❌ **NEXT UPDATES**
 
-   - 🎨 Nav Host final implementation
+   - ⚠️ Implement registration and authentication business behaviors
    - 🎨 UI implementatation
    - 💾 Prepopulate sample data
-   - 📤 ContentProvider setup (for external data access)
    - 🔔 Notification on property creation
    - 🛡️ Permission & Error Handling Layer.
 
@@ -104,8 +111,8 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🎨 **Modern and Fluid Interface**:
 
-      - ❌ **NOT IMPLEMENTED** Follows Material Design 3 guidelines.
-      - ❌ **NOT IMPLEMENTED** Smooth transitions with Navigation Component.
+      - 🟩 **IN PROGRESS** Follows Material Design 3 guidelines.
+      - 🟩 **IN PROGRESS** Smooth transitions with Navigation Component.
       - ❌ **NOT IMPLEMENTED** Responsive layout with adaptive UI.
 
       - **TopBar**:
@@ -187,7 +194,33 @@ This project is developed using modern Android architecture principles, with a f
 
 ## 📸 **Screenshots**
 
-❌ **THIS SECTION IS NOT AVAILABLE YET**
+- **Welcome page**:
+
+   ![Welcome page](screenshots/welcome_page.png)
+   
+- **Login page**:
+
+   ![Login page](screenshots/login_page.png)
+
+- **Forgot password page**:
+
+   ![Forgot password page](screenshots/forgot_password_page.png)
+
+- **Account creation page**:
+
+   ![Account creation page](screenshots/account_creation_page.png)
+
+- **Help page**:
+
+   ![Help page](screenshots/help_page.png)
+
+- **Email contact page**:
+
+   ![Email contact page](screenshots/email_contact_page.png)
+
+- **Chat contact page**:
+
+   ![Chat contact page](screenshots/chat_contact_page.png)
 
 
 ## 🤝 **Contributions**

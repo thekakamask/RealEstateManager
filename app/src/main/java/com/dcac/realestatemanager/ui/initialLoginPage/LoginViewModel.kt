@@ -140,6 +140,7 @@ class LoginViewModel @Inject constructor(
             )
         }
     }
+    //TODO SIGN UP FUNCTION
 
     // Resets the UI state to Idle (used after a success or error to clean UI)
     fun resetState() {
