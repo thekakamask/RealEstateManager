@@ -34,6 +34,12 @@ class OfflineUserRepository(
     override fun getAllUsers(): Flow<List<User>> =
         userDao.getAllUsers().map { list -> list.map { it.toModel() } }
 
+    override suspend fun firstInsertUser(user: User): Long {
+        return userDao.firstUserInsert(
+            user.toEntity().copy(id = 0L)
+        )
+    }
+
     override suspend fun insertUser(user: User) {
         userDao.insertUser(user.toEntity())
     }
@@ -84,9 +90,10 @@ class OfflineUserRepository(
     }
 
     // STORE A USER THAT WAS ORIGINALLY CREATED FROM FIREBASE (INCLUDING SYNC INFO)
-    override suspend fun downloadUserFromFirebase(user: UserOnlineEntity) {
-        userDao.downloadUserFromFirebase(user.toEntity(userId = user.roomId))
-
+    override suspend fun downloadUserFromFirebase(user: UserOnlineEntity, firebaseUid: String) {
+        userDao.downloadUserFromFirebase(
+            user.toEntity(userId = user.roomId, firebaseUid = firebaseUid)
+        )
     }
 
     // --- FOR TEST / HARD DELETE CHECK ---

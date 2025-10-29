@@ -3,30 +3,32 @@
 This project is developed using modern Android architecture principles, with a focus on local data persistence, modular code, and responsive design. It evolves from a legacy intern prototype and will be gradually refactored and extended.
 
 
+## 📚 **SUMMARY**
+- [✅ LAST MAJOR UPDATES](#-last-major-updates-see-updatesmd-for-details)
+- [❌ NEXT UPDATES](#-next-updates)
+- [📋 Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🚀 How to Use](#-how-to-use)
+- [📸 Screenshots](#-screenshots)
+- [🤝 Contributions](#-contributions)
+
+
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🧭 Full navigation implemented with NavGraph and NavHostController.
-   - 🚀 Welcome screen with navigation to Login, Registration, and Help.
-   - 🔐 Login screen with email/password fields and navigation to forgotten password.
-   - 🆕 Account creation screen with field validation.
-   - 📨 Forgotten password screen with email entry.
-   - ☎️ Contact screen (Contact Info) with navigation to email or chat.
-   - 📧 Email contact screen with complete form (email, subject, message).
-   - 💬 Chat contact screen with information message.
-   - 🆘 Help button on the main pages leading to the contact section.
-   - 🏠 Navigation to the home page after successful login or registration.
-   - 🖼️ Page UI implemented with Jetpack Compose (complete design).
-   - 🧭 Functional button behavior (navigation only for now).
-
-   - ⚠️ Business behaviors (registration, authentication) not yet implemented.
+   - ✅ Complete implementation of login and account creation logic with Firebase integration and local Room syncing.
+   - 🧱 Refactored User data layer (Firebase + Room) including mappers for safer sync and validation.
+   - 🔄 Improved user sync logic between Room and Firestore with firebaseUid mapping and conflict handling.
+   - 🧪 Refactored all user-related unit and instrumentation tests to align with new data & sync logic.
+   - 📭 Forgot Password and Contact pages displayed with full UI but backend logic not yet implemented.
    
 
 ## ❌ **NEXT UPDATES**
 
-   - ⚠️ Implement registration and authentication business behaviors
-   - 🎨 UI implementatation
-   - 💾 Prepopulate sample data
-   - 🔔 Notification on property creation
+   - ⚠️ Build the HomePage.
+   - ⚠️ Implement backend logic for Forgot Password and Contact page.
+   - 🎨 Continue UI implementatation.
+   - 💾 Prepopulate sample data.
+   - 🔔 Notification on property creation.
    - 🛡️ Permission & Error Handling Layer.
 
 
@@ -102,7 +104,6 @@ This project is developed using modern Android architecture principles, with a f
    - 🧭 **Navigation** :
 
       - ❌ **NOT IMPLEMENTED** Navigation between list and detail.
-      - ❌ **NOT IMPLEMENTED** Two-pane mode support for tablets.
       - 🟩 **IN PROGRESS** Setting up core navigation components:
         - Implementing a central NavHost in the main activity.
         - Defining the NavGraph with all destinations and actions.
@@ -113,10 +114,10 @@ This project is developed using modern Android architecture principles, with a f
 
       - 🟩 **IN PROGRESS** Follows Material Design 3 guidelines.
       - 🟩 **IN PROGRESS** Smooth transitions with Navigation Component.
-      - ❌ **NOT IMPLEMENTED** Responsive layout with adaptive UI.
+      - 🟩 **IN PROGRESS** Responsive layout with adaptive UI.
 
       - **TopBar**:
-         - ❌ **NOT IMPLEMENTED** Display application title and possible future actions.
+         - 🟩 **IN PROGRESS** Display application title and possible future actions.
 
       - **Light/Dark Mode**:
          - ✅ **DONE** Supports light/dark mode.
@@ -201,6 +202,11 @@ This project is developed using modern Android architecture principles, with a f
 - **Login page**:
 
    ![Login page](screenshots/login_page.png)
+
+- **Home page (temporary)**:
+
+   ![Home page 1](screenshots/home_page_1.png)
+   ![Home page 2](screenshots/home_page_2.png)
 
 - **Forgot password page**:
 

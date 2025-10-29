@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.ui.initialLoginPage.accountScreen
 
+import android.util.Patterns
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,10 +38,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.ui.initialLoginPage.LoginUiState
+import com.dcac.realestatemanager.ui.initialLoginPage.LoginViewModel
 
 @Composable
 fun AccountCreationPage(
+    viewModel: LoginViewModel = hiltViewModel(),
     onAccountCreationSuccess:() -> Unit,
     onBackClick:() -> Unit,
 ) {
@@ -47,12 +54,23 @@ fun AccountCreationPage(
     var agentName by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
     var confirmationPassword by remember { mutableStateOf(TextFieldValue()) }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    val isFormValid = email.text.isNotBlank()
+    val uiState by viewModel.uiState.collectAsState()
+
+    val isFormValid = Patterns.EMAIL_ADDRESS.matcher(email.text).matches()
             && agentName.text.isNotBlank()
-            && password.text.isNotBlank()
+            && password.text.length >= 6
             && confirmationPassword.text.isNotBlank()
             && password == confirmationPassword
+            && uiState !is LoginUiState.Loading
+
+    LaunchedEffect(uiState) {
+        if (uiState is LoginUiState.Success) {
+            onAccountCreationSuccess()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -115,16 +133,20 @@ fun AccountCreationPage(
         Text(text = stringResource(
             R.string.account_creation_email_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.secondary
+        )
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
-            placeholder = { Text(stringResource(
+            placeholder = {
+                Text(stringResource(
                 R.string.account_creation_email_content),
-                color = MaterialTheme.colorScheme.tertiary) }
+                color = MaterialTheme.colorScheme.tertiary
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -132,22 +154,23 @@ fun AccountCreationPage(
         Text(text = stringResource(
             R.string.account_creation_agent_name_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.secondary
+        )
         OutlinedTextField(
             value = agentName,
             onValueChange = { agentName = it },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
-            placeholder = { Text(
-                stringResource(
+            placeholder = {
+                Text(stringResource(
                     R.string.account_creation_agent_name_content),
-                color = MaterialTheme.colorScheme.tertiary) }
+                color = MaterialTheme.colorScheme.tertiary
+            )
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        var passwordVisible by remember { mutableStateOf(false) }
 
         Text(text = stringResource(
             R.string.account_creation_password_label),
@@ -159,8 +182,8 @@ fun AccountCreationPage(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
-            placeholder = { Text(
-                stringResource(
+            placeholder = {
+                Text(stringResource(
                     R.string.account_creation_password_content),
                 color = MaterialTheme.colorScheme.tertiary) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -190,21 +213,40 @@ fun AccountCreationPage(
                 stringResource(
                     R.string.account_creation_password_content),
                 color = MaterialTheme.colorScheme.tertiary) },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
                     Icon(
-                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        imageVector = if (confirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = null
                     )
                 }
             }
         )
-
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top =8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (password != confirmationPassword && confirmationPassword.text.isNotBlank()) {
+                Text(
+                    text = stringResource(R.string.passwords_do_not_match),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { onAccountCreationSuccess() },
+            onClick = {
+                viewModel.signUp(
+                    email = email.text.trim(),
+                    password = password.text.trim(),
+                    agentName = agentName.text.trim()
+                )
+            },
             enabled = isFormValid,
             modifier = Modifier
                 .fillMaxWidth()
@@ -218,5 +260,32 @@ fun AccountCreationPage(
         ) {
             Text(stringResource(R.string.account_creation_button))
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            when (uiState) {
+                is LoginUiState.Loading -> {
+                    Text(
+                        text = stringResource(R.string.account_creation_in_progress),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                is LoginUiState.Error -> {
+                    val messageResId = (uiState as LoginUiState.Error).messageResId
+                    Text(
+                        text = stringResource(messageResId),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                else -> Unit
+            }
+        }
+
     }
 }

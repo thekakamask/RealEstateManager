@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.sync.user
 
+import com.dcac.realestatemanager.data.firebaseDatabase.user.FirestoreUserDocument
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
@@ -14,28 +15,33 @@ class UserDownloadManager(
     override suspend fun downloadUnSyncedUsers(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
         try {
-            val onlineUsers = userOnlineRepository.getAllUsers()
+            val onlineDocuments: List<FirestoreUserDocument> = userOnlineRepository.getAllUsers()
 
-            for (onlineUser in onlineUsers) {
+            for (doc in onlineDocuments) {
+                val firebaseUid = doc.id
+                val onlineUser = doc.user
+                val roomId = onlineUser.roomId
+
                 try {
-                    val roomId = onlineUser.roomId
                     val localUser = userRepository.getUserEntityById(roomId).first()
 
                     val shouldDownload = localUser == null || onlineUser.updatedAt > localUser.updatedAt
 
                     if (shouldDownload) {
-                        userRepository.downloadUserFromFirebase(onlineUser)
+                        userRepository.downloadUserFromFirebase(onlineUser, firebaseUid)
                         results.add(SyncStatus.Success("User $roomId downloaded"))
                     } else {
                         results.add(SyncStatus.Success("User $roomId already up-to-date"))
                     }
-                } catch (e : Exception) {
-                    results.add(SyncStatus.Failure("User ${onlineUser.roomId} failed to sync", e))
+
+                } catch (e: Exception) {
+                    results.add(SyncStatus.Failure("User $roomId failed to sync", e))
                 }
             }
         } catch (e: Exception) {
             results.add(SyncStatus.Failure("Global user download failed", e))
         }
+
         return results
     }
 }

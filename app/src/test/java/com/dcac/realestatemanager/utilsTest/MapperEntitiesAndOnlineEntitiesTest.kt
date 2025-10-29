@@ -28,6 +28,7 @@ class MapperEntitiesAndOnlineEntitiesTest {
     private val propertyOnlineEntity = FakePropertyOnlineEntity.propertyEntity1
     private val crossOnlineEntity = FakePropertyPoiCrossOnlineEntity.cross1
     private val userOnlineEntity = FakeUserOnlineEntity.userOnline1
+    private val firebaseUserDocument = FakeUserOnlineEntity.firestoreUserDocument1
 
     // ---------------- USER ----------------
 
@@ -43,13 +44,13 @@ class MapperEntitiesAndOnlineEntitiesTest {
 
     @Test
     fun toEntity_userOnlineEntity_mapsCorrectlyToUserEntity() {
-        val entity = userOnlineEntity.toEntity(userOnlineEntity.roomId)
+        val entity = userOnlineEntity.toEntity(userOnlineEntity.roomId, firebaseUserDocument.id)
 
         assertEquals(userOnlineEntity.roomId, entity.id)
         assertEquals(userOnlineEntity.email, entity.email)
         assertEquals(userOnlineEntity.agentName, entity.agentName)
         assertEquals(userOnlineEntity.updatedAt, entity.updatedAt)
-        assertEquals(userOnlineEntity.firebaseUid, entity.firebaseUid)
+        assertEquals(firebaseUserDocument.id, entity.firebaseUid)
         assertEquals(true, entity.isSynced)
         assertEquals(false, entity.isDeleted)
     }

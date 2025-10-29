@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dcac.realestatemanager.ui.homePage.HomeScreen
 import com.dcac.realestatemanager.ui.initialLoginPage.WelcomePage
 import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.AccountCreationPage
 import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.ForgotPasswordPage
@@ -98,9 +99,9 @@ fun RealEstateNavGraph(
             )
         }
 
-        /*composable( route = RealEstateDestination.Home.route) {
+        composable( route = RealEstateDestination.Home.route) {
             HomeScreen(
-                onPropertyClick = { propertyId ->
+                /*onPropertyClick = { propertyId ->
                     navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
                 },
                 onAddProperty = {
@@ -114,7 +115,7 @@ fun RealEstateNavGraph(
                 },
                 onSettingsClick = {
                     navController.navigate(RealEstateDestination.Settings.route)
-                },
+                },*/
                 onLogout = {
                     navController.navigate(RealEstateDestination.Welcome.route) {
                         popUpTo(0) { inclusive = true } // Clear whole backstack
@@ -123,7 +124,7 @@ fun RealEstateNavGraph(
             )
         }
 
-        composable(
+        /*composable(
             // Define a composable destination in the NavGraph with a dynamic route parameter `propertyId`
             route = RealEstateDestination.PropertyDetails.route, // e.g. "property_details/{propertyId}"
             // Declare the argument(s) expected by this route and their type(s)

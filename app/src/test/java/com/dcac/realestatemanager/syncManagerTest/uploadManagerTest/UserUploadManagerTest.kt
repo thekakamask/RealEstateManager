@@ -7,6 +7,7 @@ import com.dcac.realestatemanager.data.sync.user.UserUploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserUploadManager
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
 import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakeUserOnlineEntity
+import com.dcac.realestatemanager.utils.toOnlineEntity
 import com.google.common.truth.Truth.assertThat
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -34,6 +35,9 @@ class UserUploadManagerTest {
     private val userOnline1 = FakeUserOnlineEntity.userOnline1
     private val userOnline2 = FakeUserOnlineEntity.userOnline2
 
+    private val firebaseUserDocument1 = FakeUserOnlineEntity.firestoreUserDocument1
+    private val firebaseUserDocument2 = FakeUserOnlineEntity.firestoreUserDocument2
+
     @Before
     fun setup(){
         MockKAnnotations.init(this, relaxUnitFun = true)
@@ -57,8 +61,8 @@ class UserUploadManagerTest {
         assertThat(success!!.userEmail).isEqualTo("User ${userEntity1.id} uploaded")
 
         coVerify {
-            userOnlineRepository.uploadUser(any(), userEntity1.id.toString())
-            userRepository.downloadUserFromFirebase(userOnline1)
+            userOnlineRepository.uploadUser(any(), userEntity1.firebaseUid)
+            userRepository.downloadUserFromFirebase(userOnline1, firebaseUserDocument1.id)
         }
     }
 
@@ -74,7 +78,7 @@ class UserUploadManagerTest {
         assertThat(success!!.userEmail).isEqualTo("User ${deletedUser.id} deleted")
 
         coVerify {
-            userOnlineRepository.deleteUser(deletedUser.id.toString())
+            userOnlineRepository.deleteUser(deletedUser.firebaseUid)
             userRepository.deleteUser(deletedUser)
         }
     }
@@ -103,7 +107,7 @@ class UserUploadManagerTest {
 
         coVerify(exactly = 0) {
             userOnlineRepository.uploadUser(any(), any())
-            userRepository.downloadUserFromFirebase(any())
+            userRepository.downloadUserFromFirebase(any(),any())
             userOnlineRepository.deleteUser(any())
             userRepository.deleteUser(any())
         }
@@ -115,12 +119,13 @@ class UserUploadManagerTest {
         val alreadySyncedNotDeleted = userEntity2
         val notSyncedDeleted = userEntity3
 
+
         coEvery {
             userRepository.uploadUnSyncedUsers()
         } returns flowOf(listOf(notSyncedNotDeleted, notSyncedDeleted))
 
         coEvery {
-            userOnlineRepository.uploadUser(any(), notSyncedNotDeleted.id.toString())
+            userOnlineRepository.uploadUser(any(), notSyncedNotDeleted.firebaseUid)
         } returns userOnline1
 
         val result = uploadManager.syncUnSyncedUsers()
@@ -133,16 +138,32 @@ class UserUploadManagerTest {
         assertThat(uploaded).isNotNull()
         assertThat(deleted).isNotNull()
 
-        coVerify { userOnlineRepository.deleteUser(notSyncedDeleted.id.toString()) }
-        coVerify { userRepository.deleteUser(notSyncedDeleted) }
-        coVerify { userOnlineRepository.uploadUser(any(), notSyncedNotDeleted.id.toString()) }
-        coVerify { userRepository.downloadUserFromFirebase(userOnline1) }
+
+        coVerify {
+            userOnlineRepository.uploadUser(match {
+                it.email == notSyncedNotDeleted.email && it.agentName == notSyncedNotDeleted.agentName
+            }, notSyncedNotDeleted.firebaseUid)
+
+            userRepository.downloadUserFromFirebase(userOnline1, notSyncedNotDeleted.firebaseUid)
+
+            //userRepository.downloadUserFromFirebase(
+            //                match {
+            //                    it.email == userOnline1.email &&
+            //                            it.agentName == userOnline1.agentName &&
+            //                            it.roomId == userOnline1.roomId
+            //                },
+            //                notSyncedNotDeleted.firebaseUid
+            //            )
+        }
+
+        coVerify {
+            userOnlineRepository.deleteUser(notSyncedDeleted.firebaseUid)
+            userRepository.deleteUser(notSyncedDeleted)
+        }
 
         coVerify(exactly = 0) {
-            userOnlineRepository.uploadUser(any(), alreadySyncedNotDeleted.id.toString())
-        }
-        coVerify(exactly = 0) {
-            userRepository.downloadUserFromFirebase(userOnline2)
+            userOnlineRepository.uploadUser(any(), alreadySyncedNotDeleted.firebaseUid)
+            userRepository.downloadUserFromFirebase(any(), alreadySyncedNotDeleted.firebaseUid)
         }
     }
 }

@@ -24,6 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,10 +39,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.ui.initialLoginPage.LoginUiState
+import com.dcac.realestatemanager.ui.initialLoginPage.LoginViewModel
+import android.util.Patterns
 
 @Composable
 fun LoginPage(
+    viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     onInfoClick: () -> Unit,
     onBackClick:() -> Unit,
@@ -50,7 +57,16 @@ fun LoginPage(
     var email by remember { mutableStateOf(TextFieldValue()) }
     var password by remember { mutableStateOf(TextFieldValue()) }
 
-    val isFormValid = email.text.isNotBlank() && password.text.isNotBlank()
+    //val isFormValid = email.text.isNotBlank() && password.text.isNotBlank()
+    val isFormValid = Patterns.EMAIL_ADDRESS.matcher(email.text).matches() && password.text.length >= 6
+
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        if (uiState is LoginUiState.Success) {
+            onLoginSuccess()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -161,7 +177,12 @@ fun LoginPage(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { onLoginSuccess() },
+            onClick = {
+                viewModel.signIn(
+                    email = email.text.trim(),
+                    password = password.text.trim()
+                )
+            },
             enabled = isFormValid,
             modifier = Modifier
                 .fillMaxWidth()
@@ -174,6 +195,30 @@ fun LoginPage(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(stringResource(R.string.login_log_in_button))
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            when (uiState) {
+                is LoginUiState.Loading -> {
+                    Text(
+                        text = stringResource(R.string.login_log_in_in_progress),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                is LoginUiState.Error -> {
+                    val messageResId = (uiState as LoginUiState.Error).messageResId
+                    Text(
+                        text = stringResource(messageResId),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                else -> Unit
+            }
         }
 
     }

@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.ui.initialLoginPage
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.google.firebase.auth.FirebaseUser
 
@@ -16,7 +17,7 @@ sealed interface LoginUiState {
 
     @Immutable
     data class Error(
-        val message: String
+        @StringRes val messageResId: Int
     ) : LoginUiState
 
 }

@@ -64,7 +64,15 @@
     <string name="login_password_content">••••••</string>
     <string name="login_forgot_password_content">I forgot my password</string>
     <string name="login_log_in_button">Log in</string>
+    <string name="login_log_in_in_progress">Log in in progress…</string>
+    <string name="error_no_account_found">"No Account find for this email."</string>
 
+    <string name="error_user_sync">An error occurred while syncing.</string>
+    <string name="error_null_user">Firebase returned null user.</string>
+
+    <string name="error_unknown">An unknown error occurred.</string>
+    <string name="error_invalid_credentials">"Incorrect credentials."</string>
+    <string name="error_user_creation">Error creating account.</string>
     <!-- Forgot password screen -->
     <string name="forgot_password_button_content_description">back</string>
     <string name="forgot_password_title">Change your password</string>
@@ -87,5 +95,6 @@
     <string name="account_creation_agent_name_content">Example Example</string>
     <string name="account_creation_password_content">••••••</string>
     <string name="account_creation_button">Create your account</string>
-
+    <string name="account_creation_in_progress">Account creation in progress…</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
 </resources>

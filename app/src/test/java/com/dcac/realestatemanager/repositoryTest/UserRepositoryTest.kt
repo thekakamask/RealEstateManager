@@ -28,12 +28,9 @@ class UserRepositoryTest {
     private val userEntity2 = FakeUserEntity.user2
     private val userEntity3 = FakeUserEntity.user3
     private val allUsersEntity = FakeUserEntity.userEntityList
-    private val allUsersEntityNotDeleted = FakeUserEntity.userEntityListNotDeleted
 
     private val userModel1 = FakeUserModel.user1
     private val userModel2 = FakeUserModel.user2
-    private val userModel3 = FakeUserModel.user3
-    private val allUsersModel = FakeUserModel.userModelList
     private val allUsersModelNotDeleted = FakeUserModel.userModelListNotDeleted
 
     @Before
@@ -85,6 +82,34 @@ class UserRepositoryTest {
         assertTrue(result.containsAll(allUsersModelNotDeleted))
     }
 
+    @Test
+    fun firstInsertUser_shouldInsertUserAndReturnGeneratedId() = runTest {
+        val newUser = User(
+            id = 0L,
+            email = "unique@domain.com",
+            agentName = "New Agent",
+            firebaseUid = "unique_firebase_uid",
+            updatedAt = System.currentTimeMillis()
+        )
+
+        val generatedId = userRepository.firstInsertUser(newUser)
+
+        assertTrue(generatedId > 0)
+
+        val inserted = userRepository.getUserById(generatedId).first()
+
+        assertNotNull(inserted)
+        assertEquals("unique@domain.com", inserted?.email)
+    }
+
+    @Test
+    fun firstInsertUser_shouldIgnoreDuplicateAndReturnMinusOne() = runTest {
+        val duplicate = FakeUserModel.user1.copy(id = 0L) // same email as existing
+
+        val result = userRepository.firstInsertUser(duplicate)
+
+        assertEquals(-1L, result)
+    }
 
     @Test
     fun insertUser_insertsUserCorrectly() = runTest {
@@ -322,12 +347,12 @@ class UserRepositoryTest {
         val firebaseUser = UserOnlineEntity(
             email = "cloud@firebase.com",
             agentName = "Cloud Agent",
-            firebaseUid = "firebase_new_999",
             updatedAt = System.currentTimeMillis(),
             roomId = 999L
         )
 
-        userRepository.downloadUserFromFirebase(firebaseUser)
+        val firebaseUid = "firebase_new_999" // firebaseUid given separately
+        userRepository.downloadUserFromFirebase(firebaseUser, firebaseUid)
 
         val result = userRepository.getUserEntityById(firebaseUser.roomId).first()
 
@@ -344,12 +369,12 @@ class UserRepositoryTest {
         val firebaseUser = UserOnlineEntity(
             email = "updated@firebase.com",
             agentName = "Update Agent",
-            firebaseUid = "firebase_new_999",
             updatedAt = System.currentTimeMillis(),
             roomId = original.id
         )
 
-        userRepository.downloadUserFromFirebase(firebaseUser)
+        val firebaseUid = "firebase_new_999" // firebaseUid given separately
+        userRepository.downloadUserFromFirebase(firebaseUser, firebaseUid)
 
         val entity = fakeUserDao.entityMap[original.id]
         assertNotNull(entity)

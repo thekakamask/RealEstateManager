@@ -10,6 +10,7 @@ interface UserRepository {
     fun getUserById(id: Long): Flow<User?>
     fun getUserByEmail(email: String): Flow<User?>
     fun getAllUsers(): Flow<List<User>>
+    suspend fun firstInsertUser(user: User): Long
     suspend fun insertUser(user: User)
     suspend fun insertAllUsers(users: List<User>)
     suspend fun updateUser(user: User)
@@ -24,7 +25,7 @@ interface UserRepository {
     suspend fun deleteUser(user: UserEntity)
     suspend fun clearAllUsersDeleted()
     fun uploadUnSyncedUsers(): Flow<List<UserEntity>>
-    suspend fun downloadUserFromFirebase(user: UserOnlineEntity)
+    suspend fun downloadUserFromFirebase(user: UserOnlineEntity, firebaseUid: String)
 
     fun getUserByIdIncludeDeleted(id: Long): Flow<UserEntity?>
     fun getAllUsersIncludeDeleted(): Flow<List<UserEntity>>

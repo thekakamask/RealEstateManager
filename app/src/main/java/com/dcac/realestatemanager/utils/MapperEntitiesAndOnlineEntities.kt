@@ -16,17 +16,17 @@ fun UserEntity.toOnlineEntity(): UserOnlineEntity {
         email = this.email,
         agentName = this.agentName,
         updatedAt = updatedAt,
-        roomId = this.id
+        roomId = this.id,
     )
 }
 
-fun UserOnlineEntity.toEntity(userId: Long): UserEntity {
+fun UserOnlineEntity.toEntity(userId: Long, firebaseUid: String): UserEntity {
     return UserEntity(
         id = userId,
         email = this.email,
         agentName = this.agentName,
         isSynced = true,
-        firebaseUid = this.firebaseUid,
+        firebaseUid = firebaseUid,
         updatedAt = this.updatedAt,
         isDeleted = false
     )

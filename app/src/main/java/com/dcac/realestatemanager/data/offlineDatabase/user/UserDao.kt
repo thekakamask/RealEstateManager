@@ -24,6 +24,9 @@ interface UserDao{
     @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email AND is_deleted = 0)")
     fun emailExists(email: String): Flow<Boolean>
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun firstUserInsert(user: UserEntity): Long
+
     @Query("""
         INSERT OR REPLACE INTO users (
             id, email, agent_name, firebase_uid, is_deleted, is_synced, updated_at

@@ -11,7 +11,6 @@ import androidx.annotation.Keep
 data class UserOnlineEntity(
     val email: String = "",
     val agentName: String = "",
-    val firebaseUid: String = "",
     val updatedAt: Long = System.currentTimeMillis(),
     val roomId : Long = 0L
 )

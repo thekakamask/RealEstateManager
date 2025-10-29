@@ -1,7 +1,9 @@
 package com.dcac.realestatemanager.ui.initialLoginPage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
@@ -13,6 +15,7 @@ import kotlinx.coroutines.launch
 import com.dcac.realestatemanager.utils.toOnlineEntity
 import com.dcac.realestatemanager.ui.initialLoginPage.LoginUiState.*
 import com.dcac.realestatemanager.utils.toEntity
+import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
@@ -69,16 +72,33 @@ class LoginViewModel @Inject constructor(
                             resetState()
                         } catch (e: Exception) {
                             // Catch conversion or sync errors
-                            _uiState.value = Error("User sync error: ${e.message}")
+                            _uiState.value = Error(R.string.error_user_sync)
                         }
                     } ?: run {
                         // Null user returned from Firebase
-                        _uiState.value = Error("Firebase returned null user")
+                        _uiState.value = Error(R.string.error_null_user)
                     }
                 },
                 onFailure = { e ->
-                    // Handle Firebase Auth error
-                    _uiState.value = Error(e.message ?: "Unknown error")
+                    Log.e("AuthError", "Sign in failed: ${e.message}", e)
+
+                    val messageResId = when {
+                        // Case 1 : User don't exist
+                        e.message?.contains("no user record", ignoreCase = true) == true ||
+                                (e as? FirebaseAuthException)?.errorCode == "ERROR_USER_NOT_FOUND" ->
+                            R.string.error_no_account_found
+
+                        // Case 2 : Invalid credentials
+                        e.message?.contains("auth credential", ignoreCase = true) == true ||
+                                e.message?.contains("password", ignoreCase = true) == true ||
+                                (e as? FirebaseAuthException)?.errorCode == "ERROR_WRONG_PASSWORD" ->
+                            R.string.error_invalid_credentials
+
+                        // Case 3 : Unknown
+                        else -> R.string.error_unknown
+                    }
+
+                    _uiState.value = Error(messageResId)
                 }
             )
         }
@@ -104,21 +124,27 @@ class LoginViewModel @Inject constructor(
                                 email = it.email ?: "no-email",
                                 agentName = agentName,
                                 firebaseUid = it.uid,
-                                isSynced = false,
+                                isSynced = true,
                                 isDeleted = false,
                                 updatedAt = now
                             )
 
-                            val userEntity = user.toEntity()
-                            // Prevent duplicate insertion in Room
-                            val userAlreadyExists = userRepository.getUserByEmail(user.email).firstOrNull() != null
-                            if (!userAlreadyExists) {
-                                userRepository.insertUser(user)
-                            }
+                            // Check if a user with the same email already exists in the local Room database
+                            val userAlreadyExists =
+                                userRepository.getUserByEmail(user.email).firstOrNull() != null
 
-                            // Upload to Firestore
-                            val userOnline = userEntity.toOnlineEntity()
-                            userOnlineRepository.uploadUser(userOnline, it.uid)
+                            // Only proceed with insertion if the user does not exist locally
+                            if (!userAlreadyExists) {
+                                // Insert the user into Room; Room auto-generates the ID and returns it
+                                val generatedId = userRepository.firstInsertUser(user)
+
+                                // Create a new User instance with the generated ID
+                                val userWithId = user.copy(id = generatedId)
+                                // Convert the User to a Room Entity, then to an online Firebase entity
+                                val userOnline = userWithId.toEntity().toOnlineEntity()
+                                // Upload the user to Firebase using the Firebase UID
+                                userOnlineRepository.uploadUser(userOnline, it.uid)
+                            }
 
                             // Emit success and reset state
                             _uiState.value = Success(it)
@@ -126,21 +152,24 @@ class LoginViewModel @Inject constructor(
                             resetState()
                         } catch (e: Exception) {
                             // Handle sync failure
-                            _uiState.value = Error("User creation error: ${e.message}")
+                            Log.e("SignUpError", "Error during local insertion or sync", e)
+                            _uiState.value = Error(R.string.error_user_creation)
                         }
                     } ?: run {
                         // Handle edge case where Firebase returns null
-                        _uiState.value = Error("Firebase returned null user")
+                        _uiState.value = Error(R.string.error_null_user)
                     }
                 },
                 onFailure = { e ->
                     // Handle Firebase sign-up failure
-                    _uiState.value = Error(e.message ?: "Unknown error")
+                    _uiState.value = Error(R.string.error_unknown)
                 }
             )
         }
     }
-    //TODO SIGN UP FUNCTION
+
+    val isUserConnected: Boolean
+        get() = authRepository.currentUser != null
 
     // Resets the UI state to Idle (used after a success or error to clean UI)
     fun resetState() {

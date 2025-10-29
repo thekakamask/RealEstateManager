@@ -4,7 +4,7 @@ import com.dcac.realestatemanager.model.User
 
 interface UserOnlineRepository {
     suspend fun uploadUser(user: UserOnlineEntity, userId: String): UserOnlineEntity
-    suspend fun getUser(userId: String): UserOnlineEntity?
+    suspend fun getUser(userId: String): FirestoreUserDocument?
     suspend fun deleteUser(userId: String)
-    suspend fun getAllUsers(): List<UserOnlineEntity>
+    suspend fun getAllUsers(): List<FirestoreUserDocument>
 }

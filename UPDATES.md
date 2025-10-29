@@ -859,5 +859,35 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - The integration of authentication, account registration, and email/chat messaging will be part of future updates.
 
 
+### 🔹 **Update #31**
+
+  - ✅ **Complete implementation of login and account creation logic with Firebase integration and local Room syncing**
+    - The login and sign-up screens are now fully connected to Firebase Authentication.
+    - On success, users are created both remotely (Firestore) and locally (Room).
+    - ViewModels emit LoginUiState for loading, success, and error states, handled via StateFlow.
+    - Error messages are contextualized using localized strings and reflect Firebase-specific exceptions.
+    - Includes validation for email format, password matching, and minimum password length.
+    - Navigation on success uses popUpTo() to ensure clean back stack behavior.
+
+  - 🧱 **Refactored User data layer (Firebase + Room) including mappers for safer sync and validation**
+    - UserOnlineEntity has been simplified: firebaseUiD is now excluded from the document body and used as Firestore document ID only.
+    - Room entity UserEntity enforces uniqueness on both email and firebase_uid via @Index.
+    - Mappers were updated accordingly:
+      - UserEntity.toOnlineEntity() sends roomId to Firestore.
+      - UserOnlineEntity.toEntity(userId, firebaseUid) ensures data is reconstructed with the correct Firestore UID.
+
+- 🔄 **Improved user sync logic between Room and Firestore with firebaseUid mapping and conflict handling**
+  - The UserUploadManager now uploads local users using their firebaseUid as document ID.
+  - Conflicts are prevented by checking if email or roomId already exist in Firestore before insertion.
+  - The UserDownloadManager uses FirestoreUserDocument to retrieve both the Firestore UID and document content.
+  - The sync managers now log detailed SyncStatus per user (Success or Failure), making debugging easier and more transparent.
+
+- 🧪 **Refactored all user-related unit and instrumentation tests to align with new data & sync logic**
+  - UserDaoTest updated to reflect new insert strategies and unique constraints.
+  - OfflineUserRepositoryTest extended to verify proper handling of firebaseUid, soft deletes, and sync flags.
+  - FirebaseUserOnlineRepositoryTest includes new test cases for duplicate checks and exception handling.
+  - UserUploadManagerTest and UserDownloadManagerTest now test real sync flows and validate UID-to-roomId mapping logic.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

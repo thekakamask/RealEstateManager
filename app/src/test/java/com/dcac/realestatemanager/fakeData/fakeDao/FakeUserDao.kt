@@ -32,6 +32,19 @@ class FakeUserDao : UserDao,
     override fun emailExists(email: String): Flow<Boolean> =
         entityFlow.map { list -> list.any { it.email == email && !it.isDeleted } }
 
+    override suspend fun firstUserInsert(user: UserEntity): Long {
+        val existing = entityMap.values.any { it.email == user.email }
+
+        return if (existing) {
+            -1L // Mimic Room's behavior for IGNORE
+        } else {
+            val newId = (entityMap.keys.maxOrNull() ?: 0L) + 1L
+            val newUser = user.copy(id = newId)
+            upsert(newUser)
+            newId
+        }
+    }
+
     override suspend fun insertUserForcedSyncFalse(
         id: Long,
         email: String,

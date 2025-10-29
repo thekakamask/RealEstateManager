@@ -13,34 +13,36 @@ class UserUploadManager(
 
     // Uploads all local users that are not yet synced (isSynced == false)
     override suspend fun syncUnSyncedUsers(): List<SyncStatus> {
-
         val results = mutableListOf<SyncStatus>()
 
         try {
             val unSyncedUsers = userRepository.uploadUnSyncedUsers().first()
 
             for (userEntity in unSyncedUsers) {
-                val userId = userEntity.id
+                val roomId = userEntity.id
+                val firebaseUid = userEntity.firebaseUid
 
                 if (userEntity.isDeleted) {
-                    userOnlineRepository.deleteUser(userId.toString())
+                    userOnlineRepository.deleteUser(firebaseUid)
                     userRepository.deleteUser(userEntity)
-                    results.add(SyncStatus.Success("User $userId deleted"))
+                    results.add(SyncStatus.Success("User $roomId deleted"))
                 } else {
                     val updatedUser = userEntity.copy(updatedAt = System.currentTimeMillis())
                     val uploadedUser = userOnlineRepository.uploadUser(
                         user = updatedUser.toOnlineEntity(),
-                        userId = userId.toString()
+                        userId = firebaseUid
                     )
                     userRepository.downloadUserFromFirebase(
-                        uploadedUser
+                        user = uploadedUser,
+                        firebaseUid = firebaseUid
                     )
-                    results.add(SyncStatus.Success("User $userId uploaded"))
+                    results.add(SyncStatus.Success("User $roomId uploaded"))
                 }
             }
         } catch (e: Exception) {
             results.add(SyncStatus.Failure("Global upload sync failed", e))
         }
+
         return results
     }
 }
