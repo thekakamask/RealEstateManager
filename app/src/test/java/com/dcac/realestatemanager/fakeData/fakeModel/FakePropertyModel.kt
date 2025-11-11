@@ -1,10 +1,7 @@
 package com.dcac.realestatemanager.fakeData.fakeModel
 
-import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel.user1
-import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel.user2
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePhotoModel.photoModelList
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePoiModel.poiModelList
-import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel.user3
 import com.dcac.realestatemanager.model.Property
 import org.threeten.bp.LocalDate
 
@@ -13,7 +10,9 @@ object FakePropertyModel {
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
     val property1 = Property(
-        id = 1L,
+        universalLocalId = "property-1",
+        firestoreDocumentId = "firestore-property-1",
+        universalLocalUserId = "user-1",
         title = "Loft République",
         type = "Loft",
         price = 300_000,
@@ -24,7 +23,6 @@ object FakePropertyModel {
         isSold = true,
         entryDate = LocalDate.parse("2025-08-01"),
         saleDate = LocalDate.parse("2025-08-20"),
-        user = user1,
         staticMapPath = null,
         photos = listOf(photoModelList[0]),
         poiS = listOf(poiModelList[0], poiModelList[1]),
@@ -32,7 +30,9 @@ object FakePropertyModel {
     )
 
     val property2 = Property(
-        id = 2L,
+        universalLocalId = "property-2",
+        firestoreDocumentId = "firestore-property-2",
+        universalLocalUserId = "user-2",
         title = "Villa Montmartre",
         type = "House",
         price = 550_000,
@@ -43,7 +43,6 @@ object FakePropertyModel {
         isSold = false,
         entryDate = LocalDate.parse("2025-08-02"),
         saleDate = null,
-        user = user2,
         staticMapPath = null,
         photos = listOf(photoModelList[1]),
         poiS = listOf(poiModelList[1]),
@@ -52,7 +51,9 @@ object FakePropertyModel {
     )
 
     val property3 = Property(
-        id = 3L,
+        universalLocalId = "property-3",
+        firestoreDocumentId = "firestore-property-3",
+        universalLocalUserId = "user-3",
         title = "Studio Latin Quarter",
         type = "Studio",
         price = 180_000,
@@ -63,7 +64,6 @@ object FakePropertyModel {
         isSold = false,
         entryDate = LocalDate.parse("2025-08-03"),
         saleDate = LocalDate.parse("2025-08-20"),
-        user = user3,
         staticMapPath = null,
         photos = listOf(photoModelList[2]),
         poiS = emptyList(),

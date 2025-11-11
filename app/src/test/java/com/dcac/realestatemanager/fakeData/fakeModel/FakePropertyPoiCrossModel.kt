@@ -1,5 +1,7 @@
 package com.dcac.realestatemanager.fakeData.fakeModel
 
+import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
+import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyEntity
 import com.dcac.realestatemanager.model.PropertyPoiCross
 
 object FakePropertyPoiCrossModel {
@@ -7,33 +9,42 @@ object FakePropertyPoiCrossModel {
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
     val cross1 = PropertyPoiCross(
-        FakePropertyModel.property1.id,
-        FakePoiModel.poi1.id,
+        universalLocalPropertyId = "property-1",
+        universalLocalPoiId = "poi-1",
+        firestoreDocumentId = "firestore-cross-1",
         updatedAt =  DEFAULT_TIMESTAMP + 1
     )
     val cross2 = PropertyPoiCross(
-        FakePropertyModel.property1.id, FakePoiModel.poi2.id,
+        universalLocalPropertyId = "property-1",
+        universalLocalPoiId = "poi-2",
+        firestoreDocumentId = "firestore-cross-2",
         updatedAt = DEFAULT_TIMESTAMP + 2
     )
     val cross3 = PropertyPoiCross(
-        FakePropertyModel.property2.id,
-        FakePoiModel.poi2.id,
+        universalLocalPropertyId = "property-2",
+        universalLocalPoiId = "poi-2",
+        firestoreDocumentId = "firestore-cross-3",
         isSynced = true,
         updatedAt = DEFAULT_TIMESTAMP + 3
     )
     val cross4 = PropertyPoiCross(
-        FakePropertyModel.property2.id,
-        FakePoiModel.poi3.id,
+        universalLocalPropertyId = "property-2",
+        universalLocalPoiId = "poi-3",
+        firestoreDocumentId = "firestore-cross-4",
         isSynced = true,
         updatedAt = DEFAULT_TIMESTAMP + 4
     )
     val cross5 = PropertyPoiCross(
-        FakePropertyModel.property3.id, FakePoiModel.poi1.id,
+        universalLocalPropertyId = "property-3",
+        universalLocalPoiId = "poi-1",
+        firestoreDocumentId = "firestore-cross-5",
         isDeleted = true,
         updatedAt = DEFAULT_TIMESTAMP + 5
     )
     val cross6 = PropertyPoiCross(
-        FakePropertyModel.property3.id, FakePoiModel.poi3.id,
+        universalLocalPropertyId = "property-3",
+        universalLocalPoiId = "poi-3",
+        firestoreDocumentId = "firestore-cross-6",
         isDeleted = true,
         updatedAt = DEFAULT_TIMESTAMP + 6
     )

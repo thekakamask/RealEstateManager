@@ -26,7 +26,7 @@ class UserPropertiesViewModel @Inject constructor(
     val uiState: StateFlow<UserPropertiesUiState> = _uiState.asStateFlow()
 
     override fun loadUserProperties() {
-        val firebaseUid = authRepository.currentUser?.uid
+        /*val firebaseUid = authRepository.currentUser?.uid
 
         if (firebaseUid == null) {
             _uiState.value = Error("User not logged in.")
@@ -54,7 +54,7 @@ class UserPropertiesViewModel @Inject constructor(
                             _uiState.value = Success(userProperties)
                         }
                 }
-        }
+        }*/
     }
 
     override fun resetState() {

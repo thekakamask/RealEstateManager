@@ -14,6 +14,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toModel
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 
 class MapperModelsAndEntitiesTest {
 
@@ -36,8 +38,8 @@ class MapperModelsAndEntitiesTest {
     fun toModel_photoEntity_mapsCorrectlyToPhotoModel() {
         val model = photoEntity.toModel()
 
-        assertEquals(photoEntity.id, model.id)
-        assertEquals(photoEntity.propertyId, model.propertyId)
+        assertEquals(photoEntity.id, model.universalLocalId)
+        assertEquals(photoEntity.universalLocalPropertyId, model.universalLocalPropertyId)
         assertEquals(photoEntity.uri, model.uri)
         assertEquals(photoEntity.description, model.description)
         assertEquals(photoEntity.isDeleted, model.isDeleted)
@@ -45,12 +47,13 @@ class MapperModelsAndEntitiesTest {
         assertEquals(photoEntity.updatedAt, model.updatedAt)
     }
 
+
     @Test
     fun  toEntity_photoModel_mapsCorrectlyToPhotoEntity() {
         val entity = photoModel.toEntity()
 
-        assertEquals(photoModel.id, entity.id)
-        assertEquals(photoModel.propertyId, entity.propertyId)
+        assertEquals(photoModel.universalLocalId, entity.id)
+        assertEquals(photoModel.universalLocalPropertyId, entity.universalLocalPropertyId)
         assertEquals(photoModel.uri, entity.uri)
         assertEquals(photoModel.description, entity.description)
         assertEquals(photoModel.isDeleted, entity.isDeleted)
@@ -64,7 +67,7 @@ class MapperModelsAndEntitiesTest {
     fun toModel_poiEntity_mapsCorrectlyToPoiModel() {
         val model = poiEntity.toModel()
 
-        assertEquals(poiEntity.id, model.id)
+        assertEquals(poiEntity.id, model.universalLocalId)
         assertEquals(poiEntity.name, model.name)
         assertEquals(poiEntity.type, model.type)
         assertEquals(poiEntity.isSynced, model.isSynced)
@@ -75,7 +78,7 @@ class MapperModelsAndEntitiesTest {
     fun toEntity_poiModel_mapsCorrectlyToPoiEntity() {
         val entity = poiModel.toEntity()
 
-        assertEquals(poiModel.id, entity.id)
+        assertEquals(poiModel.universalLocalId, entity.id)
         assertEquals(poiModel.name, entity.name)
         assertEquals(poiModel.type, entity.type)
         assertEquals(poiModel.isSynced, entity.isSynced)
@@ -88,7 +91,7 @@ class MapperModelsAndEntitiesTest {
     fun toModel_userEntity_mapsCorrectlyToUserModel() {
         val model = userEntity.toModel()
 
-        assertEquals(userEntity.id, model.id)
+        assertEquals(userEntity.id, model.universalLocalId)
         assertEquals(userEntity.email, model.email)
         assertEquals(userEntity.agentName, model.agentName)
         assertEquals(userEntity.isSynced, model.isSynced)
@@ -100,7 +103,7 @@ class MapperModelsAndEntitiesTest {
     fun toEntity_userModel_mapsCorrectlyToUserEntity() {
         val entity = userModel.toEntity()
 
-        assertEquals(userModel.id, entity.id)
+        assertEquals(userModel.universalLocalId, entity.id)
         assertEquals(userModel.email, entity.email)
         assertEquals(userModel.agentName, entity.agentName)
         assertEquals(userModel.isSynced, entity.isSynced)
@@ -114,8 +117,8 @@ class MapperModelsAndEntitiesTest {
     fun toModel_propertyPoiCrossEntity_mapsCorrectlyToModel() {
         val model = crossEntity.toModel()
 
-        assertEquals(crossEntity.propertyId, model.propertyId)
-        assertEquals(crossEntity.poiId, model.poiId)
+        assertEquals(crossEntity.universalLocalPropertyId, model.universalLocalPropertyId)
+        assertEquals(crossEntity.universalLocalPoiId, model.universalLocalPoiId)
         assertEquals(crossEntity.isSynced, model.isSynced)
         assertEquals(crossEntity.updatedAt, model.updatedAt)
     }
@@ -124,8 +127,8 @@ class MapperModelsAndEntitiesTest {
     fun toEntity_propertyPoiCrossModel_mapsCorrectlyToEntity() {
         val entity = crossModel.toEntity()
 
-        assertEquals(crossModel.propertyId, entity.propertyId)
-        assertEquals(crossModel.poiId, entity.poiId)
+        assertEquals(crossModel.universalLocalPropertyId, entity.universalLocalPropertyId)
+        assertEquals(crossModel.universalLocalPoiId, entity.universalLocalPoiId)
         assertEquals(crossModel.isSynced, entity.isSynced)
         assertEquals(crossModel.updatedAt, entity.updatedAt)
     }
@@ -133,11 +136,17 @@ class MapperModelsAndEntitiesTest {
     // ---------------- PROPERTY ----------------
 
     @Test
-    fun toModel_propertyEntityWithUserPhotosPoiS_mapsCorrectlyToPropertyModel() {
+    fun toModel_propertyEntity_mapsCorrectlyToPropertyModel() {
 
-        val model = propertyEntity.toModel(userModel, listOf(photoModel), listOf(poiModel))
+        val model = propertyEntity.toModel(
+            photos = listOf(photoModel),
+            poiS = listOf(poiModel)
+        )
 
-        assertEquals(propertyEntity.id, model.id)
+        // --- Vérification des champs simples ---
+        assertEquals(propertyEntity.id, model.universalLocalId)
+        assertEquals(propertyEntity.firestoreDocumentId, model.firestoreDocumentId)
+        assertEquals(propertyEntity.universalLocalUserId, model.universalLocalUserId)
         assertEquals(propertyEntity.title, model.title)
         assertEquals(propertyEntity.type, model.type)
         assertEquals(propertyEntity.price, model.price)
@@ -148,9 +157,15 @@ class MapperModelsAndEntitiesTest {
         assertEquals(propertyEntity.isSold, model.isSold)
         assertEquals(propertyEntity.staticMapPath, model.staticMapPath)
         assertEquals(propertyEntity.isSynced, model.isSynced)
+        assertEquals(propertyEntity.isDeleted, model.isDeleted)
         assertEquals(propertyEntity.updatedAt, model.updatedAt)
 
-        assertEquals(userModel, model.user)
+        // --- check converted date ---
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        assertEquals(LocalDate.parse(propertyEntity.entryDate, formatter), model.entryDate)
+        assertEquals(propertyEntity.saleDate?.let { LocalDate.parse(it, formatter) }, model.saleDate)
+
+        // --- check associate lists ---
         assertEquals(listOf(photoModel), model.photos)
         assertEquals(listOf(poiModel), model.poiS)
     }
@@ -159,7 +174,10 @@ class MapperModelsAndEntitiesTest {
     fun toEntity_propertyModel_mapsCorrectlyToPropertyEntity() {
         val entity = propertyModel.toEntity()
 
-        assertEquals(propertyModel.id, entity.id)
+        // --- Vérification des champs simples ---
+        assertEquals(propertyModel.universalLocalId, entity.id)
+        assertEquals(propertyModel.firestoreDocumentId, entity.firestoreDocumentId)
+        assertEquals(propertyModel.universalLocalUserId, entity.universalLocalUserId)
         assertEquals(propertyModel.title, entity.title)
         assertEquals(propertyModel.type, entity.type)
         assertEquals(propertyModel.price, entity.price)
@@ -170,10 +188,12 @@ class MapperModelsAndEntitiesTest {
         assertEquals(propertyModel.isSold, entity.isSold)
         assertEquals(propertyModel.staticMapPath, entity.staticMapPath)
         assertEquals(propertyModel.isSynced, entity.isSynced)
+        assertEquals(propertyModel.isDeleted, entity.isDeleted)
         assertEquals(propertyModel.updatedAt, entity.updatedAt)
 
-        assertEquals(propertyModel.user.id, entity.userId)
-        assertEquals(propertyModel.entryDate.toString(), entity.entryDate)
-        assertEquals(propertyModel.saleDate?.toString(), entity.saleDate)
+        // --- Vérification de la conversion LocalDate → String ---
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        assertEquals(propertyModel.entryDate.format(formatter), entity.entryDate)
+        assertEquals(propertyModel.saleDate?.format(formatter), entity.saleDate)
     }
 }

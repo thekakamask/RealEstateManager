@@ -9,6 +9,8 @@ import androidx.annotation.Keep
 
 @Keep
 data class PropertyOnlineEntity(
+    val universalLocalId: String = "", // 🔑 UUID from Room
+    val universalLocalUserId: String = "",  // 🔗 link with user
     val title: String = "",
     val type: String = "",
     val price: Int = 0,
@@ -17,10 +19,8 @@ data class PropertyOnlineEntity(
     val description: String = "",
     val address: String = "",
     val isSold: Boolean = false,
-    val entryDate: String = "",       // format "yyyy-MM-dd"
-    val saleDate: String? = null,     // nullable
-    val userId: Long = 0L,            // same id than Room
+    val entryDate: String = "",
+    val saleDate: String? = null,
     val staticMapPath: String? = null,
-    val updatedAt: Long = System.currentTimeMillis(),
-    val roomId : Long = 0L
+    val updatedAt: Long = System.currentTimeMillis()
 )

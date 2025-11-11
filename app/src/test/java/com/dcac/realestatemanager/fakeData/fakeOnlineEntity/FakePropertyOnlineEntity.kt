@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.fakeData.fakeOnlineEntity
 
+import com.dcac.realestatemanager.data.firebaseDatabase.property.FirestorePropertyDocument
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity.user1
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity.user2
@@ -9,7 +10,9 @@ object FakePropertyOnlineEntity {
 
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
-    val propertyEntity1 = PropertyOnlineEntity(
+    val propertyOnline1 = PropertyOnlineEntity(
+        universalLocalId = "property-1",
+        universalLocalUserId = user1.id,
         title = "Loft République",
         type = "Loft",
         price = 300_000,
@@ -20,14 +23,13 @@ object FakePropertyOnlineEntity {
         isSold = true,
         entryDate = "2025-08-01",
         saleDate = "2025-08-20",
-        userId = user1.id,
         staticMapPath = null,
-        updatedAt = DEFAULT_TIMESTAMP + 1,
-        roomId = 1L
+        updatedAt = DEFAULT_TIMESTAMP + 1
     )
 
-    // Correspond exactement à FakePropertyEntity.property2
-    val propertyEntity2 = PropertyOnlineEntity(
+    val propertyOnline2 = PropertyOnlineEntity(
+        universalLocalId = "property-2",
+        universalLocalUserId = user2.id,
         title = "Villa Montmartre",
         type = "House",
         price = 550_000,
@@ -38,14 +40,13 @@ object FakePropertyOnlineEntity {
         isSold = false,
         entryDate = "2025-08-02",
         saleDate = null,
-        userId = user2.id,
         staticMapPath = null,
-        updatedAt = DEFAULT_TIMESTAMP + 2,
-        roomId = 2L
+        updatedAt = DEFAULT_TIMESTAMP + 2
     )
 
-    // Correspond exactement à FakePropertyEntity.property3
-    val propertyEntity3 = PropertyOnlineEntity(
+    val propertyOnline3 = PropertyOnlineEntity(
+        universalLocalId = "property-3",
+        universalLocalUserId = user3.id,
         title = "Studio Latin Quarter",
         type = "Studio",
         price = 180_000,
@@ -56,11 +57,32 @@ object FakePropertyOnlineEntity {
         isSold = false,
         entryDate = "2025-08-03",
         saleDate = null,
-        userId = user3.id,
         staticMapPath = null,
-        updatedAt = DEFAULT_TIMESTAMP + 3,
-        roomId = 3L
+        updatedAt = DEFAULT_TIMESTAMP + 3
     )
 
-    val propertyOnlineEntityList = listOf(propertyEntity1, propertyEntity2, propertyEntity3)
+    val firestorePropertyDocument1 = FirestorePropertyDocument(
+        id = "firestore-property-1",
+        property = propertyOnline1
+    )
+
+    val firestorePropertyDocument2 = FirestorePropertyDocument(
+        id = "firestore-property-2",
+        property = propertyOnline2
+    )
+
+    val firestorePropertyDocument3 = FirestorePropertyDocument(
+        id = "firestore-property-3",
+        property = propertyOnline3
+    )
+
+    val propertyOnlineEntityList = listOf(
+        propertyOnline1, propertyOnline2, propertyOnline3
+    )
+
+    val firestorePropertyDocumentList = listOf(
+        firestorePropertyDocument1,
+        firestorePropertyDocument2,
+        firestorePropertyDocument3
+    )
 }

@@ -4,12 +4,11 @@ import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-// Repository implementation that manages Users stored in Firestore
 class FirebaseUserOnlineRepository(
     private val firestore: FirebaseFirestore
 ) : UserOnlineRepository {
 
-    override suspend fun uploadUser(user: UserOnlineEntity, userId: String): UserOnlineEntity {
+    override suspend fun uploadUser(user: UserOnlineEntity, firebaseUserId: String): UserOnlineEntity {
         try {
             // Check if email already exists in Firestore
             val emailExists = firestore.collection(FirestoreCollections.USERS)
@@ -17,26 +16,14 @@ class FirebaseUserOnlineRepository(
                 .get()
                 .await()
                 .documents
-                .any { it.id != userId } // ignore if it is an update
+                .any { it.id != firebaseUserId } // ignore if it is an update
 
             if (emailExists) {
                 throw FirebaseUserUploadException("Email already in use", null)
             }
 
-            // Check if roomId already exist
-            val roomIdExists = firestore.collection(FirestoreCollections.USERS)
-                .whereEqualTo("roomId", user.roomId)
-                .get()
-                .await()
-                .documents
-                .any { it.id != userId }
-
-            if (roomIdExists) {
-                throw FirebaseUserUploadException("Room ID already in use", null)
-            }
-
             firestore.collection(FirestoreCollections.USERS)
-                .document(userId)
+                .document(firebaseUserId)
                 .set(user)
                 .await()
 
@@ -47,16 +34,15 @@ class FirebaseUserOnlineRepository(
         }
     }
 
-
-    override suspend fun getUser(userId: String): FirestoreUserDocument? {
+    override suspend fun getUser(firebaseUserId: String): FirestoreUserDocument? {
         return try {
             val snapshot = firestore.collection(FirestoreCollections.USERS)
-                .document(userId)
+                .document(firebaseUserId)
                 .get()
                 .await()
 
             val user = snapshot.toObject(UserOnlineEntity::class.java)
-            user?.let { FirestoreUserDocument(id = snapshot.id, user = it) }
+            user?.let { FirestoreUserDocument(firebaseId = snapshot.id, user = it) }
         } catch (e: Exception) {
             throw FirebaseUserDownloadException("Failed to fetch user: ${e.message}", e)
         }
@@ -70,17 +56,17 @@ class FirebaseUserOnlineRepository(
                 .documents
                 .mapNotNull { doc ->
                     val user = doc.toObject(UserOnlineEntity::class.java)
-                    user?.let { FirestoreUserDocument(id = doc.id, user = it) }
+                    user?.let { FirestoreUserDocument(firebaseId = doc.id, user = it) }
                 }
         } catch (e: Exception) {
             throw FirebaseUserDownloadException("Failed to fetch all users: ${e.message}", e)
         }
     }
 
-    override suspend fun deleteUser(userId: String) {
+    override suspend fun deleteUser(firebaseUserId: String) {
         try {
             firestore.collection(FirestoreCollections.USERS)
-                .document(userId)
+                .document(firebaseUserId)
                 .delete()
                 .await()
         } catch (e: Exception) {
@@ -95,7 +81,7 @@ class FirebaseUserDeleteException(message: String, cause: Throwable?) : Exceptio
 class FirebaseUserDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
 
 data class FirestoreUserDocument(
-    val id: String,                      // => Firebase UID (document ID)
+    val firebaseId: String,                      // => Firebase UID (document ID)
     val user: UserOnlineEntity           // => User data
 )
 

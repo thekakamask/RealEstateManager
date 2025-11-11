@@ -9,7 +9,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
 ) : PropertyPoiCrossOnlineRepository {
 
     override suspend fun uploadCrossRef(crossRef: PropertyPoiCrossOnlineEntity): PropertyPoiCrossOnlineEntity {
-        val documentId = "${crossRef.propertyId}-${crossRef.poiId}"
+        val documentId = "${crossRef.universalLocalPropertyId}-${crossRef.universalLocalPoiId}"
 
         try {
             firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
@@ -22,10 +22,10 @@ class FirebasePropertyPoiCrossOnlineRepository(
         }
     }
 
-    override suspend fun getCrossRefsByPropertyId(propertyId: Long): List<PropertyPoiCrossOnlineEntity> {
+    override suspend fun getCrossRefsByPropertyId(firebasePropertyId: String): List<PropertyPoiCrossOnlineEntity> {
         return try {
             firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
-                .whereEqualTo("propertyId", propertyId)
+                .whereEqualTo("propertyId", firebasePropertyId)
                 .get()
                 .await()
                 .documents.mapNotNull {
@@ -36,10 +36,10 @@ class FirebasePropertyPoiCrossOnlineRepository(
         }
     }
 
-    override suspend fun getCrossRefsByPoiId(poiId: Long): List<PropertyPoiCrossOnlineEntity> {
+    override suspend fun getCrossRefsByPoiId(firebasePoiId: String): List<PropertyPoiCrossOnlineEntity> {
         return try {
             firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
-                .whereEqualTo("poiId", poiId)
+                .whereEqualTo("poiId", firebasePoiId)
                 .get()
                 .await()
                 .documents.mapNotNull {
@@ -50,21 +50,26 @@ class FirebasePropertyPoiCrossOnlineRepository(
         }
     }
 
-    override suspend fun getAllCrossRefs(): List<PropertyPoiCrossOnlineEntity> {
+    override suspend fun getAllCrossRefs(): List<FirestoreCrossDocument> {
         return try {
             firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
                 .get()
                 .await()
-                .documents.mapNotNull {
-                    it.toObject(PropertyPoiCrossOnlineEntity::class.java)
+                .documents.mapNotNull { doc ->
+                    doc.toObject(PropertyPoiCrossOnlineEntity::class.java)?.let { entity ->
+                        FirestoreCrossDocument(
+                            firebaseId = doc.id,
+                            cross = entity
+                        )
+                    }
                 }
         } catch (e: Exception) {
             throw FirebasePropertyPoiCrossDownloadException("Failed to fetch cross-references: ${e.message}", e)
         }
     }
 
-    override suspend fun deleteCrossRef(propertyId: Long, poiId: Long) {
-        val docId = "$propertyId-$poiId"
+    override suspend fun deleteCrossRef(firebasePropertyId: String, firebasePoiId: String) {
+        val docId = "$firebasePropertyId-$firebasePoiId"
         try {
             firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
                 .document(docId)
@@ -75,10 +80,10 @@ class FirebasePropertyPoiCrossOnlineRepository(
         }
     }
 
-    override suspend fun deleteAllCrossRefsForProperty(propertyId: Long) {
+    override suspend fun deleteAllCrossRefsForProperty(firebasePropertyId: String) {
         try {
             val snapshots = firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
-                .whereEqualTo("propertyId", propertyId)
+                .whereEqualTo("propertyId", firebasePropertyId)
                 .get()
                 .await()
 
@@ -90,10 +95,10 @@ class FirebasePropertyPoiCrossOnlineRepository(
         }
     }
 
-    override suspend fun deleteAllCrossRefsForPoi(poiId: Long) {
+    override suspend fun deleteAllCrossRefsForPoi(firebasePoiId: String) {
         try {
             val snapshots = firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
-                .whereEqualTo("poiId", poiId)
+                .whereEqualTo("poiId", firebasePoiId)
                 .get()
                 .await()
 
@@ -109,3 +114,8 @@ class FirebasePropertyPoiCrossOnlineRepository(
 class FirebasePropertyPoiCrossUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePropertyPoiCrossDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePropertyPoiCrossDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+
+data class FirestoreCrossDocument(
+    val firebaseId: String,                      // => Firebase UID (document ID)
+    val cross: PropertyPoiCrossOnlineEntity           // => Cross data
+)

@@ -15,14 +15,16 @@ fun UserEntity.toOnlineEntity(): UserOnlineEntity {
     return UserOnlineEntity(
         email = this.email,
         agentName = this.agentName,
-        updatedAt = updatedAt,
-        roomId = this.id,
+        updatedAt = this.updatedAt,
+        universalLocalId = this.id // ✅ Same UUID
     )
 }
 
-fun UserOnlineEntity.toEntity(userId: Long, firebaseUid: String): UserEntity {
+fun UserOnlineEntity.toEntity(
+    firebaseUid: String
+): UserEntity {
     return UserEntity(
-        id = userId,
+        id = this.universalLocalId, // ✅ UUID receive from firestore
         email = this.email,
         agentName = this.agentName,
         isSynced = true,
@@ -34,36 +36,44 @@ fun UserOnlineEntity.toEntity(userId: Long, firebaseUid: String): UserEntity {
 
 fun PhotoEntity.toOnlineEntity(): PhotoOnlineEntity {
     return PhotoOnlineEntity(
+        universalLocalId = this.id,
+        universalLocalPropertyId = this.universalLocalPropertyId,
         description = this.description,
-        propertyId = this.propertyId,
         updatedAt = this.updatedAt,
-        roomId = this.id
+        storageUrl = this.uri
     )
 }
 
-fun PhotoOnlineEntity.toEntity(photoId : Long): PhotoEntity {
+fun PhotoOnlineEntity.toEntity(
+    firestoreId: String
+): PhotoEntity {
     return PhotoEntity(
-        id = photoId,
-        propertyId = this.propertyId,
-        description = this.description,
+        id = universalLocalId,
+        firestoreDocumentId = firestoreId,
+        universalLocalPropertyId = universalLocalPropertyId,
+        uri = storageUrl,
+        description = description,
         isSynced = true,
-        updatedAt = this.updatedAt,
+        updatedAt = updatedAt,
         isDeleted = false
     )
 }
 
 fun PoiEntity.toOnlineEntity(): PoiOnlineEntity {
     return PoiOnlineEntity(
+        universalLocalId = this.id,
         name = this.name,
         type = this.type,
         updatedAt = this.updatedAt,
-        roomId = this.id
     )
 }
 
-fun PoiOnlineEntity.toEntity(poiId : Long): PoiEntity {
+fun PoiOnlineEntity.toEntity(
+    firestoreId: String?,
+): PoiEntity {
     return PoiEntity(
-        id = poiId,
+        id = universalLocalId,
+        firestoreDocumentId = firestoreId,
         name = this.name,
         type = this.type,
         isSynced = true,
@@ -75,6 +85,8 @@ fun PoiOnlineEntity.toEntity(poiId : Long): PoiEntity {
 
 fun PropertyEntity.toOnlineEntity(): PropertyOnlineEntity {
     return PropertyOnlineEntity(
+        universalLocalId = this.id,
+        universalLocalUserId = this.universalLocalUserId,
         title = this.title,
         type = this.type,
         price = this.price,
@@ -85,46 +97,50 @@ fun PropertyEntity.toOnlineEntity(): PropertyOnlineEntity {
         isSold = this.isSold,
         entryDate = this.entryDate,
         saleDate = this.saleDate,
-        userId = this.userId,
         staticMapPath = this.staticMapPath,
-        updatedAt = this.updatedAt,
-        roomId = this.id
+        updatedAt = this.updatedAt
     )
 }
 
-fun PropertyOnlineEntity.toEntity(propertyId: Long): PropertyEntity {
+fun PropertyOnlineEntity.toEntity(
+    firestoreId: String?,
+): PropertyEntity {
     return PropertyEntity(
-        id = propertyId,
-        title = this.title,
-        type = this.type,
-        price = this.price,
-        surface = this.surface,
-        rooms = this.rooms,
-        description = this.description,
-        address = this.address,
-        isSold = this.isSold,
-        entryDate = this.entryDate, // déjà String "yyyy-MM-dd"
-        saleDate = this.saleDate,
-        userId = this.userId,
-        staticMapPath = this.staticMapPath,
+        id = universalLocalId,
+        firestoreDocumentId = firestoreId,
+        universalLocalUserId = universalLocalUserId,
+        title = title,
+        type = type,
+        price = price,
+        surface = surface,
+        rooms = rooms,
+        description = description,
+        address = address,
+        isSold = isSold,
+        entryDate = entryDate,
+        saleDate = saleDate,
+        staticMapPath = staticMapPath,
         isSynced = true,
-        updatedAt = this.updatedAt,
-        isDeleted = false
+        isDeleted = false,
+        updatedAt = updatedAt
     )
 }
 
 fun PropertyPoiCrossEntity.toOnlineEntity(): PropertyPoiCrossOnlineEntity {
     return PropertyPoiCrossOnlineEntity(
-        propertyId = this.propertyId,
-        poiId = this.poiId,
+        universalLocalPropertyId = universalLocalPropertyId,
+        universalLocalPoiId = universalLocalPoiId,
         updatedAt = this.updatedAt,
     )
 }
 
-fun PropertyPoiCrossOnlineEntity.toEntity(): PropertyPoiCrossEntity {
+fun PropertyPoiCrossOnlineEntity.toEntity(
+    firestoreId: String?,
+): PropertyPoiCrossEntity {
     return PropertyPoiCrossEntity(
-        propertyId = this.propertyId,
-        poiId = this.poiId,
+        universalLocalPropertyId = universalLocalPropertyId,
+        universalLocalPoiId = universalLocalPoiId,
+        firestoreDocumentId = firestoreId,
         isSynced = true,
         updatedAt = this.updatedAt,
         isDeleted = false

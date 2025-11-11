@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross
 
 import androidx.annotation.Keep
+import androidx.room.ColumnInfo
 
 /**
  * @Keep ensures that this data class and its fields are not removed or renamed by R8/ProGuard.
@@ -9,8 +10,7 @@ import androidx.annotation.Keep
 
 @Keep
 data class PropertyPoiCrossOnlineEntity(
-    val propertyId: Long,
-    val poiId: Long,
-    val updatedAt: Long = System.currentTimeMillis(),
-    val roomId : Long = 0L
+    val universalLocalPropertyId: String = "", // 🔗 UUID of the property
+    val universalLocalPoiId: String = "",      // 🔗 UUID of the poi
+    val updatedAt: Long = System.currentTimeMillis()
 )

@@ -11,38 +11,39 @@ class UserUploadManager(
     private val userOnlineRepository: UserOnlineRepository   // Firestore repository (remote)
 ): UserUploadInterfaceManager {
 
-    // Uploads all local users that are not yet synced (isSynced == false)
     override suspend fun syncUnSyncedUsers(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
+        val usersToSync = userRepository.uploadUnSyncedUsersToFirebase().first()
 
-        try {
-            val unSyncedUsers = userRepository.uploadUnSyncedUsers().first()
+        for (userEntity in usersToSync) {
+            val firebaseId = userEntity.firebaseUid
+            val localId = userEntity.id
 
-            for (userEntity in unSyncedUsers) {
-                val roomId = userEntity.id
-                val firebaseUid = userEntity.firebaseUid
-
+            try {
                 if (userEntity.isDeleted) {
-                    userOnlineRepository.deleteUser(firebaseUid)
+                    userOnlineRepository.deleteUser(firebaseId)
                     userRepository.deleteUser(userEntity)
-                    results.add(SyncStatus.Success("User $roomId deleted"))
+                    results.add(SyncStatus.Success("User $localId deleted from Firebase & Room"))
                 } else {
-                    val updatedUser = userEntity.copy(updatedAt = System.currentTimeMillis())
                     val uploadedUser = userOnlineRepository.uploadUser(
-                        user = updatedUser.toOnlineEntity(),
-                        userId = firebaseUid
+                        user = userEntity.toOnlineEntity(),
+                        firebaseUserId = firebaseId
                     )
-                    userRepository.downloadUserFromFirebase(
+
+                    userRepository.updateUserFromFirebase(
                         user = uploadedUser,
-                        firebaseUid = firebaseUid
+                        firebaseUid = firebaseId
                     )
-                    results.add(SyncStatus.Success("User $roomId uploaded"))
+
+                    results.add(SyncStatus.Success("User $localId uploaded to Firebase"))
                 }
+
+            } catch (e: Exception) {
+                results.add(SyncStatus.Failure("User $localId", e))
             }
-        } catch (e: Exception) {
-            results.add(SyncStatus.Failure("Global upload sync failed", e))
         }
 
         return results
     }
+
 }

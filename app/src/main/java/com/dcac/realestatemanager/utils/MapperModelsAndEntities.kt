@@ -17,30 +17,20 @@ import com.dcac.realestatemanager.model.User
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 
-// ------------------ Property ------------------
-
+//PROPERTY
 fun PropertyEntity.toModel(
-    user: User,
     photos: List<Photo> = emptyList(),
     poiS: List<Poi> = emptyList()
 ): Property {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    val entryDateLocal = if (entryDate.isNotBlank()) {
-        LocalDate.parse(entryDate, formatter)
-    } else {
-        // throw explicit error or log
-        throw IllegalArgumentException("entryDate is blank and LocalDate.now() cannot be used in JVM test without time-zone data.")
-    }
+    val entryDateLocal = LocalDate.parse(entryDate, formatter)
+    val saleDateLocal = saleDate?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it, formatter) }
 
-
-    val saleDateLocal = if (!saleDate.isNullOrBlank()) {
-        LocalDate.parse(saleDate, formatter)
-    } else {
-        null
-    }
     return Property(
-        id = id,
+        universalLocalId = id,
+        firestoreDocumentId = firestoreDocumentId,
+        universalLocalUserId = universalLocalUserId,
         title = title,
         type = type,
         price = price,
@@ -52,35 +42,37 @@ fun PropertyEntity.toModel(
         entryDate = entryDateLocal,
         saleDate = saleDateLocal,
         staticMapPath = staticMapPath,
-        user = user,
         photos = photos,
         poiS = poiS,
         isSynced = isSynced,
+        isDeleted = isDeleted,
         updatedAt = updatedAt
     )
 }
 
+//FULL MODEL
 fun PropertyEntity.toFullModel(
     allUsers: List<User>,
     photos: List<Photo>,
     crossRefs: List<PropertyPoiCross>,
     allPoiS: List<Poi>
 ): Property? {
-    val propertyPhotos = photos.filter { it.propertyId == this.id }
-    val poiIds = crossRefs.filter { it.propertyId == this.id }.map { it.poiId }
-    val propertyPoiS = allPoiS.filter { it.id in poiIds }
-    val user = allUsers.firstOrNull { it.id == this.userId }
-        ?: return@toFullModel null
+    val userExists = allUsers.any { it.universalLocalId == this.universalLocalUserId }
+    if (!userExists) return null
 
-    return this.toModel(user, propertyPhotos, propertyPoiS)
+    val propertyPhotos = photos.filter { it.universalLocalPropertyId == this.id }
+    val poiIds = crossRefs.filter { it.universalLocalPropertyId == this.id }.map { it.universalLocalPoiId }
+    val propertyPois = allPoiS.filter { it.universalLocalId in poiIds }
+
+    return this.toModel(propertyPhotos, propertyPois)
 }
 
 fun Property.toEntity(): PropertyEntity {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val entryDateString = entryDate.format(formatter)
-    val saleDateString = saleDate?.format(formatter)
     return PropertyEntity(
-        id = id,
+        id = universalLocalId,
+        firestoreDocumentId = firestoreDocumentId,
+        universalLocalUserId = universalLocalUserId,
         title = title,
         type = type,
         price = price,
@@ -89,20 +81,21 @@ fun Property.toEntity(): PropertyEntity {
         description = description,
         address = address,
         isSold = isSold,
-        entryDate = entryDateString,
-        saleDate = saleDateString,
-        userId = user.id,
+        entryDate = entryDate.format(formatter),
+        saleDate = saleDate?.format(formatter),
         staticMapPath = staticMapPath,
         isSynced = isSynced,
+        isDeleted = isDeleted,
         updatedAt = updatedAt
     )
 }
 
-// ------------------ Photo ------------------
+//PHOTO
 
 fun PhotoEntity.toModel(): Photo = Photo(
-    id = id,
-    propertyId = propertyId,
+    universalLocalId = id,
+    firestoreDocumentId = firestoreDocumentId,
+    universalLocalPropertyId = universalLocalPropertyId,
     uri = uri,
     description = description,
     isDeleted = isDeleted,
@@ -111,8 +104,9 @@ fun PhotoEntity.toModel(): Photo = Photo(
 )
 
 fun Photo.toEntity(): PhotoEntity = PhotoEntity(
-    id = id,
-    propertyId = propertyId,
+    id = universalLocalId,
+    firestoreDocumentId = firestoreDocumentId,
+    universalLocalPropertyId = universalLocalPropertyId,
     uri = uri,
     description = description,
     isDeleted = isDeleted,
@@ -120,10 +114,11 @@ fun Photo.toEntity(): PhotoEntity = PhotoEntity(
     updatedAt = updatedAt
 )
 
-// ------------------ POI ------------------
+//POI
 
 fun PoiEntity.toModel(): Poi = Poi(
-    id = id,
+    universalLocalId = id,
+    firestoreDocumentId = firestoreDocumentId,
     name = name,
     type = type,
     isSynced = isSynced,
@@ -131,67 +126,68 @@ fun PoiEntity.toModel(): Poi = Poi(
 )
 
 fun Poi.toEntity(): PoiEntity = PoiEntity(
-    id = id,
+    id = universalLocalId,
+    firestoreDocumentId = firestoreDocumentId,
     name = name,
     type = type,
     isSynced = isSynced,
     updatedAt = updatedAt
 )
 
-// ------------------ User ------------------
+//USER
 
-fun UserEntity.toModel(): User = User(
-    id = id,
-    email = email,
-    agentName = agentName,
-    isSynced = isSynced,
-    firebaseUid = firebaseUid,
-    updatedAt = updatedAt
-)
+fun UserEntity.toModel(): User {
+    return User(
+        universalLocalId = this.id, // ✅ no UUID generation here
+        email = this.email,
+        agentName = this.agentName,
+        firebaseUid = this.firebaseUid,
+        isSynced = this.isSynced,
+        isDeleted = this.isDeleted,
+        updatedAt = this.updatedAt
+    )
+}
 
-fun User.toEntity(): UserEntity = UserEntity(
-    id = id,
-    email = email,
-    agentName = agentName,
-    isSynced = isSynced,
-    firebaseUid = firebaseUid,
-    updatedAt = updatedAt
-)
+fun User.toEntity(): UserEntity {
+    return UserEntity(
+        id = this.universalLocalId, // ✅ stable UUID
+        email = this.email,
+        agentName = this.agentName,
+        isSynced = this.isSynced,
+        firebaseUid = this.firebaseUid,
+        isDeleted = this.isDeleted,
+        updatedAt = this.updatedAt
+    )
+}
 
-// ------------------ CrossRef ------------------
+//CROSSREFS
 
 fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
-    propertyId = propertyId,
-    poiId = poiId,
+    universalLocalPropertyId = universalLocalPropertyId,
+    universalLocalPoiId = universalLocalPoiId,
     isSynced = isSynced,
     updatedAt = updatedAt
 )
 
 fun PropertyPoiCross.toEntity(): PropertyPoiCrossEntity = PropertyPoiCrossEntity(
-    propertyId = propertyId,
-    poiId = poiId,
+    universalLocalPropertyId = universalLocalPropertyId,
+    universalLocalPoiId = universalLocalPoiId,
     isSynced = isSynced,
     updatedAt = updatedAt
 )
 
-// ------------------ Relations ------------------
+//RELATIONS
 
-fun PoiWithPropertiesRelation.toModel(allUsers: List<User>): PoiWithProperties {
+fun PoiWithPropertiesRelation.toModel(): PoiWithProperties {
     return PoiWithProperties(
         poi = poi.toModel(),
-        properties = properties.map { property ->
-            val user = allUsers.first { it.id == property.userId }
-            property.toModel(user = user)
-        }
+        properties = properties.map { it.toModel() }
     )
 }
 
-fun PropertyWithPoiSRelation.toModel(allUsers: List<User>): PropertyWithPoiS? {
-    val user = allUsers.firstOrNull { it.id == property.userId } ?: return null
-
+fun PropertyWithPoiSRelation.toModel(): PropertyWithPoiS {
     return PropertyWithPoiS(
-        property = property.toModel(user = user),
+        property = property.toModel(),
         poiS = poiS.map { it.toModel() }
     )
 }
-

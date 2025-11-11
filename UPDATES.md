@@ -889,5 +889,58 @@ This file documents key technical updates applied to the RealEstateManager Andro
   - UserUploadManagerTest and UserDownloadManagerTest now test real sync flows and validate UID-to-roomId mapping logic.
 
 
+### 🔹 **Update #32**
+
+  - 🔐 **Optimized sign-in flow to use local data when available and fallback to Firestore when necessary**
+    - The LoginViewModel signIn() logic now checks whether the user already exists in the local Room database before re-creating or uploading them.
+    - If the user is not found locally, it falls back to Firebase Firestore using UserOnlineRepository.getUser(uid) to fetch the UserOnlineEntity, then reconstructs the full domain User.
+    - The fallback user is saved to Room to ensure consistency for future offline-first behavior.
+    - This avoids unnecessary writes to Firestore and protects against inconsistent data overwrites.
+    - A new mapping logic using remoteUser.user.toEntity(...).toModel() is used to convert Firestore user documents into domain models.
+
+  - 🧱 **Complete refactor of data model architecture for sync-safe, scalable offline-first structure**
+    - Introduced universalLocalId: UUID in all models to uniquely identify entities across devices and offline sessions.
+    - Added optional firestoreDocumentId: String? in all models/entities to track remote Firestore references.
+    - All Room Entities (UserEntity, PropertyEntity, PhotoEntity, PoiEntity, PropertyPoiCrossEntity) now mirror the domain structure and enforce integrity via indices and foreign keys.
+    - Mappers between Model, Room, and Online entities now follow a clean architecture approach with:
+      - Strict ownership of ID generation
+      - Controlled sync state flags (isSynced, isDeleted)
+      - Full offline reconstruction support
+    - Adapted new relation classes and converters:
+      - PropertyWithPoiS, PoiWithProperties (Model)
+      - PropertyWithPoiSRelation, PoiWithPropertiesRelation (Room)
+    - Updated toFullModel() logic for PropertyEntity to dynamically rebuild properties with photos and POIs using UUID-based linking.
+  
+  - 📦 **Refactored Room DAOs for all entities to support offline sync and consistency**
+    - Migrated all Room DAOs to use String based UUID identifiers instead of Long.
+    - Standardized isSynced and isDeleted logic across all DAO operations:
+      - Inserts from UI set isSynced = false, inserts from Firestore set isSynced = true.
+      - Soft deletes mark isDeleted = true with updated_at tracking and deferred sync.
+      - Hard deletes physically remove entities only after confirmation from Firestore.
+    - Split insert/update/delete logic by data source (UI vs Firebase) for deterministic behavior.
+    - All DAOs now expose complete test and debug visibility (e.g. IncludeDeleted() queries).
+
+  - 🧩 **Updated all repository interfaces and implementations to reflect the new architecture**
+    - All repositories (User, Property, Photo, POI, CrossRef) have been refactored to operate on UUID-based models with firestoreDocumentId support.
+    - Interface contracts now enforce separation between local (Room) and remote (Firestore) operations, with clear mapping rules.
+    - This enables:
+      - Predictable and testable repository logic
+      - Full offline-first behavior without redundancy
+      - Consistent sync strategies across all entities
+
+  - 🔄 **Refactored the entire Sync layer to support per-entity upload/download management with full conflict resolution**
+    - Refactored dedicated UploadManager and DownloadManager classes for each entity type (User, Property, Photo, POI, CrossRef) to encapsulate synchronization logic.
+    - Sync operations now use updatedAt timestamps to resolve conflicts between local and remote data, ensuring deterministic updates.
+    - Added unified handling of soft deletion: entities marked as isDeleted = true are propagated to Firestore and hard-deleted from Room only after successful remote confirmation.
+    - All sync flows emit standardized SyncStatus objects (Success/Failure), providing consistent feedback and traceability during synchronization cycles.
+    - These managers integrate seamlessly with the updated repository and DAO layers, enabling fully modular, testable, and scalable sync infrastructure.
+
+  - 🎯 **Refactored LoginViewModel to align with the offline-first architecture and new repository model**
+    - The signIn() flow now queries Room for the user by firebaseUid; if not found, it falls back to Firestore and reconstructs the domain model from the remote UserOnlineEntity.
+    - The fallback path ensures the user is inserted into Room via insertUserInsertFromFirebase() to enable full offline support immediately after login.
+    - The signUp() logic creates a full User domain model locally and inserts it into Room using firstUserInsert(), followed by uploading the user to Firestore via uploadUser() using the stable UUID.
+    - Mapping from domain to Firestore is performed using toEntity().toOnlineEntity(), guaranteeing ID stability and sync consistency.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

@@ -1,47 +1,43 @@
 package com.dcac.realestatemanager.data.sync.property
 
-import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
-import com.dcac.realestatemanager.model.User
-import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 class PropertyDownloadManager(
-    private val propertyRepository: PropertyRepository,                 // Local Room repository
-    private val propertyOnlineRepository: PropertyOnlineRepository      // Firestore repository
+    private val propertyRepository: PropertyRepository,
+    private val propertyOnlineRepository: PropertyOnlineRepository
 ): PropertyDownloadInterfaceManager {
 
-    // Downloads all properties from Firestore and syncs to Room
-    override suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>()
+   override suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
+       val results = mutableListOf<SyncStatus>()
 
-        try {
-            val onlineProperties = propertyOnlineRepository.getAllProperties()
+       try {
+           val onlineProperties = propertyOnlineRepository.getAllProperties()
 
-            for (onlineProperty in onlineProperties) {
-                try {
-                    val roomId = onlineProperty.roomId
-                    val localProperty = propertyRepository.getPropertyEntityById(roomId).first()
+           for (doc in onlineProperties){
+               try {
+                   val propertyOnline = doc.property
+                   val localId = propertyOnline.universalLocalId
+                   val localProperty = propertyRepository.getPropertyById(localId).first()
 
-                    val shouldDownload = localProperty == null || onlineProperty.updatedAt > localProperty.updatedAt
+                   val shouldDownload = localProperty == null || propertyOnline.updatedAt > localProperty.updatedAt
 
-                    if (shouldDownload) {
-                        propertyRepository.downloadPropertyFromFirebase(onlineProperty)
-                        results.add(SyncStatus.Success("Property $roomId downloaded"))
-                    } else {
-                        results.add(SyncStatus.Success("Property $roomId already up-to-date"))
-                    }
-                } catch (e: Exception) {
-                    results.add(SyncStatus.Failure("Property ${onlineProperty.roomId} failed to sync", e))
-                }
-            }
-        } catch (e:Exception){
-            results.add(SyncStatus.Failure("Global PROPERTY download failed", e))
-        }
-        return results
-
-    }
+                   if (shouldDownload) {
+                       propertyRepository.insertPropertyInsertFromFirebase(propertyOnline, doc.firebaseId)
+                       results.add(SyncStatus.Success("Property $localId downloaded"))
+                   } else {
+                       results.add(SyncStatus.Success("Property $localId already up-to-date"))
+                   }
+               } catch (e :Exception) {
+                   results.add(SyncStatus.Failure("Property ${doc.firebaseId} failed to sync", e))
+               }
+           }
+       } catch (e: Exception) {
+           results.add(SyncStatus.Failure("Global property download failed", e))
+       }
+       return results
+   }
 
 }

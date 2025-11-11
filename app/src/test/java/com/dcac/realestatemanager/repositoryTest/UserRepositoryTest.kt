@@ -347,17 +347,15 @@ class UserRepositoryTest {
         val firebaseUser = UserOnlineEntity(
             email = "cloud@firebase.com",
             agentName = "Cloud Agent",
-            updatedAt = System.currentTimeMillis(),
-            roomId = 999L
+            updatedAt = System.currentTimeMillis()
         )
 
-        val firebaseUid = "firebase_new_999" // firebaseUid given separately
+        val firebaseUid = "firebase_new_999" // Firestore document ID
         userRepository.downloadUserFromFirebase(firebaseUser, firebaseUid)
 
-        val result = userRepository.getUserEntityById(firebaseUser.roomId).first()
+        val result = userRepository.getUserByFirebaseUid(firebaseUid).first()
 
         assertNotNull(result)
-        assertEquals(firebaseUser.roomId, result?.id)
         assertEquals(firebaseUser.agentName, result?.agentName)
         assertEquals(firebaseUser.email, result?.email)
         assertTrue(result?.isSynced == true)
@@ -369,11 +367,11 @@ class UserRepositoryTest {
         val firebaseUser = UserOnlineEntity(
             email = "updated@firebase.com",
             agentName = "Update Agent",
-            updatedAt = System.currentTimeMillis(),
-            roomId = original.id
+            updatedAt = System.currentTimeMillis()
         )
 
-        val firebaseUid = "firebase_new_999" // firebaseUid given separately
+        val firebaseUid = original.firebaseUid
+
         userRepository.downloadUserFromFirebase(firebaseUser, firebaseUid)
 
         val entity = fakeUserDao.entityMap[original.id]
@@ -382,7 +380,7 @@ class UserRepositoryTest {
         assertEquals(firebaseUser.agentName, entity?.agentName)
         assertTrue(entity?.isSynced == true)
 
-        val result = userRepository.getUserEntityById(original.id).first()
+        val result = userRepository.getUserByFirebaseUid(firebaseUid).first()
         assertNotNull(result)
         assertEquals(firebaseUser.email, result?.email)
         assertEquals(firebaseUser.agentName, result?.agentName)

@@ -12,55 +12,80 @@ class OfflinePhotoRepository(
 ) : PhotoRepository {
 
     //FOR UI
-
-    override fun getPhotoById(id: Long): Flow<Photo?> =
+    override fun getPhotoById(id: String): Flow<Photo?> =
         photoDao.getPhotoById(id).map { it?.toModel() }
-
-    override fun getPhotosByPropertyId(propertyId: Long): Flow<List<Photo>> =
+    override fun getPhotosByPropertyId(propertyId: String): Flow<List<Photo>> =
         photoDao.getPhotosByPropertyId(propertyId).map { list -> list.map { it.toModel() } }
-
     override fun getAllPhotos(): Flow<List<Photo>> =
         photoDao.getAllPhotos().map { list -> list.map { it.toModel() } }
 
-    override suspend fun insertPhotos(photos: List<Photo>) =
-        photoDao.insertPhotos(photos.map { it.toEntity() })
-
-    override suspend fun insertPhoto(photo: Photo) =
-        photoDao.insertPhoto(photo.toEntity())
-
-    override suspend fun updatePhoto(photo: Photo) =
-        photoDao.updatePhoto(photo.toEntity())
-
-    override suspend fun markPhotosAsDeletedByProperty(propertyId: Long) =
-        photoDao.markPhotosAsDeletedByProperty(propertyId, System.currentTimeMillis())
-
-    override suspend fun markPhotoAsDelete(photo: Photo) {
-        photoDao.markPhotoAsDeleted(photo.id, System.currentTimeMillis())
-    }
-
-    //FOR FIREBASE SYNC
-
-    override fun getPhotoEntityById(id: Long): Flow<PhotoEntity?> =
-        photoDao.getPhotoById(id)
-
-    override suspend fun deletePhoto(photo: PhotoEntity) =
-        photoDao.deletePhoto(photo)
-
-    override suspend fun deletePhotosByPropertyId(propertyId: Long) =
-        photoDao.deletePhotosByPropertyId(propertyId)
-
+    //SYNC
     override fun uploadUnSyncedPhotosToFirebase(): Flow<List<PhotoEntity>> =
-        photoDao.getUnSyncedPhotos()
+        photoDao.uploadUnSyncedPhotos()
 
-    override suspend fun downloadPhotoFromFirebase(photo: PhotoOnlineEntity, localUri: String) {
-        val entity = photo.toEntity(photoId = photo.roomId).copy(uri = localUri)
-        photoDao.savePhotoFromFirebase(entity)
+    //INSERTIONS
+    //INSERTIONS FROM UI
+    override suspend fun insertPhotoInsertFromUI(photo: Photo): String =
+        photoDao.insertPhotoInsertFromUI(photo.toEntity())
+    override suspend fun insertPhotosInsertFromUI(photos: List<Photo>) =
+        photoDao.insertPhotosInsertFromUI(photos.map { it.toEntity() })
+
+    //INSERTIONS FROM FIREBASE
+    override suspend fun insertPhotoInsertFromFirebase(
+        photo: PhotoOnlineEntity,
+        firestoreId: String,
+        localUri: String
+    ) {
+        val entity = photo.toEntity(firestoreId = firestoreId).copy(uri = localUri)
+        photoDao.insertPhotoInsertFromFirebase(entity)
+    }
+    override suspend fun insertPhotosInsertFromFirebase(
+        photos: List<Triple<PhotoOnlineEntity, String, String>>
+    ) {
+        val entities = photos.map { (photo, firestoreId, localUri) ->
+            photo.toEntity(firestoreId = firestoreId).copy(uri = localUri)
+        }
+        photoDao.insertAllPhotosNotExistingFromFirebase(entities)
     }
 
-    // --- FOR TEST / HARD DELETE CHECK ---
-    override fun getPhotoByIdIncludeDeleted(id: Long): Flow<PhotoEntity?> =
-        photoDao.getPhotoByIdIncludeDeleted(id)
+    //UPDATE
+    override suspend fun updatePhotoFromUI(photo: Photo) {
+        photoDao.updatePhotoFromUIForceSyncFalse(photo.toEntity())
+    }
+    override suspend fun updatePhotoFromFirebase(photo: PhotoOnlineEntity, firestoreId: String) {
+        photoDao.updatePhotoFromFirebaseForceSyncTrue(photo.toEntity(firestoreId = firestoreId))
+    }
+    override suspend fun updateAllPhotosFromFirebase(photos: List<Pair<PhotoOnlineEntity, String>>) {
+        val entities = photos.map { (photo, firestoreId) ->
+            photo.toEntity(firestoreId = firestoreId)
+        }
+        photoDao.updateAllPhotosFromFirebaseForceSyncTrue(entities)
+    }
 
-    override fun getPhotosByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PhotoEntity>> =
+    //SOFT DELETE
+    override suspend fun markPhotoAsDeleted(photo: Photo) {
+        photoDao.markPhotoAsDeleted(photo.universalLocalId, System.currentTimeMillis())
+    }
+    override suspend fun markPhotosAsDeletedByProperty(propertyId: String) {
+        photoDao.markPhotosAsDeletedByProperty(propertyId, System.currentTimeMillis())
+    }
+
+    //HARD DELETE
+    override suspend fun deletePhotosByPropertyId(propertyId: String) {
+        photoDao.deletePhotosByPropertyId(propertyId)
+    }
+    override suspend fun deletePhoto(photo: PhotoEntity) {
+        photoDao.deletePhoto(photo)
+    }
+    override suspend fun clearAllPhotosDeleted() {
+        photoDao.clearAllPhotosDeleted()
+    }
+
+    // FOR TEST HARD DELETE CHECK
+    override fun getPhotoByIdIncludeDeleted(id: String): Flow<PhotoEntity?> =
+        photoDao.getPhotoByIdIncludeDeleted(id)
+    override fun getPhotosByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PhotoEntity>> =
         photoDao.getPhotosByPropertyIdIncludeDeleted(propertyId)
+    override fun getAllPhotosIncludeDeleted(): Flow<List<PhotoEntity>> =
+        photoDao.getAllPhotosIncludeDeleted()
 }

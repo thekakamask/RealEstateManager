@@ -71,7 +71,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // Clear snackbar message after displaying it
     override fun resetSnackBarMessage() {
         val currentState = _uiState.value
         if (currentState is Success) {
@@ -79,7 +78,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // Optional: toggle drawer open/close from UI
     override fun toggleDrawer(isOpen: Boolean) {
         val currentState = _uiState.value
         if (currentState is Success) {

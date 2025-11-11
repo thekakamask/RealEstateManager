@@ -1,8 +1,16 @@
 package com.dcac.realestatemanager.ui.homePage
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -25,10 +33,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.ui.Alignment
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.sp
+import com.dcac.realestatemanager.R
 
 @Composable
 fun HomeScreen(
@@ -49,14 +57,57 @@ fun HomeScreen(
             drawerState = drawerState,
             drawerContent ={
                 ModalDrawerSheet {
-                    Text(
-                        text = "${state.userName} (${state.userEmail})",
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    HorizontalDivider()
+                    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.user_24px),
+                            contentDescription = "user icon",
+                            modifier = Modifier
+                                .size(72.dp)
+                                .padding(bottom = 8.dp)
+                        )
+
+                        Text(
+                            text = state.userName,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = state.userEmail,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "0", fontSize = 16.sp)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    painter = painterResource(id = R.drawable.apartment_24px),
+                                    contentDescription = "apartment handle"
+                                )
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "0", fontSize = 16.sp)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    painter = painterResource(id = R.drawable.money_24px),
+                                    contentDescription = "apartment sell"
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        HorizontalDivider()
+                    }
 
                     NavigationDrawerItem(
+                        icon = {Icon (painterResource(id = R.drawable.apartment_24px),
+                            contentDescription = "my properties")} ,
                         label = {Text("My properties")},
                         selected = state.currentScreen == HomeDestination.PropertyList,
                         onClick = {
@@ -65,13 +116,17 @@ fun HomeScreen(
                         }
                     )
                     NavigationDrawerItem(
-                        label= {Text("Parameters")},
+                        icon = {Icon (painterResource(id = R.drawable.settings_24px),
+                            contentDescription = "settings")},
+                        label= {Text("Settings")},
                         selected = false,
                         onClick = {
                             scope.launch {drawerState.close()}
                         }
                     )
                     NavigationDrawerItem(
+                        icon = {Icon(painterResource(id = R.drawable.log_out_24px),
+                            contentDescription =  "log out")},
                         label = { Text("Log out")},
                         selected = false,
                         onClick = {
@@ -86,12 +141,14 @@ fun HomeScreen(
                 bottomBar = {
                     NavigationBar {
                         NavigationBarItem(
-                            icon = { Icon(Icons.Default.Map, contentDescription = "Map") },
+                            icon = { Icon(painterResource(id = R.drawable.map_24px),
+                                contentDescription = "Map") },
                             selected = state.currentScreen is HomeDestination.GoogleMap,
                             onClick = { viewModel.navigateTo(HomeDestination.GoogleMap) }
                         )
                         NavigationBarItem(
-                            icon = { Icon(Icons.Default.List, contentDescription = "List") },
+                            icon = { Icon(painterResource(id= R.drawable.list_24px),
+                                contentDescription = "List") },
                             selected = state.currentScreen is HomeDestination.PropertyList,
                             onClick = { viewModel.navigateTo(HomeDestination.PropertyList) }
                         )

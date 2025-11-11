@@ -9,27 +9,33 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 
 @Entity(
     tableName = "property_poi_cross_ref",
-    primaryKeys = ["propertyId", "poiId"],
+    primaryKeys = ["property_id", "poi_id"],
+    indices = [
+        Index(value = ["property_id"]),
+        Index(value = ["poi_id"])
+    ],
     foreignKeys = [
         ForeignKey(
             entity = PropertyEntity::class,
             parentColumns = ["id"],
-            childColumns = ["propertyId"],
+            childColumns = ["property_id"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = PoiEntity::class,
             parentColumns = ["id"],
-            childColumns = ["poiId"],
+            childColumns = ["poi_id"],
             onDelete = ForeignKey.CASCADE
         )
-    ],
-    indices = [Index(value = ["propertyId"]), Index(value = ["poiId"])]
+    ]
 )
-
 data class PropertyPoiCrossEntity(
-    val propertyId: Long,
-    val poiId: Long,
+    @ColumnInfo(name = "property_id")
+    val universalLocalPropertyId: String, // 🔁 UUID unique link between multi device
+    @ColumnInfo(name = "poi_id")
+    val universalLocalPoiId: String,      // 🔁 UUID unique link between multi device
+    @ColumnInfo(name = "firestore_document_id")
+    val firestoreDocumentId: String? = null,
     @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "is_deleted")

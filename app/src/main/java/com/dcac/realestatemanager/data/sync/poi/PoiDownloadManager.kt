@@ -10,32 +10,29 @@ class PoiDownloadManager(
     private val poiOnlineRepository: PoiOnlineRepository     // Remote (Firestore) POI repository
 ): PoiDownloadInterfaceManager {
 
-    // Downloads all POIs from Firestore and updates Room if needed
     override suspend fun downloadUnSyncedPoiS(): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>() // Collects the sync results
+        val results = mutableListOf<SyncStatus>()
 
         try {
-            val onlinePoiS = poiOnlineRepository.getAllPoiS() // Step 1: Get all POIs from Firebase
+            val onlinePoiS = poiOnlineRepository.getAllPoiS()
 
-            for (onlinePoi in onlinePoiS) {
+            for (doc in onlinePoiS) {
                 try {
-                    val roomId = onlinePoi.roomId // Room ID used to find matching local POI
+                    val poiOnline = doc.poi
+                    val localId = poiOnline.universalLocalId
+                    val localPoi = poiRepository.getPoiById(localId).first()
 
-                    // Step 2: Get local POI from Room (null if not found)
-                    val localPoi = poiRepository.getPoiEntityById(roomId).first()
-
-                    // Step 3: Sync if local data doesn't exist or is outdated
-                    val shouldDownload = localPoi == null || onlinePoi.updatedAt > localPoi.updatedAt
+                    val shouldDownload = localPoi == null || poiOnline.updatedAt > localPoi.updatedAt
 
                     if (shouldDownload) {
-                        poiRepository.downloadPoiFromFirebase(onlinePoi) // Save POI to Room
-                        results.add(SyncStatus.Success("Poi $roomId downloaded"))
+                        poiRepository.insertPoiInsertFromFirebase(poiOnline, doc.firebaseId)
+                        results.add(SyncStatus.Success("Poi $localId downloaded"))
                     } else {
-                        results.add(SyncStatus.Success("Poi $roomId already up-to-date"))
+                        results.add(SyncStatus.Success("Poi $localId already up-to-date"))
                     }
 
                 } catch (e: Exception) {
-                    results.add(SyncStatus.Failure("Poi ${onlinePoi.roomId} failed to sync", e))
+                    results.add(SyncStatus.Failure("Poi ${doc.firebaseId} failed to sync", e))
                 }
             }
 

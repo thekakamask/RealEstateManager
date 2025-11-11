@@ -8,10 +8,10 @@ class FirebasePoiOnlineRepository(
     private val firestore: FirebaseFirestore
 ) : PoiOnlineRepository {
 
-    override suspend fun uploadPoi(poi: PoiOnlineEntity, poiId: String): PoiOnlineEntity {
+    override suspend fun uploadPoi(poi: PoiOnlineEntity, firebasePoiId: String): PoiOnlineEntity {
         try {
             firestore.collection(FirestoreCollections.POIS)
-                .document(poiId)
+                .document(firebasePoiId)
                 .set(poi)
                 .await()
             return poi
@@ -20,10 +20,10 @@ class FirebasePoiOnlineRepository(
         }
     }
 
-    override suspend fun getPoi(poiId: String): PoiOnlineEntity? {
+    override suspend fun getPoi(firebasePoiId: String): PoiOnlineEntity? {
         return try {
             val snapshot = firestore.collection(FirestoreCollections.POIS)
-                .document(poiId)
+                .document(firebasePoiId)
                 .get()
                 .await()
 
@@ -33,23 +33,28 @@ class FirebasePoiOnlineRepository(
         }
     }
 
-    override suspend fun getAllPoiS(): List<PoiOnlineEntity> {
+    override suspend fun getAllPoiS(): List<FirestorePoiDocument> {
         return try {
             firestore.collection(FirestoreCollections.POIS)
                 .get()
                 .await()
                 .documents.mapNotNull { doc ->
-                    doc.toObject(PoiOnlineEntity::class.java)
+                    doc.toObject(PoiOnlineEntity::class.java)?.let { entity ->
+                        FirestorePoiDocument(
+                            firebaseId = doc.id,
+                            poi = entity
+                        )
+                    }
                 }
         } catch (e: Exception) {
-            throw FirebasePoiDownloadException("Failed to get POIs: ${e.message}", e)
+            throw FirebasePoiDownloadException("Failed to fetch POIs: ${e.message}", e)
         }
     }
 
-    override suspend fun deletePoi(poiId: String) {
+    override suspend fun deletePoi(firebasePoiId: String) {
         try {
             firestore.collection(FirestoreCollections.POIS)
-                .document(poiId)
+                .document(firebasePoiId)
                 .delete()
                 .await()
         } catch (e: Exception) {
@@ -61,3 +66,8 @@ class FirebasePoiOnlineRepository(
 class FirebasePoiUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePoiDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePoiDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+
+data class FirestorePoiDocument(
+    val firebaseId: String,                      // => Firebase UID (document ID)
+    val poi: PoiOnlineEntity        // => Poi data
+)

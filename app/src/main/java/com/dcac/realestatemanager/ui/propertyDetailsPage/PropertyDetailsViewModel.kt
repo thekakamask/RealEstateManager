@@ -31,7 +31,7 @@ class PropertyDetailsViewModel @Inject constructor(
 
     // Called when navigating to the PropertyDetails screen
     override fun loadPropertyDetails(propertyId: Long) {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             _uiState.value = Loading  // Start with loading state
 
             // Fetch property from local DB (as Flow)
@@ -75,6 +75,6 @@ class PropertyDetailsViewModel @Inject constructor(
                         _uiState.value = Success(property)
                     }
                 }
-        }
+        }*/
     }
 }

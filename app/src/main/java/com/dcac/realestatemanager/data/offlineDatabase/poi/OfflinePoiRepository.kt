@@ -1,7 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.poi
 
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
-import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
 import com.dcac.realestatemanager.utils.toEntity
@@ -10,61 +9,74 @@ import kotlinx.coroutines.flow.map
 import com.dcac.realestatemanager.utils.toModel
 
 class OfflinePoiRepository(
-    private val poiDao: PoiDao,
-    private val userRepository: UserRepository
+    private val poiDao: PoiDao
 ): PoiRepository {
 
     // FOR UI
-
+    override fun getPoiById(id: String): Flow<Poi?> =
+        poiDao.getPoiById(id).map { it?.toModel() }
     override fun getAllPoiS(): Flow<List<Poi>> =
         poiDao.getAllPoiS().map { list -> list.map { it.toModel() } }
 
-    override fun getPoiById(id: Long): Flow<Poi?> =
-        poiDao.getPoiById(id).map { it?.toModel() }
-
-    // Inserts single POI
-    override suspend fun insertPoi(poi: Poi) = poiDao.insertPoi(poi.toEntity())
-
-    // Inserts a list of POI entities into the database.
-    override suspend fun insertAllPoiS(poiS: List<Poi>)=
-        poiDao.insertAllPoiS(poiS.map { it.toEntity() })
-
-    override suspend fun updatePoi(poi: Poi) {
-        poiDao.updatePoi(poi.toEntity())
-    }
-
-    override suspend fun markPoiAsDeleted(poi: Poi) {
-        poiDao.markPoiAsDeleted(poi.id, System.currentTimeMillis())
-    }
-
-    override fun getPoiWithProperties(poiId: Long): Flow<PoiWithProperties> {
-        val relationFlow = poiDao.getPoiWithProperties(poiId)
-        val usersFlow = userRepository.getAllUsers()
-
-        return kotlinx.coroutines.flow.combine(relationFlow, usersFlow) { relation, users ->
-            relation.toModel(allUsers = users)
-        }
-    }
-
-
-    //FOR FIREBASE SYNC
-
-    override fun getPoiEntityById(id: Long): Flow<PoiEntity?> =
-        poiDao.getPoiById(id)
-
-    override suspend fun deletePoi(poi: PoiEntity) =
-        poiDao.deletePoi(poi)
-
+    //SYNC
     override fun uploadUnSyncedPoiSToFirebase(): Flow<List<PoiEntity>> =
-        poiDao.uploadUnSyncedPoiSToFirebase()
+        poiDao.uploadUnSyncedPoiS()
 
-    override suspend fun downloadPoiFromFirebase(poi: PoiOnlineEntity) {
-        poiDao.savePoiFromFirebase(poi.toEntity(poiId = poi.roomId))
+    // INSERTIONS
+    override suspend fun insertPoiInsertFromUI(poi: Poi) {
+        poiDao.insertPoiInsertFromUi(poi.toEntity())
+    }
+    override suspend fun insertPoiSInsertFromUi(poiS: List<Poi>) {
+        poiDao.insertPoiSInsertFromUi(poiS.map { it.toEntity() })
+    }
+    //INSERTIONS FROM FIREBASE
+    override suspend fun insertPoiInsertFromFirebase(poi: PoiOnlineEntity, firebaseDocumentId: String) {
+        poiDao.insertPoiInsertFromFirebase(poi.toEntity(firestoreId = firebaseDocumentId))
+    }
+    override suspend fun insertPoiSInsertFromFirebase(poiS: List<Pair<PoiOnlineEntity, String>>) {
+        val entities = poiS.map {(poi, firebaseDocumentId) ->
+            poi.toEntity(firestoreId = firebaseDocumentId)
+        }
+        poiDao.insertAllPoiSNotExistingFromFirebase(entities)
     }
 
-    //FOR TEST HARD DELETE
-    override fun getPoiByIdIncludeDeleted(id: Long): Flow<PoiEntity?> =
+    //UPDATE
+    override suspend fun updatePoiFromUI(poi: Poi) {
+        poiDao.updatePoiFromUIForceSyncFalse(poi.toEntity())
+    }
+    override suspend fun updatePoiFromFirebase(poi: PoiOnlineEntity, firebaseDocumentId: String) {
+        poiDao.updatePoiFromFirebaseForceSyncTrue(poi.toEntity(firestoreId = firebaseDocumentId))
+    }
+
+    override suspend fun updateAllPoiSFromFirebase(poiS: List<Pair<PoiOnlineEntity, String>>) {
+        val entities = poiS.map { (poi, firebaseDocumentId) ->
+            poi.toEntity(firestoreId = firebaseDocumentId)
+        }
+        poiDao.updateAllPoiFromFirebaseForceSyncTrue(entities)
+    }
+
+    //SOFT DELETE
+    override suspend fun markPoiAsDeleted(poi: Poi) {
+        poiDao.markPoiAsDeleted(poi.universalLocalId, System.currentTimeMillis())
+    }
+
+    //HARD DELETE
+    override suspend fun deletePoi(poi: PoiEntity) {
+        poiDao.deletePoi(poi)
+    }
+    override suspend fun clearAllPoiSDeleted() {
+        poiDao.clearAllPoiSDeleted()
+    }
+
+    // FOR TEST HARD DELETE CHECK
+    override fun getAllPoiSByIdIncludeDeleted(id: String): Flow<PoiEntity?> =
         poiDao.getPoiByIdIncludeDeleted(id)
     override fun getAllPoiIncludeDeleted(): Flow<List<PoiEntity>> =
-        poiDao.getAllPoiIncludeDeleted()
+        poiDao.getAllPoiSIncludeDeleted()
+
+    override fun getPoiWithProperties(poiId: String): Flow<PoiWithProperties> {
+        return poiDao.getPoiWithProperties(poiId).map { relation ->
+            relation.toModel()
+        }
+    }
 }

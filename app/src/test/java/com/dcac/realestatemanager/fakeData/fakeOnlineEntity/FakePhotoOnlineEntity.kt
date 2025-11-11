@@ -1,37 +1,57 @@
 package com.dcac.realestatemanager.fakeData.fakeOnlineEntity
 
+import com.dcac.realestatemanager.data.firebaseDatabase.photo.FirestorePhotoDocument
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineEntity
-
 object FakePhotoOnlineEntity {
 
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
-    val photoEntity1 = PhotoOnlineEntity(
+    val photoOnline1 = PhotoOnlineEntity(
+        universalLocalId = "photo-1",
+        universalLocalPropertyId = "property-1",
         description = "Living room of Loft République",
-        propertyId = 1L,
         updatedAt = DEFAULT_TIMESTAMP + 1,
-        storageUrl = "https://firebase.storage.com/photo_1.jpg",
-        roomId = 1L
+        storageUrl = "https://firebase.storage.com/photo_1.jpg"
     )
 
-    val photoEntity2 = PhotoOnlineEntity(
+    val photoOnline2 = PhotoOnlineEntity(
+        universalLocalId = "photo-2",
+        universalLocalPropertyId = "property-2",
         description = "Kitchen of Loft République",
-        propertyId = 2L,
         updatedAt = DEFAULT_TIMESTAMP + 2,
-        storageUrl = "https://firebase.storage.com/photo_2.jpg",
-        roomId = 2L
+        storageUrl = "https://firebase.storage.com/photo_2.jpg"
     )
 
-    val photoEntity3 = PhotoOnlineEntity(
+    val photoOnline3 = PhotoOnlineEntity(
+        universalLocalId = "photo-3",
+        universalLocalPropertyId = "property-3",
         description = "Garden view of Villa Montmartre",
-        propertyId = 3L,
         updatedAt = DEFAULT_TIMESTAMP + 3,
-        storageUrl = "https://firebase.storage.com/photo_3.jpg",
-        roomId = 3L
+        storageUrl = "https://firebase.storage.com/photo_3.jpg"
+    )
+
+    val firestorePhotoDocument1 = FirestorePhotoDocument(
+        id = "firestore-photo-1",
+        photo = photoOnline1
+    )
+
+    val firestorePhotoDocument2 = FirestorePhotoDocument(
+        id = "firestore-photo-2",
+        photo = photoOnline2
+    )
+
+    val firestorePhotoDocument3 = FirestorePhotoDocument(
+        id = "firestore-photo-3",
+        photo = photoOnline3
     )
 
     val photoOnlineEntityList = listOf(
-        photoEntity1, photoEntity2, photoEntity3
+        photoOnline1, photoOnline2, photoOnline3
     )
 
+    val firestorePhotoDocumentList = listOf(
+        firestorePhotoDocument1,
+        firestorePhotoDocument2,
+        firestorePhotoDocument3
+    )
 }

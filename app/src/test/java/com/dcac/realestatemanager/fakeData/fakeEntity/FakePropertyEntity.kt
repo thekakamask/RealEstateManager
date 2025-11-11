@@ -7,7 +7,9 @@ object FakePropertyEntity {
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
     val property1 = PropertyEntity(
-        id = 1L,
+        id = "property-1",
+        firestoreDocumentId = "firestore-property-1",
+        universalLocalUserId = FakeUserEntity.user1.id,
         title = "Loft République",
         type = "Loft",
         price = 300_000,
@@ -18,13 +20,16 @@ object FakePropertyEntity {
         isSold = true,
         entryDate = "2025-08-01",
         saleDate = "2025-08-20",
-        userId = FakeUserEntity.user1.id,
         staticMapPath = null,
+        isSynced = false,
+        isDeleted = false,
         updatedAt = DEFAULT_TIMESTAMP + 1
     )
 
     val property2 = PropertyEntity(
-        id = 2L,
+        id = "property-2",
+        firestoreDocumentId = "firestore-property-2",
+        universalLocalUserId = FakeUserEntity.user2.id,
         title = "Villa Montmartre",
         type = "House",
         price = 550_000,
@@ -35,7 +40,6 @@ object FakePropertyEntity {
         isSold = false,
         entryDate = "2025-08-02",
         saleDate = null,
-        userId = FakeUserEntity.user2.id,
         staticMapPath = null,
         isSynced = true,
         isDeleted = false,
@@ -43,7 +47,9 @@ object FakePropertyEntity {
     )
 
     val property3 = PropertyEntity(
-        id = 3L,
+        id = "property-3",
+        firestoreDocumentId = "firestore-property-3",
+        universalLocalUserId = FakeUserEntity.user3.id,
         title = "Studio Latin Quarter",
         type = "Studio",
         price = 180_000,
@@ -54,7 +60,6 @@ object FakePropertyEntity {
         isSold = false,
         entryDate = "2025-08-03",
         saleDate = null,
-        userId = FakeUserEntity.user3.id,
         staticMapPath = null,
         isSynced = false,
         isDeleted = true,
@@ -64,5 +69,4 @@ object FakePropertyEntity {
     val propertyEntityList = listOf(property1, property2, property3)
 
     val propertyEntityListNotDeleted = listOf(property1, property2)
-
 }

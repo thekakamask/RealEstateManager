@@ -1,64 +1,62 @@
 package com.dcac.realestatemanager.data.sync.photo
 
-import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineRepository
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.utils.toOnlineEntity
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.first
 
 
 class PhotoUploadManager(
-    private val photoRepository: PhotoRepository, // Local Room repository for photos
-    private val photoOnlineRepository: PhotoOnlineRepository // Firebase repository for photos
-): PhotoUploadInterfaceManager {
+    private val photoRepository: PhotoRepository,
+    private val photoOnlineRepository: PhotoOnlineRepository
+) : PhotoUploadInterfaceManager {
 
     override suspend fun syncUnSyncedPhotos(): List<SyncStatus> {
-        val results = mutableListOf<SyncStatus>() // List to collect sync results
+        val results = mutableListOf<SyncStatus>()
+        val photosToSync = photoRepository.uploadUnSyncedPhotosToFirebase().first()
 
-        try {
-            // 🔽 Fetch all photos that are not yet synced (from Room)
-            val unSyncedPhotos = photoRepository.uploadUnSyncedPhotosToFirebase().first()
+        for (photo in photosToSync) {
+            try {
+                val firebaseId = photo.firestoreDocumentId
 
-            for (photoEntity in unSyncedPhotos) {
-                val roomId = photoEntity.id // Local database ID (used as Firebase document ID)
+                if (photo.isDeleted) {
+                    if (firebaseId != null) {
+                        photoOnlineRepository.deletePhoto(firebaseId)
+                    }
 
-                if (photoEntity.isDeleted) {
-                    // ❌ If the photo is marked as deleted locally, delete it from Firebase
-                    photoOnlineRepository.deletePhoto(roomId.toString())
+                    photoRepository.deletePhoto(photo)
 
-                    // ❌ Then delete it from Room
-                    photoRepository.deletePhoto(photoEntity)
-
-                    // ✅ Add success status for deletion
-                    results.add(SyncStatus.Success("Photo $roomId deleted"))
-
+                    results.add(SyncStatus.Success("Photo ${photo.id} deleted from Firebase & Room"))
                 } else {
-                    // 🕒 Update the `updatedAt` timestamp before uploading
-                    val updatedPhoto = photoEntity.copy(updatedAt = System.currentTimeMillis())
-
-                    // ⬆️ Upload the photo to Firebase (Storage + Firestore)
-                    val uploadedPhoto = photoOnlineRepository.uploadPhoto(
-                        photo = updatedPhoto.toOnlineEntity(), // Map Room entity to Firebase model
-                        photoId = roomId.toString() // Use local ID as Firebase document ID
+                    val finalId = firebaseId ?: generateFirestoreId()
+                    val updatedOnline = photoOnlineRepository.uploadPhoto(
+                        photo.toOnlineEntity(),
+                        finalId
                     )
 
-                    // 💾 Save the uploaded Firebase photo to Room, keeping the local URI
-                    photoRepository.downloadPhotoFromFirebase(
-                        photo = uploadedPhoto,
-                        localUri = photoEntity.uri // Retain the existing local image path
+                    photoRepository.updatePhotoFromFirebase(
+                        photo = updatedOnline,
+                        firestoreId = finalId
                     )
 
-                    // ✅ Add success status for upload
-                    results.add(SyncStatus.Success("Photo $roomId uploaded"))
+                    results.add(SyncStatus.Success("Photo ${photo.id} uploaded to Firebase"))
                 }
-            }
 
-        } catch (e: Exception) {
-            // ❗ Catch any global error (e.g. fetch or general sync failure)
-            results.add(SyncStatus.Failure("Global upload sync failed", e))
+            } catch (e: Exception) {
+                results.add(SyncStatus.Failure("Photo ${photo.id}", e))
+            }
         }
 
-        // ⏎ Return the list of results (success/failure for each photo)
         return results
+    }
+
+    private fun generateFirestoreId(): String {
+        return FirebaseFirestore.getInstance()
+            .collection(FirestoreCollections.PHOTOS)
+            .document()
+            .id
     }
 }

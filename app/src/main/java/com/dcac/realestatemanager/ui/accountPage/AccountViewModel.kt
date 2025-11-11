@@ -22,9 +22,9 @@ class AccountViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AccountUiState>(Idle)
     val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
-    private var currentUser: User? = null // Cache current user for reuse
+    private var currentUser: User? = null
 
-    override fun loadUser(userId: Long) {
+    override fun loadUser(userId: String) {
         viewModelScope.launch {
             _uiState.value = Loading
             userRepository.getUserById(userId)

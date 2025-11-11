@@ -3,28 +3,28 @@ package com.dcac.realestatemanager.data.offlineDatabase.property
 import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.room.Transaction
+import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 
-// DAO interface for accessing PropertyEntity data
 @Dao
 interface PropertyDao {
 
+    //QUERIES (FILTERED ON IS_DELETE = 0)
+    //FOR UI
     @Query("SELECT * FROM properties WHERE is_deleted = 0 ORDER BY entry_date DESC")
     fun getAllPropertiesByDate(): Flow<List<PropertyEntity>>
-
     @Query("SELECT * FROM properties WHERE is_deleted = 0 ORDER BY title ASC")
     fun getAllPropertiesByAlphabetic(): Flow<List<PropertyEntity>>
-
     @Query("SELECT * FROM properties WHERE id = :id AND is_deleted = 0 LIMIT 1")
-    fun getPropertyById(id: Long): Flow<PropertyEntity?>
-
+    fun getPropertyById(id: String): Flow<PropertyEntity?>
     @Query("SELECT * FROM properties WHERE user_id = :userId AND is_deleted = 0")
-    fun getPropertyByUserId(userId: Long): Flow<List<PropertyEntity>>
-
+    fun getPropertyByUserId(userId: String): Flow<List<PropertyEntity>>
     @Query("""
         SELECT * FROM properties
         WHERE is_deleted = 0
@@ -43,198 +43,81 @@ interface PropertyDao {
         type: String?,
         isSold: Boolean?
     ): Flow<List<PropertyEntity>>
+    @Query("UPDATE properties SET is_sold = 1, sale_date = :saleDate, updated_at = :updatedAt WHERE id = :propertyId")
+    suspend fun markPropertyAsSold(propertyId: String, saleDate: String, updatedAt: Long)
 
-    @Query("""
-        INSERT OR REPLACE INTO properties (
-            id, title, type, price, surface, rooms, description,
-            address, is_sold, entry_date, sale_date, user_id,
-            static_map_path, is_deleted, is_synced, updated_at
-        ) VALUES (
-            :id, :title, :type, :price, :surface, :rooms, :description,
-            :address, :isSold, :entryDate, :saleDate, :userId,
-            :staticMapPath, :isDeleted, 0, :updatedAt
-        )
-    """)
-    suspend fun insertPropertyForcedSyncFalse(
-        id: Long,
-        title: String,
-        type: String,
-        price: Int,
-        surface: Int,
-        rooms: Int,
-        description: String,
-        address: String,
-        isSold: Boolean,
-        entryDate: String,
-        saleDate: String?,
-        userId: Long,
-        staticMapPath: String?,
-        isDeleted: Boolean,
-        updatedAt: Long
-    )
+    //SYNC
+    @Query("SELECT * FROM properties WHERE is_synced = 0")
+    fun uploadUnSyncedProperties(): Flow<List<PropertyEntity>>
 
-    // Wrapper insert
-    suspend fun insertProperty(property: PropertyEntity): Long {
-        insertPropertyForcedSyncFalse(
-            id = property.id,
-            title = property.title,
-            type = property.type,
-            price = property.price,
-            surface = property.surface,
-            rooms = property.rooms,
-            description = property.description,
-            address = property.address,
-            isSold = property.isSold,
-            entryDate = property.entryDate,
-            saleDate = property.saleDate,
-            userId = property.userId,
-            staticMapPath = property.staticMapPath,
-            isDeleted = property.isDeleted,
-            updatedAt = property.updatedAt
-        )
+    //INSERTIONS
+    //INSERTIONS FROM UI
+    suspend fun insertPropertyFromUi(property: PropertyEntity): String {
+        firstPropertyInsert(property.copy(isSynced = false))
         return property.id
     }
-
-    @Query("""
-        UPDATE properties SET
-            title = :title,
-            type = :type,
-            price = :price,
-            surface = :surface,
-            rooms = :rooms,
-            description = :description,
-            address = :address,
-            is_sold = :isSold,
-            entry_date = :entryDate,
-            sale_date = :saleDate,
-            user_id = :userId,
-            static_map_path = :staticMapPath,
-            is_deleted = :isDeleted,
-            is_synced = 0,
-            updated_at = :updatedAt
-        WHERE id = :id
-    """)
-    suspend fun updatePropertyForcedSyncFalse(
-        id: Long,
-        title: String,
-        type: String,
-        price: Int,
-        surface: Int,
-        rooms: Int,
-        description: String,
-        address: String,
-        isSold: Boolean,
-        entryDate: String,
-        saleDate: String?,
-        userId: Long,
-        staticMapPath: String?,
-        isDeleted: Boolean,
-        updatedAt: Long
-    )
-
-    // Wrapper update
-    suspend fun updateProperty(property: PropertyEntity) {
-        updatePropertyForcedSyncFalse(
-            id = property.id,
-            title = property.title,
-            type = property.type,
-            price = property.price,
-            surface = property.surface,
-            rooms = property.rooms,
-            description = property.description,
-            address = property.address,
-            isSold = property.isSold,
-            entryDate = property.entryDate,
-            saleDate = property.saleDate,
-            userId = property.userId,
-            staticMapPath = property.staticMapPath,
-            isDeleted = property.isDeleted,
-            updatedAt = property.updatedAt
-        )
+    suspend fun insertPropertiesFromUi(properties: List<PropertyEntity>) {
+        properties.forEach { property ->
+            firstPropertyInsert(property.copy(isSynced = false))
+        }
     }
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun firstPropertyInsert(poi: PropertyEntity)
 
-    // ✅ Hard delete
-    @Delete
-    suspend fun deleteProperty(property: PropertyEntity)
+    //INSERTIONS FROM FIREBASE
+    suspend fun insertPropertyFromFirebase(property: PropertyEntity): String? {
+        insertPropertyIfNotExists(property.copy(isSynced = true))
+        return property.firestoreDocumentId
+    }
+    suspend fun insertAllPropertiesNotExistingFromFirebase(properties: List<PropertyEntity>) {
+        properties.forEach { property ->
+            insertPropertyIfNotExists(property.copy(isSynced = true))
+        }
+    }
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPropertyIfNotExists(property: PropertyEntity)
 
-    // ✅ Soft delete
+    //UPDATE
+    // WHEN PROPERTY IS UPDATE FROM A PHONE (UI → ROOM, will need to sync later)
+    suspend fun updatePropertyFromUIForceSyncFalse(property: PropertyEntity): String{
+        updateProperty(property.copy(isSynced = false))
+        return property.id
+    }
+    suspend fun updatePropertyFromFirebaseForcesSyncTrue(property: PropertyEntity): String? {
+        updateProperty(property.copy(isSynced = true))
+        return property.firestoreDocumentId
+    }
+    suspend fun updateAllPropertiesFromFirebaseForceSyncTrue(properties: List<PropertyEntity>) {
+        properties.forEach { property ->
+            updateProperty(property.copy(isSynced = true))
+        }
+    }
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateProperty(property: PropertyEntity)
+
+    //SOFT DELETE
+    //MARK FROM UI PROPERTIES AS DELETED BEFORE REAL DELETE
     @Query("UPDATE properties SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt WHERE id = :id")
-    suspend fun markPropertyAsDeleted(id: Long, updatedAt: Long)
-
-    //for test check hard delete
-    @Query("SELECT * FROM properties WHERE id = :id")
-    fun getPropertyByIdIncludeDeleted(id: Long): Flow<PropertyEntity?>
-
-    /*@Query("UPDATE properties SET is_sold = 1, sale_date = :saleDate, updated_at = :updatedAt WHERE id = :propertyId")
-    suspend fun markPropertyAsSold(propertyId: Long, saleDate: String, updatedAt: Long)
-*/
-    // ✅ Hard delete
-    @Query("DELETE FROM properties WHERE is_deleted = 1")
-    suspend fun clearAllDeleted()
-
-    // ✅ Soft delete
+    suspend fun markPropertyAsDeleted(id: String, updatedAt: Long)
     @Query("UPDATE properties SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt")
     suspend fun markAllPropertiesAsDeleted(updatedAt: Long)
 
-    //for test check hard delete
+    //HARD DELETE
+    //AFTER DELETE PROPERTY FROM FIREBASE, DELETE PROPERTY FROM ROOM
+    @Delete
+    suspend fun deleteProperty(property: PropertyEntity)
+    @Query("DELETE FROM properties WHERE is_deleted = 1")
+    suspend fun clearAllDeleted()
+
+    //FOR TEST CHECK HARD DELETE
+    @Query("SELECT * FROM properties WHERE id = :id")
+    fun getPropertyByIdIncludeDeleted(id: String): Flow<PropertyEntity?>
     @Query("SELECT * FROM properties")
     fun getAllPropertiesIncludeDeleted(): Flow<List<PropertyEntity>>
 
     @Transaction
     @Query("SELECT * FROM properties WHERE id = :propertyId AND is_deleted = 0")
-    fun getPropertyWithPoiS(propertyId: Long): Flow<PropertyWithPoiSRelation?>
-
-    @Query("SELECT * FROM properties WHERE is_synced = 0")
-    fun uploadUnSyncedPropertiesToFirebase(): Flow<List<PropertyEntity>>
-
-    @Query("""
-        INSERT OR REPLACE INTO properties (
-            id, title, type, price, surface, rooms, description,
-            address, is_sold, entry_date, sale_date, user_id,
-            static_map_path, is_deleted, is_synced, updated_at
-        ) VALUES (
-            :id, :title, :type, :price, :surface, :rooms, :description,
-            :address, :isSold, :entryDate, :saleDate, :userId,
-            :staticMapPath, :isDeleted, 1, :updatedAt
-        )
-    """)
-    suspend fun savePropertyFromFirebaseForcedSyncTrue(
-        id: Long,
-        title: String,
-        type: String,
-        price: Int,
-        surface: Int,
-        rooms: Int,
-        description: String,
-        address: String,
-        isSold: Boolean,
-        entryDate: String,
-        saleDate: String?,
-        userId: Long,
-        staticMapPath: String?,
-        isDeleted: Boolean,
-        updatedAt: Long
-    )
-
-    suspend fun savePropertyFromFirebase(property: PropertyEntity) {
-        savePropertyFromFirebaseForcedSyncTrue(
-            id = property.id,
-            title = property.title,
-            type = property.type,
-            price = property.price,
-            surface = property.surface,
-            rooms = property.rooms,
-            description = property.description,
-            address = property.address,
-            isSold = property.isSold,
-            entryDate = property.entryDate,
-            saleDate = property.saleDate,
-            userId = property.userId,
-            staticMapPath = property.staticMapPath,
-            isDeleted = property.isDeleted,
-            updatedAt = property.updatedAt
-        )
-    }
+    fun getPropertyWithPoiS(propertyId: String): Flow<PropertyWithPoiSRelation>
 
     @RawQuery(observedEntities = [PropertyEntity::class])
     fun getAllPropertiesAsCursor(query: SupportSQLiteQuery): Cursor

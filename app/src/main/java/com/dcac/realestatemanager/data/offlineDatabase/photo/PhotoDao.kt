@@ -3,145 +3,101 @@ package com.dcac.realestatemanager.data.offlineDatabase.photo
 import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RawQuery
+import androidx.room.Update
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 
-// DAO interface for accessing PhotoEntity data
 @Dao
 interface PhotoDao {
 
+    //QUERIES (FILTERED ON IS_DELETE = 0)
+    //FOR UI
     @Query("SELECT * FROM photos WHERE id = :id AND is_deleted = 0")
-    fun getPhotoById(id: Long): Flow<PhotoEntity?>
-
+    fun getPhotoById(id: String): Flow<PhotoEntity?>
     @Query("SELECT * FROM photos WHERE property_id = :propertyId AND is_deleted = 0")
-    fun getPhotosByPropertyId(propertyId: Long): Flow<List<PhotoEntity>>
-
+    fun getPhotosByPropertyId(propertyId: String): Flow<List<PhotoEntity>>
     @Query("SELECT * FROM photos WHERE is_deleted = 0")
     fun getAllPhotos(): Flow<List<PhotoEntity>>
 
-    //wrapper insert all
-    suspend fun insertPhotos(photos: List<PhotoEntity>) {
+    //SYNC
+    @Query("SELECT * FROM photos WHERE is_synced = 0")
+    fun uploadUnSyncedPhotos(): Flow<List<PhotoEntity>>
+
+    //INSERTIONS
+    //INSERTIONS FROM UI
+    suspend fun insertPhotoInsertFromUI(photo: PhotoEntity): String{
+        firstPhotoInsert(photo.copy(isSynced = false))
+        return photo.id
+    }
+    suspend fun insertPhotosInsertFromUI(photos: List<PhotoEntity>){
         photos.forEach { photo ->
-            insertPhoto(photo)
+            firstPhotoInsert(photo.copy(isSynced = false))
         }
     }
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun firstPhotoInsert(photo: PhotoEntity)
 
-    //wrapper insert
-    suspend fun insertPhoto(photo: PhotoEntity) {
-        insertPhotoForcedSyncFalse(
-            id = photo.id,
-            propertyId = photo.propertyId,
-            uri = photo.uri,
-            description = photo.description,
-            isDeleted = photo.isDeleted,
-            updatedAt = photo.updatedAt
-        )
+    //INSERTIONS FROM FIREBASE
+    suspend fun insertPhotoInsertFromFirebase(photo: PhotoEntity): String? {
+        insertPhotoIfNotExists(photo.copy(isSynced = true))
+        return photo.firestoreDocumentId
     }
-
-    @Query("""
-        INSERT OR REPLACE INTO photos (
-            id, property_id, uri, description, is_deleted, is_synced, updated_at
-        ) VALUES (
-            :id, :propertyId, :uri, :description, :isDeleted, 0, :updatedAt
-        )
-    """)
-    suspend fun insertPhotoForcedSyncFalse(
-        id: Long,
-        propertyId: Long,
-        uri: String,
-        description: String?,
-        isDeleted: Boolean,
-        updatedAt: Long
-    )
-
-    @Query("""
-        UPDATE photos SET
-            property_id = :propertyId,
-            uri = :uri,
-            description = :description,
-            is_deleted = :isDeleted,
-            is_synced = 0,
-            updated_at = :updatedAt
-        WHERE id = :id
-    """)
-    suspend fun updatePhotoForcedSyncFalse(
-        id: Long,
-        propertyId: Long,
-        uri: String,
-        description: String?,
-        isDeleted: Boolean,
-        updatedAt: Long
-    )
-
-    //wrapper update
-    suspend fun updatePhoto(photo: PhotoEntity) {
-        updatePhotoForcedSyncFalse(
-            id = photo.id,
-            propertyId = photo.propertyId,
-            uri = photo.uri,
-            description = photo.description,
-            isDeleted = photo.isDeleted,
-            updatedAt = photo.updatedAt
-        )
+    suspend fun insertAllPhotosNotExistingFromFirebase(photos: List<PhotoEntity>){
+        photos.forEach { photo ->
+            insertPhotoIfNotExists(photo.copy(isSynced = true))
+        }
     }
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPhotoIfNotExists(photo: PhotoEntity)
 
-    // ✅ Hard delete
+    //UPDATE
+    // WHEN PHOTO IS UPDATE FROM A PHONE (UI → ROOM, will need to sync later)
+    suspend fun updatePhotoFromUIForceSyncFalse(photo: PhotoEntity): String {
+        updatePhoto(photo.copy(isSynced = false))
+        return photo.id
+    }
+    // WHEN FIREBASE SENDS AN UPDATED SINGLE OR MULTIPLE PHOTOS TO ROOM
+    suspend fun updatePhotoFromFirebaseForceSyncTrue(photo: PhotoEntity): String? {
+        updatePhoto(photo.copy(isSynced = true))
+        return photo.firestoreDocumentId
+    }
+    suspend fun updateAllPhotosFromFirebaseForceSyncTrue(photos: List<PhotoEntity>) {
+        photos.forEach { photo ->
+            updatePhoto(photo.copy(isSynced = true))
+        }
+    }
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updatePhoto(photo: PhotoEntity)
+
+    //SOFT DELETE
+    //MARK FROM UI PHOTOS AS DELETED BEFORE REAL DELETE
+    @Query("UPDATE photos SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt WHERE property_id = :propertyId")
+    suspend fun markPhotosAsDeletedByProperty(propertyId: String, updatedAt: Long)
+    @Query("UPDATE photos SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt WHERE id = :id")
+    suspend fun markPhotoAsDeleted(id: String, updatedAt: Long)
+
+    //HARD DELETE
+    // AFTER DELETE PHOTO FROM FIREBASE, DELETE PHOTO FROM ROOM
     @Delete
     suspend fun deletePhoto(photo: PhotoEntity)
-
-    // ✅ Hard delete
     @Query("DELETE FROM photos WHERE property_id = :propertyId")
-    suspend fun deletePhotosByPropertyId(propertyId: Long)
+    suspend fun deletePhotosByPropertyId(propertyId: String)
+    @Query("DELETE FROM photos WHERE is_deleted = 1")
+    suspend fun clearAllPhotosDeleted()
 
-    //for test check hard delete
+    //FOR TEST CHECK HARD DELETE
     @Query("SELECT * FROM photos WHERE id = :id")
-    fun getPhotoByIdIncludeDeleted(id: Long): Flow<PhotoEntity?>
-
+    fun getPhotoByIdIncludeDeleted(id: String): Flow<PhotoEntity?>
     @Query("SELECT * FROM photos WHERE property_id = :propertyId")
-    fun getPhotosByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PhotoEntity>>
-
-    // ✅ Soft delete
-    @Query("UPDATE photos SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt WHERE property_id = :propertyId")
-    suspend fun markPhotosAsDeletedByProperty(propertyId: Long, updatedAt: Long)
-
-    // ✅ Soft delete
-    @Query("UPDATE photos SET is_deleted = 1, is_synced = 0, updated_at = :updatedAt WHERE id = :id")
-    suspend fun markPhotoAsDeleted(id: Long, updatedAt: Long)
-
-    @Query("SELECT * FROM photos WHERE is_synced = 0")
-    fun getUnSyncedPhotos(): Flow<List<PhotoEntity>>
-
-    @Query("""
-    INSERT OR REPLACE INTO photos (
-        id, property_id, uri, description, is_deleted, is_synced, updated_at
-    ) VALUES (
-        :id, :propertyId, :uri, :description, :isDeleted, 1, :updatedAt
-    )
-""")
-    suspend fun savePhotoFromFirebaseForcedSyncTrue(
-        id: Long,
-        propertyId: Long,
-        uri: String,
-        description: String?,
-        isDeleted: Boolean,
-        updatedAt: Long
-    )
-
-    suspend fun savePhotoFromFirebase(photo: PhotoEntity) {
-        savePhotoFromFirebaseForcedSyncTrue(
-            id = photo.id,
-            propertyId = photo.propertyId,
-            uri = photo.uri,
-            description = photo.description,
-            isDeleted = photo.isDeleted,
-            updatedAt = photo.updatedAt
-        )
-    }
+    fun getPhotosByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PhotoEntity>>
+    @Query("SELECT * FROM photos")
+    fun getAllPhotosIncludeDeleted(): Flow<List<PhotoEntity>>
 
     @RawQuery(observedEntities = [PhotoEntity::class])
     fun getAllPhotosAsCursor(query: SupportSQLiteQuery): Cursor
-
 
 }

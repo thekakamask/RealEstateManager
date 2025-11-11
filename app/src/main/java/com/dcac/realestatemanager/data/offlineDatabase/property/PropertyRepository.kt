@@ -8,11 +8,10 @@ import kotlinx.coroutines.flow.Flow
 interface PropertyRepository {
 
     //FOR UI
-
     fun getAllPropertiesByDate(): Flow<List<Property>>
     fun getAllPropertiesByAlphabetic(): Flow<List<Property>>
-    fun getPropertyById(id: Long): Flow<Property?>
-    fun getPropertiesByUserId(userId: Long): Flow<List<Property>>
+    fun getPropertyById(id: String): Flow<Property?>
+    fun getPropertiesByUserId(userId: String): Flow<List<Property>>
     fun searchProperties(
         minSurface: Int?,
         maxSurface: Int?,
@@ -21,23 +20,36 @@ interface PropertyRepository {
         type: String?,
         isSold: Boolean?
     ): Flow<List<Property>>
-    suspend fun insertProperty(property: Property): Long
-    suspend fun updateProperty(property: Property)
-    //suspend fun markPropertyAsSold(propertyId: Long, saleDate: String)
-    fun getPropertyWithPoiS(id: Long): Flow<PropertyWithPoiS?>
+    suspend fun markPropertyAsSold(propertyId: String, saleDate: String, updatedAt: Long)
+
+    //SYNC
+    fun uploadUnSyncedPropertiesToFirebase(): Flow<List<PropertyEntity>>
+
+    //INSERTIONS
+    //INSERTIONS FROM UI
+    suspend fun insertPropertyFromUI(property: Property)
+    suspend fun insertPropertiesFromUI(properties: List<Property>)
+    //INSERTIONS FROM FIREBASE
+    suspend fun insertPropertyInsertFromFirebase(property: PropertyOnlineEntity, firebaseDocumentId: String)
+    suspend fun insertPropertiesInsertFromFirebase(properties: List<Pair<PropertyOnlineEntity, String>>)
+
+    //UPDATE
+    suspend fun updatePropertyFromUI(property : Property)
+    suspend fun updatePropertyFromFirebase(property: PropertyOnlineEntity, firebaseDocumentId: String)
+    suspend fun updateAllPropertiesFromFirebase(properties: List<Pair<PropertyOnlineEntity, String>>)
+
+    //SOFT DELETE
     suspend fun markPropertyAsDeleted(property: Property)
-    suspend fun markAllPropertyAsDeleted()
+    suspend fun markAllPropertiesAsDeleted()
 
-    //FOR FIREBASE SYNC
-
-    fun getPropertyEntityById(id: Long): Flow<PropertyEntity?>
+    //HARD DELETE
     suspend fun deleteProperty(property: PropertyEntity)
     suspend fun clearAllDeleted()
-    fun uploadUnSyncedPropertiesToFirebase(): Flow<List<PropertyEntity>>
-    suspend fun downloadPropertyFromFirebase(property: PropertyOnlineEntity)
 
     //FOR TEST HARD DELETE
-    fun getPropertyByIdIncludeDeleted(id: Long): Flow<PropertyEntity?>
+    fun getPropertyByIdIncludeDeleted(id: String): Flow<PropertyEntity?>
     fun getAllPropertyIncludeDeleted(): Flow<List<PropertyEntity>>
+
+    fun getPropertyWithPoiS(propertyId: String): Flow<PropertyWithPoiS>
 
 }

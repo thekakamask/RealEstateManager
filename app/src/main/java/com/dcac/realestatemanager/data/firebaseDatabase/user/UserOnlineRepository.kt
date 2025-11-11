@@ -1,10 +1,8 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.user
 
-import com.dcac.realestatemanager.model.User
-
 interface UserOnlineRepository {
-    suspend fun uploadUser(user: UserOnlineEntity, userId: String): UserOnlineEntity
-    suspend fun getUser(userId: String): FirestoreUserDocument?
-    suspend fun deleteUser(userId: String)
+    suspend fun uploadUser(user: UserOnlineEntity, firebaseUserId: String): UserOnlineEntity
+    suspend fun getUser(firebaseUserId: String): FirestoreUserDocument?
+    suspend fun deleteUser(firebaseUserId: String)
     suspend fun getAllUsers(): List<FirestoreUserDocument>
 }

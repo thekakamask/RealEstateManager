@@ -31,7 +31,7 @@ class PropertyCreationViewModel @Inject constructor(
     val uiState: StateFlow<PropertyCreationUiState> = _uiState.asStateFlow()
 
     override fun createProperty(property: Property) {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             _uiState.value = Loading
 
             try {
@@ -55,11 +55,11 @@ class PropertyCreationViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = Error("Failed to create property: ${e.message}")
             }
-        }
+        }*/
     }
 
     override fun updateProperty(property: Property) {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             _uiState.value = Loading
 
             try {
@@ -83,11 +83,11 @@ class PropertyCreationViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = Error("Failed to update property: ${e.message}")
             }
-        }
+        }*/
     }
 
     override fun loadPropertyForEditing(propertyId: Long) {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             _uiState.value = Loading
 
             propertyRepository.getPropertyById(propertyId)
@@ -101,10 +101,10 @@ class PropertyCreationViewModel @Inject constructor(
                         _uiState.value = Error("Property not found")
                     }
                 }
-        }
+        }*/
     }
 
     override fun resetState() {
-        _uiState.value = Idle
+        //_uiState.value = Idle
     }
 }

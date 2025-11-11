@@ -11,39 +11,38 @@ class PropertyPoiCrossUploadManager(
     private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository  // Firestore repo
 ): PropertyPoiCrossUploadInterfaceManager {
 
-    // Uploads all unsynced cross-references from Room to Firestore
     override suspend fun syncUnSyncedPropertyPoiCross(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
+        val crossRefsToSync = propertyPoiCrossRepository.uploadUnSyncedCrossRefsToFirebase().first()
 
-        try {
-            val unSyncedCrossRefs = propertyPoiCrossRepository.uploadUnSyncedPropertiesPoiSCross().first()
+        for (crossRef in crossRefsToSync) {
+            val propertyId = crossRef.universalLocalPropertyId
+            val poiId = crossRef.universalLocalPoiId
+            val firestoreId = "$propertyId-$poiId"
 
-            for (crossRefEntity in unSyncedCrossRefs) {
-                val propertyId = crossRefEntity.propertyId
-                val poiId = crossRefEntity.poiId
-
-                if (crossRefEntity.isDeleted) {
-                    // 🗑 Delete from Firebase then Room
+            try {
+                if (crossRef.isDeleted) {
                     propertyPoiCrossOnlineRepository.deleteCrossRef(propertyId, poiId)
-                    propertyPoiCrossRepository.deleteCrossRef(crossRefEntity)
-                    results.add(SyncStatus.Success("CrossRef ($propertyId, $poiId) deleted"))
+                    propertyPoiCrossRepository.deleteCrossRef(crossRef)
+
+                    results.add(SyncStatus.Success("CrossRef $firestoreId deleted from Firebase & Room"))
+
                 } else {
-                    // 🔄 Update timestamp and upload to Firebase
-                    val updatedCrossRef = crossRefEntity.copy(updatedAt = System.currentTimeMillis())
-                    propertyPoiCrossOnlineRepository.uploadCrossRef(
-                        crossRef = updatedCrossRef.toOnlineEntity() // ✅ Just pass the online entity
+                    val uploadedCrossRef = propertyPoiCrossOnlineRepository.uploadCrossRef(
+                        crossRef = crossRef.toOnlineEntity()
                     )
 
-                    // ✅ Optional : could re-save to Room to mark isSynced = true
-                    propertyPoiCrossRepository.downloadCrossRefFromFirebase(
-                        crossRef = updatedCrossRef.toOnlineEntity()
+                    propertyPoiCrossRepository.updateCrossRefFromFirebase(
+                        crossRef = uploadedCrossRef,
+                        firebaseDocumentId = firestoreId
                     )
 
-                    results.add(SyncStatus.Success("CrossRef ($propertyId, $poiId) uploaded"))
+                    results.add(SyncStatus.Success("CrossRef $firestoreId uploaded to Firebase"))
                 }
+
+            } catch (e: Exception) {
+                results.add(SyncStatus.Failure("CrossRef $firestoreId failed to sync", e))
             }
-        } catch (e: Exception) {
-            results.add(SyncStatus.Failure("Global CrossRef upload failed", e))
         }
 
         return results

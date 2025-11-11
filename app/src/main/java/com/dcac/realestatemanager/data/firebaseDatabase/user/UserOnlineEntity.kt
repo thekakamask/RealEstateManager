@@ -9,8 +9,8 @@ import androidx.annotation.Keep
 
 @Keep
 data class UserOnlineEntity(
+    val universalLocalId: String = "" , // 🔑 UUID from Room
     val email: String = "",
     val agentName: String = "",
-    val updatedAt: Long = System.currentTimeMillis(),
-    val roomId : Long = 0L
+    val updatedAt: Long = System.currentTimeMillis()
 )

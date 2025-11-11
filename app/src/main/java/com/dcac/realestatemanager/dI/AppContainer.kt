@@ -243,8 +243,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePoiRepository(poiDao: PoiDao, userRepository: UserRepository): PoiRepository =
-        OfflinePoiRepository(poiDao, userRepository)
+    fun providePoiRepository(poiDao: PoiDao): PoiRepository =
+        OfflinePoiRepository(poiDao)
 
     @Provides
     @Singleton

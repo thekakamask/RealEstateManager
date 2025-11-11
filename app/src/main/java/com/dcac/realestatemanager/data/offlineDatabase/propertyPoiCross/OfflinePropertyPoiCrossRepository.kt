@@ -13,98 +13,98 @@ class OfflinePropertyPoiCrossRepository(
 
     //FOR UI
 
-    override fun getCrossRefsForProperty(propertyId: Long): Flow<List<PropertyPoiCross>> {
+    override fun getCrossRefsForProperty(propertyId: String): Flow<List<PropertyPoiCross>> {
         return dao.getCrossRefsForProperty(propertyId).map { list ->
             list.map { it.toModel() }
         }
     }
-
+    override fun getPoiIdsForProperty(propertyId: String): Flow<List<String>> {
+        return dao.getPoiIdsForProperty(propertyId)
+    }
+    override fun getPropertyIdsForPoi(poiId: String): Flow<List<String>> {
+        return dao.getPropertyIdsForPoi(poiId)
+    }
     override fun getAllCrossRefs(): Flow<List<PropertyPoiCross>> {
         return dao.getAllCrossRefs().map { list ->
             list.map { it.toModel() }
         }
     }
-
-    override fun getPoiIdsForProperty(propertyId: Long): Flow<List<Long>> {
-        return dao.getPoiIdsForProperty(propertyId)
-    }
-
-    override fun getPropertyIdsForPoi(poiId: Long): Flow<List<Long>> {
-        return dao.getPropertyIdsForPoi(poiId)
-    }
-
-    override fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCross?> {
+    override fun getCrossByIds(propertyId: String, poiId: String): Flow<PropertyPoiCross?> {
         return dao.getCrossByIds(propertyId, poiId).map { it?.toModel() }
     }
+    override fun uploadUnSyncedCrossRefsToFirebase(): Flow<List<PropertyPoiCrossEntity>> =
+        dao.uploadUnSyncedCrossRefs()
 
-    override suspend fun insertCrossRef(crossRef: PropertyPoiCross) {
-        dao.insertCrossRef(crossRef.toEntity())
+    //INSERTIONS
+    //INSERTIONS FROM UI
+    override suspend fun insertCrossRefInsertFromUI(crossRef: PropertyPoiCross) {
+        dao.insertCrossRefInsertFromUI(crossRef.toEntity())
+    }
+    override suspend fun insertAllCrossRefsInsertFromUI(crossRefs: List<PropertyPoiCross>) {
+        dao.insertAllCrossRefInsertFromUi(crossRefs.map { it.toEntity() })
+    }
+    override suspend fun insertCrossRefInsertFromFirebase(crossRef: PropertyPoiCrossOnlineEntity, firebaseDocumentId: String) {
+        dao.insertCrossRefInsertFromFirebase(crossRef.toEntity(firestoreId = firebaseDocumentId))
+    }
+    override suspend fun insertAllCrossRefInsertFromFirebase(crossRefs: List<Pair<PropertyPoiCrossOnlineEntity,String>>) {
+        val entities = crossRefs.map {(crossRef, firebaseDocumentId) ->
+            crossRef.toEntity(firestoreId = firebaseDocumentId)
+        }
+        dao.insertAllCrossRefNotExistingFromFirebase(entities)
     }
 
-    override suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCross>) {
-        dao.insertAllCrossRefs(crossRefs.map { it.toEntity() })
+    //UPDATES
+    override suspend fun updateCrossRefFromUI(crossRef: PropertyPoiCross) {
+        dao.updateCrossRefFromUIForceSyncFalse(crossRef.toEntity())
+    }
+    override suspend fun updateAllCrossRefsFromUI(crossRefs: List<PropertyPoiCross>) {
+        dao.updateAllCrossRefsFromUIForceSyncFalse(crossRefs.map { it.toEntity() })
+    }
+    override suspend fun updateCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity, firebaseDocumentId: String) {
+       dao.updateCrossRefFromUIForceSyncFalse(crossRef.toEntity(firestoreId = firebaseDocumentId))
+    }
+    override suspend fun updateAllCrossRefFromFirebase(crossRefs: List<Pair<PropertyPoiCrossOnlineEntity, String>>) {
+        val entities = crossRefs.map { (crossRef, firebaseDocumentId) ->
+            crossRef.toEntity(firestoreId = firebaseDocumentId)
+        }
+        dao.updateAllCrossRefFromFirebaseForceSyncTrue(entities)
     }
 
-    override suspend fun updateCrossRef(crossRef: PropertyPoiCross) {
-        dao.updateCrossRef(crossRef.toEntity())
-    }
-
-    override suspend fun markCrossRefAsDeleted(propertyId: Long, poiId: Long) {
+    //SOFT DELETE
+    override suspend fun markCrossRefAsDeleted(propertyId: String, poiId: String) {
         dao.markCrossRefAsDeleted(propertyId, poiId, System.currentTimeMillis())
     }
-
-    override suspend fun markCrossRefsAsDeletedForProperty(propertyId: Long) {
+    override suspend fun markCrossRefsAsDeletedForProperty(propertyId: String) {
         dao.markCrossRefsAsDeletedForProperty(propertyId, System.currentTimeMillis())
     }
-
-    override suspend fun markCrossRefsAsDeletedForPoi(poiId: Long) {
+    override suspend fun markCrossRefsAsDeletedForPoi(poiId: String) {
         dao.markCrossRefsAsDeletedForPoi(poiId, System.currentTimeMillis())
     }
-
     override suspend fun markAllCrossRefsAsDeleted() {
         dao.markAllCrossRefsAsDeleted(System.currentTimeMillis())
     }
 
-    // FOR FIREBASE SYNC
-
-    override fun getCrossEntityByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?> {
-        return dao.getCrossByIds(propertyId, poiId)
-    }
-
-    override suspend fun deleteCrossRefsForProperty(propertyId: Long) {
+    //HARD DELETE
+    override suspend fun deleteCrossRefsForProperty(propertyId: String) {
         dao.deleteCrossRefsForProperty(propertyId)
     }
-
-    override suspend fun deleteCrossRefsForPoi(poiId: Long) {
+    override suspend fun deleteCrossRefsForPoi(poiId: String) {
         dao.deleteCrossRefsForPoi(poiId)
     }
-
     override suspend fun deleteCrossRef(crossRef: PropertyPoiCrossEntity) {
         dao.deleteCrossRef(crossRef)
     }
-
     override suspend fun clearAllDeleted() {
         dao.clearAllDeleted()
     }
 
-    override fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>> {
-        return dao.uploadUnSyncedPropertiesPoiSCross()
-    }
-
-    override suspend fun downloadCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity) {
-        dao.saveCrossRefFromFirebase(crossRef.toEntity())
-    }
-
     //FOR TEST HARD DELETE
-    override fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PropertyPoiCrossEntity>> =
+    override fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PropertyPoiCrossEntity>> =
         dao.getCrossRefsByPropertyIdIncludeDeleted(propertyId)
-
-    override fun getCrossRefsByPoiIdIncludeDeleted(poiId: Long): Flow<List<PropertyPoiCrossEntity>> =
+    override fun getCrossRefsByPoiIdIncludeDeleted(poiId: String): Flow<List<PropertyPoiCrossEntity>> =
         dao.getCrossRefsByPoiIdIncludeDeleted(poiId)
-
-    override fun getCrossRefsByIdsIncludedDeleted(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?> =
+    override fun getCrossRefsByIdsIncludedDeleted(propertyId: String, poiId: String): Flow<PropertyPoiCrossEntity?> =
         dao.getCrossRefsByIdsIncludedDeleted(propertyId, poiId)
-
     override fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>> =
         dao.getAllCrossRefsIncludeDeleted()
 

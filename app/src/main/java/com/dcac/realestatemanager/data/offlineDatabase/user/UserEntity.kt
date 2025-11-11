@@ -13,8 +13,10 @@ import androidx.room.PrimaryKey
     ]
 )
 data class UserEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
+    @PrimaryKey
+    val id: String, // ✅ Stable UUID for multi device link from User model
+    @ColumnInfo(name = "firebase_uid")
+    val firebaseUid: String,   // ✅ for Firebase Auth mapping
     val email: String,
     @ColumnInfo(name = "agent_name")
     val agentName: String,
@@ -22,8 +24,6 @@ data class UserEntity(
     val isSynced: Boolean = false,
     @ColumnInfo(name = "is_deleted")
     val isDeleted: Boolean = false,
-    @ColumnInfo(name = "firebase_uid")
-    val firebaseUid: String,
     @ColumnInfo(name = "updated_at")
     val updatedAt: Long = System.currentTimeMillis()
 )

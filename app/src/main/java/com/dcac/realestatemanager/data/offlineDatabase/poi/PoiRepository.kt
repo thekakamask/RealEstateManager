@@ -8,24 +8,35 @@ import kotlinx.coroutines.flow.Flow
 interface PoiRepository {
 
     // FOR UI
-
+    fun getPoiById(id: String): Flow<Poi?>
     fun getAllPoiS(): Flow<List<Poi>>
-    fun getPoiById(id: Long): Flow<Poi?>
-    suspend fun insertPoi(poi: Poi)
-    suspend fun insertAllPoiS(poiS: List<Poi>)
-    suspend fun updatePoi(poi: Poi)
-    suspend fun markPoiAsDeleted(poi: Poi)
-    fun getPoiWithProperties(poiId: Long): Flow<PoiWithProperties>
 
-    //FOR FIREBASE SYNC
-
-    fun getPoiEntityById(id: Long): Flow<PoiEntity?>
-    suspend fun deletePoi(poi: PoiEntity)
+    //SYNC
     fun uploadUnSyncedPoiSToFirebase(): Flow<List<PoiEntity>>
-    suspend fun downloadPoiFromFirebase(poi: PoiOnlineEntity)
 
-    //FOR TEST HARD DELETE
-    fun getPoiByIdIncludeDeleted(id: Long): Flow<PoiEntity?>
+    //INSERTIONS
+    //INSERTIONS FROM UI
+    suspend fun insertPoiInsertFromUI(poi: Poi)
+    suspend fun insertPoiSInsertFromUi(poiS: List<Poi>)
+    //INSERTIONS FROM FIREBASE
+    suspend fun insertPoiInsertFromFirebase(poi : PoiOnlineEntity, firebaseDocumentId: String)
+    suspend fun insertPoiSInsertFromFirebase(poiS: List<Pair<PoiOnlineEntity, String>>)
+
+    //UPDATE
+    suspend fun updatePoiFromUI(poi: Poi)
+    suspend fun updatePoiFromFirebase(poi: PoiOnlineEntity,  firebaseDocumentId: String)
+    suspend fun updateAllPoiSFromFirebase(poiS: List<Pair<PoiOnlineEntity, String>>)
+
+    //SOFT DELETE
+    suspend fun markPoiAsDeleted(poi: Poi)
+
+    //HARD DELETE
+    suspend fun deletePoi(poi:PoiEntity)
+    suspend fun clearAllPoiSDeleted()
+
+    // FOR TEST HARD DELETE CHECK
+    fun getAllPoiSByIdIncludeDeleted(id: String): Flow<PoiEntity?>
     fun getAllPoiIncludeDeleted(): Flow<List<PoiEntity>>
 
+    fun getPoiWithProperties(poiId: String): Flow<PoiWithProperties>
 }

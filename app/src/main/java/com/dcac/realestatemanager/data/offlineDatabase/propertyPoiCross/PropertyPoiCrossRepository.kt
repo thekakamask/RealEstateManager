@@ -1,40 +1,50 @@
 package com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross
 
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
-import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.model.PropertyPoiCross
 import kotlinx.coroutines.flow.Flow
 
 interface PropertyPoiCrossRepository {
 
     // FOR UI
-
-    fun getCrossRefsForProperty(propertyId: Long): Flow<List<PropertyPoiCross>>
+    fun getCrossRefsForProperty(propertyId: String): Flow<List<PropertyPoiCross>>
+    fun getPoiIdsForProperty(propertyId: String): Flow<List<String>>
+    fun getPropertyIdsForPoi(poiId: String): Flow<List<String>>
     fun getAllCrossRefs(): Flow<List<PropertyPoiCross>>
-    fun getPoiIdsForProperty(propertyId: Long): Flow<List<Long>>
-    fun getPropertyIdsForPoi(poiId: Long): Flow<List<Long>>
-    fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCross?>
-    suspend fun insertCrossRef(crossRef: PropertyPoiCross)
-    suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCross>)
-    suspend fun updateCrossRef(crossRef: PropertyPoiCross)
-    suspend fun markCrossRefAsDeleted(propertyId: Long, poiId: Long)
-    suspend fun markCrossRefsAsDeletedForProperty(propertyId: Long)
-    suspend fun markCrossRefsAsDeletedForPoi(poiId: Long)
+    fun getCrossByIds(propertyId: String, poiId: String): Flow<PropertyPoiCross?>
+
+    //SYNC
+    fun uploadUnSyncedCrossRefsToFirebase(): Flow<List<PropertyPoiCrossEntity>>
+
+    //INSERTIONS
+    //INSERTIONS FROM UI
+    suspend fun insertCrossRefInsertFromUI(crossRef: PropertyPoiCross)
+    suspend fun insertAllCrossRefsInsertFromUI(crossRefs: List<PropertyPoiCross>)
+    //INSERTIONS FROM FIREBASE
+    suspend fun insertCrossRefInsertFromFirebase(crossRef: PropertyPoiCrossOnlineEntity, firebaseDocumentId: String)
+    suspend fun insertAllCrossRefInsertFromFirebase(crossRefs: List<Pair<PropertyPoiCrossOnlineEntity, String>>)
+
+    //UPDATE
+    suspend fun updateCrossRefFromUI(crossRef: PropertyPoiCross)
+    suspend fun updateAllCrossRefsFromUI(crossRefs: List<PropertyPoiCross>)
+    suspend fun updateCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity, firebaseDocumentId: String)
+    suspend fun updateAllCrossRefFromFirebase(crossRefs: List<Pair<PropertyPoiCrossOnlineEntity, String>>)
+
+    //SOFT DELETE
+    suspend fun markCrossRefAsDeleted(propertyId: String, poiId: String)
+    suspend fun markCrossRefsAsDeletedForProperty(propertyId: String)
+    suspend fun markCrossRefsAsDeletedForPoi(poiId: String)
     suspend fun markAllCrossRefsAsDeleted()
 
-    //FOR FIREBASE SYNC
-
-    fun getCrossEntityByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?>
+    //HARD DELETE
     suspend fun deleteCrossRef(crossRef: PropertyPoiCrossEntity)
-    suspend fun deleteCrossRefsForProperty(propertyId: Long)
-    suspend fun deleteCrossRefsForPoi(poiId: Long)
+    suspend fun deleteCrossRefsForProperty(propertyId: String)
+    suspend fun deleteCrossRefsForPoi(poiId: String)
     suspend fun clearAllDeleted()
-    fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>>
-    suspend fun downloadCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity)
 
     //FOR TEST HARD DELETE
-    fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PropertyPoiCrossEntity>>
-    fun getCrossRefsByPoiIdIncludeDeleted(poiId: Long): Flow<List<PropertyPoiCrossEntity>>
-    fun getCrossRefsByIdsIncludedDeleted(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?>
+    fun getCrossRefsByIdsIncludedDeleted(propertyId: String, poiId: String): Flow<PropertyPoiCrossEntity?>
+    fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PropertyPoiCrossEntity>>
+    fun getCrossRefsByPoiIdIncludeDeleted(poiId: String): Flow<List<PropertyPoiCrossEntity>>
     fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>>
 }

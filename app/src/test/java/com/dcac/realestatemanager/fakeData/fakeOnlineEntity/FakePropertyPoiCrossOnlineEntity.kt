@@ -1,54 +1,68 @@
 package com.dcac.realestatemanager.fakeData.fakeOnlineEntity
 
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.FirestoreCrossDocument
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
 
 object FakePropertyPoiCrossOnlineEntity {
 
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
-    val cross1 = PropertyPoiCrossOnlineEntity(
-        propertyId = 1L,
-        poiId = 1L,
-        updatedAt = DEFAULT_TIMESTAMP + 1,
-        roomId = 0L
+    val crossOnline1 = PropertyPoiCrossOnlineEntity(
+        universalLocalPropertyId = "property-1",
+        universalLocalPoiId = "poi-1",
+        updatedAt = DEFAULT_TIMESTAMP + 1
     )
 
-    val cross2 = PropertyPoiCrossOnlineEntity(
-        propertyId = 1L,
-        poiId = 2L,
-        updatedAt = DEFAULT_TIMESTAMP + 2,
-        roomId = 0L
+    val crossOnline2 = PropertyPoiCrossOnlineEntity(
+        universalLocalPropertyId = "property-1",
+        universalLocalPoiId = "poi-2",
+        updatedAt = DEFAULT_TIMESTAMP + 2
     )
 
-    val cross3 = PropertyPoiCrossOnlineEntity(
-        propertyId = 2L,
-        poiId = 2L,
-        updatedAt = DEFAULT_TIMESTAMP + 3,
-        roomId = 0L
+    val crossOnline3 = PropertyPoiCrossOnlineEntity(
+        universalLocalPropertyId = "property-2",
+        universalLocalPoiId = "poi-2",
+        updatedAt = DEFAULT_TIMESTAMP + 3
     )
 
-    val cross4 = PropertyPoiCrossOnlineEntity(
-        propertyId = 2L,
-        poiId = 3L,
-        updatedAt = DEFAULT_TIMESTAMP + 4,
-        roomId = 0L
+    val crossOnline4 = PropertyPoiCrossOnlineEntity(
+        universalLocalPropertyId = "property-2",
+        universalLocalPoiId = "poi-3",
+        updatedAt = DEFAULT_TIMESTAMP + 4
     )
 
-    val cross5 = PropertyPoiCrossOnlineEntity(
-        propertyId = 3L,
-        poiId = 1L,
-        updatedAt = DEFAULT_TIMESTAMP + 5,
+    val crossOnline5 = PropertyPoiCrossOnlineEntity(
+        universalLocalPropertyId = "property-3",
+        universalLocalPoiId = "poi-1",
+        updatedAt = DEFAULT_TIMESTAMP + 5
     )
 
-    val cross6 = PropertyPoiCrossOnlineEntity(
-        propertyId = 3L,
-        poiId = 3L,
-        updatedAt = DEFAULT_TIMESTAMP + 6,
+    val crossOnline6 = PropertyPoiCrossOnlineEntity(
+        universalLocalPropertyId = "property-3",
+        universalLocalPoiId = "poi-3",
+        updatedAt = DEFAULT_TIMESTAMP + 6
     )
-
-
 
     val propertyPoiCrossOnlineEntityList = listOf(
-        cross1, cross2, cross3, cross4, cross5, cross6
+        crossOnline1, crossOnline2, crossOnline3, crossOnline4, crossOnline5, crossOnline6
+    )
+
+    val firestoreCrossDocument1 = FirestoreCrossDocument(
+        id = "firestore-cross-1",
+        cross = crossOnline1
+    )
+    val firestoreCrossDocument2 = FirestoreCrossDocument(
+        id = "firestore-cross-2",
+        cross = crossOnline2
+    )
+    val firestoreCrossDocument3 = FirestoreCrossDocument(
+        id = "firestore-cross-3",
+        cross = crossOnline3
+    )
+
+    val firestoreCrossDocumentList = listOf(
+        firestoreCrossDocument1,
+        firestoreCrossDocument2,
+        firestoreCrossDocument3
     )
 }

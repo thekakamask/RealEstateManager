@@ -13,8 +13,8 @@ data class PoiWithPropertiesRelation(
         entityColumn = "id",
         associateBy = Junction(
             value = PropertyPoiCrossEntity::class,
-            parentColumn= "poiId",
-            entityColumn= "propertyId"
+            parentColumn = "poi_id",       // 🔁
+            entityColumn = "property_id"   // 🔁
         )
     )
     val properties: List<PropertyEntity>

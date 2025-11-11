@@ -9,8 +9,8 @@ import androidx.annotation.Keep
 
 @Keep
 data class PoiOnlineEntity(
+    val universalLocalId: String = "", //🔑 UUID from Room
     val name: String = "",
     val type: String = "",
-    val updatedAt: Long = System.currentTimeMillis(),
-    val roomId : Long = 0L
+    val updatedAt: Long = System.currentTimeMillis()
 )
