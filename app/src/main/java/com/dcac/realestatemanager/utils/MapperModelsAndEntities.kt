@@ -4,6 +4,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiWithPropertiesRelation
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyWithDetails
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyWithPoiSRelation
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
@@ -177,6 +178,37 @@ fun PropertyPoiCross.toEntity(): PropertyPoiCrossEntity = PropertyPoiCrossEntity
 )
 
 //RELATIONS
+
+// Added by Gemini AI - New mapper for PropertyWithDetails
+fun PropertyWithDetails.toModel(): Property {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val entryDateLocal = LocalDate.parse(property.entryDate, formatter)
+    val saleDateLocal = property.saleDate?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it, formatter) }
+
+    return Property(
+        universalLocalId = property.id,
+        firestoreDocumentId = property.firestoreDocumentId,
+        universalLocalUserId = property.universalLocalUserId,
+        agent = user.toModel(),
+        title = property.title,
+        type = property.type,
+        price = property.price,
+        surface = property.surface,
+        rooms = property.rooms,
+        description = property.description,
+        address = property.address,
+        isSold = property.isSold,
+        entryDate = entryDateLocal,
+        saleDate = saleDateLocal,
+        staticMapPath = property.staticMapPath,
+        photos = photos.map { it.toModel() },
+        poiS = pois.map { it.toModel() },
+        isSynced = property.isSynced,
+        isDeleted = property.isDeleted,
+        updatedAt = property.updatedAt
+    )
+}
+// End of modification by Gemini AI
 
 fun PoiWithPropertiesRelation.toModel(): PoiWithProperties {
     return PoiWithProperties(
