@@ -251,22 +251,13 @@ object AppModule {
     fun providePropertyCrossRepository(crossDao: PropertyPoiCrossDao): PropertyPoiCrossRepository =
         OfflinePropertyPoiCrossRepository(crossDao)
 
+    // Modified by Gemini AI - Simplified the provider for PropertyRepository
     @Provides
     @Singleton
     fun providePropertyRepository(
-        propertyDao: PropertyDao,
-        userRepository: UserRepository,
-        poiRepository: PoiRepository,
-        photoRepository: PhotoRepository,
-        propertyPoiCrossRepository: PropertyPoiCrossRepository
-    ): PropertyRepository =
-        OfflinePropertyRepository(
-            propertyDao,
-            userRepository,
-            poiRepository,
-            photoRepository,
-            propertyPoiCrossRepository
-        )
+        propertyDao: PropertyDao
+    ): PropertyRepository = OfflinePropertyRepository(propertyDao)
+    // End of modification by Gemini AI
 
     @Provides
     @Singleton
