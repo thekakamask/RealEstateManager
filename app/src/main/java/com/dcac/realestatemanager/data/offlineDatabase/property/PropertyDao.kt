@@ -15,6 +15,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PropertyDao {
 
+    // --- NEW METHODS USING RELATIONS ---
+    @Transaction
+    @Query("SELECT * FROM properties WHERE is_deleted = 0 ORDER BY entry_date DESC")
+    fun getPropertiesWithDetailsByDate(): Flow<List<PropertyWithDetails>>
+
+    @Transaction
+    @Query("SELECT * FROM properties WHERE is_deleted = 0 ORDER BY title ASC")
+    fun getPropertiesWithDetailsByAlphabetic(): Flow<List<PropertyWithDetails>>
+    // --- END NEW METHODS ---
+
     //QUERIES (FILTERED ON IS_DELETE = 0)
     //FOR UI
     @Query("SELECT * FROM properties WHERE is_deleted = 0 ORDER BY entry_date DESC")
