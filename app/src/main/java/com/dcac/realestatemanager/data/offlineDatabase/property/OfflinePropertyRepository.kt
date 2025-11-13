@@ -14,15 +14,17 @@ import com.dcac.realestatemanager.utils.toModel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
+// OfflinePropertyRepository est instancié dans AppContainer
 class OfflinePropertyRepository(
     private val propertyDao: PropertyDao,
     private val userRepository: UserRepository,
     private val poiRepository: PoiRepository,
     private val photoRepository: PhotoRepository,
     private val propertyPoiCrossRepository: PropertyPoiCrossRepository
-): PropertyRepository {
+) : PropertyRepository {
 
     //FOR UI
+    // TODO: peut être beaucoup simplifié(dixit gemini)
     private fun combinePropertiesWithDetails(
         propertiesFlow: Flow<List<PropertyEntity>>
     ): Flow<List<Property>> {
@@ -31,8 +33,14 @@ class OfflinePropertyRepository(
         val poiSFlow = poiRepository.getAllPoiS()
         val usersFlow = userRepository.getAllUsers()
 
-        return combine(propertiesFlow, usersFlow, photosFlow, crossRefsFlow, poiSFlow) {
-                properties, users, photos, crossRefs, poiS ->
+        // TODO: bien apprendre le fonctionnement de combine
+        return combine(
+            propertiesFlow,
+            usersFlow,
+            photosFlow,
+            crossRefsFlow,
+            poiSFlow
+        ) { properties, users, photos, crossRefs, poiS ->
             properties.mapNotNull { property ->
                 property.toFullModel(
                     allUsers = users,
@@ -43,17 +51,22 @@ class OfflinePropertyRepository(
             }
         }
     }
+
     override fun getAllPropertiesByDate(): Flow<List<Property>> =
         combinePropertiesWithDetails(propertyDao.getAllPropertiesByDate())
+
     override fun getAllPropertiesByAlphabetic(): Flow<List<Property>> =
         combinePropertiesWithDetails(propertyDao.getAllPropertiesByAlphabetic())
+
     override fun getPropertyById(id: String): Flow<Property?> =
         propertyDao.getPropertyById(id).map { it?.toModel() }
+
     override fun getPropertiesByUserId(userId: String): Flow<List<Property>> =
         propertyDao.getPropertyByUserId(userId)
             .map { list ->
                 list.map { it.toModel() }
             }
+
     override fun searchProperties(
         minSurface: Int?,
         maxSurface: Int?,
@@ -83,8 +96,9 @@ class OfflinePropertyRepository(
             }
         }
     }
-    override suspend fun markPropertyAsSold(propertyId: String, saleDate: String, updatedAt: Long)
-            = propertyDao.markPropertyAsSold(propertyId, saleDate, updatedAt)
+
+    override suspend fun markPropertyAsSold(propertyId: String, saleDate: String, updatedAt: Long) =
+        propertyDao.markPropertyAsSold(propertyId, saleDate, updatedAt)
 
 
     //SYNC
@@ -95,15 +109,21 @@ class OfflinePropertyRepository(
     override suspend fun insertPropertyFromUI(property: Property) {
         propertyDao.insertPropertyFromUi(property.toEntity())
     }
+
     override suspend fun insertPropertiesFromUI(properties: List<Property>) {
         propertyDao.insertPropertiesFromUi(properties.map { it.toEntity() })
     }
+
     //INSERTIONS FROM FIREBASE
-    override suspend fun insertPropertyInsertFromFirebase(property: PropertyOnlineEntity, firebaseDocumentId: String) {
+    override suspend fun insertPropertyInsertFromFirebase(
+        property: PropertyOnlineEntity,
+        firebaseDocumentId: String
+    ) {
         propertyDao.insertPropertyFromFirebase(property.toEntity(firestoreId = firebaseDocumentId))
     }
+
     override suspend fun insertPropertiesInsertFromFirebase(properties: List<Pair<PropertyOnlineEntity, String>>) {
-        val entities = properties.map {(property, firebaseDocumentId) ->
+        val entities = properties.map { (property, firebaseDocumentId) ->
             property.toEntity(firestoreId = firebaseDocumentId)
         }
         propertyDao.insertAllPropertiesNotExistingFromFirebase(entities)
@@ -113,14 +133,18 @@ class OfflinePropertyRepository(
     override suspend fun updatePropertyFromUI(property: Property) {
         propertyDao.updateProperty(property.toEntity())
     }
-    override suspend fun updatePropertyFromFirebase(property: PropertyOnlineEntity, firebaseDocumentId: String) {
+
+    override suspend fun updatePropertyFromFirebase(
+        property: PropertyOnlineEntity,
+        firebaseDocumentId: String
+    ) {
         propertyDao.updatePropertyFromFirebaseForcesSyncTrue(property.toEntity(firestoreId = firebaseDocumentId))
     }
 
     override suspend fun updateAllPropertiesFromFirebase(properties: List<Pair<PropertyOnlineEntity, String>>) {
         val entities = properties.map { (property, firebaseDocumentId) ->
             property.toEntity(firestoreId = firebaseDocumentId)
-            }
+        }
         propertyDao.updateAllPropertiesFromFirebaseForceSyncTrue(entities)
     }
 
@@ -128,6 +152,7 @@ class OfflinePropertyRepository(
     override suspend fun markPropertyAsDeleted(property: Property) {
         propertyDao.markPropertyAsDeleted(property.universalLocalId, System.currentTimeMillis())
     }
+
     override suspend fun markAllPropertiesAsDeleted() {
         propertyDao.markAllPropertiesAsDeleted(System.currentTimeMillis())
     }
@@ -136,14 +161,16 @@ class OfflinePropertyRepository(
     override suspend fun deleteProperty(property: PropertyEntity) {
         propertyDao.deleteProperty(property)
     }
+
     override suspend fun clearAllDeleted() {
-       propertyDao.clearAllDeleted()
+        propertyDao.clearAllDeleted()
     }
 
 
     //FOR TEST HARD DELETE
     override fun getPropertyByIdIncludeDeleted(id: String): Flow<PropertyEntity?> =
         propertyDao.getPropertyByIdIncludeDeleted(id)
+
     override fun getAllPropertyIncludeDeleted(): Flow<List<PropertyEntity>> =
         propertyDao.getAllPropertiesIncludeDeleted()
 
