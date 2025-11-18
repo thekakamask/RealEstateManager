@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -34,7 +35,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.ui.Alignment
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.dcac.realestatemanager.R
 
@@ -42,6 +45,7 @@ import com.dcac.realestatemanager.R
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit,
+    onAddPropertyClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
@@ -59,11 +63,11 @@ fun HomeScreen(
                 ModalDrawerSheet {
                     Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
-                            painter = painterResource(id = R.drawable.user_24px),
+                            painter = painterResource(id = R.drawable.user_icon),
                             contentDescription = "user icon",
+                            tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(72.dp)
-                                .padding(bottom = 8.dp)
                         )
 
                         Text(
@@ -109,7 +113,7 @@ fun HomeScreen(
                         icon = {Icon (painterResource(id = R.drawable.apartment_24px),
                             contentDescription = "my properties")} ,
                         label = {Text("My properties")},
-                        selected = state.currentScreen == HomeDestination.PropertyList,
+                        selected = false,
                         onClick = {
                             viewModel.navigateTo(HomeDestination.PropertyList)
                             scope.launch { drawerState.close() }
@@ -138,19 +142,34 @@ fun HomeScreen(
             }
         ) {
             Scaffold(
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = onAddPropertyClick,
+                        modifier = Modifier
+                            .padding(end = 16.dp, bottom = 32.dp),
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.add_home_24px),
+                            contentDescription = stringResource(R.string.add_property),
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                },
                 bottomBar = {
                     NavigationBar {
-                        NavigationBarItem(
-                            icon = { Icon(painterResource(id = R.drawable.map_24px),
-                                contentDescription = "Map") },
-                            selected = state.currentScreen is HomeDestination.GoogleMap,
-                            onClick = { viewModel.navigateTo(HomeDestination.GoogleMap) }
-                        )
                         NavigationBarItem(
                             icon = { Icon(painterResource(id= R.drawable.list_24px),
                                 contentDescription = "List") },
                             selected = state.currentScreen is HomeDestination.PropertyList,
                             onClick = { viewModel.navigateTo(HomeDestination.PropertyList) }
+                        )
+                        NavigationBarItem(
+                            icon = { Icon(painterResource(id = R.drawable.map_24px),
+                                contentDescription = "Map") },
+                            selected = state.currentScreen is HomeDestination.GoogleMap,
+                            onClick = { viewModel.navigateTo(HomeDestination.GoogleMap) }
                         )
                     }
                 }

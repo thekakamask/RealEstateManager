@@ -942,5 +942,43 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Mapping from domain to Firestore is performed using toEntity().toOnlineEntity(), guaranteeing ID stability and sync consistency.
 
 
+### 🔹 **Update #33**
+
+  - 🏗️ **Step-by-step property creation form (8 steps)**
+    - A new PropertyCreationPage was introduced with the following screens:
+      - Intro – Simple welcome page
+      - Property Type – Select type with icon picker
+      - Address – Inputs for street, city, postal code, country
+      - POIs – Add up to 5 POIs (School, Grocery, etc.) with full address and type
+      - Description – Enter price, surface, rooms and textual description
+      - Photos – Add photos via file picker, with live preview and deletion
+      - Static Map – Fetch a clean static map centered on the address with POI markers
+      - Confirmation – Show full summary of all data before creation
+
+  - 📸 **Photo handling**
+    - Uses ActivityResultContracts.GetContent()
+    - Saves image to local app storage
+    - Allows inline deletion before submission
+
+  - 🗺️ **Static map rendering**
+    - Uses StaticMapRepository.getStaticMapImage(config)
+    - Markers include property and POIs with labels
+    - Cleans up default Google POIs and visual clutter using map style rules
+    - Map image is persisted to draft and reused in confirmation
+
+  - 🧠 **Draft logic with PropertyDraft model**
+    - All intermediate input is stored in a PropertyDraft
+    - Values are updated step-by-step
+    - Reused in confirmation step and final property creation logic
+    - Supports POI modeling with PoiDraft
+    - Supports saving temporary photos with local file URIs
+
+  - 🧪 **Confirmation screen and submission**
+    - Displays formatted sections: address, POIs, description, photos, map
+    - Calls createModelFromDraft() which builds a full Property with relations
+    - Inserts Property, Poi, Photo, and PropertyPoiCross into Room
+    - Sync-ready, and offline-first compatible
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

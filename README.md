@@ -15,14 +15,13 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - 🔐 Optimized sign-in flow to load user data from Room first and fallback to Firestore if not available.
-   - 🧱 Refactored all domain models (User, Property, Photo, Poi, CrossRef) to use stable UUID identifiers, added firestoreDocumentId tracking, and adapted clean Room ↔ Model ↔ Firestore mappers with full offline/online consistency and foreign key support.
-   - 📦 Refactored all Room DAO layers (User, Property, Photo, POI, CrossRef) to support UUID-based identifiers, soft/hard delete logic, and reliable sync flags (isSynced, isDeleted) for robust offline-first architecture.
-   - 🧩 Refactored all repository interfaces and implementations to align with the new domain/entity structure and ID system (UUID + Firestore tracking), enabling consistent cross-layer operations and supporting complete offline/online data flow.
-   - 🔄 Refactored the Sync layer: refactored Upload/Download managers for all entities (User, Property, Photo, POI, CrossRef) with conflict resolution (updatedAt), soft delete support, and consistent Firestore ID tracking.
-   - 🎯 Updated LoginViewModel to follow the new local-first strategy using Room with Firestore fallback on sign-in and consistent user sync on sign-up.
-
+   - 🏗️ Added full step-by-step property creation flow (multi-step UI + ViewModel architecture)
+   - 🗺️ Integrated custom static map generator with cleaner UI styles and POI markers
+   - 🧭 Improved address and POI input UX with clean form fields and per-type icons
+   - 📸 Enhanced photo selection flow with inline preview, delete option, and local saving
+   - 🧪 Draft is persisted across steps, and used for final confirmation screen before final submission.
    
+
 ## ❌ **NEXT UPDATES**
 
    - ⚠️ Build the HomePage.
@@ -65,7 +64,7 @@ This project is developed using modern Android architecture principles, with a f
 
    - 📷 **Media Management** :
 
-      - ❌ **NOT IMPLEMENTED** Take or select photos from gallery.
+      - ✅ **DONE** Take or select photos from gallery.
       - 🟩 **IN PROGRESS** Add multiple images per listing.
       - ✅ **DONE** Downloads images from Firebase Storage and saves them locally on device during sync.
 
@@ -141,7 +140,7 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🚀 **Performance and responsiveness**:
    
-      - ❌ **NOT IMPLEMENTED** Optimize UI scrolling and animations.
+      - 🟩 **IN PROGRESS** Optimize UI scrolling and animations.
 
    - 🧪 **Testing & Quality Assurance** :
 
@@ -228,6 +227,18 @@ This project is developed using modern Android architecture principles, with a f
 - **Chat contact page**:
 
    ![Chat contact page](screenshots/chat_contact_page.png)
+
+- **Property creation page**:
+
+   ![Step 1 screen](screenshots/property_creation_step_1_screen.png)
+   ![Step 2 screen](screenshots/property_creation_step_2_screen.png)
+   ![Step 3 screen](screenshots/property_creation_step_3_screen.png)
+   ![Step 4 screen](screenshots/property_creation_step_4_screen.png)
+   ![Step 5 screen](screenshots/property_creation_step_5_screen.png)
+   ![Step 6 screen](screenshots/property_creation_step_6_screen.png)
+   ![Step 7 screen](screenshots/property_creation_step_7_screen.png)
+   ![Step 8 screen](screenshots/property_creation_step_8_screen.png)
+   ![Step 8 screen 2](screenshots/property_creation_step_8_screen_2.png)
 
 
 ## 🤝 **Contributions**

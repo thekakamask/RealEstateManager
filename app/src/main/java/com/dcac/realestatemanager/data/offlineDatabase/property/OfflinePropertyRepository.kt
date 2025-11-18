@@ -22,7 +22,9 @@ class OfflinePropertyRepository(
     private val propertyPoiCrossRepository: PropertyPoiCrossRepository
 ): PropertyRepository {
 
-    //FOR UI
+    //TODO PROBLEM WHEN RELOADING THE UI (IF A PROPERTY IS MODIFIED)
+    // I RELOAD ALL PROPERTIES.
+    // THIS IS NOT EFFICIENT IF THERE ARE MANY PROPERTIES.
     private fun combinePropertiesWithDetails(
         propertiesFlow: Flow<List<PropertyEntity>>
     ): Flow<List<Property>> {

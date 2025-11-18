@@ -12,5 +12,6 @@ data class PoiOnlineEntity(
     val universalLocalId: String = "", //🔑 UUID from Room
     val name: String = "",
     val type: String = "",
+    val address: String,
     val updatedAt: Long = System.currentTimeMillis()
 )

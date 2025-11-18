@@ -121,6 +121,7 @@ fun PoiEntity.toModel(): Poi = Poi(
     firestoreDocumentId = firestoreDocumentId,
     name = name,
     type = type,
+    address = address,
     isSynced = isSynced,
     updatedAt = updatedAt
 )
@@ -130,6 +131,7 @@ fun Poi.toEntity(): PoiEntity = PoiEntity(
     firestoreDocumentId = firestoreDocumentId,
     name = name,
     type = type,
+    address = address,
     isSynced = isSynced,
     updatedAt = updatedAt
 )

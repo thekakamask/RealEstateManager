@@ -97,4 +97,99 @@
     <string name="account_creation_button">Create your account</string>
     <string name="account_creation_in_progress">Account creation in progress…</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
+
+    <!--Property creation page -->
+    <string name="add_property">Add Property</string>
+    <string name="property_creation_title">Add a property</string>
+    <string name="property_creation_back_button_content_description">back</string>
+    <string name="property_creation_help_button">Help</string>
+    <string name="property_creation_next_button">Next</string>
+    <string name="property_creation_finish_button">Finish</string>
+    <string name="property_creation_previous_button">Previous</string>
+    <string name="property_creation_step_1_apartment_image_description">Appartement image description</string>
+    <string name="property_creation_step_1_title_text">Step 1</string>
+    <string name="property_creation_step_1_subtitle_text">Describe the property</string>
+    <string name="property_creation_step_1_text">
+        During this step, you will add the property you are managing. Describe it by adding all the necessary information.
+    </string>
+    <string name="property_creation_step_2_title_text">Step 2</string>
+    <string name="property_creation_step_2_subtitle_text">Type of property</string>
+    <string name="property_creation_step_2_text">
+        Select the type of property you are managing.
+    </string>
+
+    <string name="property_creation_step_3_title_text">Step 3</string>
+    <string name="property_creation_step_3_subtitle_text">Location of property</string>
+    <string name="property_creation_step_3_text">
+        Indicate the location of the property.
+    </string>
+    <string name="property_creation_step_3_text_field_icon_description">Address</string>
+    <string name="property_creation_step_3_text_field_placeholder_text">Enter the address</string>
+    <string name="property_creation_step_3_button_text">Locate</string>
+    <string name="address_not_found">address not found</string>
+    <string name ="property_creation_step_3_number_street_label">Add the number and street name</string>
+    <string name ="property_creation_step_3_postal_code_label">Add the postal code</string>
+    <string name ="property_creation_step_3_city_label">Add the city</string>
+    <string name ="property_creation_step_3_country_label">Add the country</string>
+    <string name="property_creation_step_3_number_street_content"><![CDATA[Number & street]]></string>
+    <string name="property_creation_step_3_postal_code_content">Postal code</string>
+    <string name="property_creation_step_3_city_content">City</string>
+    <string name="property_creation_step_3_country_content">Country</string>
+
+    <string name="property_creation_step_4_title_text">Step 4</string>
+    <string name="property_creation_step_4_subtitle_text">Useful points of interest</string>
+    <string name="property_creation_step_4_text">
+        Create up to 5 points of interest nearby your property.
+    </string>
+    <string name="property_creation_step_4_poi_title">POI %1$s</string>
+    <string name="property_creation_step_4_poi_outlined_name_text_field_label">Enter POI name</string>
+    <string name="property_creation_step_4_poi_outlined_street_text_field_label">Enter POI number and street</string>
+    <string name="property_creation_step_4_poi_outlined_city_text_field_label">Enter POI city</string>
+    <string name="property_creation_step_4_poi_outlined_postal_code_text_field_label">Enter POI postal code</string>
+    <string name="property_creation_step_4_poi_outlined_country_text_field_label">Enter POI country</string>
+
+    <string name="property_creation_step_5_title_text">Step 5</string>
+    <string name="property_creation_step_5_subtitle_text">Property description</string>
+    <string name="property_creation_step_5_text">
+        Provide all informations about the property
+    </string>
+    <string name ="property_creation_step_5_price_label">Add the price of the property</string>
+    <string name ="property_creation_step_5_surface_label">Add the surface of the property</string>
+    <string name ="property_creation_step_5_rooms_label">Add the number of rooms of the property</string>
+    <string name ="property_creation_step_5_description_label">Describe the property</string>
+    <string name="property_creation_step_5_price_content">Price</string>
+    <string name="property_creation_step_5_surface_content">Surface</string>
+    <string name="property_creation_step_5_rooms_content">Number of rooms</string>
+    <string name="property_creation_step_5_description_content">Description</string>
+
+    <string name="property_creation_step_6_title_text">Step 6</string>
+    <string name="property_creation_step_6_subtitle_text">Add photo</string>
+    <string name="property_creation_step_6_text">
+        Add photos of the property
+    </string>
+    <string name="property_creation_step_6_add_photo_icon_content_description">Add photo</string>
+    <string name="property_creation_step_6_delete_photo_icon_content_description">Delete photo</string>
+
+    <string name="property_creation_step_7_title_text">Step 7</string>
+    <string name="property_creation_step_7_subtitle_text">Property static map</string>
+    <string name="property_creation_step_7_text">
+        See the map of the property\'s surroundings
+    </string>
+    <string name="property_creation_step_8_title_text">Step 8</string>
+    <string name="property_creation_step_8_subtitle_text">Confirmation</string>
+    <string name="property_creation_step_8_text">
+        Validate the information of the property
+    </string>
+    <string name="property_creation_step_8_address_title">Address</string>
+    <string name="property_creation_step_8_street_title">Street</string>
+    <string name="property_creation_step_8_city_title">City</string>
+    <string name="property_creation_step_8_postal_code_title">Postal code</string>
+    <string name="property_creation_step_8_country_title">Country</string>
+    <string name="property_creation_step_8_poi_title">PoiS</string>
+    <string name="property_creation_step_8_description_title">Description</string>
+    <string name="property_creation_step_8_photos_title">Photos</string>
+    <string name="property_creation_step_8_price_title">Price</string>
+    <string name="property_creation_step_8_surface_title">Surface</string>
+    <string name="property_creation_step_8_rooms_title">Rooms</string>
+
 </resources>

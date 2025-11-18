@@ -8,6 +8,7 @@ data class Poi(
     val firestoreDocumentId: String? = null,
     val name: String,
     val type: String,
+    val address: String,
     val isSynced : Boolean = false,
     val isDeleted : Boolean = false,
     val updatedAt: Long = System.currentTimeMillis()

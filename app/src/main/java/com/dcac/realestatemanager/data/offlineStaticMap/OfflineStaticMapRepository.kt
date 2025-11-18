@@ -18,7 +18,8 @@ class OfflineStaticMapRepository(
                 zoom = config.zoom,
                 size = config.size,
                 mapType = config.mapType,
-                markers = config.markers
+                markers = config.markers,
+                style = config.styles
             )
             if (response.isSuccessful) {
                 response.body()?.bytes()

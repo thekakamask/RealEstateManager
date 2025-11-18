@@ -140,6 +140,8 @@ dependencies {
     // Allows you to use CoroutineWorker, WorkerParameters, and deferred task management.
     implementation(libs.work.runtime.ktx)
 
+    implementation(libs.coil.compose)
+
     // Unit testing framework
     testImplementation(libs.junit)
     // Testing

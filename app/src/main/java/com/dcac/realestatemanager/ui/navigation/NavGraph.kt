@@ -12,6 +12,7 @@ import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.LoginPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ChatContactPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ContactInfoPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.EmailContactPage
+import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationPage
 
 @Composable
 fun RealEstateNavGraph(
@@ -104,9 +105,6 @@ fun RealEstateNavGraph(
                 /*onPropertyClick = { propertyId ->
                     navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
                 },
-                onAddProperty = {
-                    navController.navigate(RealEstateDestination.CreateProperty.route)
-                },
                 onAccountClick = {
                     navController.navigate(RealEstateDestination.Account.route)
                 },
@@ -116,9 +114,28 @@ fun RealEstateNavGraph(
                 onSettingsClick = {
                     navController.navigate(RealEstateDestination.Settings.route)
                 },*/
+                onAddPropertyClick = {
+                    navController.navigate(RealEstateDestination.CreateProperty.route)
+                },
                 onLogout = {
                     navController.navigate(RealEstateDestination.Welcome.route) {
                         popUpTo(0) { inclusive = true } // Clear whole backstack
+                    }
+                }
+            )
+        }
+        composable(route = RealEstateDestination.CreateProperty.route) {
+            PropertyCreationPage(
+                onExit = { navController.popBackStack() },
+                onInfoClick = {
+                    navController.navigate(RealEstateDestination.ContactInfo.route)
+                },
+                onFinish = {
+                    navController.navigate(RealEstateDestination.Home.route) {
+                        popUpTo(RealEstateDestination.Home.route) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -135,10 +152,6 @@ fun RealEstateNavGraph(
             val propertyId = backStackEntry.arguments?.getLong("propertyId") ?: -1L
             // Display the PropertyDetailsScreen composable, passing the extracted propertyId
             PropertyDetailsScreen(propertyId = propertyId)
-        }
-
-        composable(route = RealEstateDestination.CreateProperty.route) {
-            CreatePropertyScreen()
         }
 
         composable(route = RealEstateDestination.Account.route) {

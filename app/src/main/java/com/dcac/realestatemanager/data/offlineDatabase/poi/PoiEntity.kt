@@ -19,6 +19,7 @@ data class PoiEntity(
     val firestoreDocumentId: String? = null,
     val name: String,
     val type: String,
+    val address: String,
     @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "is_deleted")

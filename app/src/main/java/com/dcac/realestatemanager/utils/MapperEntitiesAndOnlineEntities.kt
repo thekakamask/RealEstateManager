@@ -64,6 +64,7 @@ fun PoiEntity.toOnlineEntity(): PoiOnlineEntity {
         universalLocalId = this.id,
         name = this.name,
         type = this.type,
+        address= this.address,
         updatedAt = this.updatedAt,
     )
 }
@@ -76,6 +77,7 @@ fun PoiOnlineEntity.toEntity(
         firestoreDocumentId = firestoreId,
         name = this.name,
         type = this.type,
+        address= this.address,
         isSynced = true,
         updatedAt = this.updatedAt,
         isDeleted = false,

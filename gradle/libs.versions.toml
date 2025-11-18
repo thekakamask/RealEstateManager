@@ -1,6 +1,7 @@
 [versions]
 # Library and plugin version declarations (centralized)
 appcompat = "1.7.1"
+coilCompose = "2.4.0"
 constraintlayout = "2.2.1"
 firebaseStorageKtx = "21.0.0"
 junit = "4.13.2"
@@ -50,6 +51,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
 # 🧪 Used for classic Java unit tests (e.g. business logic).
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
