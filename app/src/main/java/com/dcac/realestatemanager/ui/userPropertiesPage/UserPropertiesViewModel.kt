@@ -23,7 +23,7 @@ class UserPropertiesViewModel @Inject constructor(
 ) : ViewModel(), IUserPropertiesViewModel {
 
     private val _uiState = MutableStateFlow<UserPropertiesUiState>(Idle)
-    val uiState: StateFlow<UserPropertiesUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<UserPropertiesUiState> = _uiState.asStateFlow()
 
     override fun loadUserProperties() {
         /*val firebaseUid = authRepository.currentUser?.uid

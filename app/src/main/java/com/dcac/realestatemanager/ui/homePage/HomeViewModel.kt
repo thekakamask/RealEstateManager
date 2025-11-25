@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.dcac.realestatemanager.ui.homePage.HomeUiState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,10 +25,17 @@ class HomeViewModel @Inject constructor(
     // Internal mutable state
     private val _uiState = MutableStateFlow<HomeUiState>(Loading)
     // UI exposed read-only state
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
         loadUserInfo()
+    }
+
+    fun toggleFilterSheet(show: Boolean) {
+        val currentState = _uiState.value
+        if (currentState is Success) {
+            _uiState.value = currentState.copy(showFilterSheet = show)
+        }
     }
 
     // Load user info from Firebase auth and update UI state
@@ -102,6 +110,17 @@ class HomeViewModel @Inject constructor(
         if (currentState is Success) {
             _uiState.value = currentState.copy(currentScreen = screen)
         }
+    }
+
+    fun applyFilters(filters: PropertyFilters) {
+        _uiState.update {
+            (it as? Success)?.copy(filters = filters) ?: it
+        }
+
+    }
+
+    fun resetFilters() {
+        applyFilters(PropertyFilters())
     }
 
     override fun resetState() {

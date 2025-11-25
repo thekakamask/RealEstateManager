@@ -14,7 +14,7 @@ import java.util.UUID
     ])
 data class PoiEntity(
     @PrimaryKey
-    val id: String = UUID.randomUUID().toString(), // 🔁 UUID
+    val id: String, // 🔁 UUID
     @ColumnInfo(name = "firestore_document_id")
     val firestoreDocumentId: String? = null,
     val name: String,

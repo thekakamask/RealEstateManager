@@ -5,9 +5,9 @@ import androidx.compose.runtime.Immutable
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.Property
 
-sealed interface GoogleMapUiState {
+sealed class GoogleMapUiState {
 
-    data object Loading : GoogleMapUiState
+    data object Loading : GoogleMapUiState()
 
     @Immutable
     data class Success(
@@ -15,8 +15,8 @@ sealed interface GoogleMapUiState {
         val properties: List<Property>,
         val poiS: List<Poi>,
         val selectedPropertyId: Long? = null       // for display selected pin
-    ) : GoogleMapUiState
+    ) : GoogleMapUiState()
 
     @Immutable
-    data class Error(val message: String) : GoogleMapUiState
+    data class Error(val message: String) : GoogleMapUiState()
 }

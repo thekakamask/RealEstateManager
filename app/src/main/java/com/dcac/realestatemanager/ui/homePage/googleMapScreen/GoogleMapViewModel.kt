@@ -19,7 +19,7 @@ class GoogleMapViewModel @Inject constructor(
 ): ViewModel(), IGoogleMapViewModel {
 
     private val _uiState = MutableStateFlow<GoogleMapUiState>(GoogleMapUiState.Loading)
-    val uiState: StateFlow<GoogleMapUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<GoogleMapUiState> = _uiState.asStateFlow()
 
     override fun loadMapData() {
         viewModelScope.launch {

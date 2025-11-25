@@ -5,6 +5,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyReposito
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.dcac.realestatemanager.ui.homePage.propertiesListScreen.PropertiesListUiState.*
 import androidx.lifecycle.viewModelScope
+import com.dcac.realestatemanager.ui.homePage.PropertyFilters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +20,7 @@ class PropertiesListViewModel @Inject constructor(
 ) : ViewModel(), IPropertiesListViewModel {
 
     private val _uiState = MutableStateFlow<PropertiesListUiState>(Loading)
-    val uiState: StateFlow<PropertiesListUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<PropertiesListUiState> = _uiState.asStateFlow()
 
     override fun loadProperties() {
         viewModelScope.launch {
@@ -31,7 +32,31 @@ class PropertiesListViewModel @Inject constructor(
         }
     }
 
-    override fun searchProperties(
+    override fun applyFilters(filters: PropertyFilters) {
+        viewModelScope.launch {
+            propertyRepository.searchProperties(
+                minSurface = filters.minSurface,
+                maxSurface = filters.maxSurface,
+                minPrice = filters.minPrice,
+                maxPrice = filters.maxPrice,
+                type = filters.selectedType,
+                isSold = filters.isSold
+            )
+                .catch { e ->
+                    _uiState.value = Error("Search failed: ${e.message}")
+                }
+                .collectLatest { result ->
+                    _uiState.value = Success(
+                        properties = result,
+                        isFiltered = true,
+                        activeFilters = filters
+                    )
+                }
+        }
+    }
+
+
+    /*override fun searchProperties(
         minSurface: Int?,
         maxSurface: Int?,
         minPrice: Int?,
@@ -45,7 +70,7 @@ class PropertiesListViewModel @Inject constructor(
                 maxSurface = maxSurface,
                 minPrice = minPrice,
                 maxPrice = maxPrice,
-                type = type,
+                selectedType = type,
                 isSold = isSold
             )
 
@@ -54,7 +79,7 @@ class PropertiesListViewModel @Inject constructor(
                 maxSurface = filters.maxSurface,
                 minPrice = filters.minPrice,
                 maxPrice = filters.maxPrice,
-                type = filters.type,
+                type = filters.selectedType,
                 isSold = filters.isSold
             )
                 .catch { e -> _uiState.value = Error("Search failed: ${e.message}") }
@@ -100,7 +125,7 @@ class PropertiesListViewModel @Inject constructor(
                     )
                 }
         }
-    }
+    }*/
 
     override fun resetFilters() {
         loadProperties()

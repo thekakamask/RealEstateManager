@@ -4,20 +4,19 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.google.firebase.auth.FirebaseUser
 
-sealed interface LoginUiState {
+sealed class LoginUiState {
 
-    data object Idle : LoginUiState
+    data object Idle : LoginUiState()
 
-    data object Loading : LoginUiState
+    data object Loading : LoginUiState()
 
     @Immutable
     data class Success(
         val firebaseUser: FirebaseUser
-    ) : LoginUiState
+    ) : LoginUiState()
 
     @Immutable
     data class Error(
         @StringRes val messageResId: Int
-    ) : LoginUiState
-
+    ) : LoginUiState()
 }

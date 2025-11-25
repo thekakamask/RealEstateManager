@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -47,6 +48,8 @@ import coil.compose.AsyncImage
 import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.model.Photo
 import androidx.core.net.toUri
+import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
+import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 
 @Composable
 fun Step1IntroScreen(
@@ -104,14 +107,15 @@ fun Step2TypeScreen(
     selectedType: String?,
     onTypeSelected: (String) -> Unit
 ) {
+
     val propertyTypes = listOf(
-        "House" to R.drawable.house_24px,
-        "Apartment" to R.drawable.apartment_24px,
-        "Studio" to R.drawable.studio_24px,
-        "Boat" to R.drawable.houseboat_24px,
-        "Cabin" to R.drawable.cabin_24px,
-        "Castle" to R.drawable.castle_24px,
-        "Motor home" to R.drawable.motor_home_24px,
+        stringResource(R.string.property_creation_step_2_type_house),
+        stringResource(R.string.property_creation_step_2_type_apartment),
+        stringResource(R.string.property_creation_step_2_type_studio),
+        stringResource(R.string.property_creation_step_2_type_boat),
+        stringResource(R.string.property_creation_step_2_type_cabin),
+        stringResource(R.string.property_creation_step_2_type_castle),
+        stringResource(R.string.property_creation_step_2_type_motor_home)
     )
 
     Column(
@@ -155,12 +159,12 @@ fun Step2TypeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(propertyTypes.size) { index ->
-                    val (label, iconRes) = propertyTypes[index]
+                    val label = propertyTypes[index]
+                    val iconRes = getIconForPropertyType(label)
                     val isSelected = selectedType == label
 
-                    val borderColor = if (isSelected) Color.Black else Color.LightGray
-                    val iconTint = if (isSelected) Color.Black else MaterialTheme.colorScheme.onSurface
-
+                    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                    val iconTint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
 
                     Surface(
                         onClick = { onTypeSelected(label) },
@@ -402,11 +406,11 @@ fun PoiInputBlock(
     onCountryChanged: (String) -> Unit
 ) {
     val poiTypes = listOf(
-        "School" to R.drawable.school_24px,
-        "Grocery" to R.drawable.grocery_24px,
-        "Bakery" to R.drawable.bakery_24px,
-        "Butcher" to R.drawable.butcherl_24px,
-        "Restaurant" to R.drawable.restaurant_24px
+        stringResource(R.string.property_creation_step_4_poi_type_school),
+        stringResource(R.string.property_creation_step_4_poi_type_grocery),
+        stringResource(R.string.property_creation_step_4_poi_type_bakery),
+        stringResource(R.string.property_creation_step_4_poi_type_butcher),
+        stringResource(R.string.property_creation_step_4_poi_type_restaurant)
     )
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -424,8 +428,10 @@ fun PoiInputBlock(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            poiTypes.forEach { (label, icon) ->
+            poiTypes.forEach { label ->
+                val icon = getIconForPoiType(label)
                 val isSelected = selectedType == label
+
                 PoiIcon(icon, label, isSelected) {
                     onTypeSelected(label)
                 }
@@ -484,7 +490,7 @@ fun PoiIcon(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
     val iconTint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
 
     Surface(
@@ -511,6 +517,7 @@ fun PoiIcon(
 
 @Composable
 fun Step5DescriptionScreen(
+    title: String,
     price: Int,
     surface: Int,
     rooms: Int,
@@ -518,7 +525,8 @@ fun Step5DescriptionScreen(
     onPriceChange: (Int) -> Unit,
     onSurfaceChange: (Int) -> Unit,
     onRoomsChange: (Int) -> Unit,
-    onDescriptionChange: (String) -> Unit
+    onDescriptionChange: (String) -> Unit,
+    onTitleChange: (String) -> Unit
 ){
     Column(
         modifier = Modifier
@@ -557,12 +565,22 @@ fun Step5DescriptionScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
+            AddressTextField(
+                stringResource(R.string.property_creation_step_5_title_label),
+                stringResource(R.string.property_creation_step_5_title_content),
+                title,
+                onTitleChange,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+
             NumberTextField(
                 stringResource(R.string.property_creation_step_5_price_label),
                 stringResource(R.string.property_creation_step_5_price_content),
                 price,
                 onPriceChange,
-                unit = "€"
+                unit = stringResource(R.string.property_creation_step_5_unit_euro)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -571,7 +589,7 @@ fun Step5DescriptionScreen(
                 stringResource(R.string.property_creation_step_5_surface_content),
                 surface,
                 onSurfaceChange,
-                unit = "m²"
+                unit = stringResource(R.string.property_creation_step_5_unit_square_meter)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -746,7 +764,7 @@ fun AddPhotoCell(
                 Icon(
                     painter = painterResource(id = R.drawable.delete_24px),
                     contentDescription = stringResource(R.string.property_creation_step_6_delete_photo_icon_content_description),
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
@@ -818,7 +836,7 @@ fun Step7StaticMapScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when {
-                    isLoading -> CircularProgressIndicator()
+                    isLoading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
 
                     mapBytes != null -> {
                         val bitmap = remember(mapBytes) {
@@ -827,7 +845,7 @@ fun Step7StaticMapScreen(
 
                         Image(
                             bitmap = bitmap,
-                            contentDescription = "Static Map",
+                            contentDescription = stringResource(R.string.property_creation_step_7_static_map_content_description),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(600.dp)
@@ -835,7 +853,9 @@ fun Step7StaticMapScreen(
                         )
                     }
 
-                    else -> Text("Map unavailable", color = MaterialTheme.colorScheme.error)
+                    else -> Text(
+                        stringResource(R.string.property_creation_step_7_static_map_unavailable),
+                        color = MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -982,7 +1002,7 @@ fun Step8ConfirmationScreen(
 
                 if (!draft.staticMapPath.isNullOrBlank()) {
                     item {
-                        SectionTitle("Map")
+                        SectionTitle(stringResource(R.string.property_creation_step_8_map_title))
                         BorderedBox {
                             val bitmap = remember(draft.staticMapPath) {
                                 BitmapFactory.decodeFile(draft.staticMapPath)?.asImageBitmap()
@@ -991,13 +1011,16 @@ fun Step8ConfirmationScreen(
                             bitmap?.let {
                                 Image(
                                     bitmap = it,
-                                    contentDescription = "Static Map",
+                                    contentDescription = stringResource(R.string.property_creation_step_8_map_content_description),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(300.dp)
                                         .clip(RoundedCornerShape(12.dp))
                                 )
-                            } ?: Text("Map unavailable")
+                            } ?: Text(
+                                text = stringResource(R.string.property_creation_step_8_map_unavailable),
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }
@@ -1021,7 +1044,7 @@ fun SectionTitle(title: String) {
 fun BorderedBox(content: @Composable ColumnScope.() -> Unit) {
     Surface(
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Color.LightGray),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -1045,34 +1068,19 @@ fun InfoRow(label: String, value: String) {
             text = label,
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
         )
+
+        val textModifier = if (label == stringResource(R.string.property_creation_step_8_description_title)) {
+            Modifier.widthIn(max = 300.dp)
+        } else {
+            Modifier
+        }
+
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
+            modifier = textModifier
         )
     }
 }
 
-fun getIconForPropertyType(type: String): Int {
-    return when (type) {
-        "House" -> R.drawable.house_24px
-        "Apartment" -> R.drawable.apartment_24px
-        "Studio" -> R.drawable.studio_24px
-        "Boat" -> R.drawable.houseboat_24px
-        "Cabin" -> R.drawable.cabin_24px
-        "Castle" -> R.drawable.castle_24px
-        "Motor home" -> R.drawable.motor_home_24px
-        else -> R.drawable.close_24px
-    }
-}
 
-@DrawableRes
-fun getIconForPoiType(type: String): Int {
-    return when (type) {
-        "School" -> R.drawable.school_24px
-        "Grocery" -> R.drawable.grocery_24px
-        "Bakery" -> R.drawable.bakery_24px
-        "Butcher" -> R.drawable.butcherl_24px
-        "Restaurant" -> R.drawable.restaurant_24px
-        else -> R.drawable.close_24px
-    }
-}

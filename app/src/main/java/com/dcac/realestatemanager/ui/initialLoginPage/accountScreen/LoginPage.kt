@@ -92,16 +92,15 @@ fun LoginPage(
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.login_back_button_content_description),
-                    tint = MaterialTheme.colorScheme.secondary)
+                    tint = MaterialTheme.colorScheme.onBackground)
             }
 
-            // Title centered
             Text(
                 text = stringResource(R.string.login_title),
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Center),
             )
 
@@ -110,7 +109,7 @@ fun LoginPage(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
-                color = Color.Blue,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .clickable { onInfoClick() }
@@ -122,7 +121,7 @@ fun LoginPage(
         Text(text = stringResource(
             R.string.login_email_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -131,7 +130,7 @@ fun LoginPage(
             shape = RoundedCornerShape(12.dp),
             placeholder = { Text(stringResource(
                 R.string.login_email_content),
-                color = MaterialTheme.colorScheme.tertiary) }
+                color = MaterialTheme.colorScheme.onSurfaceVariant) }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -142,7 +141,7 @@ fun LoginPage(
         Text(text = stringResource(
             R.string.login_password_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -152,7 +151,7 @@ fun LoginPage(
             placeholder = { Text(
                 stringResource(
                     R.string.login_password_content),
-                color = MaterialTheme.colorScheme.tertiary) },
+                color = MaterialTheme.colorScheme.onSurfaceVariant) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -168,7 +167,7 @@ fun LoginPage(
 
         Text(
             text = stringResource(R.string.login_forgot_password_content),
-            color = Color.Blue,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .align(Alignment.Start)
                 .clickable { onPasswordForgotClick() }
@@ -188,9 +187,9 @@ fun LoginPage(
                 .fillMaxWidth()
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-                disabledContentColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -207,7 +206,7 @@ fun LoginPage(
                 is LoginUiState.Loading -> {
                     Text(
                         text = stringResource(R.string.login_log_in_in_progress),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 is LoginUiState.Error -> {

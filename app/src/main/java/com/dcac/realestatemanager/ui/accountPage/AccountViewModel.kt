@@ -20,7 +20,7 @@ class AccountViewModel @Inject constructor(
 ) : ViewModel(), IAccountViewModel {
 
     private val _uiState = MutableStateFlow<AccountUiState>(Idle)
-    val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
     private var currentUser: User? = null
 

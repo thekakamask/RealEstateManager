@@ -21,9 +21,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,11 +41,13 @@ fun PropertyCreationPage(
     onInfoClick: () -> Unit,
     onFinish: () -> Unit
 ) {
-    val currentStep = viewModel.currentStep
+    val state by viewModel.uiState.collectAsState()
+    val stepState = state as? PropertyCreationUiState.StepState
 
-    val isNextEnabled by remember(viewModel.currentStep) {
-        derivedStateOf { viewModel.isNextEnabled }
-    }
+
+    val currentStep = stepState?.currentStep ?: PropertyCreationStep.Intro
+
+    val isNextEnabled = stepState?.isNextEnabled == true
 
     val context = LocalContext.current
 
@@ -79,7 +80,6 @@ fun PropertyCreationPage(
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Medium
                             ),
-                            color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.align(Alignment.Center)
                         )
                         Text(
@@ -87,7 +87,7 @@ fun PropertyCreationPage(
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Medium
                             ),
-                            color = Color.Blue,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
                                 .clickable { onInfoClick() }
@@ -118,6 +118,7 @@ fun PropertyCreationPage(
                     if (currentStep == PropertyCreationStep.Confirmation){
                         TextButton(
                             onClick = {
+                                viewModel.createModelFromDraft()
                                 onFinish()
                             },
                             enabled = isNextEnabled
@@ -148,15 +149,15 @@ fun PropertyCreationPage(
                     Step1IntroScreen()
                 is PropertyCreationStep.PropertyType ->
                     Step2TypeScreen(
-                    selectedType = viewModel.propertyDraft.type,
+                    selectedType = stepState?.draft?.type.orEmpty(),
                     onTypeSelected = { viewModel.updateType(it) }
                 )
                 is PropertyCreationStep.Address ->
                     Step3AddressScreen(
-                        street = viewModel.propertyDraft.street,
-                        city = viewModel.propertyDraft.city,
-                        postalCode = viewModel.propertyDraft.postalCode,
-                        country = viewModel.propertyDraft.country,
+                        street = stepState?.draft?.street.orEmpty(),
+                        city = stepState?.draft?.city.orEmpty(),
+                        postalCode = stepState?.draft?.postalCode.orEmpty(),
+                        country = stepState?.draft?.country.orEmpty(),
                         onStreetChange = { viewModel.updateStreet(it) },
                         onPostalCodeChange = { viewModel.updatePostalCode(it) },
                         onCityChange = { viewModel.updateCity(it) },
@@ -164,7 +165,7 @@ fun PropertyCreationPage(
                     )
                 is PropertyCreationStep.PoiS ->
                     Step4PoiScreen(
-                        poiList = viewModel.propertyDraft.poiS,
+                        poiList = stepState?.draft?.poiS ?: emptyList(),
                         onTypeSelected = { index, type -> viewModel.updatePoiType(index, type) },
                         onNameChanged = { index, name -> viewModel.updatePoiName(index, name) },
                         onStreetChanged = { index, street -> viewModel.updatePoiStreet(index, street)},
@@ -174,18 +175,20 @@ fun PropertyCreationPage(
                     )
                 is PropertyCreationStep.Description ->
                     Step5DescriptionScreen(
-                        price = viewModel.propertyDraft.price,
-                        surface = viewModel.propertyDraft.surface,
-                        rooms = viewModel.propertyDraft.rooms,
-                        description = viewModel.propertyDraft.description,
+                        title = stepState?.draft?.title.orEmpty(),
+                        price = stepState?.draft?.price ?: 0,
+                        surface = stepState?.draft?.surface ?: 0,
+                        rooms = stepState?.draft?.rooms ?: 0,
+                        description = stepState?.draft?.description.orEmpty(),
                         onPriceChange = { viewModel.updatePrice(it) },
                         onSurfaceChange = { viewModel.updateSurface(it) },
                         onRoomsChange = { viewModel.updateRooms(it) },
-                        onDescriptionChange = { viewModel.updateDescription(it) }
+                        onDescriptionChange = { viewModel.updateDescription(it) },
+                        onTitleChange = {viewModel.updateTitle(it)}
                     )
                 is PropertyCreationStep.Photos ->
                     Step6PhotosScreen(
-                        photos = viewModel.propertyDraft.photos,
+                        photos = stepState?.draft?.photos ?: emptyList(),
                         onPhotoClick = { index ->
                             viewModel.onPhotoCellClicked(index) {
                                 launcher.launch("image/*")
@@ -197,13 +200,13 @@ fun PropertyCreationPage(
                     )
                 is PropertyCreationStep.StaticMap ->
                     Step7StaticMapScreen(
-                        mapBytes = viewModel.staticMapImageBytes.value,
-                        isLoading = viewModel.isLoadingMap.value,
+                        mapBytes = stepState?.staticMapImageBytes?.toByteArray(),
+                        isLoading = stepState?.isLoadingMap == true,
                         onLoadMap = { viewModel.fetchStaticMap(context) }
                     )
                 is PropertyCreationStep.Confirmation ->
                     Step8ConfirmationScreen(
-                        draft = viewModel.propertyDraft
+                        draft = stepState?.draft ?: return@Scaffold
                     )
 
             }

@@ -2,9 +2,7 @@ package com.dcac.realestatemanager.ui.propertyCreationPage
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +11,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapConfig
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.model.Photo
@@ -25,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
@@ -36,197 +36,138 @@ class PropertyCreationViewModel @Inject constructor(
     private val photoRepository: PhotoRepository,
     private val crossRefRepository: PropertyPoiCrossRepository,
     private val authRepository: AuthRepository,
-    private val staticMapRepository: StaticMapRepository
+    private val staticMapRepository: StaticMapRepository,
+    private val userRepository: UserRepository
 ) : ViewModel(), IPropertyCreationViewModel {
 
-    private val _uiState = MutableStateFlow<PropertyCreationUiState>(Idle)
-    val uiState: StateFlow<PropertyCreationUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<PropertyCreationUiState>(
+        StepState(
+            currentStep = PropertyCreationStep.Intro,
+            draft = PropertyDraft(),
+            isNextEnabled =  validateStep(PropertyCreationStep.Intro, PropertyDraft())
+        )
+    )
+    override val uiState: StateFlow<PropertyCreationUiState> = _uiState.asStateFlow()
 
-    var currentStep by mutableStateOf<PropertyCreationStep>(PropertyCreationStep.Intro)
-        private set
-
-    var propertyDraft by mutableStateOf(PropertyDraft())
-        private set
-
-    override fun goToNext() {
-        currentStep = when (currentStep) {
-            is PropertyCreationStep.Intro -> PropertyCreationStep.PropertyType
-            is PropertyCreationStep.PropertyType -> PropertyCreationStep.Address
-            is PropertyCreationStep.Address -> PropertyCreationStep.PoiS
-            is PropertyCreationStep.PoiS -> PropertyCreationStep.Description
-            is PropertyCreationStep.Description -> PropertyCreationStep.Photos
-            is PropertyCreationStep.Photos -> PropertyCreationStep.StaticMap
-            is PropertyCreationStep.StaticMap -> PropertyCreationStep.Confirmation
-            is PropertyCreationStep.Confirmation -> currentStep
+    private fun stepState(): StepState {
+        val state = _uiState.value
+        require(state is StepState) {
+            "The ViewModel is not currently in a StepState, current state = $state"
         }
+        return state
     }
 
-    override fun goToPrevious() {
-        currentStep = when (currentStep) {
-            is PropertyCreationStep.Confirmation -> PropertyCreationStep.StaticMap
-            is PropertyCreationStep.StaticMap -> PropertyCreationStep.Photos
-            is PropertyCreationStep.Photos -> PropertyCreationStep.Description
-            is PropertyCreationStep.Description -> PropertyCreationStep.PoiS
-            is PropertyCreationStep.PoiS -> PropertyCreationStep.Address
-            is PropertyCreationStep.Address -> PropertyCreationStep.PropertyType
-            is PropertyCreationStep.PropertyType -> PropertyCreationStep.Intro
-            is PropertyCreationStep.Intro -> currentStep
-        }
+    private fun updateState(
+        draft: PropertyDraft = stepState().draft,
+        step: PropertyCreationStep = stepState().currentStep,
+        error: String? = null,
+        isLoadingMap: Boolean = stepState().isLoadingMap,
+        staticMapImageBytes: List<Byte>? = stepState().staticMapImageBytes
+    ) {
+        _uiState.value = StepState(
+            currentStep = step,
+            draft = draft,
+            isNextEnabled = validateStep(step, draft),
+            error = error,
+            isLoadingMap = isLoadingMap,
+            staticMapImageBytes = staticMapImageBytes
+        )
+    }
+
+    private fun validateStep(step: PropertyCreationStep, draft: PropertyDraft): Boolean = when (step) {
+        PropertyCreationStep.PropertyType -> draft.type.isNotBlank()
+        PropertyCreationStep.Address -> draft.street.isNotBlank() &&
+                draft.city.isNotBlank() && draft.postalCode.isNotBlank() && draft.country.isNotBlank()
+        PropertyCreationStep.PoiS -> draft.poiS.any { it.name.isNotBlank() && it.type.isNotBlank() }
+        PropertyCreationStep.Description -> draft.title.isNotBlank() && draft.price > 0 && draft.surface > 0 &&
+                draft.rooms > 0 && draft.description.isNotBlank()
+        PropertyCreationStep.Photos -> draft.photos.any { it.uri.isNotBlank() }
+        else -> true
     }
 
     override val isNextEnabled: Boolean
-        get() = when (currentStep) {
-            is PropertyCreationStep.PropertyType -> propertyDraft.type.isNotBlank()
-            is PropertyCreationStep.Address -> propertyDraft.street.isNotBlank() &&
-                    propertyDraft.city.isNotBlank() &&
-                    propertyDraft.postalCode.isNotBlank() &&
-                    propertyDraft.country.isNotBlank()
-            is PropertyCreationStep.PoiS -> propertyDraft.poiS.any { it.name.isNotBlank() && it.type.isNotBlank() }
-            is PropertyCreationStep.Description ->propertyDraft.price > 0 &&
-                    propertyDraft.surface > 0 &&
-                    propertyDraft.rooms > 0 &&
-                    propertyDraft.description.isNotBlank()
-            is PropertyCreationStep.Photos -> propertyDraft.photos.any { it.uri.isNotBlank() }
-            else -> true
+        get() = (uiState.value as? StepState)?.isNextEnabled ?: false
+
+    override fun goToNext() {
+        val next = when (stepState().currentStep) {
+            PropertyCreationStep.Intro -> PropertyCreationStep.PropertyType
+            PropertyCreationStep.PropertyType -> PropertyCreationStep.Address
+            PropertyCreationStep.Address -> PropertyCreationStep.PoiS
+            PropertyCreationStep.PoiS -> PropertyCreationStep.Description
+            PropertyCreationStep.Description -> PropertyCreationStep.Photos
+            PropertyCreationStep.Photos -> PropertyCreationStep.StaticMap
+            PropertyCreationStep.StaticMap -> PropertyCreationStep.Confirmation
+            PropertyCreationStep.Confirmation -> return
         }
-
-
-    override fun updateType(type: String) {
-        propertyDraft = propertyDraft.copy(type = type)
+        updateState(step = next)
     }
 
-    override fun updateStreet(value: String) {
-        propertyDraft = propertyDraft.copy(street = value)
-    }
-
-    override fun updateCity(value: String) {
-        propertyDraft = propertyDraft.copy(city = value)
-    }
-
-    override fun updatePostalCode(value: String) {
-        propertyDraft = propertyDraft.copy(postalCode = value)
-    }
-
-    override fun updateCountry(value: String) {
-        propertyDraft = propertyDraft.copy(country = value)
-    }
-
-    override fun updatePoiType(index: Int, type: String) {
-        val currentList = propertyDraft.poiS.toMutableList()
-        val existing = currentList.getOrNull(index) ?: PoiDraft("", "", "", "", "", "")
-        val updated = existing.copy(type = type)
-
-        while (currentList.size <= index) {
-            currentList.add(PoiDraft("", "", "", "", "", ""))
+    override fun goToPrevious() {
+        val previous = when (stepState().currentStep) {
+            PropertyCreationStep.Confirmation -> PropertyCreationStep.StaticMap
+            PropertyCreationStep.StaticMap -> PropertyCreationStep.Photos
+            PropertyCreationStep.Photos -> PropertyCreationStep.Description
+            PropertyCreationStep.Description -> PropertyCreationStep.PoiS
+            PropertyCreationStep.PoiS -> PropertyCreationStep.Address
+            PropertyCreationStep.Address -> PropertyCreationStep.PropertyType
+            PropertyCreationStep.PropertyType -> PropertyCreationStep.Intro
+            PropertyCreationStep.Intro -> return
         }
-
-        currentList[index] = updated
-        propertyDraft = propertyDraft.copy(poiS = currentList)
+        updateState(step = previous)
     }
 
-    override fun updatePoiName(index: Int, name: String) {
-        val currentList = propertyDraft.poiS.toMutableList()
-        val existing = currentList.getOrNull(index) ?: PoiDraft("", "", "", "", "", "")
-        val updated = existing.copy(name = name)
-
-        while (currentList.size <= index) {
-            currentList.add(PoiDraft("", "", "", "", "", ""))
-        }
-
-        currentList[index] = updated
-        propertyDraft = propertyDraft.copy(poiS = currentList)
+    private fun updateDraft(modifier: (PropertyDraft) -> PropertyDraft) {
+        val current = stepState().draft
+        updateState(draft = modifier(current))
     }
 
-    override fun updatePoiStreet(index: Int, street: String) {
-        val currentList = propertyDraft.poiS.toMutableList()
-        val existing = currentList.getOrNull(index) ?: PoiDraft("", "", "", "", "", "")
-        val updated = existing.copy(street = street)
+    override fun updateType(type: String) = updateDraft { it.copy(type = type) }
+    override fun updateStreet(value: String) = updateDraft { it.copy(street = value) }
+    override fun updateCity(value: String) = updateDraft { it.copy(city = value) }
+    override fun updatePostalCode(value: String) = updateDraft { it.copy(postalCode = value) }
+    override fun updateCountry(value: String) = updateDraft { it.copy(country = value) }
+    override fun updateTitle(value: String) = updateDraft { it.copy(title = value) }
+    override fun updatePrice(value: Int) = updateDraft { it.copy(price = value) }
+    override fun updateSurface(value: Int) = updateDraft { it.copy(surface = value) }
+    override fun updateRooms(value: Int) = updateDraft { it.copy(rooms = value) }
+    override fun updateDescription(value: String) = updateDraft { it.copy(description = value) }
 
-        while (currentList.size <= index) {
-            currentList.add(PoiDraft("", "", "", "", "", ""))
-        }
-
-        currentList[index] = updated
-        propertyDraft = propertyDraft.copy(poiS = currentList)
+    private fun updatePoi(index: Int, transform: (PoiDraft) -> PoiDraft) {
+        val current = stepState().draft
+        val list = current.poiS.toMutableList()
+        while (list.size <= index) list.add(PoiDraft())
+        list[index] = transform(list[index])
+        updateDraft { it.copy(poiS = list) }
     }
 
-    override fun updatePoiCity(index: Int, city: String) {
-        val currentList = propertyDraft.poiS.toMutableList()
-        val existing = currentList.getOrNull(index) ?: PoiDraft("", "", "", "", "", "")
-        val updated = existing.copy(city = city)
-
-        while (currentList.size <= index) {
-            currentList.add(PoiDraft("", "", "", "", "", ""))
-        }
-
-        currentList[index] = updated
-        propertyDraft = propertyDraft.copy(poiS = currentList)
-    }
-
-    override fun updatePoiPostalCode(index: Int, postalCode: String) {
-        val currentList = propertyDraft.poiS.toMutableList()
-        val existing = currentList.getOrNull(index) ?: PoiDraft("", "", "", "", "", "")
-        val updated = existing.copy(postalCode = postalCode)
-
-        while (currentList.size <= index) {
-            currentList.add(PoiDraft("", "", "", "", "", ""))
-        }
-
-        currentList[index] = updated
-        propertyDraft = propertyDraft.copy(poiS = currentList)
-    }
-
-    override fun updatePoiCountry(index: Int, country: String) {
-        val currentList = propertyDraft.poiS.toMutableList()
-        val existing = currentList.getOrNull(index) ?: PoiDraft("", "", "", "", "", "")
-        val updated = existing.copy(country = country)
-
-        while (currentList.size <= index) {
-            currentList.add(PoiDraft("", "", "", "", "", ""))
-        }
-
-        currentList[index] = updated
-        propertyDraft = propertyDraft.copy(poiS = currentList)
-    }
-
-    override fun updatePrice(value : Int) {
-        propertyDraft = propertyDraft.copy(price = value)
-    }
-
-    override fun updateSurface(value : Int) {
-        propertyDraft = propertyDraft.copy(surface = value)
-    }
-
-
-    override fun updateRooms(value : Int) {
-        propertyDraft = propertyDraft.copy(rooms = value)
-    }
-
-    override fun updateDescription(value : String) {
-        propertyDraft = propertyDraft.copy(description = value)
-    }
+    override fun updatePoiType(index: Int, type: String) = updatePoi(index) { it.copy(type = type) }
+    override fun updatePoiName(index: Int, name: String) = updatePoi(index) { it.copy(name = name) }
+    override fun updatePoiStreet(index: Int, street: String) = updatePoi(index) { it.copy(street = street) }
+    override fun updatePoiCity(index: Int, city: String) = updatePoi(index) { it.copy(city = city) }
+    override fun updatePoiPostalCode(index: Int, postalCode: String) = updatePoi(index) { it.copy(postalCode = postalCode) }
+    override fun updatePoiCountry(index: Int, country: String) = updatePoi(index) { it.copy(country = country) }
 
     override fun updatePhotoAt(index: Int, uri: Uri, description: String?) {
-        val currentList = propertyDraft.photos.toMutableList()
-
-        while (currentList.size <= index) {
-            currentList.add(
-                Photo(
-                    universalLocalPropertyId = "TEMP",
-                    uri = "",
-                    description = null
-                )
-            )
+        val current = stepState().draft
+        val list = current.photos.toMutableList()
+        while (list.size <= index) {
+            list.add(Photo(universalLocalPropertyId = "TEMP", uri = ""))
         }
-
-        val updated = currentList[index].copy(
+        list[index] = list[index].copy(
             uri = uri.toString(),
             description = description,
             updatedAt = System.currentTimeMillis()
         )
+        updateDraft { it.copy(photos = list) }
+    }
 
-        currentList[index] = updated
-        propertyDraft = propertyDraft.copy(photos = currentList)
+    override fun removePhotoAt(index: Int) {
+        val current = stepState().draft
+        val photos = current.photos.toMutableList()
+        if (index in photos.indices) {
+            photos[index] = photos[index].copy(uri = "")
+            updateDraft { it.copy(photos = photos) }
+        }
     }
 
     private var pendingPhotoIndex: Int? = null
@@ -238,167 +179,125 @@ class PropertyCreationViewModel @Inject constructor(
 
     override fun handlePhotoPicked(context: Context, uri: Uri) {
         val index = pendingPhotoIndex ?: return
-        val localFile = saveUriToAppStorage(context, uri)
-        val localUri = localFile?.toUri() ?: return
-
-        updatePhotoAt(index, localUri)
-        pendingPhotoIndex = null // reset
+        val file = saveUriToAppStorage(context, uri) ?: return
+        updatePhotoAt(index, file.toUri())
+        pendingPhotoIndex = null
     }
-
-    override fun removePhotoAt(index: Int) {
-        val currentList = propertyDraft.photos.toMutableList()
-        if (index in currentList.indices) {
-            currentList[index] = currentList[index].copy(uri = "")
-            propertyDraft = propertyDraft.copy(photos = currentList)
-        }
-    }
-
-    val staticMapImageBytes = mutableStateOf<ByteArray?>(null)
-    val isLoadingMap = mutableStateOf(false)
-
-    private val cleanStyles = listOf(
-        "feature:poi|visibility:off",
-        "feature:transit|visibility:off",
-        "feature:administrative|visibility:off",
-        "feature:landscape|visibility:simplified",
-        "feature:water|visibility:simplified"
-    )
-
 
     override fun fetchStaticMap(context: Context) {
         viewModelScope.launch {
-            isLoadingMap.value = true
+            updateState(isLoadingMap = true)
 
-            val fullAddress = listOf(
-                propertyDraft.street,
-                propertyDraft.postalCode,
-                propertyDraft.city,
-                propertyDraft.country
-            ).filter { it.isNotBlank() }.joinToString(" ")
+            val draft = stepState().draft
+            val address = listOf(draft.street, draft.postalCode, draft.city, draft.country)
+                .filter { it.isNotBlank() }
+                .joinToString(" ")
 
-            if (fullAddress.isBlank()) {
-                isLoadingMap.value = false
+            if (address.isBlank()) {
+                updateState(isLoadingMap = false)
                 return@launch
             }
 
-            val markers = mutableListOf<String>()
-            markers.add("color:blue|label:P|$fullAddress")
+            val markers = mutableListOf("color:blue|label:P|$address")
+            val labelMap = mapOf("Butcher" to "B", "Bakery" to "B", "Restaurant" to "R", "School" to "S", "Grocery" to "G")
 
-            val labelMap = mapOf(
-                "Butcher"     to "B",
-                "Bakery"      to "B",
-                "Restaurant"  to "R",
-                "School"      to "S",
-                "Supermarket" to "S"
-            )
+            draft.poiS.forEach {
+                val label = labelMap[it.type] ?: "P"
+                val poiAddress = listOf(it.street, it.postalCode, it.city, it.country)
+                    .filter { it.isNotBlank() }
+                    .joinToString(" ")
 
-            markers.addAll(
-                propertyDraft.poiS.mapNotNull { poi ->
-                    if (poi.name.isNotBlank() && poi.type.isNotBlank()) {
-                        val poiAddress = listOf(
-                            poi.street,
-                            poi.postalCode,
-                            poi.city,
-                            poi.country
-                        )
-                            .filter { it.isNotBlank() }
-                            .joinToString(" ")
-
-                        if (poiAddress.isBlank()) return@mapNotNull null
-
-                        val label = labelMap[poi.type] ?: "P" // fallback
-
-                        "color:red|label:$label|$poiAddress"
-                    } else null
+                if (poiAddress.isNotBlank()) {
+                    markers.add("color:red|label:$label|$poiAddress")
                 }
-            )
-            val config = StaticMapConfig(
-                center = fullAddress,
-                markers = markers,
-                styles = cleanStyles
-            )
-            val bytes = staticMapRepository.getStaticMapImage(config)
-            if (bytes != null) {
-                staticMapImageBytes.value = bytes
-                val filePath = staticMapRepository.saveStaticMapToLocal(context, "temp_static_map.png", bytes)
-                propertyDraft = propertyDraft.copy(staticMapPath = filePath)
             }
 
-            isLoadingMap.value = false
+            val config = StaticMapConfig(
+                center = address,
+                markers = markers,
+                styles = listOf(
+                    "feature:poi|visibility:off",
+                    "feature:transit|visibility:off",
+                    "feature:administrative|visibility:off",
+                    "feature:landscape|visibility:simplified",
+                    "feature:water|visibility:simplified"
+                )
+            )
+
+            val bytes = staticMapRepository.getStaticMapImage(config)
+            if (bytes != null) {
+                val path = staticMapRepository.saveStaticMapToLocal(context, "temp_static_map.png", bytes)
+                updateDraft { it.copy(staticMapPath = path) }
+                updateState(
+                    isLoadingMap = false,
+                    staticMapImageBytes = bytes.toList()
+                )
+            } else {
+                updateState(isLoadingMap = false)
+            }
         }
     }
-
-
-
     override fun createModelFromDraft() {
         viewModelScope.launch {
             try {
-                val userId = authRepository.currentUser?.uid ?: return@launch
+                val draft = stepState().draft
+
+                val firebaseUid = authRepository.currentUser?.uid ?: return@launch
+                val localUser = userRepository.getUserByFirebaseUid(firebaseUid).firstOrNull()
+                    ?: throw IllegalStateException("No local user found for uid=$firebaseUid")
 
                 val propertyId = java.util.UUID.randomUUID().toString()
 
-                val poiList = propertyDraft.poiS
-                    .filter { it.name.isNotBlank() && it.type.isNotBlank() }
-                    .map { draft ->
-                        Poi(
-                            name = draft.name,
-                            type = draft.type,
-                            address = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}",
-                            updatedAt = System.currentTimeMillis()
-                        )
-                    }
+                val poiS = draft.poiS.filter { it.name.isNotBlank() && it.type.isNotBlank() }.map {
+                    Poi(name = it.name, type = it.type,
+                        address = "${it.street}, ${it.postalCode} ${it.city}, ${it.country}",
+                        updatedAt = System.currentTimeMillis())
+                }
+
+                val photos = draft.photos.filter { it.uri.isNotBlank() }.map {
+                    it.copy(universalLocalPropertyId = propertyId)
+                }
 
                 val property = Property(
                     universalLocalId = propertyId,
-                    universalLocalUserId = userId,
-                    title = propertyDraft.title,
-                    type = propertyDraft.type,
-                    price = propertyDraft.price,
-                    surface = propertyDraft.surface,
-                    rooms = propertyDraft.rooms,
-                    description = propertyDraft.description,
-                    address = "${propertyDraft.street}, ${propertyDraft.postalCode} ${propertyDraft.city}, ${propertyDraft.country}",
+                    universalLocalUserId = localUser.universalLocalId,
+                    title = draft.title,
+                    type = draft.type,
+                    price = draft.price,
+                    surface = draft.surface,
+                    rooms = draft.rooms,
+                    description = draft.description,
+                    address = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}",
                     isSold = false,
                     entryDate = LocalDate.now(),
                     saleDate = null,
-                    staticMapPath = propertyDraft.staticMapPath,
-                    photos = propertyDraft.photos
-                        .filter { it.uri.isNotBlank() }
-                        .map { photo ->
-                            photo.copy(universalLocalPropertyId = propertyId)
-                        },
-                    poiS = poiList
+                    staticMapPath = draft.staticMapPath,
+                    photos = photos,
+                    poiS = poiS
                 )
 
                 propertyRepository.insertPropertyFromUI(property)
-                poiRepository.insertPoiSInsertFromUi(property.poiS)
-                photoRepository.insertPhotosInsertFromUI(property.photos)
+                poiRepository.insertPoiSInsertFromUi(poiS)
+                photoRepository.insertPhotosInsertFromUI(photos)
 
-                property.poiS.forEach { poi ->
-                    val crossRef = PropertyPoiCross(
-                        universalLocalPropertyId = property.universalLocalId,
-                        universalLocalPoiId = poi.universalLocalId
-                    )
-                    crossRefRepository.insertCrossRefInsertFromUI(crossRef)
+                poiS.forEach {
+                    crossRefRepository.insertCrossRefInsertFromUI(PropertyPoiCross(propertyId, it.universalLocalId))
                 }
 
-                _uiState.value = Success(
-                    createdOrUpdatedProperty = property,
-                    isUpdate = false
-                )
-
-                resetState()
+                _uiState.value = Success(property, isUpdate = false)
 
             } catch (e: Exception) {
-                _uiState.value = Error("Failed to create property: ${e.message}")
+                Log.e("PropertyCreation", "Failed to insert property", e)
+                _uiState.value = Error("Error: ${e.message}")
             }
         }
     }
 
-
     override fun resetState() {
-        propertyDraft = PropertyDraft()
-        currentStep = PropertyCreationStep.Intro
-        _uiState.value = Idle
+        _uiState.value = StepState(
+            currentStep = PropertyCreationStep.Intro,
+            draft = PropertyDraft(),
+            isNextEnabled =  validateStep(PropertyCreationStep.Intro, PropertyDraft())
+        )
     }
 }

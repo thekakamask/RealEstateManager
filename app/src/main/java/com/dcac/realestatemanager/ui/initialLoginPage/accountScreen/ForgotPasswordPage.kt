@@ -65,7 +65,7 @@ fun ForgotPasswordPage(
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.forgot_password_button_content_description),
-                    tint = MaterialTheme.colorScheme.secondary)
+                    tint = MaterialTheme.colorScheme.onBackground)
             }
 
             // Title centered
@@ -74,7 +74,7 @@ fun ForgotPasswordPage(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Center),
             )
         }
@@ -86,7 +86,7 @@ fun ForgotPasswordPage(
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -94,7 +94,7 @@ fun ForgotPasswordPage(
         Text(
             text = stringResource(R.string.forgot_password_text),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -102,7 +102,7 @@ fun ForgotPasswordPage(
         Text(text = stringResource(
             R.string.forgot_password_email_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -111,7 +111,7 @@ fun ForgotPasswordPage(
             shape = RoundedCornerShape(12.dp),
             placeholder = { Text(stringResource(
                 R.string.forgot_password_email_content),
-                color = MaterialTheme.colorScheme.tertiary) }
+                color = MaterialTheme.colorScheme.onSurfaceVariant) }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -124,9 +124,9 @@ fun ForgotPasswordPage(
                 .height(50.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-                disabledContentColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
             )
         ) {
             Text(stringResource(

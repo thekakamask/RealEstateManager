@@ -48,7 +48,7 @@ fun ChatContactPage(
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.chat_contact_back_button_content_description),
-                    tint = MaterialTheme.colorScheme.secondary)
+                    tint = MaterialTheme.colorScheme.onBackground)
             }
 
             // Title centered
@@ -57,7 +57,7 @@ fun ChatContactPage(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
@@ -69,7 +69,7 @@ fun ChatContactPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -79,7 +79,7 @@ fun ChatContactPage(
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
@@ -88,7 +88,7 @@ fun ChatContactPage(
         Text(
             text = stringResource(R.string.chat_contact_text),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 

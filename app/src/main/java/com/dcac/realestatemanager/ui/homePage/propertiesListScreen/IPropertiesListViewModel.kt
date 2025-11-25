@@ -1,11 +1,17 @@
 package com.dcac.realestatemanager.ui.homePage.propertiesListScreen
 
+import com.dcac.realestatemanager.ui.homePage.PropertyFilters
+import com.dcac.realestatemanager.ui.homePage.PropertySortOrder
+import kotlinx.coroutines.flow.StateFlow
+
 
 interface IPropertiesListViewModel {
 
+    val uiState: StateFlow<PropertiesListUiState>
     fun loadProperties()
+    fun applyFilters(filters: PropertyFilters)
 
-    fun searchProperties(
+   /* fun searchProperties(
         minSurface: Int?,
         maxSurface: Int?,
         minPrice: Int?,
@@ -14,7 +20,7 @@ interface IPropertiesListViewModel {
         isSold: Boolean?
     )
     fun sortProperties(order: PropertySortOrder)
-    fun clearSort()
+    fun clearSort()*/
     fun resetFilters()
     fun resetState()
 }

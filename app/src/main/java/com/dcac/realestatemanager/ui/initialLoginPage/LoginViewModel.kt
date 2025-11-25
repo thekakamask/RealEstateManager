@@ -29,7 +29,7 @@ class LoginViewModel @Inject constructor(
 ): ViewModel(), ILoginViewModel {
 
     private val _uiState = MutableStateFlow<LoginUiState>(Idle)
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     override fun signIn(email: String, password: String) {
         viewModelScope.launch {

@@ -66,7 +66,7 @@ fun EmailContactPage(
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.email_contact_back_button_content_description),
-                    tint = MaterialTheme.colorScheme.secondary)
+                    tint = MaterialTheme.colorScheme.onBackground)
             }
 
             // Title centered
@@ -75,7 +75,7 @@ fun EmailContactPage(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
@@ -87,7 +87,7 @@ fun EmailContactPage(
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -95,7 +95,7 @@ fun EmailContactPage(
         Text(
             text = stringResource(R.string.email_contact_text),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -103,7 +103,7 @@ fun EmailContactPage(
         Text(text = stringResource(
             R.string.email_contact_email_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -112,7 +112,7 @@ fun EmailContactPage(
             shape = RoundedCornerShape(12.dp),
             placeholder = { Text(stringResource(
                 R.string.email_contact_email_content),
-                color = MaterialTheme.colorScheme.tertiary) }
+                color = MaterialTheme.colorScheme.onSurfaceVariant) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -121,7 +121,7 @@ fun EmailContactPage(
         Text(text = stringResource(
             R.string.email_contact_subject_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = subject,
             onValueChange = { subject = it },
@@ -131,7 +131,7 @@ fun EmailContactPage(
             placeholder = { Text(
                 stringResource(
                     R.string.email_contact_subject_content),
-                color = MaterialTheme.colorScheme.tertiary) }
+                color = MaterialTheme.colorScheme.onSurfaceVariant) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -140,7 +140,7 @@ fun EmailContactPage(
         Text(text = stringResource(
             R.string.email_contact_message_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = message,
             onValueChange = { message = it },
@@ -150,7 +150,7 @@ fun EmailContactPage(
             shape = RoundedCornerShape(12.dp),
             placeholder = { Text(stringResource(
                 R.string.email_contact_message_content),
-                color = MaterialTheme.colorScheme.tertiary) }
+                color = MaterialTheme.colorScheme.onSurfaceVariant) }
         )
 
         Spacer(modifier = Modifier.height(32.dp)) // Push button to bottom
@@ -164,9 +164,10 @@ fun EmailContactPage(
                 .height(50.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-                disabledContentColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
+
             )
         ) {
             Text(stringResource(

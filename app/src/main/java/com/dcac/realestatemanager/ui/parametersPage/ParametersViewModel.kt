@@ -18,7 +18,7 @@ class ParametersViewModel @Inject constructor(
 ) : ViewModel(), IParametersViewModel {
 
     private val _uiState = MutableStateFlow<ParametersUiState>(ParametersUiState.Loading)
-    val uiState: StateFlow<ParametersUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<ParametersUiState> = _uiState.asStateFlow()
 
     private val version = "1.0.0" // Replace with BuildConfig.VERSION_NAME if needed
 

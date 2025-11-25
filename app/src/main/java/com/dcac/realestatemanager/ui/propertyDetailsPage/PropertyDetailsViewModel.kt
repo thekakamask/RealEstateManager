@@ -27,7 +27,7 @@ class PropertyDetailsViewModel @Inject constructor(
 
     // Backing property for UI state (Loading, Success, Error)
     private val _uiState = MutableStateFlow<PropertyDetailsUiState>(Loading)
-    val uiState: StateFlow<PropertyDetailsUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<PropertyDetailsUiState> = _uiState.asStateFlow()
 
     // Called when navigating to the PropertyDetails screen
     override fun loadPropertyDetails(propertyId: Long) {

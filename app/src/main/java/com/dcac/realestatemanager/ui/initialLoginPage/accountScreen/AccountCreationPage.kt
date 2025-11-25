@@ -96,7 +96,7 @@ fun AccountCreationPage(
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.account_creation_button_content_description),
-                    tint = MaterialTheme.colorScheme.secondary)
+                    tint = MaterialTheme.colorScheme.onBackground)
             }
 
             // Title centered
@@ -105,7 +105,7 @@ fun AccountCreationPage(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Medium
                 ),
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.align(Alignment.Center),
             )
         }
@@ -117,7 +117,7 @@ fun AccountCreationPage(
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -125,7 +125,7 @@ fun AccountCreationPage(
         Text(
             text = stringResource(R.string.account_creation_text),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -133,7 +133,7 @@ fun AccountCreationPage(
         Text(text = stringResource(
             R.string.account_creation_email_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onBackground
         )
         OutlinedTextField(
             value = email,
@@ -144,7 +144,7 @@ fun AccountCreationPage(
             placeholder = {
                 Text(stringResource(
                 R.string.account_creation_email_content),
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         )
@@ -154,7 +154,7 @@ fun AccountCreationPage(
         Text(text = stringResource(
             R.string.account_creation_agent_name_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onBackground
         )
         OutlinedTextField(
             value = agentName,
@@ -165,7 +165,7 @@ fun AccountCreationPage(
             placeholder = {
                 Text(stringResource(
                     R.string.account_creation_agent_name_content),
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             }
         )
@@ -175,7 +175,7 @@ fun AccountCreationPage(
         Text(text = stringResource(
             R.string.account_creation_password_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -185,7 +185,7 @@ fun AccountCreationPage(
             placeholder = {
                 Text(stringResource(
                     R.string.account_creation_password_content),
-                color = MaterialTheme.colorScheme.tertiary) },
+                color = MaterialTheme.colorScheme.onSurfaceVariant) },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -202,7 +202,7 @@ fun AccountCreationPage(
         Text(text = stringResource(
             R.string.account_creation_password_confirmation_label),
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.secondary)
+            color = MaterialTheme.colorScheme.onBackground)
         OutlinedTextField(
             value = confirmationPassword,
             onValueChange = { confirmationPassword = it },
@@ -212,7 +212,7 @@ fun AccountCreationPage(
             placeholder = { Text(
                 stringResource(
                     R.string.account_creation_password_content),
-                color = MaterialTheme.colorScheme.tertiary) },
+                color = MaterialTheme.colorScheme.onSurfaceVariant) },
             visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
@@ -252,9 +252,9 @@ fun AccountCreationPage(
                 .fillMaxWidth()
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-                disabledContentColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.primary,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -273,7 +273,7 @@ fun AccountCreationPage(
                 is LoginUiState.Loading -> {
                     Text(
                         text = stringResource(R.string.account_creation_in_progress),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 is LoginUiState.Error -> {

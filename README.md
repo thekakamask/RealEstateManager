@@ -15,16 +15,16 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - 🏗️ Added full step-by-step property creation flow (multi-step UI + ViewModel architecture)
-   - 🗺️ Integrated custom static map generator with cleaner UI styles and POI markers
-   - 🧭 Improved address and POI input UX with clean form fields and per-type icons
-   - 📸 Enhanced photo selection flow with inline preview, delete option, and local saving
-   - 🧪 Draft is persisted across steps, and used for final confirmation screen before final submission.
+   - 🧠 Refactored ViewModel to fully rely on centralized UI state (PropertyCreationUiState) for consistency and scalability.
+   - 🏠 Added property list display in the HomePage with dynamic loading via PropertiesListViewModel.
+   - 🔍 Integrated full filtering system (type, price, surface, status) with bottom sheet UI.
+   - 🎨 Refined global color palette and UI theme for visual consistency across the app.
    
 
 ## ❌ **NEXT UPDATES**
 
-   - ⚠️ Build the HomePage.
+   - ⚠️ Implement the properties displaying into the GoogleMapScreen. 
+   - ⚠️ Implement the DetailPage for properties. 
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - 🎨 Continue UI implementatation.
    - 💾 Prepopulate sample data.
@@ -65,13 +65,13 @@ This project is developed using modern Android architecture principles, with a f
    - 📷 **Media Management** :
 
       - ✅ **DONE** Take or select photos from gallery.
-      - 🟩 **IN PROGRESS** Add multiple images per listing.
+      - ✅ **DONE** Add multiple images per listing.
       - ✅ **DONE** Downloads images from Firebase Storage and saves them locally on device during sync.
 
    - 🔍 **Search** :
 
-      - 🟩 **IN PROGRESS** Multi-criteria search (surface, price, type, POI, dates, sold status).
-      - 🟩 **IN PROGRESS** Sort and filter property results.
+      - ✅ **DONE** Multi-criteria search (surface, price, type, POI, dates, sold status).
+      - ✅ **DONE** Sort and filter property results.
 
    - 💾 **Offline Mode** :
 
@@ -103,8 +103,8 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🧭 **Navigation** :
 
-      - ❌ **NOT IMPLEMENTED** Navigation between list and detail.
-      - 🟩 **IN PROGRESS** Setting up core navigation components:
+      - 🟩 **IN PROGRESS** Navigation between list and detail.
+      - ✅ **DONE** Setting up core navigation components:
         - Implementing a central NavHost in the main activity.
         - Defining the NavGraph with all destinations and actions.
         - Using a single NavController to manage navigation events.
@@ -203,11 +203,6 @@ This project is developed using modern Android architecture principles, with a f
 
    ![Login page](screenshots/login_page.png)
 
-- **Home page (temporary)**:
-
-   ![Home page 1](screenshots/home_page_1.png)
-   ![Home page 2](screenshots/home_page_2.png)
-
 - **Forgot password page**:
 
    ![Forgot password page](screenshots/forgot_password_page.png)
@@ -239,6 +234,12 @@ This project is developed using modern Android architecture principles, with a f
    ![Step 7 screen](screenshots/property_creation_step_7_screen.png)
    ![Step 8 screen](screenshots/property_creation_step_8_screen.png)
    ![Step 8 screen 2](screenshots/property_creation_step_8_screen_2.png)
+
+- **HomePage with PropertyListScreen**:
+
+   ![HomePage with PropertyScreen](screenshots/home_page_1.png)
+   ![HomePage with PropertyScreen (MenuDrawer open)](screenshots/home_page_2.png)
+   ![HomePage with PropertyScreen (FilterScreen open)](screenshots/home_page_3.png)
 
 
 ## 🤝 **Contributions**

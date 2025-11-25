@@ -980,5 +980,35 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Sync-ready, and offline-first compatible
 
 
+### 🔹 **Update #34**
+
+  - 🧠 **Simplification & centralization of state management (UI State)**
+    - The ViewModel for property creation has been refactored to rely solely on a StateFlow<PropertyCreationUiState>, removing the currentStep, propertyDraft, isNextEnabled, etc. fields as independent variables.
+    - A single source of truth is used: PropertyCreationUiState.StepState, which contains:
+      - currentStep
+      - draft
+      - isNextEnabled
+      - error
+      - isLoadingMap
+      - staticMapImageBytes
+    - All UI screens now consume this uiState declaratively (collectAsState()).
+
+  - 🏠 **Property List Screen and State-Driven Loading**
+    - Implemented the full PropertiesListScreen connected to PropertiesListViewModel.
+    - Properties are dynamically loaded based on the presence (or absence) of filters.
+    - The UI reacts to PropertiesListUiState (Idle, Loading, Success, Error) for a declarative display.
+
+  - 🔍 **Advanced Filtering System**
+    - Introduced a bottom sheet for applying filters (type, status, price range, surface range).
+    - Filters are stored centrally in HomeUiState, then passed to the list screen.
+    - Type filtering uses a new icon-based selector UI, replacing the dropdown.
+    - Filtering logic is performed via repository calls inside PropertiesListViewModel.
+
+  - 🎨 **Theming Overhaul**
+    - Updated the application’s color palette using MaterialTheme.colorScheme across components.
+    - Applied consistent colors for icons, backgrounds, text, outlines, and surfaces.
+    - Improved contrast and primary accent color usage to enhance visual clarity and UX.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

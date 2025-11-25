@@ -1,26 +1,20 @@
 package com.dcac.realestatemanager.ui.propertyCreationPage
 
-import androidx.compose.runtime.Immutable
 import com.dcac.realestatemanager.model.Property
 
-sealed interface PropertyCreationUiState {
+sealed class PropertyCreationUiState {
+    data object Idle : PropertyCreationUiState()
+    data object Loading : PropertyCreationUiState()
 
-    @Immutable
-    data class Editing(
-        val property: Property
-    ) : PropertyCreationUiState
-    // -> Loaded property for modifying (pre-filling the form)
+    data class StepState(
+        val currentStep: PropertyCreationStep,
+        val draft: PropertyDraft,
+        val isNextEnabled: Boolean,
+        val error: String? = null,
+        val isLoadingMap: Boolean = false,
+        val staticMapImageBytes: List<Byte>? = null
+    ) : PropertyCreationUiState()
 
-    @Immutable
-    data class Success(
-        val createdOrUpdatedProperty: Property,
-        val isUpdate: Boolean
-    ) : PropertyCreationUiState
-    // -> Created or updated property with success
-
-    data class Error(val message: String) : PropertyCreationUiState
-
-    data object Loading : PropertyCreationUiState
-
-    data object Idle : PropertyCreationUiState
+    data class Success(val property: Property, val isUpdate: Boolean) : PropertyCreationUiState()
+    data class Error(val message: String) : PropertyCreationUiState()
 }
