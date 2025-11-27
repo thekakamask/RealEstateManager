@@ -15,6 +15,8 @@ data class Property(
     val rooms: Int,
     val description: String,
     val address: String,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
     val isSold: Boolean,
     val entryDate: LocalDate,
     val saleDate: LocalDate?,

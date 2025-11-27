@@ -235,12 +235,19 @@
     <string name="home_page_top_bar_filter_icon_content_description">Filter icon</string>
     <string name="home_page_bottom_bar_list_icon_content_description">List</string>
     <string name="home_page_bottom_bar_map_icon_content_description">Map</string>
+    <string name="home_page_type_house">House</string>
+    <string name="home_page_type_apartment">Apartment</string>
+    <string name="home_page_type_studio">Studio</string>
+    <string name="home_page_type_boat">Boat</string>
+    <string name="home_page_type_cabin">Cabin</string>
+    <string name="home_page_type_castle">Castle</string>
+    <string name="home_page_type_motor_home">Motor home</string>
 
-    <!--Property list screen -->
+    <!--Property list screen-->
     <string name="property_list_screen_no_data_to_display">No data to display</string>
     <string name="property_list_screen_no_photo_content_description">Placeholder</string>
 
-    <!--Property creation page -->
+    <!--Filter screen-->
     <string name="filter_screen_title">Filters</string>
     <string name="filter_screen_sort_order_title">Sort order</string>
     <string name="filter_screen_sort_order_alphabetic_label">Alphabetic</string>
@@ -259,6 +266,15 @@
     <string name="filter_screen_reset_button_label">Reset</string>
     <string name="filter_screen_apply_button_label">Apply</string>
 
+    <!--Google Map screen-->
+    <string name="no_internet_connexion_text">No internet connexion. The Google Map cannot be display.</string>
+    <string name="location_authorization_request_text">
+        Enable location services to display your position on the map, as well as properties and points of interest.
+    </string>
+    <string name="user_marker_title">You</string>
+    <string name="user_marker_snippet">Your current location</string>
+    <string name="xml_custom_marker_background_content_description">Marker background\n</string>
+    <string name="xml_custom_marker_icon_description">Marker icon description</string>
 
 
 </resources>

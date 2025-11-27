@@ -46,7 +46,7 @@ interface IPropertyCreationViewModel {
     fun fetchStaticMap(context: Context)
 
     // Step 7
-    fun createModelFromDraft()
+    fun createModelFromDraft(context: Context)
 
     // Reset
     fun resetState()

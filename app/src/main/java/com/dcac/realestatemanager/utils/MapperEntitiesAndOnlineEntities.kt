@@ -65,6 +65,8 @@ fun PoiEntity.toOnlineEntity(): PoiOnlineEntity {
         name = this.name,
         type = this.type,
         address= this.address,
+        latitude = this.latitude,
+        longitude = this.longitude,
         updatedAt = this.updatedAt,
     )
 }
@@ -78,6 +80,8 @@ fun PoiOnlineEntity.toEntity(
         name = this.name,
         type = this.type,
         address= this.address,
+        latitude = this.latitude,
+        longitude = this.longitude,
         isSynced = true,
         updatedAt = this.updatedAt,
         isDeleted = false,

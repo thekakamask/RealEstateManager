@@ -33,6 +33,7 @@ android {
         targetSdk = 35  // Targeted Android version for compatibility testing
         versionCode = 1 // Internal version number
         versionName = "1.0" // User-visible version string
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
 
         // Runner used for instrumentation tests
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -141,6 +142,9 @@ dependencies {
     implementation(libs.work.runtime.ktx)
 
     implementation(libs.coil.compose)
+
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps.v1820)
 
     // Unit testing framework
     testImplementation(libs.junit)

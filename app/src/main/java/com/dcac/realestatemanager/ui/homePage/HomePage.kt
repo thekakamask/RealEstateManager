@@ -56,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.ui.homePage.googleMapScreen.GoogleMapScreen
 import com.dcac.realestatemanager.ui.homePage.propertiesListScreen.PropertiesListScreen
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 
@@ -285,7 +286,8 @@ fun HomeScreen(
                             )
                         }
                         is HomeDestination.GoogleMap -> {
-
+                            GoogleMapScreen(
+                                onPropertyClick = { /* ... */ })
                         }
                     }
                 }
@@ -421,7 +423,16 @@ fun TypeIconSelectableRow(
     selectedType: String,
     onTypeSelected: (String) -> Unit
 ) {
-    val allTypes = listOf("House", "Apartment", "Studio", "Boat", "Cabin", "Castle", "Motor home")
+
+    val allTypes = listOf(
+        stringResource(R.string.home_page_type_house),
+        stringResource(R.string.home_page_type_apartment),
+        stringResource(R.string.home_page_type_studio),
+        stringResource(R.string.home_page_type_boat),
+        stringResource(R.string.home_page_type_cabin),
+        stringResource(R.string.home_page_type_castle),
+        stringResource(R.string.home_page_type_motor_home)
+    )
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),

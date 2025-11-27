@@ -1,6 +1,5 @@
 package com.dcac.realestatemanager.ui.propertyCreationPage
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
@@ -28,6 +27,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
+import android.content.Context
 
 @HiltViewModel
 class PropertyCreationViewModel @Inject constructor(
@@ -237,7 +237,7 @@ class PropertyCreationViewModel @Inject constructor(
             }
         }
     }
-    override fun createModelFromDraft() {
+    override fun createModelFromDraft(context: Context) {
         viewModelScope.launch {
             try {
                 val draft = stepState().draft
@@ -247,11 +247,20 @@ class PropertyCreationViewModel @Inject constructor(
                     ?: throw IllegalStateException("No local user found for uid=$firebaseUid")
 
                 val propertyId = java.util.UUID.randomUUID().toString()
+                val propertyAddress = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}"
+                val propertyLatLng = geocodeAddress(context, propertyAddress)
 
                 val poiS = draft.poiS.filter { it.name.isNotBlank() && it.type.isNotBlank() }.map {
-                    Poi(name = it.name, type = it.type,
-                        address = "${it.street}, ${it.postalCode} ${it.city}, ${it.country}",
-                        updatedAt = System.currentTimeMillis())
+                    val poiAddress = "${it.street}, ${it.postalCode} ${it.city}, ${it.country}"
+                    val latLng = geocodeAddress(context, poiAddress)
+                    Poi(
+                        name = it.name,
+                        type = it.type,
+                        address = poiAddress,
+                        latitude = latLng?.latitude,
+                        longitude = latLng?.longitude,
+                        updatedAt = System.currentTimeMillis()
+                    )
                 }
 
                 val photos = draft.photos.filter { it.uri.isNotBlank() }.map {
@@ -267,7 +276,9 @@ class PropertyCreationViewModel @Inject constructor(
                     surface = draft.surface,
                     rooms = draft.rooms,
                     description = draft.description,
-                    address = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}",
+                    address = propertyAddress,
+                    latitude = propertyLatLng?.latitude,
+                    longitude = propertyLatLng?.longitude,
                     isSold = false,
                     entryDate = LocalDate.now(),
                     saleDate = null,

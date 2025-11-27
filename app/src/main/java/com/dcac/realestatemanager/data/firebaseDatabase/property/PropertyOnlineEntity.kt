@@ -18,6 +18,8 @@ data class PropertyOnlineEntity(
     val rooms: Int = 0,
     val description: String = "",
     val address: String = "",
+    val latitude: Double? = null,
+    val longitude: Double? = null,
     val isSold: Boolean = false,
     val entryDate: String = "",
     val saleDate: String? = null,

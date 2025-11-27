@@ -21,11 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,6 +56,12 @@ fun PropertyCreationPage(
     ) { uri ->
         uri?.let {
             viewModel.handlePhotoPicked(context, uri)
+        }
+    }
+
+    LaunchedEffect(state) {
+        if (state is PropertyCreationUiState.Success) {
+            onFinish()
         }
     }
 
@@ -118,8 +124,7 @@ fun PropertyCreationPage(
                     if (currentStep == PropertyCreationStep.Confirmation){
                         TextButton(
                             onClick = {
-                                viewModel.createModelFromDraft()
-                                onFinish()
+                                viewModel.createModelFromDraft(context)
                             },
                             enabled = isNextEnabled
                         ) {

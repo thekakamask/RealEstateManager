@@ -20,6 +20,10 @@ data class PoiEntity(
     val name: String,
     val type: String,
     val address: String,
+    @ColumnInfo(name = "latitude")
+    val latitude: Double? = null,
+    @ColumnInfo(name = "longitude")
+    val longitude: Double? = null,
     @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "is_deleted")

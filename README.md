@@ -15,15 +15,19 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - 🧠 Refactored ViewModel to fully rely on centralized UI state (PropertyCreationUiState) for consistency and scalability.
-   - 🏠 Added property list display in the HomePage with dynamic loading via PropertiesListViewModel.
-   - 🔍 Integrated full filtering system (type, price, surface, status) with bottom sheet UI.
-   - 🎨 Refined global color palette and UI theme for visual consistency across the app.
+   - 🗺️ Added Google Maps integration with dynamic markers for properties and POIs.
+   - 📍 Implemented real-time user location tracking with FusedLocationProviderClient.
+   - 📌 Geolocation (latitude & longitude) is now saved once at creation and synced to Firebase.
+   - 🧱 Extended data models with latitude and longitude fields across all layers.
+   - 🌐 Added offline-aware fallback UI for map when no internet connection is available.
+   - 🚀 Optimized map performance: map now displays immediately after user location is fetched.
+   - 🧩 Separated UI loading states for user location and marker data to improve user experience.
+   - ✅ Removed runtime geocoding at map display for better performance and offline support.
    
 
 ## ❌ **NEXT UPDATES**
 
-   - ⚠️ Implement the properties displaying into the GoogleMapScreen. 
+   - ⚠️ Implement filters into the GoogleMapScreen. 
    - ⚠️ Implement the DetailPage for properties. 
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - 🎨 Continue UI implementatation.
@@ -44,8 +48,8 @@ This project is developed using modern Android architecture principles, with a f
    - 📍 **Geolocation** :
 
       - ✅ **DONE** Auto-map property using Static Maps API.
-      - 🟩 **IN PROGRESS** Display pins of nearby listings on a map.
-      - 🟩 **IN PROGRESS** Retrieve and display user current location.
+      - ✅ **DONE** Display pins of nearby listings on a map.
+      - ✅ **DONE** Retrieve and display user current location.
 
    - 🔐 **User Authentication with Firebase** :
 
@@ -241,6 +245,11 @@ This project is developed using modern Android architecture principles, with a f
    ![HomePage with PropertyScreen (MenuDrawer open)](screenshots/home_page_2.png)
    ![HomePage with PropertyScreen (FilterScreen open)](screenshots/home_page_3.png)
 
+- **HomePage with GoogleMapScreen**:
+
+   ![HomePage with GoogleMapScreen](screenshots/home_page_4.png)
+   ![HomePage with GoogleMapScreen (MenuDrawer open)](screenshots/home_page_5.png)
+   ![HomePage with GoogleMapScreen (FilterScreen open)](screenshots/home_page_6.png)
 
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

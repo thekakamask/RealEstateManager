@@ -113,7 +113,7 @@ fun PropertyItem(
     onClick: () -> Unit
 ){
 
-    val photos = property.photos.drop(1).take(3)
+    val photos = property.photos.take(3)
 
     val pricePerSquareMeter = calculatePricePerSquareMeter(property.price, property.surface)
 

@@ -6,6 +6,6 @@ interface IGoogleMapViewModel {
 
     val uiState: StateFlow<GoogleMapUiState>
     fun loadMapData()
-    fun selectProperty(propertyId: Long)
+    fun selectProperty(propertyId: String)
     fun clearSelectedProperty()
 }

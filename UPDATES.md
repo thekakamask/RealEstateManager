@@ -993,21 +993,66 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - staticMapImageBytes
     - All UI screens now consume this uiState declaratively (collectAsState()).
 
-  - 🏠 **Property List Screen and State-Driven Loading**
+  - 🏠 **PropertyListScreen and state driven loading**
     - Implemented the full PropertiesListScreen connected to PropertiesListViewModel.
     - Properties are dynamically loaded based on the presence (or absence) of filters.
     - The UI reacts to PropertiesListUiState (Idle, Loading, Success, Error) for a declarative display.
 
-  - 🔍 **Advanced Filtering System**
+  - 🔍 **Advanced filtering system**
     - Introduced a bottom sheet for applying filters (type, status, price range, surface range).
     - Filters are stored centrally in HomeUiState, then passed to the list screen.
     - Type filtering uses a new icon-based selector UI, replacing the dropdown.
     - Filtering logic is performed via repository calls inside PropertiesListViewModel.
 
-  - 🎨 **Theming Overhaul**
+  - 🎨 **Theming overhaul**
     - Updated the application’s color palette using MaterialTheme.colorScheme across components.
     - Applied consistent colors for icons, backgrounds, text, outlines, and surfaces.
     - Improved contrast and primary accent color usage to enhance visual clarity and UX.
+
+
+### 🔹 **Update #35**
+
+  - 🗺️ **Google Maps integration**
+    - Integrated Google Maps into the app's Home screen via GoogleMapScreen.
+    - Properties and POIs are displayed as interactive markers on the map.
+    - Each marker is styled with a custom icon.
+
+  - 📍 **Accurate user location handling**
+    - Implemented real-time user tracking with FusedLocationProviderClient.
+    - The camera centers on the user's current position when permission is granted.
+    - If location is unavailable, a proper fallback message is shown.
+
+  - 📌 **Fixed-time geocoding**
+    - Properties and POIs are geocoded only once when they are created.
+    - Their latitude and longitude are stored in the local Room database and synced to Firebase.
+    - This eliminates the need to geocode again when displaying the map.
+
+  - 🧱 **Enriched data models (lat/lng fields)**
+    - Added latitude and longitude fields to the following layers:
+      - Property and Poi model classes.
+      - Room entities and Firebase DTOs (OnlinePropertyEntity, etc.).
+      - All mappers and converters (to/from Firebase and Room).
+    - Ensures that geolocation data persists across devices and survives offline mode.
+    
+  - 🌐 **Network awareness**
+    - The map screen detects whether an internet connection is available.
+    - If offline, a fallback message is shown, but map markers still render using saved data.
+    - Reinforces the offline-first design philosophy of the app.
+
+  - 🚀 **Optimized map performance**
+    - The map is now displayed as soon as the user's location is available, without waiting for properties or POIs to load.
+    - This change significantly reduces perceived loading time, especially on slower networks or large datasets.
+    - Markers are added incrementally after the map is visible, improving user feedback and responsiveness.
+
+  - 🧩 **Separated UI loading states**
+    - Introduced a new intermediate UI state: OnlyUserLocation, representing when the user’s location is known but marker data isn’t yet ready.
+    - This separation allows the map to initialize with just the user position, then update once properties and POIs are fetched.
+    - Enhances user experience by avoiding full-screen spinners during partial data loading.
+
+  - ✅ **Removed runtime geocoding at map display**
+    - No geocoding calls are made during map screen usage.
+    - All coordinates (lat/lng) are computed once at creation time and reused from the local database.
+    - Improves performance, avoids crashes in offline mode, and removes dependency on the Geocoder service.
 
 
 ## 🤝 **Contributions**

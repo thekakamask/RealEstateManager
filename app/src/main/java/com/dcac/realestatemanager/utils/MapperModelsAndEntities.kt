@@ -38,6 +38,8 @@ fun PropertyEntity.toModel(
         rooms = rooms,
         description = description,
         address = address,
+        latitude = latitude,
+        longitude = longitude,
         isSold = isSold,
         entryDate = entryDateLocal,
         saleDate = saleDateLocal,
@@ -80,6 +82,8 @@ fun Property.toEntity(): PropertyEntity {
         rooms = rooms,
         description = description,
         address = address,
+        latitude = latitude,
+        longitude = longitude,
         isSold = isSold,
         entryDate = entryDate.format(formatter),
         saleDate = saleDate?.format(formatter),
@@ -122,6 +126,8 @@ fun PoiEntity.toModel(): Poi = Poi(
     name = name,
     type = type,
     address = address,
+    latitude = latitude,
+    longitude = longitude,
     isSynced = isSynced,
     updatedAt = updatedAt
 )
@@ -132,6 +138,8 @@ fun Poi.toEntity(): PoiEntity = PoiEntity(
     name = name,
     type = type,
     address = address,
+    latitude = latitude,
+    longitude = longitude,
     isSynced = isSynced,
     updatedAt = updatedAt
 )

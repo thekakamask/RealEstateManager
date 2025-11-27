@@ -13,6 +13,8 @@ kotlin = "2.0.0"
 
 compose-bom = "2025.06.01"
 kotlinxCoroutinesTest = "1.7.3"
+mapsCompose = "4.2.0"
+playServicesMaps = "18.2.0"
 room = "2.7.2"
 datastore = "1.1.7"
 location = "21.3.0"
@@ -80,6 +82,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 # 🗃️ Room's main runtime for database access.
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+play-services-maps-v1820 = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 
 # 🧪 Kotlin-friendly version of Room with coroutine support and practical extensions.

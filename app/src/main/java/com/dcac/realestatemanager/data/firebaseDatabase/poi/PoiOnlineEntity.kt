@@ -13,5 +13,7 @@ data class PoiOnlineEntity(
     val name: String = "",
     val type: String = "",
     val address: String,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
     val updatedAt: Long = System.currentTimeMillis()
 )

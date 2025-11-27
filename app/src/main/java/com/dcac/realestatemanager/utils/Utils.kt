@@ -2,6 +2,7 @@ package com.dcac.realestatemanager.utils
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkInfo
@@ -124,6 +125,15 @@ object Utils {
             "Restaurant" -> R.drawable.restaurant_24px
             else -> R.drawable.close_24px
         }
+    }
+
+    fun getColorForPoiType(type: String): Int = when (type) {
+        "School" -> Color.CYAN
+        "Grocery" -> Color.GREEN
+        "Bakery" -> Color.YELLOW
+        "Butcher" -> Color.RED
+        "Restaurant" -> Color.MAGENTA
+        else -> Color.GRAY
     }
 
 }

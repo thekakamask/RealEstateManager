@@ -37,6 +37,10 @@ data class PropertyEntity(
     val rooms: Int,
     val description: String,
     val address: String,
+    @ColumnInfo(name = "latitude")
+    val latitude: Double? = null,
+    @ColumnInfo(name = "longitude")
+    val longitude: Double? = null,
     @ColumnInfo(name = "is_sold")
     val isSold: Boolean,
     @ColumnInfo(name = "entry_date")

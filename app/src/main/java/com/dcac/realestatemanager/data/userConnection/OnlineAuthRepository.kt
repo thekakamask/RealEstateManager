@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.userConnection
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.channels.awaitClose
@@ -34,27 +35,28 @@ class OnlineAuthRepository(
     // PERFORM LOGIN USING EMAIL/PASSWORD
     override suspend fun signInWithEmail(email: String, password: String): Result<FirebaseUser?> {
         return try {
-            // ATTEMPT TO SIGN IN AND AWAIT COMPLETION (SUSPENDING)
             val authResult = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            Result.success(authResult.user) // RETURN THE AUTHENTICATED USER
+            Log.d("AUTH", "Login success for ${authResult.user?.email}")
+            Result.success(authResult.user)
         } catch (e: Exception) {
-            Result.failure(e) // RETURN FAILURE WITH EXCEPTION
+            Log.e("AUTH", "Login failed: ${e.message}", e)
+            Result.failure(e)
         }
     }
 
-    // PERFORM ACCOUNT CREATION USING EMAIL/PASSWORD
     override suspend fun signUpWithEmail(email: String, password: String): Result<FirebaseUser?> {
         return try {
-            // CREATE USER ACCOUNT AND AWAIT COMPLETION
+            Log.d("AUTH", "Attempting to sign up user with email: $email")
             val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            Result.success(authResult.user) // RETURN THE NEWLY CREATED USER
+            Log.d("AUTH", "User sign-up success. UID: ${authResult.user?.uid}, Email: ${authResult.user?.email}")
+            Result.success(authResult.user)
         } catch (e: Exception) {
-            Result.failure(e) // RETURN FAILURE WITH EXCEPTION
+            Log.e("AUTH", "User sign-up failed: ${e.message}", e)
+            Result.failure(e)
         }
     }
 
-    // LOG OUT THE CURRENT USER
     override suspend fun signOut() {
-        firebaseAuth.signOut() // INVALIDATE SESSION AND CLEAR LOCAL CREDENTIALS
+        firebaseAuth.signOut()
     }
 }
