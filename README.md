@@ -15,20 +15,13 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - 🗺️ Added Google Maps integration with dynamic markers for properties and POIs.
-   - 📍 Implemented real-time user location tracking with FusedLocationProviderClient.
-   - 📌 Geolocation (latitude & longitude) is now saved once at creation and synced to Firebase.
-   - 🧱 Extended data models with latitude and longitude fields across all layers.
-   - 🌐 Added offline-aware fallback UI for map when no internet connection is available.
-   - 🚀 Optimized map performance: map now displays immediately after user location is fetched.
-   - 🧩 Separated UI loading states for user location and marker data to improve user experience.
-   - ✅ Removed runtime geocoding at map display for better performance and offline support.
+   - 🎯 Added dynamic map filtering, properties displayed on the map now update according to active filters.
+   - 🖼️ Fixed static map duplication bug: each property now generates a uniquely named map image file.
+   - 📄 Added full property info (photos, agent, POIs) to the Property Details screen.
    
 
 ## ❌ **NEXT UPDATES**
 
-   - ⚠️ Implement filters into the GoogleMapScreen. 
-   - ⚠️ Implement the DetailPage for properties. 
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - 🎨 Continue UI implementatation.
    - 💾 Prepopulate sample data.
@@ -41,8 +34,8 @@ This project is developed using modern Android architecture principles, with a f
    - 🏠 **Property Listings** :
 
       - 🟩 **IN PROGRESS** Create/edit property listings.
-      - 🟩 **IN PROGRESS** View detail and photos of each property.
-      - 🟩 **IN PROGRESS** Add status (available / sold).
+      - ✅ **DONE** View detail and photos of each property.
+      - ✅ **DONE** Add status (available / sold).
       - 🟩 **IN PROGRESS** Add real estate agent assigned to each listing.
    
    - 📍 **Geolocation** :
@@ -250,6 +243,11 @@ This project is developed using modern Android architecture principles, with a f
    ![HomePage with GoogleMapScreen](screenshots/home_page_4.png)
    ![HomePage with GoogleMapScreen (MenuDrawer open)](screenshots/home_page_5.png)
    ![HomePage with GoogleMapScreen (FilterScreen open)](screenshots/home_page_6.png)
+
+- **DetailPage**:
+
+   ![DetailPage](screenshots/detail_page.png)
+   ![DetailPage2](screenshots/detail_page_2.png)
 
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

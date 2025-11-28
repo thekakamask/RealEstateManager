@@ -1,80 +1,64 @@
 package com.dcac.realestatemanager.ui.propertyDetailsPage
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapRepository
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsUiState.*
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
-import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapConfig
-import com.dcac.realestatemanager.data.offlineStaticMap.createFromProperty
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PropertyDetailsViewModel @Inject constructor(
-    private val propertyRepository: PropertyRepository, // Gets full property data (with POIs, photos, user)
-    private val staticMapRepository: StaticMapRepository, // Used to fetch and save the static map image
-    @ApplicationContext private val appContext: Context // Needed to save the image in local storage
+    private val userRepository: UserRepository,
+    private val propertyRepository: PropertyRepository,
+    private val photoRepository: PhotoRepository,
+    private val poiRepository: PoiRepository,
+    private val crossRefRepository: PropertyPoiCrossRepository,
 ) : ViewModel(), IPropertyDetailsViewModel {
 
-    // Backing property for UI state (Loading, Success, Error)
     private val _uiState = MutableStateFlow<PropertyDetailsUiState>(Loading)
     override val uiState: StateFlow<PropertyDetailsUiState> = _uiState.asStateFlow()
 
-    // Called when navigating to the PropertyDetails screen
-    override fun loadPropertyDetails(propertyId: Long) {
-        /*viewModelScope.launch {
-            _uiState.value = Loading  // Start with loading state
+    override fun loadPropertyDetails(propertyId: String) {
+        viewModelScope.launch {
+            try {
+                val property = propertyRepository.getPropertyById(propertyId).firstOrNull()
+                if (property != null) {
+                    val user = userRepository.getUserById(property.universalLocalUserId).firstOrNull()
+                    val photos = photoRepository.getPhotosByPropertyId(propertyId).firstOrNull() ?: emptyList()
+                    val crossRefs = crossRefRepository.getAllCrossRefs().firstOrNull() ?: emptyList()
+                    val allPoiS = poiRepository.getAllPoiS().firstOrNull() ?: emptyList()
 
-            // Fetch property from local DB (as Flow)
-            propertyRepository.getPropertyById(propertyId)
-                .catch { e -> // If anything fails (DB error, etc.)
-                    _uiState.value = Error("Failed to load property: ${e.message}")
+                    val linkedPoiIds = crossRefs
+                        .filter {it.universalLocalPropertyId == propertyId }
+                        .map {it.universalLocalPoiId}
+
+                    val propertyPoiS = allPoiS.filter {it.universalLocalId in linkedPoiIds}
+
+                    val fullProperty = property.copy(
+                        photos= photos,
+                        poiS = propertyPoiS
+                    )
+
+                    _uiState.value = Success(
+                        fullProperty,
+                        userName = user?.agentName ?: "Unknown"
+                    )
+                } else {
+                    _uiState.value = Error("Property not found")
                 }
-                .collectLatest { property -> // Collect the latest value emitted
-                    if (property == null) {
-                        _uiState.value = Error("Property not found.")
-                        return@collectLatest
-                    }
-
-                    // If the property already has a static map saved, skip generation
-                    if (!property.staticMapPath.isNullOrEmpty()) {
-                        _uiState.value = Success(property)
-                        return@collectLatest
-                    }
-
-                    // Creates the StaticMapConfig (based on address)
-                    val config = StaticMapConfig.createFromProperty(property)
-
-                    // Call Retrofit API to get map image bytes
-                    val bytes = staticMapRepository.getStaticMapImage(config)
-
-                    if (bytes != null) {
-                        // Save image locally
-                        val fileName = "static_map_${property.id}.png"
-                        val savedPath = staticMapRepository.saveStaticMapToLocal(appContext, fileName, bytes)
-
-                        // If saved successfully, update property
-                        val updatedProperty = if (savedPath != null) {
-                            property.copy(staticMapPath = savedPath)
-                        } else {
-                            property // fallback: return without static map
-                        }
-
-                        _uiState.value = Success(updatedProperty)
-                    } else {
-                        // No map, but still return property (not critical)
-                        _uiState.value = Success(property)
-                    }
-                }
-        }*/
+            } catch (e: Exception) {
+                _uiState.value = Error("Failed to load property: ${e.message}")
+            }
+        }
     }
 }

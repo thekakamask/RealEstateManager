@@ -29,8 +29,6 @@ class OnlineGoogleMapRepository(
     private val poiRepository: PoiRepository
 ) : GoogleMapRepository {
 
-    private val geocodeCache = mutableMapOf<String, Location>()
-
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
@@ -88,31 +86,6 @@ class OnlineGoogleMapRepository(
         } catch (e: Exception) {
             e.printStackTrace()
             null
-        }
-    }
-
-    override suspend fun geocodeAddress(address: String): Location? {
-        geocodeCache[address]?.let {
-            return it
-        }
-
-        return withContext(Dispatchers.IO) {
-            try {
-                val geocoder = Geocoder(context)
-                val results = geocoder.getFromLocationName(address, 1)
-                if (!results.isNullOrEmpty()) {
-                    val geoResult = results.first()
-                    Location("").apply {
-                        latitude = geoResult.latitude
-                        longitude = geoResult.longitude
-                    }.also {
-                        geocodeCache[address] = it
-                    }
-                } else null
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
         }
     }
 

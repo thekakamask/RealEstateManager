@@ -57,7 +57,7 @@ sealed class RealEstateDestination: NavDestination {
         override val route = "property_details/{propertyId}"
         override val titleRes = R.string.property_details
 
-        fun createRoute(propertyId: Long): String = "property_details/$propertyId"
+        fun createRoute(propertyId: String): String = "property_details/$propertyId"
     }
 
     data object CreateProperty : RealEstateDestination() {

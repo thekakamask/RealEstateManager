@@ -1055,5 +1055,32 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Improves performance, avoids crashes in offline mode, and removes dependency on the Geocoder service.
 
 
+### 🔹 **Update #36**
+
+  - 🎯 **Map-based dynamic filtering**
+    - GoogleMapScreen now supports advanced property filtering, synchronized with the filter system used in PropertiesListScreen.
+    - Filters (type, price range, surface range, status) are passed from HomeUiState to both list and map views.
+    - GoogleMapViewModel applies filters using PropertyRepository and updates the UI state accordingly.
+    - The GoogleMapUiState.Success state now includes isFiltered and activeFilters fields for better UI control.
+    - The map updates markers in real-time based on the selected filters, offering a consistent and unified UX.
+
+  - 🔄 **ViewModel state parity**
+    - The filtering logic is now fully shared between the list and map screens, ensuring consistency.
+    - Both screens react to the same PropertyFilters object and load filtered or full datasets accordingly.
+    - Code duplication has been reduced by centralizing filtering in the repository layer.
+
+  - 💡 **Idle UI state for GoogleMap**
+    - Introduced a new Idle state in googleMapUiState, enabling the map to reset its display when no data is available.
+    - Helps manage UX during state transitions (e.g., after filter reset or screen changes).
+
+  - 🖼️ **Improved static map generation and persistence**
+    - Fixed a critical issue where static maps generated during property creation in the StepScreen were always overwriting the same file. Each property now generates a static map image file using a unique name based on its ID, preventing any loss of data or map duplication.
+    - The StepScreen now correctly saves and persists static map files for each property independently, even when multiple properties are created or modified consecutively. This change ensures full compatibility with offline usage and improves reliability of map rendering across the app.
+
+  - 📄 **Added Property Details screen**
+    - The PropertyDetailsPage was Added and display complete view of the property, integrating a static map display at the bottom, agent information, associated POIs with icons, and dynamic image carousels.
+    - Static maps now appear seamlessly in the layout with full width and no border styling, offering a cleaner and more consistent visual integration. Conditional logic was added to handle null fields (like sale date), and visual separators (dividers) improve content readability.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

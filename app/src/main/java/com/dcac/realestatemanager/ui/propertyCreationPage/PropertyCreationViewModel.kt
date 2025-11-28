@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
 import android.content.Context
+import java.util.UUID
 
 @HiltViewModel
 class PropertyCreationViewModel @Inject constructor(
@@ -226,7 +227,8 @@ class PropertyCreationViewModel @Inject constructor(
 
             val bytes = staticMapRepository.getStaticMapImage(config)
             if (bytes != null) {
-                val path = staticMapRepository.saveStaticMapToLocal(context, "temp_static_map.png", bytes)
+                val uniqueFileName = "static_map_${UUID.randomUUID()}.png"
+                val path = staticMapRepository.saveStaticMapToLocal(context, uniqueFileName, bytes)
                 updateDraft { it.copy(staticMapPath = path) }
                 updateState(
                     isLoadingMap = false,
@@ -246,7 +248,7 @@ class PropertyCreationViewModel @Inject constructor(
                 val localUser = userRepository.getUserByFirebaseUid(firebaseUid).firstOrNull()
                     ?: throw IllegalStateException("No local user found for uid=$firebaseUid")
 
-                val propertyId = java.util.UUID.randomUUID().toString()
+                val propertyId = UUID.randomUUID().toString()
                 val propertyAddress = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}"
                 val propertyLatLng = geocodeAddress(context, propertyAddress)
 

@@ -65,7 +65,8 @@ import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit,
-    onAddPropertyClick: () -> Unit
+    onAddPropertyClick: () -> Unit,
+    onPropertyClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -282,12 +283,18 @@ fun HomeScreen(
                         is HomeDestination.PropertyList -> {
                             PropertiesListScreen(
                                 filters = state.filterUiState.toFilters(),
-                                onPropertyClick = { /* ... */ }
+                                onPropertyClick = { property ->
+                                    onPropertyClick(property.universalLocalId)
+                                }
                             )
                         }
                         is HomeDestination.GoogleMap -> {
                             GoogleMapScreen(
-                                onPropertyClick = { /* ... */ })
+                                filters = state.filterUiState.toFilters(),
+                                onPropertyClick = { property ->
+                                    onPropertyClick(property.property.universalLocalId)
+                                }
+                            )
                         }
                     }
                 }

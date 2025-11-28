@@ -10,7 +10,7 @@ sealed class PropertyDetailsUiState {
     @Immutable
     data class Success(
         val property: Property,
-        val isMapAvailable: Boolean = property.staticMapPath != null
+        val userName: String
     ) : PropertyDetailsUiState()
 
     @Immutable

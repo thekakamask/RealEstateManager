@@ -275,6 +275,14 @@
     <string name="user_marker_snippet">Your current location</string>
     <string name="xml_custom_marker_background_content_description">Marker background\n</string>
     <string name="xml_custom_marker_icon_description">Marker icon description</string>
+    <string name="property_map_screen_idle_message">No data to display at this moment</string>
 
+    <!--Details page -->
+    <string name="details_page_top_bar_app_icon_content_description">App icon</string>
+    <string name="details_page_top_bar_back_button_content_description">back</string>
+    <string name="details_page_loading">Loading…</string>
+    <string name="details_page_text_available">Available</string>
+    <string name="details_page_static_map_content_description">Static map</string>
+    <string name="details_page_text_static_map_not_available">Map not available</string>
 
 </resources>

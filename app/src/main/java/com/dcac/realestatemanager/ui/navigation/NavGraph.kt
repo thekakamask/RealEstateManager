@@ -2,6 +2,8 @@ package com.dcac.realestatemanager.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dcac.realestatemanager.ui.homePage.HomeScreen
@@ -13,11 +15,12 @@ import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ChatContactP
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ContactInfoPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.EmailContactPage
 import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationPage
+import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsPage
 
 @Composable
 fun RealEstateNavGraph(
     navController: NavHostController,
-    isUserLoggedIn: Boolean, // Determine from ViewModel or state
+    isUserLoggedIn: Boolean,
 ) {
     NavHost(
         navController = navController,
@@ -102,10 +105,10 @@ fun RealEstateNavGraph(
 
         composable( route = RealEstateDestination.Home.route) {
             HomeScreen(
-                /*onPropertyClick = { propertyId ->
+                onPropertyClick = { propertyId ->
                     navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
                 },
-                onAccountClick = {
+                /*onAccountClick = {
                     navController.navigate(RealEstateDestination.Account.route)
                 },
                 onUserPropertiesClick = {
@@ -141,19 +144,18 @@ fun RealEstateNavGraph(
             )
         }
 
-        /*composable(
-            // Define a composable destination in the NavGraph with a dynamic route parameter `propertyId`
-            route = RealEstateDestination.PropertyDetails.route, // e.g. "property_details/{propertyId}"
-            // Declare the argument(s) expected by this route and their type(s)
-            arguments = listOf(navArgument("propertyId") { type = NavType.LongType })
+        composable(
+            route = RealEstateDestination.PropertyDetails.route,
+            arguments = listOf(navArgument("propertyId") { type = NavType.StringType })
         ) { backStackEntry ->
-            // Extract the actual value of `propertyId` from the navigation back stack entry
-            // If it's missing, default to -1L (a fallback value to avoid crash)
-            val propertyId = backStackEntry.arguments?.getLong("propertyId") ?: -1L
-            // Display the PropertyDetailsScreen composable, passing the extracted propertyId
-            PropertyDetailsScreen(propertyId = propertyId)
+            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+            PropertyDetailsPage(
+                propertyId = propertyId,
+                onBack = { navController.popBackStack() }
+            )
         }
 
+        /*
         composable(route = RealEstateDestination.Account.route) {
             AccountScreen()
         }

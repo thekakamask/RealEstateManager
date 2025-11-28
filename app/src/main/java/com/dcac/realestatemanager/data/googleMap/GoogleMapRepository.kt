@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface GoogleMapRepository {
     suspend fun getUserLocation(): Location?
-    suspend fun geocodeAddress(address: String): Location?
     fun getAllProperties(): Flow<List<Property>>
     fun getAllPoiS(): Flow<List<Poi>>
 }

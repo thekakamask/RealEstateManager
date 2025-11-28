@@ -4,6 +4,7 @@ appcompat = "1.7.1"
 coilCompose = "2.4.0"
 constraintlayout = "2.2.1"
 firebaseStorageKtx = "21.0.0"
+foundation = "1.9.5"
 junit = "4.13.2"
 androidxJunit = "1.2.1"
 espressoCore = "3.6.1"
@@ -53,6 +54,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
 # 🧪 Used for classic Java unit tests (e.g. business logic).
+androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -157,7 +159,6 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 
 # For Hilt Navigation Compose
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExt" }
-
 
 
 [plugins]
