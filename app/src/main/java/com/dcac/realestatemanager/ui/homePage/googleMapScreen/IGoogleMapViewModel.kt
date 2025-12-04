@@ -1,6 +1,6 @@
 package com.dcac.realestatemanager.ui.homePage.googleMapScreen
 
-import com.dcac.realestatemanager.ui.homePage.PropertyFilters
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
 import kotlinx.coroutines.flow.StateFlow
 
 interface IGoogleMapViewModel {

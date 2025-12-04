@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcac.realestatemanager.data.googleMap.GoogleMapRepository
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
-import com.dcac.realestatemanager.ui.homePage.PropertyFilters
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -79,7 +79,8 @@ class GoogleMapViewModel @Inject constructor(
                     minPrice = filters.minPrice,
                     maxPrice = filters.maxPrice,
                     type = filters.selectedType,
-                    isSold = filters.isSold
+                    isSold = filters.isSold,
+                    sortOrder = filters.sortOrder
                 ).first()
 
                 val poiS = mapRepository.getAllPoiS().first()

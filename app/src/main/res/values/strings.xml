@@ -285,4 +285,11 @@
     <string name="details_page_static_map_content_description">Static map</string>
     <string name="details_page_text_static_map_not_available">Map not available</string>
 
+    <!--UserProperties page -->
+    <string name="userProperties_page_top_bar_back_button_content_description">back</string>
+    <string name="userProperties_page_top_bar_icon_content_description">My properties icon</string>
+    <string name="userProperties_page_top_bar_app_text">My properties</string>
+    <string name="userProperties_page_top_bar_filter_icon_content_description">Filter icon</string>
+    <string name="user_properties_page_empty_properties_message">No properties find</string>
+
 </resources>

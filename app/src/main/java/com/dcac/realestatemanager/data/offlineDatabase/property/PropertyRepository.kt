@@ -3,6 +3,8 @@ package com.dcac.realestatemanager.data.offlineDatabase.property
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyWithPoiS
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
+import com.dcac.realestatemanager.ui.filter.PropertySortOrder
 import kotlinx.coroutines.flow.Flow
 
 interface PropertyRepository {
@@ -11,14 +13,22 @@ interface PropertyRepository {
     fun getAllPropertiesByDate(): Flow<List<Property>>
     fun getAllPropertiesByAlphabetic(): Flow<List<Property>>
     fun getPropertyById(id: String): Flow<Property?>
-    fun getPropertiesByUserId(userId: String): Flow<List<Property>>
+    fun getPropertiesByUserIdAlphabetic(userId: String): Flow<List<Property>>
+    fun getFullPropertiesByUserIdAlphabetic(userId: String): Flow<List<Property>>
+    fun getPropertiesByUserIdDate(userId: String): Flow<List<Property>>
+    fun getFullPropertiesByUserIdDate(userId: String): Flow<List<Property>>
     fun searchProperties(
         minSurface: Int?,
         maxSurface: Int?,
         minPrice: Int?,
         maxPrice: Int?,
         type: String?,
-        isSold: Boolean?
+        isSold: Boolean?,
+        sortOrder: PropertySortOrder
+    ): Flow<List<Property>>
+    fun searchUserProperties(
+        userId: String,
+        filters: PropertyFilters
     ): Flow<List<Property>>
     suspend fun markPropertyAsSold(propertyId: String, saleDate: String, updatedAt: Long)
 

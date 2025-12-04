@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.ui.homePage
+package com.dcac.realestatemanager.ui.filter
 
 enum class PropertySortOrder {
     ALPHABETIC,

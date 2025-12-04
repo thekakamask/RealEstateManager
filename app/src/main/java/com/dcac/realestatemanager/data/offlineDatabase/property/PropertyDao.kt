@@ -23,19 +23,22 @@ interface PropertyDao {
     fun getAllPropertiesByAlphabetic(): Flow<List<PropertyEntity>>
     @Query("SELECT * FROM properties WHERE id = :id AND is_deleted = 0 LIMIT 1")
     fun getPropertyById(id: String): Flow<PropertyEntity?>
-    @Query("SELECT * FROM properties WHERE user_id = :userId AND is_deleted = 0")
-    fun getPropertyByUserId(userId: String): Flow<List<PropertyEntity>>
+    @Query("SELECT * FROM properties WHERE user_id = :userId AND is_deleted = 0 ORDER BY title ASC")
+    fun getPropertyByUserIdAlphabetic(userId: String): Flow<List<PropertyEntity>>
+    @Query("SELECT * FROM properties WHERE user_id = :userId AND is_deleted = 0 ORDER BY entry_date DESC")
+    fun getPropertyByUserIdDate(userId: String): Flow<List<PropertyEntity>>
     @Query("""
-        SELECT * FROM properties
-        WHERE is_deleted = 0
-          AND (:minSurface IS NULL OR surface >= :minSurface)
-          AND (:maxSurface IS NULL OR surface <= :maxSurface)
-          AND (:minPrice IS NULL OR price >= :minPrice)
-          AND (:maxPrice IS NULL OR price <= :maxPrice)
-          AND (:type IS NULL OR type = :type)
-          AND (:isSold IS NULL OR is_sold = :isSold)
-    """)
-    fun searchProperties(
+    SELECT * FROM properties
+    WHERE is_deleted = 0
+      AND (:minSurface IS NULL OR surface >= :minSurface)
+      AND (:maxSurface IS NULL OR surface <= :maxSurface)
+      AND (:minPrice IS NULL OR price >= :minPrice)
+      AND (:maxPrice IS NULL OR price <= :maxPrice)
+      AND (:type IS NULL OR type = :type)
+      AND (:isSold IS NULL OR is_sold = :isSold)
+    ORDER BY entry_date DESC
+""")
+    fun searchPropertiesByDate(
         minSurface: Int?,
         maxSurface: Int?,
         minPrice: Int?,
@@ -43,6 +46,68 @@ interface PropertyDao {
         type: String?,
         isSold: Boolean?
     ): Flow<List<PropertyEntity>>
+    @Query("""
+    SELECT * FROM properties
+    WHERE is_deleted = 0
+      AND (:minSurface IS NULL OR surface >= :minSurface)
+      AND (:maxSurface IS NULL OR surface <= :maxSurface)
+      AND (:minPrice IS NULL OR price >= :minPrice)
+      AND (:maxPrice IS NULL OR price <= :maxPrice)
+      AND (:type IS NULL OR type = :type)
+      AND (:isSold IS NULL OR is_sold = :isSold)
+    ORDER BY title ASC
+""")
+    fun searchPropertiesByAlphabetic(
+        minSurface: Int?,
+        maxSurface: Int?,
+        minPrice: Int?,
+        maxPrice: Int?,
+        type: String?,
+        isSold: Boolean?
+    ): Flow<List<PropertyEntity>>
+
+    @Query("""
+    SELECT * FROM properties
+    WHERE user_id = :userId AND is_deleted = 0
+      AND (:minSurface IS NULL OR surface >= :minSurface)
+      AND (:maxSurface IS NULL OR surface <= :maxSurface)
+      AND (:minPrice IS NULL OR price >= :minPrice)
+      AND (:maxPrice IS NULL OR price <= :maxPrice)
+      AND (:type IS NULL OR type = :type)
+      AND (:isSold IS NULL OR is_sold = :isSold)
+    ORDER BY title ASC
+""")
+    fun searchUserPropertiesByAlphabetic(
+        userId: String,
+        minSurface: Int?,
+        maxSurface: Int?,
+        minPrice: Int?,
+        maxPrice: Int?,
+        type: String?,
+        isSold: Boolean?
+    ): Flow<List<PropertyEntity>>
+
+    @Query("""
+    SELECT * FROM properties
+    WHERE user_id = :userId AND is_deleted = 0
+      AND (:minSurface IS NULL OR surface >= :minSurface)
+      AND (:maxSurface IS NULL OR surface <= :maxSurface)
+      AND (:minPrice IS NULL OR price >= :minPrice)
+      AND (:maxPrice IS NULL OR price <= :maxPrice)
+      AND (:type IS NULL OR type = :type)
+      AND (:isSold IS NULL OR is_sold = :isSold)
+    ORDER BY entry_date DESC
+""")
+    fun searchUserPropertiesByDate(
+        userId: String,
+        minSurface: Int?,
+        maxSurface: Int?,
+        minPrice: Int?,
+        maxPrice: Int?,
+        type: String?,
+        isSold: Boolean?
+    ): Flow<List<PropertyEntity>>
+
     @Query("UPDATE properties SET is_sold = 1, sale_date = :saleDate, updated_at = :updatedAt WHERE id = :propertyId")
     suspend fun markPropertyAsSold(propertyId: String, saleDate: String, updatedAt: Long)
 

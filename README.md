@@ -14,11 +14,16 @@ This project is developed using modern Android architecture principles, with a f
 
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
-   
-   - 🎯 Added dynamic map filtering, properties displayed on the map now update according to active filters.
-   - 🖼️ Fixed static map duplication bug: each property now generates a uniquely named map image file.
-   - 📄 Added full property info (photos, agent, POIs) to the Property Details screen.
-   
+
+   - 🏠 Added UserPropertiesPage to display properties created by the currently logged-in user
+   - 🧩 Shared PropertyFilters module applied across Home, Google Map, and User Properties screens
+   - 🔍 Unified filter bottom sheet (FilterSheetContent) with consistent UI and logic across screens
+   - ⚙️ ViewModel logic improved to avoid unnecessary queries when no filters are applied
+   - 📤 Automatically dispatches to appropriate DAO method based on filters and sort order
+   - 🗂️ Supported sorting by alphabetic or date, with full filter support (price, surface, type, sold)
+   - 🧠 resetFilters() resets to default sort (alphabetic), handled cleanly in ViewModels
+   - ✅ Filter bottom sheet now closes automatically on Apply or Reset in all screens
+
 
 ## ❌ **NEXT UPDATES**
 
@@ -36,7 +41,7 @@ This project is developed using modern Android architecture principles, with a f
       - 🟩 **IN PROGRESS** Create/edit property listings.
       - ✅ **DONE** View detail and photos of each property.
       - ✅ **DONE** Add status (available / sold).
-      - 🟩 **IN PROGRESS** Add real estate agent assigned to each listing.
+      - ✅ **DONE** Add real estate agent assigned to each listing.
    
    - 📍 **Geolocation** :
 
@@ -244,10 +249,15 @@ This project is developed using modern Android architecture principles, with a f
    ![HomePage with GoogleMapScreen (MenuDrawer open)](screenshots/home_page_5.png)
    ![HomePage with GoogleMapScreen (FilterScreen open)](screenshots/home_page_6.png)
 
+- **UserPropertiesPage**:
+
+   ![UserPropertiesPage](screenshots/user_properties_page.png)
+
 - **DetailPage**:
 
    ![DetailPage](screenshots/detail_page.png)
    ![DetailPage2](screenshots/detail_page_2.png)
+
 
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

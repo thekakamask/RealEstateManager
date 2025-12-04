@@ -26,8 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
-import com.dcac.realestatemanager.ui.homePage.PropertyFilters
-import com.dcac.realestatemanager.ui.homePage.isEmpty
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
 import com.dcac.realestatemanager.utils.Utils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
@@ -50,11 +49,7 @@ fun GoogleMapScreen(
     LaunchedEffect(filters) {
         isConnected = Utils.isInternetAvailable(context)
         if (isConnected) {
-            if (filters.isEmpty()) {
-                viewModel.loadMapData()
-            } else {
-                viewModel.applyFilters(filters)
-            }
+            viewModel.applyFilters(filters)
         }
     }
 

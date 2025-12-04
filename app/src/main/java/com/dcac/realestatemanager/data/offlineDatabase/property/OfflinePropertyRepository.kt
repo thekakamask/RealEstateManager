@@ -7,6 +7,8 @@ import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.Property
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyWithPoiS
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
+import com.dcac.realestatemanager.ui.filter.PropertySortOrder
 import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toFullModel
 import kotlinx.coroutines.flow.Flow
@@ -51,39 +53,68 @@ class OfflinePropertyRepository(
         combinePropertiesWithDetails(propertyDao.getAllPropertiesByAlphabetic())
     override fun getPropertyById(id: String): Flow<Property?> =
         propertyDao.getPropertyById(id).map { it?.toModel() }
-    override fun getPropertiesByUserId(userId: String): Flow<List<Property>> =
-        propertyDao.getPropertyByUserId(userId)
+    override fun getPropertiesByUserIdAlphabetic(userId: String): Flow<List<Property>> =
+        propertyDao.getPropertyByUserIdAlphabetic(userId)
             .map { list ->
                 list.map { it.toModel() }
             }
+    override fun getFullPropertiesByUserIdAlphabetic(userId: String): Flow<List<Property>> {
+        return combinePropertiesWithDetails(propertyDao.getPropertyByUserIdAlphabetic(userId))
+    }
+    override fun getPropertiesByUserIdDate(userId: String): Flow<List<Property>> =
+        propertyDao.getPropertyByUserIdDate(userId)
+            .map { list ->
+                list.map { it.toModel() }
+            }
+    override fun getFullPropertiesByUserIdDate(userId: String): Flow<List<Property>> {
+        return combinePropertiesWithDetails(propertyDao.getPropertyByUserIdDate(userId))
+    }
     override fun searchProperties(
         minSurface: Int?,
         maxSurface: Int?,
         minPrice: Int?,
         maxPrice: Int?,
         type: String?,
-        isSold: Boolean?
+        isSold: Boolean?,
+        sortOrder: PropertySortOrder
     ): Flow<List<Property>> {
-        val propertiesFlow = propertyDao.searchProperties(
-            minSurface, maxSurface, minPrice, maxPrice, type, isSold
-        )
-        val photosFlow = photoRepository.getAllPhotos()
-        val crossRefsFlow = propertyPoiCrossRepository.getAllCrossRefs()
-        val poiSFlow = poiRepository.getAllPoiS()
-        val usersFlow = userRepository.getAllUsers()
-
-        return combine(
-            propertiesFlow, photosFlow, crossRefsFlow, poiSFlow, usersFlow
-        ) { properties, photos, crossRefs, poiS, users ->
-            properties.mapNotNull { property ->
-                property.toFullModel(
-                    allUsers = users,
-                    photos = photos,
-                    crossRefs = crossRefs,
-                    allPoiS = poiS
-                )
-            }
+        val baseFlow = when (sortOrder) {
+            PropertySortOrder.DATE -> propertyDao.searchPropertiesByDate(
+                minSurface, maxSurface, minPrice, maxPrice, type, isSold
+            )
+            PropertySortOrder.ALPHABETIC -> propertyDao.searchPropertiesByAlphabetic(
+                minSurface, maxSurface, minPrice, maxPrice, type, isSold
+            )
         }
+
+        return combinePropertiesWithDetails(baseFlow)
+    }
+
+    override fun searchUserProperties(
+        userId: String,
+        filters: PropertyFilters
+    ): Flow<List<Property>> {
+        val baseFlow = when (filters.sortOrder) {
+            PropertySortOrder.ALPHABETIC -> propertyDao.searchUserPropertiesByAlphabetic(
+                userId,
+                filters.minSurface,
+                filters.maxSurface,
+                filters.minPrice,
+                filters.maxPrice,
+                filters.selectedType,
+                filters.isSold
+            )
+            PropertySortOrder.DATE -> propertyDao.searchUserPropertiesByDate(
+                userId,
+                filters.minSurface,
+                filters.maxSurface,
+                filters.minPrice,
+                filters.maxPrice,
+                filters.selectedType,
+                filters.isSold
+            )
+        }
+        return combinePropertiesWithDetails(baseFlow)
     }
     override suspend fun markPropertyAsSold(propertyId: String, saleDate: String, updatedAt: Long)
             = propertyDao.markPropertyAsSold(propertyId, saleDate, updatedAt)

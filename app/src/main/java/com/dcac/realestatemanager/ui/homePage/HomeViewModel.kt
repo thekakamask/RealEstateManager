@@ -6,6 +6,7 @@ import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.globalManager.UploadInterfaceManager
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

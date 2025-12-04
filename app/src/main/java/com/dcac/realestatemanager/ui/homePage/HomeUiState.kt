@@ -2,6 +2,7 @@ package com.dcac.realestatemanager.ui.homePage
 
 import androidx.compose.runtime.Immutable
 import com.dcac.realestatemanager.data.sync.SyncStatus
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
 
 sealed class HomeUiState {
 
@@ -21,20 +22,6 @@ sealed class HomeUiState {
         val showFilterSheet: Boolean = false
     ) : HomeUiState() {
 
-        val filterUiState: FilterUiState
-            get() = FilterUiState(
-                sortOrder = filters.sortOrder,
-                selectedType = filters.selectedType.orEmpty(),
-                isSold = filters.isSold,
-                minSurface = filters.minSurface?.toString().orEmpty(),
-                maxSurface = filters.maxSurface?.toString().orEmpty(),
-                minPrice = filters.minPrice?.toString().orEmpty(),
-                maxPrice = filters.maxPrice?.toString().orEmpty()
-            )
-
-        //val isDrawerClosed: Boolean
-         //   get() = !isDrawerOpen
-
         val isOnPropertyList: Boolean
             get() = currentScreen == HomeDestination.PropertyList
 
@@ -45,24 +32,3 @@ sealed class HomeUiState {
     @Immutable
     data class Error(val message: String) : HomeUiState()
 }
-
-@Immutable
-data class FilterUiState(
-    val sortOrder: PropertySortOrder,
-    val selectedType: String,
-    val isSold: Boolean?,
-    val minSurface: String,
-    val maxSurface: String,
-    val minPrice: String,
-    val maxPrice: String
-)
-
-fun FilterUiState.toFilters(): PropertyFilters = PropertyFilters(
-    sortOrder = this.sortOrder,
-    selectedType = this.selectedType.ifBlank { null },
-    isSold = this.isSold,
-    minSurface = this.minSurface.toIntOrNull(),
-    maxSurface = this.maxSurface.toIntOrNull(),
-    minPrice = this.minPrice.toIntOrNull(),
-    maxPrice = this.maxPrice.toIntOrNull()
-)

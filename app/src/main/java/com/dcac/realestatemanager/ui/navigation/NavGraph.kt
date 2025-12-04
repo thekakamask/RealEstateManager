@@ -16,6 +16,7 @@ import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ContactInfoP
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.EmailContactPage
 import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationPage
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsPage
+import com.dcac.realestatemanager.ui.userPropertiesPage.UserPropertiesPage
 
 @Composable
 fun RealEstateNavGraph(
@@ -108,12 +109,13 @@ fun RealEstateNavGraph(
                 onPropertyClick = { propertyId ->
                     navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
                 },
-                /*onAccountClick = {
-                    navController.navigate(RealEstateDestination.Account.route)
-                },
                 onUserPropertiesClick = {
                     navController.navigate(RealEstateDestination.UserProperties.route)
                 },
+                /*onAccountClick = {
+                    navController.navigate(RealEstateDestination.Account.route)
+                },
+
                 onSettingsClick = {
                     navController.navigate(RealEstateDestination.Settings.route)
                 },*/
@@ -122,7 +124,7 @@ fun RealEstateNavGraph(
                 },
                 onLogout = {
                     navController.navigate(RealEstateDestination.Welcome.route) {
-                        popUpTo(0) { inclusive = true } // Clear whole backstack
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -155,6 +157,13 @@ fun RealEstateNavGraph(
             )
         }
 
+        composable(route = RealEstateDestination.UserProperties.route) {
+            UserPropertiesPage(
+                onEditProperty = {},
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         /*
         composable(route = RealEstateDestination.Account.route) {
             AccountScreen()
@@ -164,13 +173,7 @@ fun RealEstateNavGraph(
             SettingsScreen()
         }
 
-        composable(route = RealEstateDestination.UserProperties.route) {
-            UserPropertiesScreen(
-                onEditProperty = { propertyId ->
-                    navController.navigate(RealEstateDestination.ModifyProperty.createRoute(propertyId))
-                }
-            )
-        }
+
 
         composable(
             route = RealEstateDestination.ModifyProperty.route,

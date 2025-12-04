@@ -1082,5 +1082,40 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Static maps now appear seamlessly in the layout with full width and no border styling, offering a cleaner and more consistent visual integration. Conditional logic was added to handle null fields (like sale date), and visual separators (dividers) improve content readability.
 
 
+### 🔹 **Update #37**
+
+  - 🏠 **Added UserPropertiesPage**
+    - A brand new screen was introduced to display all properties created by the currently logged-in user.
+    - The page is integrated into the navigation drawer from the HomeScreen (via onUserPropertiesClick()), respecting the app's UX flow.
+    - It uses a dedicated UserPropertiesViewModel with a clean UI state model: Idle, Loading, Success, and Error.
+    - The layout mirrors the main Property List for visual consistency across screens.
+
+  - 🔧 **Enhanced UserPropertiesViewModel with full data hydration**
+    - When loading user properties, the ViewModel performs complete data hydration with photos, POIs, and agent information.
+    - This uses new repository methods: getFullPropertiesByUserIdAlphabetic(userId) and getFullPropertiesByUserIdDate(userId).
+    - These methods reconstruct complete Property models through Flow combinators, same as in main and detail views.
+
+  - 🧩 **Shared filtering system integrated across all major screens**
+    - A common PropertyFilters module now handles filtering logic for Home, Map, and UserProperties screens.
+    - This includes: domain model, UI transformation (FilterUiState), conversion (toUiState()), and the shared FilterSheetContent UI.
+    - Both Home and UserProperties screens use the same bottom sheet and react consistently to Apply and Reset.
+    - ViewModels automatically dispatch to one of three DAO methods:
+      - getFullPropertiesByUserIdAlphabetic()
+      - getFullPropertiesByUserIdDate()
+      - searchUserProperties()
+      - based on whether filters are empty and which sort order is selected.
+    - The filter bottom sheet now closes automatically when Apply or Reset is pressed, improving UX.
+
+  - 🗂️ **Room repository refactoring for high-level property reconstruction**
+    - The offline repository now supports sorting and filtering directly with hydrated models.
+    - A centralized helper combinePropertiesWithDetails() merges Room entities into complete Property objects.
+    - Sorting by alphabetic or date, filtering by price, surface, type, or sold status is now supported across all flows.
+
+  - ⚙️ **Optimized query dispatching based on filters**
+    - ViewModels use filters.isEmpty() to avoid unnecessary calls to searchUserProperties() when no filters are applied.
+    - If filters are empty, a lightweight sorted fetch is done via getFullPropertiesByUserIdAlphabetic() or ...ByDate().
+    - This improves performance and efficiency, especially when navigating or switching users.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

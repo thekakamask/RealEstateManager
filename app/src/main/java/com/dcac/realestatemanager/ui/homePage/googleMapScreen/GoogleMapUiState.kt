@@ -2,7 +2,7 @@ package com.dcac.realestatemanager.ui.homePage.googleMapScreen
 
 import android.location.Location
 import androidx.compose.runtime.Immutable
-import com.dcac.realestatemanager.ui.homePage.PropertyFilters
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
 
 sealed class GoogleMapUiState {
 
