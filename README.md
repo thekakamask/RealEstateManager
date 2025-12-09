@@ -15,30 +15,24 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🏠 Added UserPropertiesPage to display properties created by the currently logged-in user
-   - 🧩 Shared PropertyFilters module applied across Home, Google Map, and User Properties screens
-   - 🔍 Unified filter bottom sheet (FilterSheetContent) with consistent UI and logic across screens
-   - ⚙️ ViewModel logic improved to avoid unnecessary queries when no filters are applied
-   - 📤 Automatically dispatches to appropriate DAO method based on filters and sort order
-   - 🗂️ Supported sorting by alphabetic or date, with full filter support (price, surface, type, sold)
-   - 🧠 resetFilters() resets to default sort (alphabetic), handled cleanly in ViewModels
-   - ✅ Filter bottom sheet now closes automatically on Apply or Reset in all screens
+   - 🔐 DetailsPage accessible from UserProperties, with modify property button only for properties owned by the logged-in user.
+   - ✏️ Property editing flow from DetailsPage. A modal allows selecting a section to edit (type, description, address, photos, POIs). Opens PropertyCreationPage directly at the corresponding step with pre-filled data. Changes are saved in DB.
 
 
 ## ❌ **NEXT UPDATES**
 
+   - ⚙️ Implement ParametersPage.
+   - 👤 Implement AccountPage.
+   - 🔄 Implement synchro in the UI.
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
-   - 🎨 Continue UI implementatation.
-   - 💾 Prepopulate sample data.
    - 🔔 Notification on property creation.
-   - 🛡️ Permission & Error Handling Layer.
 
 
 ## 📋 **Features**
 
    - 🏠 **Property Listings** :
 
-      - 🟩 **IN PROGRESS** Create/edit property listings.
+      - ✅ **DONE** Create/edit property listings.
       - ✅ **DONE** View detail and photos of each property.
       - ✅ **DONE** Add status (available / sold).
       - ✅ **DONE** Add real estate agent assigned to each listing.

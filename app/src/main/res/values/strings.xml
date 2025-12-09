@@ -105,8 +105,15 @@
     <string name="property_creation_help_button">Help</string>
     <string name="property_creation_next_button">Next</string>
     <string name="property_creation_finish_button">Finish</string>
+    <string name="property_creation_cancel_button">Cancel</string>
     <string name="property_creation_previous_button">Previous</string>
-    <string name="property_creation_step_1_apartment_image_description">Appartement image description</string>
+    <string name="property_creation_type_modification_title">Modify the property\'s type</string>
+    <string name="property_creation_address_modification_title">Modify the property\'s address</string>
+    <string name="property_creation_description_modification_title">Modify the property\'s description</string>
+    <string name="property_creation_poi_modification_title">Modify the property\'s Poi\'s</string>
+    <string name="property_creation_photo_modification_title">Modify the property\'s photos</string>
+
+    <string name="property_creation_step_1_apartment_image_description">Apartment image description</string>
     <string name="property_creation_step_1_title_text">Step 1</string>
     <string name="property_creation_step_1_subtitle_text">Describe the property</string>
     <string name="property_creation_step_1_text">
@@ -284,6 +291,14 @@
     <string name="details_page_text_available">Available</string>
     <string name="details_page_static_map_content_description">Static map</string>
     <string name="details_page_text_static_map_not_available">Map not available</string>
+    <string name="details_page_modify_button_description">Modify property</string>
+    <string name="edit_section_property_type">Type</string>
+    <string name="edit_section_property_address">Address</string>
+    <string name="edit_section_property_description">Description</string>
+    <string name="edit_section_property_photos">Photos</string>
+    <string name="edit_section_property_poi">Poi</string>
+    <string name="edit_section_title_text">Choose what to modify on the property</string>
+
 
     <!--UserProperties page -->
     <string name="userProperties_page_top_bar_back_button_content_description">back</string>

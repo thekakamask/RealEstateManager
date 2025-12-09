@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,11 +34,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.model.Property
+import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PropertyCreationPage(
     viewModel: PropertyCreationViewModel = hiltViewModel(),
+    mode: PropertyCreationMode = PropertyCreationMode.CREATE,
+    sectionToEdit: EditSection? = null,
+    propertyToEdit: Property? = null,
     onExit: () -> Unit,
     onInfoClick: () -> Unit,
     onFinish: () -> Unit
@@ -56,6 +63,22 @@ fun PropertyCreationPage(
     ) { uri ->
         uri?.let {
             viewModel.handlePhotoPicked(context, uri)
+        }
+    }
+
+    LaunchedEffect(propertyToEdit?.universalLocalId) {
+        if (mode == PropertyCreationMode.EDIT_SECTION && propertyToEdit != null && sectionToEdit != null) {
+            viewModel.loadDraftFromProperty(propertyToEdit, sectionToEdit)
+
+            val step = when (sectionToEdit) {
+                EditSection.TYPE -> PropertyCreationStep.PropertyType
+                EditSection.ADDRESS -> PropertyCreationStep.Address
+                EditSection.DESCRIPTION -> PropertyCreationStep.Description
+                EditSection.PHOTOS -> PropertyCreationStep.Photos
+                EditSection.POIS -> PropertyCreationStep.PoiS
+            }
+
+            viewModel.updateStep(step)
         }
     }
 
@@ -82,7 +105,7 @@ fun PropertyCreationPage(
                             }
                         }
                         Text(
-                            text = stringResource(R.string.property_creation_title),
+                            text = viewModel.topBarTitle,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Medium
                             ),
@@ -105,26 +128,19 @@ fun PropertyCreationPage(
         },
         bottomBar = {
             BottomAppBar {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    if (currentStep != PropertyCreationStep.Intro) {
-                        TextButton(onClick = { viewModel.goToPrevious() }) {
+                Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
+                    if (mode == PropertyCreationMode.EDIT_SECTION) {
+                        TextButton(onClick = { onExit() }) {
                             Text(
-                                stringResource(R.string.property_creation_previous_button),
+                                stringResource(R.string.property_creation_cancel_button),
                                 style = MaterialTheme.typography.headlineSmall
                             )
                         }
-                    } else {
-                        Spacer(modifier = Modifier)
-                    }
-                    if (currentStep == PropertyCreationStep.Confirmation){
+
                         TextButton(
                             onClick = {
-                                viewModel.createModelFromDraft(context)
+                                viewModel.updateModelFromDraft(context)
+                                onFinish()
                             },
                             enabled = isNextEnabled
                         ) {
@@ -134,86 +150,127 @@ fun PropertyCreationPage(
                             )
                         }
                     } else {
-                        TextButton(
-                            onClick = { viewModel.goToNext() },
-                            enabled = isNextEnabled
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(
-                                stringResource(R.string.property_creation_next_button),
-                                style = MaterialTheme.typography.headlineSmall
-                            )
+                            if (currentStep != PropertyCreationStep.Intro) {
+                                TextButton(onClick = { viewModel.goToPrevious() }) {
+                                    Text(
+                                        stringResource(R.string.property_creation_previous_button),
+                                        style = MaterialTheme.typography.headlineSmall
+                                    )
+                                }
+                            } else {
+                                Spacer(modifier = Modifier)
+                            }
+                            if (currentStep == PropertyCreationStep.Confirmation){
+                                TextButton(
+                                    onClick = {
+                                        viewModel.createModelFromDraft(context)
+                                    },
+                                    enabled = isNextEnabled
+                                ) {
+                                    Text(
+                                        stringResource(R.string.property_creation_finish_button),
+                                        style = MaterialTheme.typography.headlineSmall
+                                    )
+                                }
+                            } else {
+                                TextButton(
+                                    onClick = { viewModel.goToNext() },
+                                    enabled = isNextEnabled
+                                ) {
+                                    Text(
+                                        stringResource(R.string.property_creation_next_button),
+                                        style = MaterialTheme.typography.headlineSmall
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            when (currentStep) {
-                is PropertyCreationStep.Intro ->
-                    Step1IntroScreen()
-                is PropertyCreationStep.PropertyType ->
-                    Step2TypeScreen(
-                    selectedType = stepState?.draft?.type.orEmpty(),
-                    onTypeSelected = { viewModel.updateType(it) }
-                )
-                is PropertyCreationStep.Address ->
-                    Step3AddressScreen(
-                        street = stepState?.draft?.street.orEmpty(),
-                        city = stepState?.draft?.city.orEmpty(),
-                        postalCode = stepState?.draft?.postalCode.orEmpty(),
-                        country = stepState?.draft?.country.orEmpty(),
-                        onStreetChange = { viewModel.updateStreet(it) },
-                        onPostalCodeChange = { viewModel.updatePostalCode(it) },
-                        onCityChange = { viewModel.updateCity(it) },
-                        onCountryChange = { viewModel.updateCountry(it) },
-                    )
-                is PropertyCreationStep.PoiS ->
-                    Step4PoiScreen(
-                        poiList = stepState?.draft?.poiS ?: emptyList(),
-                        onTypeSelected = { index, type -> viewModel.updatePoiType(index, type) },
-                        onNameChanged = { index, name -> viewModel.updatePoiName(index, name) },
-                        onStreetChanged = { index, street -> viewModel.updatePoiStreet(index, street)},
-                        onPostalCodeChanged = { index, postal -> viewModel.updatePoiPostalCode(index, postal)},
-                        onCityChanged = { index, city -> viewModel.updatePoiCity(index, city)},
-                        onCountryChanged = { index, country -> viewModel.updatePoiCountry(index, country)}
-                    )
-                is PropertyCreationStep.Description ->
-                    Step5DescriptionScreen(
-                        title = stepState?.draft?.title.orEmpty(),
-                        price = stepState?.draft?.price ?: 0,
-                        surface = stepState?.draft?.surface ?: 0,
-                        rooms = stepState?.draft?.rooms ?: 0,
-                        description = stepState?.draft?.description.orEmpty(),
-                        onPriceChange = { viewModel.updatePrice(it) },
-                        onSurfaceChange = { viewModel.updateSurface(it) },
-                        onRoomsChange = { viewModel.updateRooms(it) },
-                        onDescriptionChange = { viewModel.updateDescription(it) },
-                        onTitleChange = {viewModel.updateTitle(it)}
-                    )
-                is PropertyCreationStep.Photos ->
-                    Step6PhotosScreen(
-                        photos = stepState?.draft?.photos ?: emptyList(),
-                        onPhotoClick = { index ->
-                            viewModel.onPhotoCellClicked(index) {
-                                launcher.launch("image/*")
+        if (state !is PropertyCreationUiState.Success) {
+            Box(modifier = Modifier.padding(innerPadding)) {
+                when (currentStep) {
+                    is PropertyCreationStep.Intro ->
+                        Step1IntroScreen()
+                    is PropertyCreationStep.PropertyType ->
+                        Step2TypeScreen(
+                            selectedType = stepState?.draft?.type.orEmpty(),
+                            onTypeSelected = { viewModel.updateType(it) }
+                        )
+                    is PropertyCreationStep.Address ->
+                        Step3AddressScreen(
+                            street = stepState?.draft?.street.orEmpty(),
+                            city = stepState?.draft?.city.orEmpty(),
+                            postalCode = stepState?.draft?.postalCode.orEmpty(),
+                            country = stepState?.draft?.country.orEmpty(),
+                            onStreetChange = { viewModel.updateStreet(it) },
+                            onPostalCodeChange = { viewModel.updatePostalCode(it) },
+                            onCityChange = { viewModel.updateCity(it) },
+                            onCountryChange = { viewModel.updateCountry(it) },
+                        )
+                    is PropertyCreationStep.PoiS ->
+                        Step4PoiScreen(
+                            poiList = stepState?.draft?.poiS ?: emptyList(),
+                            onTypeSelected = { index, type -> viewModel.updatePoiType(index, type) },
+                            onNameChanged = { index, name -> viewModel.updatePoiName(index, name) },
+                            onStreetChanged = { index, street -> viewModel.updatePoiStreet(index, street)},
+                            onPostalCodeChanged = { index, postal -> viewModel.updatePoiPostalCode(index, postal)},
+                            onCityChanged = { index, city -> viewModel.updatePoiCity(index, city)},
+                            onCountryChanged = { index, country -> viewModel.updatePoiCountry(index, country)}
+                        )
+                    is PropertyCreationStep.Description ->
+                        Step5DescriptionScreen(
+                            title = stepState?.draft?.title.orEmpty(),
+                            price = stepState?.draft?.price ?: 0,
+                            surface = stepState?.draft?.surface ?: 0,
+                            rooms = stepState?.draft?.rooms ?: 0,
+                            description = stepState?.draft?.description.orEmpty(),
+                            onPriceChange = { viewModel.updatePrice(it) },
+                            onSurfaceChange = { viewModel.updateSurface(it) },
+                            onRoomsChange = { viewModel.updateRooms(it) },
+                            onDescriptionChange = { viewModel.updateDescription(it) },
+                            onTitleChange = {viewModel.updateTitle(it)}
+                        )
+                    is PropertyCreationStep.Photos ->
+                        Step6PhotosScreen(
+                            photos = stepState?.draft?.photos ?: emptyList(),
+                            onPhotoClick = { index ->
+                                viewModel.onPhotoCellClicked(index) {
+                                    launcher.launch("image/*")
+                                }
+                            },
+                            onDeletePhoto = { index ->
+                                viewModel.removePhotoAt(index)
                             }
-                        },
-                        onDeletePhoto = { index ->
-                            viewModel.removePhotoAt(index)
-                        }
-                    )
-                is PropertyCreationStep.StaticMap ->
-                    Step7StaticMapScreen(
-                        mapBytes = stepState?.staticMapImageBytes?.toByteArray(),
-                        isLoading = stepState?.isLoadingMap == true,
-                        onLoadMap = { viewModel.fetchStaticMap(context) }
-                    )
-                is PropertyCreationStep.Confirmation ->
-                    Step8ConfirmationScreen(
-                        draft = stepState?.draft ?: return@Scaffold
-                    )
+                        )
+                    is PropertyCreationStep.StaticMap ->
+                        Step7StaticMapScreen(
+                            mapBytes = stepState?.staticMapImageBytes?.toByteArray(),
+                            isLoading = stepState?.isLoadingMap == true,
+                            onLoadMap = { viewModel.fetchStaticMap(context) }
+                        )
+                    is PropertyCreationStep.Confirmation ->
+                        Step8ConfirmationScreen(
+                            draft = stepState?.draft ?: return@Scaffold
+                        )
 
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }

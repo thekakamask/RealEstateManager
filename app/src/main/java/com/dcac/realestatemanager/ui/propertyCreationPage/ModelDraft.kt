@@ -30,3 +30,27 @@ data class PoiDraft(
     var city: String = "",
     var country: String= ""
 )
+
+data class ParsedAddress(
+    val street: String,
+    val postalCode: String,
+    val city: String,
+    val country: String
+)
+
+fun parseAddress(fullAddress: String): ParsedAddress {
+    val parts = fullAddress.split(",").map { it.trim() }
+
+    val street = parts.getOrNull(0) ?: ""
+    val cityAndPostal = parts.getOrNull(1)?.split(" ") ?: listOf()
+    val postalCode = cityAndPostal.firstOrNull() ?: ""
+    val city = cityAndPostal.drop(1).joinToString(" ")
+    val country = parts.getOrNull(2) ?: ""
+
+    return ParsedAddress(
+        street = street,
+        postalCode = postalCode,
+        city = city,
+        country = country
+    )
+}

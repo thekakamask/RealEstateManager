@@ -1,6 +1,11 @@
 package com.dcac.realestatemanager.ui.navigation
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -14,8 +19,13 @@ import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.LoginPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ChatContactPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ContactInfoPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.EmailContactPage
+import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationMode
 import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationPage
+import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationViewModel
+import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsPage
+import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsUiState
+import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsViewModel
 import com.dcac.realestatemanager.ui.userPropertiesPage.UserPropertiesPage
 
 @Composable
@@ -147,19 +157,59 @@ fun RealEstateNavGraph(
         }
 
         composable(
+            route = "edit_property/{section}/{propertyId}",
+            arguments = listOf(
+                navArgument("section") { type = NavType.StringType },
+                navArgument("propertyId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val section = EditSection.valueOf(backStackEntry.arguments?.getString("section") ?: "")
+            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+
+            val propertyDetailsViewModel: PropertyDetailsViewModel = hiltViewModel()
+            val propertyState by propertyDetailsViewModel.uiState.collectAsState()
+
+            LaunchedEffect(propertyId) {
+                propertyDetailsViewModel.loadPropertyDetails(propertyId)
+            }
+
+            val property = (propertyState as? PropertyDetailsUiState.Success)?.property
+            val creationViewModel: PropertyCreationViewModel = hiltViewModel()
+
+            if (property != null) {
+                PropertyCreationPage(
+                    mode = PropertyCreationMode.EDIT_SECTION,
+                    sectionToEdit = section,
+                    propertyToEdit = property,
+                    onExit = { navController.popBackStack() },
+                    onFinish = { navController.popBackStack() },
+                    onInfoClick = {}
+                )
+            } else {
+                Text("Loading property...")
+            }
+        }
+
+        composable(
             route = RealEstateDestination.PropertyDetails.route,
             arguments = listOf(navArgument("propertyId") { type = NavType.StringType })
         ) { backStackEntry ->
             val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
             PropertyDetailsPage(
                 propertyId = propertyId,
-                onBack = { navController.popBackStack() }
+                onModifyPropertyClick = {},
+                onBack = { navController.popBackStack() },
+                onEditSectionSelected = { section, propertyId ->
+                    navController.navigate("edit_property/${section.name}/$propertyId")
+                }
             )
         }
 
         composable(route = RealEstateDestination.UserProperties.route) {
             UserPropertiesPage(
-                onEditProperty = {},
+                onPropertyClick = { propertyId ->
+                    navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
+                },
                 onBack = { navController.popBackStack() }
             )
         }

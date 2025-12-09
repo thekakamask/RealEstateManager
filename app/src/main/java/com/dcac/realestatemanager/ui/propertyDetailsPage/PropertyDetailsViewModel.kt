@@ -8,6 +8,7 @@ import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsUiState.
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PropertyDetailsViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val propertyRepository: PropertyRepository,
     private val photoRepository: PhotoRepository,
@@ -49,9 +51,18 @@ class PropertyDetailsViewModel @Inject constructor(
                         poiS = propertyPoiS
                     )
 
+                    val firebaseUid = authRepository.currentUser?.uid
+                    val currentUserId = firebaseUid?.let {
+                        userRepository.getUserByFirebaseUid(it).firstOrNull()?.universalLocalId
+                    }
+
+                    val isOwnedByCurrentUser = currentUserId == property.universalLocalUserId
+
+
                     _uiState.value = Success(
                         fullProperty,
-                        userName = user?.agentName ?: "Unknown"
+                        userName = user?.agentName ?: "Unknown",
+                        isOwnedByCurrentUser = isOwnedByCurrentUser
                     )
                 } else {
                     _uiState.value = Error("Property not found")

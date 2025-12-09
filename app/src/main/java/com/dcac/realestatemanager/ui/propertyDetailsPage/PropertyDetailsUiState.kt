@@ -10,7 +10,8 @@ sealed class PropertyDetailsUiState {
     @Immutable
     data class Success(
         val property: Property,
-        val userName: String
+        val userName: String,
+        val isOwnedByCurrentUser: Boolean
     ) : PropertyDetailsUiState()
 
     @Immutable

@@ -3,6 +3,7 @@ package com.dcac.realestatemanager.ui.propertyDetailsPage
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,8 +44,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.dcac.realestatemanager.model.Photo
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asImageBitmap
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
@@ -55,19 +59,53 @@ import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 fun PropertyDetailsPage(
     propertyId: String,
     viewModel: PropertyDetailsViewModel = hiltViewModel(),
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onEditSectionSelected: (EditSection, String) -> Unit,
+    onModifyPropertyClick: (String) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
+    val showEditSheet = remember { mutableStateOf(false) }
+    val propertyLocalId = (uiState as? PropertyDetailsUiState.Success)?.property?.universalLocalId
 
     LaunchedEffect(propertyId) {
         viewModel.loadPropertyDetails(propertyId)
+    }
+
+    val isOwnedByCurrentUser = (uiState as? PropertyDetailsUiState.Success)?.isOwnedByCurrentUser ?: false
+    if (showEditSheet.value) {
+        EditPropertyBottomSheet(
+            onDismiss = { showEditSheet.value = false },
+            onOptionSelected = { section ->
+                showEditSheet.value = false
+                if (propertyLocalId != null) {
+                    onEditSectionSelected(section, propertyLocalId)
+                }
+            }
+        )
     }
 
     Scaffold(
         topBar = {
             PropertyDetailsTopBar(onBack = onBack)
 
+        },
+        floatingActionButton = {
+            if (isOwnedByCurrentUser && propertyLocalId != null) {
+                FloatingActionButton(
+                    onClick = { showEditSheet.value = true },
+                    modifier = Modifier
+                        .padding(end = 16.dp, bottom = 32.dp),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.modify_24px),
+                        contentDescription = stringResource(R.string.details_page_modify_button_description),
+                        modifier = Modifier.size(64.dp)
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         Box(
@@ -381,5 +419,34 @@ fun PhotoSlider(photos: List<Photo>) {
                 )
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditPropertyBottomSheet(
+    onDismiss: () -> Unit,
+    onOptionSelected: (EditSection) -> Unit
+) {
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(stringResource(R.string.edit_section_title_text), style = MaterialTheme.typography.titleLarge)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            EditSection.entries.forEach { section ->
+                Text(
+                    text = stringResource(section.labelRes),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onOptionSelected(section)
+                            onDismiss()
+                        }
+                        .padding(vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
     }
 }

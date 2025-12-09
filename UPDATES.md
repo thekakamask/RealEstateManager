@@ -1117,5 +1117,25 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - This improves performance and efficiency, especially when navigating or switching users.
 
 
+### 🔹 **Update #38**
+
+  - 🔍 **Property Details now accessible from UserPropertiesPage**
+    - The PropertyDetailsPage is now reachable when selecting a property from the UserPropertiesPage.
+    - To maintain UX consistency, the layout is reused with the same top bar and content structure as from the main list.
+    - A floating action button for modifying the property is conditionally shown only if the connected user is the property's owner.
+    - This verification uses the AuthRepository to securely fetch the current Firebase user and match their universalLocalId with the property owner.
+
+  - ✏️ **Partial Property Editing Flow via DetailsPage**
+    - From the PropertyDetailsPage, a new edit flow has been added for properties owned by the logged-in user.
+    - Tapping the floating action button opens a modal bottom sheet allowing the user to choose which part of the property to edit (type, address, description, photos, or POIs).
+    - Upon selection, the app navigates to the PropertyCreationPage in EDIT_SECTION mode, directly showing the corresponding step with pre-filled data.
+    - Each step has been adapted to allow updating only the relevant fields:
+      - For Type, Address, and Description, the update modifies the respective fields only.
+      - For Photos, existing photos are updated or removed, and new ones are inserted.
+      - For POIs, existing ones are updated by index, and new ones are inserted.
+    - The finish button follows the same validation logic as in creation mode, ensuring data consistency.
+    - The top bar dynamically reflects whether the user is in creation or editing mode and adjusts the title accordingly.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

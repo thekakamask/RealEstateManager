@@ -58,7 +58,7 @@ import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 @Composable
 fun UserPropertiesPage(
     viewModel: UserPropertiesViewModel = hiltViewModel(),
-    onEditProperty: (Long) -> Unit,
+    onPropertyClick: (String) -> Unit,
     onBack: () -> Unit
 ){
     val uiState by viewModel.uiState.collectAsState()
@@ -109,7 +109,7 @@ fun UserPropertiesPage(
             }
             UserPropertiesListContent(
                 properties = properties,
-                onEditProperty = onEditProperty,
+                onClick = onPropertyClick,
                 onBack = onBack,
                 viewModel = viewModel
             )
@@ -133,10 +133,10 @@ fun UserPropertiesPage(
 @Composable
 fun UserPropertiesListContent(
     properties: List<Property>,
-    onEditProperty: (Long) -> Unit,
+    onClick: (String) -> Unit,
     onBack: () -> Unit,
     viewModel: UserPropertiesViewModel
-) {
+){
     Scaffold(
         topBar = {
             UserPropertiesTopBar(onBack = onBack, viewModel = viewModel)
@@ -161,7 +161,10 @@ fun UserPropertiesListContent(
                 contentPadding = PaddingValues(vertical = 6.dp)
             ) {
                 items(properties) { property ->
-                    UserPropertyItem(property = property, onClick = { })
+                    UserPropertyItem(
+                        property = property,
+                        onClick = { onClick(property.universalLocalId) }
+                    )
                 }
             }
         }

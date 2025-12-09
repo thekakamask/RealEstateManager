@@ -28,10 +28,14 @@ import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
 import android.content.Context
+import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.UUID
 
 @HiltViewModel
 class PropertyCreationViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val propertyRepository: PropertyRepository,
     private val poiRepository: PoiRepository,
     private val photoRepository: PhotoRepository,
@@ -40,6 +44,9 @@ class PropertyCreationViewModel @Inject constructor(
     private val staticMapRepository: StaticMapRepository,
     private val userRepository: UserRepository
 ) : ViewModel(), IPropertyCreationViewModel {
+
+    private var propertyToEdit: Property? = null
+    private var sectionToEdit: EditSection? = null
 
     private val _uiState = MutableStateFlow<PropertyCreationUiState>(
         StepState(
@@ -73,6 +80,10 @@ class PropertyCreationViewModel @Inject constructor(
             isLoadingMap = isLoadingMap,
             staticMapImageBytes = staticMapImageBytes
         )
+    }
+
+    fun updateStep(step: PropertyCreationStep) {
+        updateState(step = step)
     }
 
     private fun validateStep(step: PropertyCreationStep, draft: PropertyDraft): Boolean = when (step) {
@@ -306,6 +317,162 @@ class PropertyCreationViewModel @Inject constructor(
         }
     }
 
+    fun loadDraftFromProperty(property: Property, section: EditSection) {
+        this.propertyToEdit = property
+        this.sectionToEdit = section
+
+        val parsedAddress = parseAddress(property.address)
+
+        val draft = PropertyDraft(
+            title = property.title,
+            type = property.type,
+            price = property.price,
+            surface = property.surface,
+            rooms = property.rooms,
+            description = property.description,
+            street = parsedAddress.street,
+            city = parsedAddress.city,
+            postalCode = parsedAddress.postalCode,
+            country = parsedAddress.country,
+            poiS = property.poiS.map {
+                val parsedPoiAddress = parseAddress(it.address)
+                PoiDraft(
+                    name = it.name,
+                    type = it.type,
+                    street = parsedPoiAddress.street,
+                    city = parsedPoiAddress.city,
+                    postalCode = parsedPoiAddress.postalCode,
+                    country = parsedPoiAddress.country
+                )
+            },
+            photos = property.photos,
+            staticMapPath = property.staticMapPath
+        )
+
+        _uiState.value = StepState(
+            currentStep = PropertyCreationStep.Intro,
+            draft = draft,
+            isNextEnabled = true
+        )
+    }
+
+    fun updateModelFromDraft(context: Context) {
+        viewModelScope.launch {
+            try {
+                val draft = stepState().draft
+                val original = propertyToEdit ?: return@launch
+                val section = sectionToEdit ?: return@launch
+
+                when (section) {
+                    EditSection.TYPE -> {
+                        val updated = original.copy(type = draft.type)
+                        propertyRepository.updatePropertyFromUI(updated)
+                    }
+
+                    EditSection.ADDRESS -> {
+                        val address = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}"
+                        val latLng = geocodeAddress(context, address)
+                        val updated = original.copy(
+                            address = address,
+                            latitude = latLng?.latitude,
+                            longitude = latLng?.longitude
+                        )
+                        propertyRepository.updatePropertyFromUI(updated)
+                    }
+
+                    EditSection.DESCRIPTION -> {
+                        val updated = original.copy(
+                            title = draft.title,
+                            price = draft.price,
+                            surface = draft.surface,
+                            rooms = draft.rooms,
+                            description = draft.description
+                        )
+                        propertyRepository.updatePropertyFromUI(updated)
+                    }
+
+                    EditSection.PHOTOS -> {
+                        val originalPhotos = original.photos.filter { it.uri.isNotBlank() }
+                        val draftPhotos = draft.photos.filter { it.uri.isNotBlank() }
+
+                        val originalUris = originalPhotos.map { it.uri }
+
+                        draftPhotos
+                            .filter { it.uri in originalUris }
+                            .forEach { draftPhoto ->
+                                val originalPhoto = originalPhotos.first { it.uri == draftPhoto.uri }
+                                val updatedPhoto = originalPhoto.copy(
+                                    description = draftPhoto.description,
+                                    updatedAt = System.currentTimeMillis()
+                                )
+                                photoRepository.updatePhotoFromUI(updatedPhoto)
+                            }
+
+                        draftPhotos
+                            .filter { it.uri !in originalUris }
+                            .forEach { newPhoto ->
+                                val inserted = newPhoto.copy(
+                                    universalLocalPropertyId = original.universalLocalId,
+                                    updatedAt = System.currentTimeMillis()
+                                )
+                                photoRepository.insertPhotoInsertFromUI(inserted)
+                            }
+
+                        originalPhotos
+                            .filter { it.uri !in draftPhotos.map { p -> p.uri } }
+                            .forEach { photoRepository.markPhotoAsDeleted(it) }
+                    }
+
+                    EditSection.POIS -> {
+                        val propertyId = original.universalLocalId
+                        val originalPoiS = original.poiS
+                        val draftPoiS = draft.poiS
+
+                        for (i in draftPoiS.indices) {
+                            val draftPoi = draftPoiS[i]
+                            val address = "${draftPoi.street}, ${draftPoi.postalCode} ${draftPoi.city}, ${draftPoi.country}"
+                            val latLng = geocodeAddress(context, address)
+
+                            if (i < originalPoiS.size) {
+                                val existingPoi = originalPoiS[i]
+                                val updatedPoi = existingPoi.copy(
+                                    name = draftPoi.name,
+                                    type = draftPoi.type,
+                                    address = address,
+                                    latitude = latLng?.latitude,
+                                    longitude = latLng?.longitude,
+                                    updatedAt = System.currentTimeMillis()
+                                )
+                                poiRepository.updatePoiFromUI(updatedPoi)
+
+                            } else {
+                                val newPoi = Poi(
+                                    universalLocalId = UUID.randomUUID().toString(),
+                                    name = draftPoi.name,
+                                    type = draftPoi.type,
+                                    address = address,
+                                    latitude = latLng?.latitude,
+                                    longitude = latLng?.longitude,
+                                    updatedAt = System.currentTimeMillis()
+                                )
+                                poiRepository.insertPoiInsertFromUI(newPoi)
+                                crossRefRepository.insertCrossRefInsertFromUI(PropertyPoiCross(propertyId, newPoi.universalLocalId))
+                            }
+                        }
+                    }
+
+                }
+
+                _uiState.value = Success(original.copy(
+                ), isUpdate = true)
+
+            } catch (e: Exception) {
+                Log.e("PropertyUpdate", "Failed to update property", e)
+                _uiState.value = Error("Error: ${e.message}")
+            }
+        }
+    }
+
     override fun resetState() {
         _uiState.value = StepState(
             currentStep = PropertyCreationStep.Intro,
@@ -313,4 +480,27 @@ class PropertyCreationViewModel @Inject constructor(
             isNextEnabled =  validateStep(PropertyCreationStep.Intro, PropertyDraft())
         )
     }
+
+    val topBarTitle: String
+        get() {
+            val state = uiState.value
+            val context = appContext
+            if (state is StepState) {
+                val section = sectionToEdit
+                return if (propertyToEdit != null && section != null) {
+                    when (section) {
+                        EditSection.TYPE -> context.getString(R.string.property_creation_type_modification_title)
+                        EditSection.ADDRESS -> context.getString(R.string.property_creation_address_modification_title)
+                        EditSection.DESCRIPTION -> context.getString(R.string.property_creation_description_modification_title)
+                        EditSection.PHOTOS -> context.getString(R.string.property_creation_photo_modification_title)
+                        EditSection.POIS -> context.getString(R.string.property_creation_poi_modification_title)
+                    }
+                } else {
+                    context.getString(R.string.property_creation_title)
+                }
+            }
+            return ""
+        }
 }
+
+
