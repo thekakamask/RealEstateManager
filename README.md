@@ -15,14 +15,17 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔐 DetailsPage accessible from UserProperties, with modify property button only for properties owned by the logged-in user.
-   - ✏️ Property editing flow from DetailsPage. A modal allows selecting a section to edit (type, description, address, photos, POIs). Opens PropertyCreationPage directly at the corresponding step with pre-filled data. Changes are saved in DB.
+   - 👤 Implemented AccountPage to view user info.
+   - ✏️ Agent name can now be edited via modal from AccountPage.
+   - 🌍 Implemented SettingsPage to change the application language (English and French).
+   - 💱 Implementedded currency setting (USD 💵 and EUR 💶).
+   - 🔄 Prices are dynamically converted according to the selected currency (stored in dollars, displayed in euros if selected).
+   - 💬 Character strings are localized, and the display adapts to the selected language.
+   - 💡 All screens adapt to the language and currency in real time without restarting.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - ⚙️ Implement ParametersPage.
-   - 👤 Implement AccountPage.
    - 🔄 Implement synchro in the UI.
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - 🔔 Notification on property creation.
@@ -122,6 +125,14 @@ This project is developed using modern Android architecture principles, with a f
          - ✅ **DONE** Implemented custom colors and shapes.
          - ✅ **DONE** Implemented custom Google Fonts.
 
+   - 🛠️ **Preferences & Settings** :
+
+      - ✅ **DONE** Change application language (English 🇺🇸 / French 🇫🇷).
+      - ✅ **DONE** Change display currency (USD 💵 / EUR 💶).
+      - ✅ **DONE** Prices are dynamically converted based on selected currency (stored in dollars).
+      - ✅ **DONE** Strings and layouts automatically adapt to selected language.
+      - ✅ **DONE** Real-time UI updates without app restart when changing language or currency.
+
    - 🔄 **Real-time status management**:
 
       - ✅ **DONE** Use of StateFlow for UI state handling.
@@ -182,7 +193,8 @@ This project is developed using modern Android architecture principles, with a f
    - **MapperUtils** : Convert between model (User) and storage representations (UserEntity, UserOnlineEntity).
    - **ContentProvider** : External data access layer.
    - **Room Cursor Support** : Custom DAO queries returning Cursor for inter-process access through ContentProvider.
-   
+   - **Jetpack DataStore (Preferences)** : Modern, asynchronous key-value storage used for persisting user preferences (language, currency, etc.).
+
 
 ## 🚀 **How to Use**
 
@@ -251,6 +263,10 @@ This project is developed using modern Android architecture principles, with a f
 
    ![DetailPage](screenshots/detail_page.png)
    ![DetailPage2](screenshots/detail_page_2.png)
+
+- **SettingsPage**:
+
+   ![SettingsPage](screenshots/settings_page.png)
 
 
 ## 🤝 **Contributions**

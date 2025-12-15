@@ -2,6 +2,8 @@ package com.dcac.realestatemanager.ui.propertyCreationPage
 
 import android.net.Uri
 import android.content.Context
+import com.dcac.realestatemanager.model.Property
+import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import kotlinx.coroutines.flow.StateFlow
 
 interface IPropertyCreationViewModel {
@@ -46,7 +48,10 @@ interface IPropertyCreationViewModel {
     fun fetchStaticMap(context: Context)
 
     // Step 7
-    fun createModelFromDraft(context: Context)
+    fun createModelFromDraft(context: Context, currency : String)
+
+    fun updateModelFromDraft(context: Context, currency: String)
+    fun loadDraftFromProperty(property: Property, section: EditSection, currency: String)
 
     // Reset
     fun resetState()

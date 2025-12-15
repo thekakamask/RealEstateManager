@@ -54,19 +54,20 @@ import androidx.compose.ui.graphics.asImageBitmap
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
+import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 
 @Composable
 fun PropertyDetailsPage(
     propertyId: String,
     viewModel: PropertyDetailsViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onEditSectionSelected: (EditSection, String) -> Unit,
-    onModifyPropertyClick: (String) -> Unit
+    onEditSectionSelected: (EditSection, String) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
     val showEditSheet = remember { mutableStateOf(false) }
     val propertyLocalId = (uiState as? PropertyDetailsUiState.Success)?.property?.universalLocalId
+    val currency = CurrencyHelper.LocalCurrency.current
 
     LaunchedEffect(propertyId) {
         viewModel.loadPropertyDetails(propertyId)
@@ -124,7 +125,10 @@ fun PropertyDetailsPage(
 
                 is PropertyDetailsUiState.Error -> {
                     Text(
-                        text = "Error : ${state.message}",
+                        text = stringResource(
+                            R.string.property_details_page_ui_state_error,
+                            state.message
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.align(Alignment.Center)
                     )
@@ -134,12 +138,31 @@ fun PropertyDetailsPage(
                     val property = state.property
                     val userName= state.userName
 
-                    val pricePerSquareMeter = calculatePricePerSquareMeter(property.price, property.surface)
+                    val displayPrice = if (currency == "EUR") {
+                        CurrencyHelper.convertDollarToEuro(property.price)
+                    } else {
+                        property.price
+                    }
+
+                    val formattedPrice = stringResource(
+                        id = CurrencyHelper.getPropertyDetailsPagePropertyPriceText(currency),
+                        displayPrice
+                    )
+
+                    val pricePerSquareMeter = calculatePricePerSquareMeter(displayPrice, property.surface)
+
+                    val formattedPricePerSquareMeter = stringResource(
+                        id = CurrencyHelper.getPropertyDetailsPagePropertyPriceSquareText(currency),
+                        pricePerSquareMeter
+                    )
 
 
-                    println("DEBUG - Photos count: ${property.photos.size}")
                     property.photos.forEach {
-                        println("DEBUG - Photo URI: ${it.uri}")
+                        println(
+                            stringResource(
+                                R.string.property_details_page_debug_photo_uri,
+                                it.uri
+                            ))
                     }
 
                     LazyColumn(
@@ -169,11 +192,18 @@ fun PropertyDetailsPage(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(text = "Date added ${property.entryDate}",
+                                        Text(text = stringResource(
+                                            R.string.property_details_page_property_entry_date_text,
+                                            property.entryDate
+                                        ),
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                         Text(
-                                            text = property.saleDate?.let { "Sale date : $it" } ?: stringResource(
+                                            text = property.saleDate?.let {
+                                                stringResource(
+                                                    R.string.property_details_page_property_sale_date_text,
+                                                    it
+                                                ) } ?: stringResource(
                                                 R.string.details_page_text_available
                                             ),
                                             style = MaterialTheme.typography.bodyLarge,
@@ -207,11 +237,11 @@ fun PropertyDetailsPage(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceAround
                                     ) {
-                                        Text(text = "${property.price} €",
+                                        Text(text = formattedPrice,
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
-                                        Text(text = "$pricePerSquareMeter €/m²",
+                                        Text(text = formattedPricePerSquareMeter,
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
@@ -221,11 +251,17 @@ fun PropertyDetailsPage(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.SpaceAround
                                     ) {
-                                        Text(text = "${property.surface} m²",
+                                        Text(text = stringResource(
+                                            R.string.property_details_page_property_surface_text,
+                                            property.surface
+                                        ),
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
-                                        Text(text = "${property.rooms} rooms",
+                                        Text(text = stringResource(
+                                            R.string.property_details_page_property_rooms_text,
+                                            property.rooms
+                                        ),
                                             style = MaterialTheme.typography.bodyLarge,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
@@ -399,7 +435,7 @@ fun PhotoSlider(photos: List<Photo>) {
 
             Image(
                 painter = rememberAsyncImagePainter(model = photo.uri),
-                contentDescription = photo.description ?: "",
+                contentDescription = photo.description ?: stringResource(R.string.property_details_page_image_content_description_empty),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
@@ -407,7 +443,11 @@ fun PhotoSlider(photos: List<Photo>) {
         }
 
         Text(
-            text = "${pagerState.currentPage + 1} / ${photos.size}",
+            text = stringResource(
+                R.string.property_details_page_photo_pager_text,
+                pagerState.currentPage + 1,
+                photos.size
+            ),
             color = Color.White,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier

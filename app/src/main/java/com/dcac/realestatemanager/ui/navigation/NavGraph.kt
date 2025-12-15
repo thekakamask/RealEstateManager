@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dcac.realestatemanager.ui.accountPage.AccountPage
 import com.dcac.realestatemanager.ui.homePage.HomeScreen
 import com.dcac.realestatemanager.ui.initialLoginPage.WelcomePage
 import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.AccountCreationPage
@@ -19,9 +20,9 @@ import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.LoginPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ChatContactPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.ContactInfoPage
 import com.dcac.realestatemanager.ui.initialLoginPage.contactScreen.EmailContactPage
+import com.dcac.realestatemanager.ui.settingsPage.SettingsPage
 import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationMode
 import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationPage
-import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationViewModel
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsPage
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsUiState
@@ -118,20 +119,19 @@ fun RealEstateNavGraph(
             HomeScreen(
                 onPropertyClick = { propertyId ->
                     navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
-                },
+                                  },
                 onUserPropertiesClick = {
                     navController.navigate(RealEstateDestination.UserProperties.route)
-                },
-                /*onAccountClick = {
+                                        },
+                onUserAccountClick = {
                     navController.navigate(RealEstateDestination.Account.route)
-                },
-
+                                     },
                 onSettingsClick = {
                     navController.navigate(RealEstateDestination.Settings.route)
-                },*/
+                                  },
                 onAddPropertyClick = {
                     navController.navigate(RealEstateDestination.CreateProperty.route)
-                },
+                                     },
                 onLogout = {
                     navController.navigate(RealEstateDestination.Welcome.route) {
                         popUpTo(0) { inclusive = true }
@@ -174,7 +174,6 @@ fun RealEstateNavGraph(
             }
 
             val property = (propertyState as? PropertyDetailsUiState.Success)?.property
-            val creationViewModel: PropertyCreationViewModel = hiltViewModel()
 
             if (property != null) {
                 PropertyCreationPage(
@@ -197,7 +196,6 @@ fun RealEstateNavGraph(
             val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
             PropertyDetailsPage(
                 propertyId = propertyId,
-                onModifyPropertyClick = {},
                 onBack = { navController.popBackStack() },
                 onEditSectionSelected = { section, propertyId ->
                     navController.navigate("edit_property/${section.name}/$propertyId")
@@ -214,24 +212,18 @@ fun RealEstateNavGraph(
             )
         }
 
-        /*
+
         composable(route = RealEstateDestination.Account.route) {
-            AccountScreen()
+            AccountPage(
+                onBack = { navController.popBackStack() },
+            )
         }
 
         composable(route = RealEstateDestination.Settings.route) {
-            SettingsScreen()
+            SettingsPage(
+                onBack = { navController.popBackStack() }
+            )
         }
-
-
-
-        composable(
-            route = RealEstateDestination.ModifyProperty.route,
-            arguments = listOf(navArgument("propertyId") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val propertyId = backStackEntry.arguments?.getLong("propertyId") ?: -1L
-            ModifyPropertyScreen(propertyId = propertyId)
-        }*/
 
     }
 

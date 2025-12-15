@@ -4,9 +4,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface IUserPreferencesRepository {
 
-    val darkModeEnabled: Flow<Boolean>
     val selectedLanguage: Flow<String>
-    suspend fun setDarkMode(enabled: Boolean)
+    val selectedCurrency: Flow<String>
+    suspend fun getCurrentLanguage(): String
     suspend fun setLanguage(lang: String)
-
+    suspend fun setCurrency(currency: String)
 }

@@ -25,21 +25,6 @@ import kotlin.math.roundToInt
 object Utils {
 
     /**
-     * 💱 Converts property price from USD to EUR.
-     * NOTE: Must be shown during the exam.
-     * @param dollars Amount in USD.
-     * @return Converted amount in EUR.
-     */
-
-    fun convertDollarToEuro(dollars: Int): Int {
-        return (dollars * 0.812).roundToInt()
-    }
-
-    fun convertEuroToDollar(euros: Int): Int {
-        return (euros / 0.812).roundToInt()
-    }
-
-    /**
      * 📅 Returns today's date in "yyyy/MM/dd" format.
      * NOTE: Must be shown during the exam.
      * @return Formatted date string.

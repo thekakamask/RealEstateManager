@@ -35,6 +35,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
@@ -43,6 +44,7 @@ import com.dcac.realestatemanager.ui.filter.PropertyFilters
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
+import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 
 @Composable
 fun PropertiesListScreen(
@@ -76,7 +78,7 @@ fun PropertiesListScreen(
         is PropertiesListUiState.Error -> {
             val errorMessage = (uiState as PropertiesListUiState.Error).message
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Error: $errorMessage", color = MaterialTheme.colorScheme.error)
+                Text(text = stringResource(R.string.property_list_screen_ui_state_error, errorMessage), color = MaterialTheme.colorScheme.error)
             }
         }
 
@@ -94,6 +96,8 @@ fun PropertyListContent(
     agentNames: Map<String, String>,
     onClick: (Property) -> Unit
 ) {
+    val context = LocalContext.current
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -104,7 +108,7 @@ fun PropertyListContent(
         items(properties) { property ->
             PropertyItem(
                 property = property,
-                agentName = agentNames[property.universalLocalUserId] ?: "Unknown",
+                agentName = agentNames[property.universalLocalUserId] ?: context.getString(R.string.property_list_screen_agent_name_message_unknown),
                 onClick = { onClick(property) }
             )
         }
@@ -120,7 +124,20 @@ fun PropertyItem(
 
     val photos = property.photos.take(3)
 
-    val pricePerSquareMeter = calculatePricePerSquareMeter(property.price, property.surface)
+    val currency = CurrencyHelper.LocalCurrency.current
+
+    val priceUnitStringRes = CurrencyHelper.getPropertyListScreenPropertyPriceText(currency)
+    val priceSquareUnitText = CurrencyHelper.getPropertyListScreenPropertyPriceSquareText(currency)
+
+    val displayPrice = if (currency == "EUR") {
+        CurrencyHelper.convertDollarToEuro(property.price)
+    } else {
+        property.price
+    }
+
+    val formattedPrice = stringResource(id = priceUnitStringRes, displayPrice)
+    val pricePerSquareMeter = calculatePricePerSquareMeter(displayPrice, property.surface)
+    val formattedPricePerSquareMeter = stringResource(id = priceSquareUnitText, pricePerSquareMeter)
 
     Card(
         modifier = Modifier
@@ -160,7 +177,10 @@ fun PropertyItem(
                     if (uri != null) {
                         AsyncImage(
                             model = uri,
-                            contentDescription = "Thumbnail $index",
+                            contentDescription = stringResource(
+                                R.string.property_list_screen_async_image_content_description,
+                                index
+                            ),
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier
                                 .weight(1f)
@@ -191,11 +211,11 @@ fun PropertyItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${property.price} €",
+                    text = formattedPrice,
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = "$pricePerSquareMeter €/m²",
+                    text = formattedPricePerSquareMeter,
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -223,7 +243,11 @@ fun PropertyItem(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "${property.rooms} rooms • ${property.surface} m²",
+                text = stringResource(
+                    R.string.property_list_screen_property_rooms_surface_text,
+                    property.rooms,
+                    property.surface
+                ),
                 style = MaterialTheme.typography.bodyLarge
             )
 

@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
+import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,10 +54,9 @@ fun PropertyCreationPage(
 
 
     val currentStep = stepState?.currentStep ?: PropertyCreationStep.Intro
-
     val isNextEnabled = stepState?.isNextEnabled == true
-
     val context = LocalContext.current
+    val currency = CurrencyHelper.LocalCurrency.current
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -68,7 +68,7 @@ fun PropertyCreationPage(
 
     LaunchedEffect(propertyToEdit?.universalLocalId) {
         if (mode == PropertyCreationMode.EDIT_SECTION && propertyToEdit != null && sectionToEdit != null) {
-            viewModel.loadDraftFromProperty(propertyToEdit, sectionToEdit)
+            viewModel.loadDraftFromProperty(propertyToEdit, section = EditSection.DESCRIPTION, currency = currency)
 
             val step = when (sectionToEdit) {
                 EditSection.TYPE -> PropertyCreationStep.PropertyType
@@ -139,7 +139,7 @@ fun PropertyCreationPage(
 
                         TextButton(
                             onClick = {
-                                viewModel.updateModelFromDraft(context)
+                                viewModel.updateModelFromDraft(context, currency)
                                 onFinish()
                             },
                             enabled = isNextEnabled
@@ -169,7 +169,7 @@ fun PropertyCreationPage(
                             if (currentStep == PropertyCreationStep.Confirmation){
                                 TextButton(
                                     onClick = {
-                                        viewModel.createModelFromDraft(context)
+                                        viewModel.createModelFromDraft(context, currency)
                                     },
                                     enabled = isNextEnabled
                                 ) {
@@ -244,7 +244,7 @@ fun PropertyCreationPage(
                             photos = stepState?.draft?.photos ?: emptyList(),
                             onPhotoClick = { index ->
                                 viewModel.onPhotoCellClicked(index) {
-                                    launcher.launch("image/*")
+                                    launcher.launch(context.getString(R.string.property_creation_launcher_image))
                                 }
                             },
                             onDeletePhoto = { index ->

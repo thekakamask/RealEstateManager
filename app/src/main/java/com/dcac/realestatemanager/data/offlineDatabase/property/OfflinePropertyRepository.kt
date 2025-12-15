@@ -145,6 +145,7 @@ class OfflinePropertyRepository(
     //UPDATES
     override suspend fun updatePropertyFromUI(property: Property) {
         propertyDao.updateProperty(property.toEntity())
+        //TODO APPELER PLUTOT UPDATE PROPERTY FORCE SYNC FALSE
     }
     override suspend fun updatePropertyFromFirebase(property: PropertyOnlineEntity, firebaseDocumentId: String) {
         propertyDao.updatePropertyFromFirebaseForcesSyncTrue(property.toEntity(firestoreId = firebaseDocumentId))

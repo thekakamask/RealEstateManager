@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Real Estate Manager</string>
+
+    <!-- Main Activity -->
+    <string name="location_permission_accepted">Permission localisation acceptée</string>
+    <string name="location_required_to_display_your_position_on_the_map">Localisation requise pour afficher votre position sur la carte.</string>
+
+
+    <!-- Navigation Titles -->
+    <string name="welcome">Bienvenue</string>
+    <string name="contact_info">Info de contact</string>
+    <string name="email_contact">Contact par email</string>
+    <string name="chat_contact">Contact par chat</string>
+    <string name="login">Connexion</string>
+    <string name="forgot_password">Mot de passe oublié</string>
+    <string name="account_creation">Création de compte</string>
+    <string name="home">Accueil</string>
+    <string name="property_details">Détails d\'une propriété</string>
+    <string name="create_property">Créer une propriété</string>
+    <string name="modify_property">Modifier une propriété</string>
+    <string name="account">Compte</string>
+    <string name="settings">Paramètres</string>
+    <string name="user_properties">Mes propriétés</string>
+
+    <!-- Welcome Page -->
+    <string name="welcome_image_content_description">Bienvenue d\'arrière plan</string>
+    <string name="welcome_back_button_content_description">Infos développeur</string>
+    <string name="welcome_app_title">Real Estate Manager</string>
+    <string name="welcome_title">Bienvenue !</string>
+    <string name="welcome_subtitle">Prenez le contrôle de vos biens immobiliers</string>
+    <string name="welcome_button_login">Se connecter</string>
+    <string name="welcome_button_register">Créez votre compte</string>
+
+    <!-- Contact Info screen -->
+    <string name="contact_info_back_button_content_description">retour</string>
+    <string name="contact_info_title">Obtenir de l\'aide</string>
+    <string name="contact_info_subtitle">On vous aide</string>
+    <string name="contact_info_text">Nous sommes disponibles du lundi au vendredi de 9 h à 18 h 30 et le samedi de 9 h à 17 h, par e-mail uniquement.</string>
+    <string name="contact_info_email_card_title">Contact par e-mail</string>
+    <string name="contact_info_email_card_text">Réponse par e-mail dans les 12 heures</string>
+    <string name="contact_info_chat_card_title">Contact par chat</string>
+    <string name="contact_info_chat_card_text">Discutez en direct avec un expert en quelques minutes</string>
+
+    <!-- Email Contact screen -->
+    <string name="email_contact_back_button_content_description">retour</string>
+    <string name="email_contact_subtitle">Décrivez votre question en détail</string>
+    <string name="email_contact_text">Nos équipes vous contacteront par e-mail dans les 12 heures ouvrables. Du lundi au vendredi, de 9 h à 18 h 30.</string>
+    <string name="email_contact_email_label">Votre email</string>
+    <string name="email_contact_subject_label">Le sujet</string>
+    <string name="email_contact_message_label">Votre message</string>
+    <string name="email_contact_email_content">exempleEmail@Exemple.com</string>
+    <string name="email_contact_subject_content">Le sujet est …</string>
+    <string name="email_contact_message_content">Écrivez votre message ici</string>
+    <string name="email_contact_button_label">Envoyer</string>
+
+    <!-- Chat Contact screen -->
+    <string name="chat_contact_back_button_content_description">retour</string>
+    <string name="chat_contact_subtitle">Cette section n\'est pas encore mise en œuvre.</string>
+    <string name="chat_contact_text">Notre équipe de développement mettra cette fonctionnalité en place sous peu.</string>
+    <string name="chat_contact_image_content_description">Image d\'erreur</string>
+
+    <!-- Login screen -->
+    <string name="login_back_button_content_description">retour</string>
+    <string name="login_title">Se connecter</string>
+    <string name="login_help_title_button">Aide</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Mot de passe</string>
+    <string name="login_email_content">exempleEmail@Exemple.com</string>
+    <string name="login_password_content">••••••</string>
+    <string name="login_forgot_password_content">Mot de passe oublié</string>
+    <string name="login_log_in_button">Se connecter</string>
+    <string name="login_log_in_in_progress">Connexion en cours…</string>
+    <string name="error_no_account_found">Aucun compte trouvé pour cette adresse e-mail.</string>
+    <string name="error_user_sync">Une erreur s\'est produite lors de la synchronisation.</string>
+    <string name="error_null_user">Firebase a renvoyé un utilisateur nul.</string>
+    <string name="error_unknown">Une erreur inconnue s\'est produite.</string>
+    <string name="error_invalid_credentials">Identifiants incorrects.</string>
+    <string name="error_user_creation">Erreur lors de la création du compte.</string>
+
+    <!-- Forgot password screen -->
+    <string name="forgot_password_button_content_description">retour</string>
+    <string name="forgot_password_title">Modifiez votre mot de passe</string>
+    <string name="forgot_password_subtitle">Mot de passe oublié ?</string>
+    <string name="forgot_password_text">Pas de problème, cela arrive même aux meilleurs d\'entre nous.</string>
+    <string name="forgot_password_email_label">Email</string>
+    <string name="forgot_password_email_content">exempleEmail@Exemple.com</string>
+    <string name="forgot_password_button">Envoyez-moi un e-mail</string>
+
+    <!-- Account creation screen -->
+    <string name="account_creation_button_content_description">retour</string>
+    <string name="account_creation_title">Account creation</string>
+    <string name="account_creation_subtitle">Création d\'un compte</string>
+    <string name="account_creation_text">Entrez vos informations pour créer votre compte.</string>
+    <string name="account_creation_email_label">Enregistrez votre adresse e-mail</string>
+    <string name="account_creation_agent_name_label">Enregistrez votre nom</string>
+    <string name="account_creation_password_label">Enregistrez votre mot de passe</string>
+    <string name="account_creation_password_confirmation_label">Confirmez votre mot de passe</string>
+    <string name="account_creation_email_content">exempleEmail@Exemple.com</string>
+    <string name="account_creation_agent_name_content">Exemple Exemple</string>
+    <string name="account_creation_password_content">••••••</string>
+    <string name="account_creation_button">Créez votre compte</string>
+    <string name="account_creation_in_progress">Création du compte en cours…</string>
+    <string name="passwords_do_not_match">Les mots de passe ne correspondent pas.</string>
+
+    <!--Property creation page -->
+    <string name="add_property">Ajouter une propriété</string>
+    <string name="property_creation_title">Ajouter une propriété</string>
+    <string name="property_creation_back_button_content_description">retour</string>
+    <string name="property_creation_help_button">Aide</string>
+    <string name="property_creation_next_button">Suivant</string>
+    <string name="property_creation_finish_button">Finir</string>
+    <string name="property_creation_cancel_button">Annuler</string>
+    <string name="property_creation_previous_button">Précédent</string>
+    <string name="property_creation_type_modification_title">Modifier le type de la propriété</string>
+    <string name="property_creation_address_modification_title">Modifier l\'adresse de la propriété</string>
+    <string name="property_creation_description_modification_title">Modifier la description de la propriété</string>
+    <string name="property_creation_poi_modification_title">Modifier les POI de la propriété</string>
+    <string name="property_creation_photo_modification_title">Modifier les photos de la propriété</string>
+    <string name="property_creation_launcher_image">image/*</string>
+
+    <string name="property_creation_step_1_apartment_image_description">Description de l\'image de l\'appartement</string>
+    <string name="property_creation_step_1_title_text">Étape 1</string>
+    <string name="property_creation_step_1_subtitle_text">Décrivez le bien immobilier</string>
+    <string name="property_creation_step_1_text">
+        Au cours de cette étape, vous ajouterez le bien immobilier que vous gérez. Décrivez-le en ajoutant toutes les informations nécessaires.
+    </string>
+    <string name="property_creation_step_2_title_text">Étape 2</string>
+    <string name="property_creation_step_2_subtitle_text">Type de bien immobilier</string>
+    <string name="property_creation_step_2_text">
+        Sélectionnez le type de bien immobilier que vous gérez.
+    </string>
+    <string name="property_creation_step_2_type_house">Maison</string>
+    <string name="property_creation_step_2_type_apartment">Appartement</string>
+    <string name="property_creation_step_2_type_studio">Studio</string>
+    <string name="property_creation_step_2_type_boat">Bateau</string>
+    <string name="property_creation_step_2_type_cabin">Cabine</string>
+    <string name="property_creation_step_2_type_castle">Chateau</string>
+    <string name="property_creation_step_2_type_motor_home">Camping-car</string>
+
+    <string name="property_creation_step_3_title_text">Étape 3</string>
+    <string name="property_creation_step_3_subtitle_text">Emplacement du bien immobilier</string>
+    <string name="property_creation_step_3_text">
+        Indiquez l\'emplacement du bien immobilier.
+    </string>
+    <string name="property_creation_step_3_text_field_icon_description">Adresse</string>
+    <string name="property_creation_step_3_text_field_placeholder_text">Entrez l\'adresse</string>
+    <string name="property_creation_step_3_button_text">Localiser</string>
+    <string name="address_not_found">adresse introuvable</string>
+    <string name ="property_creation_step_3_number_street_label">Ajoutez le numéro et le nom de la rue</string>
+    <string name ="property_creation_step_3_postal_code_label">Ajouter le code postal</string>
+    <string name ="property_creation_step_3_city_label">Ajouter la ville</string>
+    <string name ="property_creation_step_3_country_label">Ajouter le pays</string>
+    <string name="property_creation_step_3_number_street_content"><![CDATA[Numéro et rue]]></string>
+    <string name="property_creation_step_3_postal_code_content">Code postal</string>
+    <string name="property_creation_step_3_city_content">Ville</string>
+    <string name="property_creation_step_3_country_content">Pays</string>
+
+    <string name="property_creation_step_4_title_text">Étape 4</string>
+    <string name="property_creation_step_4_subtitle_text">Points d\'intérêt utiles</string>
+    <string name="property_creation_step_4_text">
+        Créez jusqu\'à 5 points d\'intérêt à proximité de votre propriété.
+    </string>
+    <string name="property_creation_step_4_poi_title">POI %1$s</string>
+    <string name="property_creation_step_4_poi_outlined_name_text_field_label">Entrer le nom du POI</string>
+    <string name="property_creation_step_4_poi_outlined_street_text_field_label">Entrez le numéro du POI et la rue</string>
+    <string name="property_creation_step_4_poi_outlined_city_text_field_label">Entrer la ville du POI</string>
+    <string name="property_creation_step_4_poi_outlined_postal_code_text_field_label">Entrez le code postal du POI</string>
+    <string name="property_creation_step_4_poi_outlined_country_text_field_label">Entrer le pays du POI</string>
+    <string name="property_creation_step_4_poi_type_school">École</string>
+    <string name="property_creation_step_4_poi_type_grocery">Épicerie</string>
+    <string name="property_creation_step_4_poi_type_bakery">Boulangerie</string>
+    <string name="property_creation_step_4_poi_type_butcher">Boucher</string>
+    <string name="property_creation_step_4_poi_type_restaurant">Restaurant</string>
+
+    <string name="property_creation_step_5_title_text">Étape 5</string>
+    <string name="property_creation_step_5_subtitle_text">Description du bien immobilier</string>
+    <string name="property_creation_step_5_text">
+        Fournir toutes les informations concernant le bien immobilier.
+    </string>
+    <string name ="property_creation_step_5_price_label">Ajouter le prix du bien immobilier</string>
+    <string name ="property_creation_step_5_surface_label">Ajouter la superficie du bien immobilier</string>
+    <string name ="property_creation_step_5_rooms_label">Ajoutez le nombre de pièces du bien immobilier</string>
+    <string name ="property_creation_step_5_description_label">Décrivez le bien immobilier</string>
+    <string name ="property_creation_step_5_title_label">Titre du bien immobilier</string>
+    <string name="property_creation_step_5_price_content">Prix</string>
+    <string name="property_creation_step_5_surface_content">Surface</string>
+    <string name="property_creation_step_5_rooms_content">Nombre de pièces</string>
+    <string name="property_creation_step_5_description_content">Description</string>
+    <string name="property_creation_step_5_title_content">Titre</string>
+    <string name="property_creation_step_5_unit_euro">€</string>
+    <string name="property_creation_step_5_unit_dollars">$</string>
+    <string name="property_creation_step_5_unit_square_meter">m²</string>
+    <string name="property_creation_step_5_number_text_field_empty" />
+
+    <string name="property_creation_step_6_title_text">Étape 6</string>
+    <string name="property_creation_step_6_subtitle_text">Ajouter une photo</string>
+    <string name="property_creation_step_6_text">
+        Ajouter des photos du bien immobilier.
+    </string>
+    <string name="property_creation_step_6_add_photo_icon_content_description">Ajouter une photo</string>
+    <string name="property_creation_step_6_delete_photo_icon_content_description">Supprimer la photo</string>
+
+    <string name="property_creation_step_7_title_text">Étape 7</string>
+    <string name="property_creation_step_7_subtitle_text">Carte statique du bien immobilier</string>
+    <string name="property_creation_step_7_text">
+        Voir le plan des environs de la propriété
+    </string>
+    <string name="property_creation_step_7_static_map_content_description">
+        Carte statique
+    </string>
+    <string name="property_creation_step_7_static_map_unavailable">
+        Carte indisponible
+    </string>
+
+    <string name="property_creation_step_8_title_text">Étape 8</string>
+    <string name="property_creation_step_8_subtitle_text">Confirmation</string>
+    <string name="property_creation_step_8_text">
+        Valider les informations relatives au bien immobilier.
+    </string>
+    <string name="property_creation_step_8_address_title">Adresse</string>
+    <string name="property_creation_step_8_street_title">Rue</string>
+    <string name="property_creation_step_8_city_title">Ville</string>
+    <string name="property_creation_step_8_postal_code_title">Code postal</string>
+    <string name="property_creation_step_8_country_title">France</string>
+    <string name="property_creation_step_8_poi_title">PoiS</string>
+    <string name="property_creation_step_8_description_title">Description</string>
+    <string name="property_creation_step_8_photos_title">Photos</string>
+    <string name="property_creation_step_8_price_title">Prix</string>
+    <string name="property_creation_step_8_surface_title">Surface</string>
+    <string name="property_creation_step_8_rooms_title">Pièces</string>
+    <string name="property_creation_step_8_map_title">Carte</string>
+    <string name="property_creation_step_8_map_content_description">Carte statique</string>
+    <string name="property_creation_step_8_map_unavailable">Carte indisponible</string>
+    <string name="property_creation_step_8_poi_text">%1$s (%2$s)</string>
+    <string name="property_creation_step_8_price_text_dollars">%1$s $</string>
+    <string name="property_creation_step_8_price_text_euro">%1$s €</string>
+    <string name="property_creation_step_8_surface_text">%1$s m²</string>
+    <string name="property_creation_step_8_rooms_text">%1$s</string>
+
+    <!--Home page -->
+    <string name="home_page_user_icon_content_description">Icone de l\'utilisateur</string>
+    <string name="home_page_user_apartment_handle">0</string>
+    <string name="home_page_user_apartment_sold">0</string>
+    <string name="home_page_user_apartment_handle_content_description">Appartements gérés</string>
+    <string name="home_page_user_apartment_sold_content_description">Appartements vendus</string>
+    <string name="home_page_navigation_drawer_user_properties_icon_content_description">Mes propriétés</string>
+    <string name="home_page_navigation_drawer_user_properties_label">Mes propriétés</string>
+    <string name="home_page_navigation_drawer_settings_icon_content_description">Paramètres</string>
+    <string name="home_page_navigation_drawer_settings_label">Paramètres</string>
+    <string name="home_page_navigation_drawer_log_out_icon_content_description">Déconnexion</string>
+    <string name="home_page_navigation_drawer_log_out_label">Déconnexion</string>
+    <string name="home_page_top_bar_user_icon_content_description">Utilisateur</string>
+    <string name="home_page_top_bar_app_icon_content_description">Icône de l\'application</string>
+    <string name="home_page_top_bar_filter_icon_content_description">Icône du filtre</string>
+    <string name="home_page_bottom_bar_list_icon_content_description">Liste</string>
+    <string name="home_page_bottom_bar_map_icon_content_description">Carte</string>
+    <string name="home_page_type_house">Maison</string>
+    <string name="home_page_type_apartment">Appartement</string>
+    <string name="home_page_type_studio">Studio</string>
+    <string name="home_page_type_boat">Bateau</string>
+    <string name="home_page_type_cabin">Cabine</string>
+    <string name="home_page_type_castle">Chateau</string>
+    <string name="home_page_type_motor_home">Camping car</string>
+    <string name="home_page_ui_state_error">Error: %1$s</string>
+
+    <!--Property list screen-->
+    <string name="property_list_screen_no_data_to_display">Aucune donnée à afficher</string>
+    <string name="property_list_screen_no_photo_content_description">Espace réservé</string>
+    <string name="property_list_screen_ui_state_error">Error: %1$s</string>
+    <string name="property_list_screen_agent_name_message_unknown">Inconnu</string>
+    <string name="property_list_screen_async_image_content_description">Vignette %1$s</string>
+    <string name="property_list_screen_property_price_text_dollars">%1$s $</string>
+    <string name="property_list_screen_property_price_text_euro">%1$s €</string>
+    <string name="property_list_screen_property_price_square_text_dollars">%1$s $/m²</string>
+    <string name="property_list_screen_property_price_square_text_euro">%1$s €/m²</string>
+    <string name="property_list_screen_property_rooms_surface_text">%1$s pièces • %2$s m²</string>
+
+    <!--Google Map screen-->
+    <string name="google_map_screen_ui_state_error">Error: %1$s</string>
+    <string name="google_map_screen_marker_snippet_dollars">%1$s $</string>
+    <string name="google_map_screen_marker_snippet_euro">%1$s €</string>
+
+    <!--Filter screen-->
+    <string name="filter_screen_title">Filtres</string>
+    <string name="filter_screen_sort_order_title">Ordre de tri</string>
+    <string name="filter_screen_sort_order_alphabetic_label">Alphabétique</string>
+    <string name="filter_screen_sort_order_date_added_label">Date d\'ajout</string>
+    <string name="filter_screen_property_type_label">
+        Type de bien immobilier (par exemple, maison, appartement, etc.)
+    </string>
+    <string name="filter_screen_status_title">Statut</string>
+    <string name="filter_screen_status_sold_label">Vendu</string>
+    <string name="filter_screen_status_available_label">Disponible</string>
+    <string name="filter_screen_status_all_label">Tous</string>
+    <string name="filter_screen_surface_min_label">Surface minimale</string>
+    <string name="filter_screen_surface_max_label">Surface maximale</string>
+    <string name="filter_screen_price_min_label">Prix minimum</string>
+    <string name="filter_screen_price_max_label">Prix maximum</string>
+    <string name="filter_screen_reset_button_label">Réinitialiser</string>
+    <string name="filter_screen_apply_button_label">Appliquer</string>
+
+    <!--Google Map screen-->
+    <string name="no_internet_connexion_text">Pas de connexion Internet. La carte Google Map ne peut pas être affichée.</string>
+    <string name="location_authorization_request_text">
+        Activez les services de localisation pour afficher votre position sur la carte, ainsi que les propriétés et les points d\'intérêt.
+    </string>
+    <string name="user_marker_title">Vous</string>
+    <string name="user_marker_snippet">Votre emplacement actuel</string>
+    <string name="xml_custom_marker_background_content_description">Arrière-plan du marqueur\n</string>
+    <string name="xml_custom_marker_icon_description">Description de l\'icône du marqueur</string>
+    <string name="property_map_screen_idle_message">Aucune donnée à afficher pour le moment</string>
+
+    <!--Details page -->
+    <string name="details_page_top_bar_app_icon_content_description">Icône de l\'application</string>
+    <string name="details_page_top_bar_back_button_content_description">retour</string>
+    <string name="details_page_loading">Chargement…</string>
+    <string name="details_page_text_available">Disponible</string>
+    <string name="details_page_static_map_content_description">Carte statique</string>
+    <string name="details_page_text_static_map_not_available">Carte non disponible</string>
+    <string name="details_page_modify_button_description">Modifier la propriété</string>
+    <string name="edit_section_property_type">Type</string>
+    <string name="edit_section_property_address">Adresse</string>
+    <string name="edit_section_property_description">Description</string>
+    <string name="edit_section_property_photos">Photos</string>
+    <string name="edit_section_property_poi">Poi</string>
+    <string name="edit_section_title_text">Choisissez ce que vous souhaitez modifier dans la propriété</string>
+    <string name="property_details_page_ui_state_error">Error : %1$s</string>
+    <string name="property_details_page_debug_photo_uri">DEBUG - Photo URI: %1$s</string>
+    <string name="property_details_page_property_entry_date_text">Date d\'ajout : %1$s</string>
+    <string name="property_details_page_property_sale_date_text">Date de vente : %1$s</string>
+    <string name="property_details_page_property_price_text_dollars">%1$s $</string>
+    <string name="property_details_page_property_price_text_euro">%1$s €</string>
+    <string name="property_details_page_property_price_square_text_dollars">%1$s $/m²</string>
+    <string name="property_details_page_property_price_square_text_euro">%1$s €/m²</string>
+    <string name="property_details_page_property_surface_text">%1$s m²</string>
+    <string name="property_details_page_property_rooms_text">%1$s pièces</string>
+    <string name="property_details_page_image_content_description_empty" />
+    <string name="property_details_page_photo_pager_text">%1$s / %2$s</string>
+
+
+    <!--UserProperties page -->
+    <string name="userProperties_page_top_bar_back_button_content_description">retour</string>
+    <string name="userProperties_page_top_bar_icon_content_description">Icône mes propriétés</string>
+    <string name="userProperties_page_top_bar_app_text">Mes propriétés</string>
+    <string name="userProperties_page_top_bar_filter_icon_content_description">Icône filtre</string>
+    <string name="user_properties_page_empty_properties_message">Aucune propriété trouvée</string>
+    <string name="user_properties_page_ui_state_error">Error: %1$s</string>
+    <string name="user_properties_page_async_image_on_error">❌ Échec du chargement de l\'image : %1$s</string>
+    <string name="user_properties_page_property_price_text_dollars">%1$s $</string>
+    <string name="user_properties_page_property_price_text_euro">%1$s €</string>
+    <string name="user_properties_page_property_price_square_text_dollars">%1$s $/m²</string>
+    <string name="user_properties_page_property_price_square_text_euro">%1$s €/m²</string>
+    <string name="user_properties_page_property_rooms_surface_text">%1$s pièces • %2$s m²</string>
+
+    <!--Account page -->
+    <string name="account_page_top_bar_back_button_content_description">retour</string>
+    <string name="account_page_top_bar_icon_content_description">Icône de l\'application</string>
+    <string name="account_page_top_bar_title">Votre compte</string>
+    <string name="account_page_user_icon_content_description">Icône utilisateur</string>
+    <string name="account_page_loading">Chargement…</string>
+    <string name="account_page_ui_state_error">Error: %1$s</string>
+    <string name="account_page_property_photo_size_text">📷 %1$s photos</string>
+    <string name="account_page_property_poi_size_text">📍 %1$s POIs</string>
+    <string name="account_page_property_price_price_square_text_euro">💰 %1$s € (%2$s €/m²)</string>
+    <string name="account_page_property_price_price_square_text_dollars">💰 %1$s $ (%2$s $/m²)</string>
+    <string name="account_page_edit_account_sheet_title">Modifier vos informations</string>
+    <string name="account_page_edit_account_sheet_agent_name_text_label">Nom de l\'agent</string>
+    <string name="account_page_edit_account_sheet_cancel_text_button">Annuler</string>
+    <string name="account_page_edit_account_sheet_apply_button_text">Appliquer</string>
+
+
+    <!--Parameters page -->
+    <string name="settings_page_top_bar_back_button_content_description">retour</string>
+    <string name="settings_page_top_bar_icon_content_description">Icône de l\'application</string>
+    <string name="settings_page_top_bar_title">Paramètres</string>
+    <string name="settings_page_currency_title">Monnaie</string>
+    <string name="settings_page_language_title">Langue</string>
+    <string name="settings_page_english">Anglais</string>
+    <string name="settings_page_fran_ais">Français</string>
+    <string name="settings_page_euro">Euro (€)</string>
+    <string name="settings_page_us_dollar">US Dollar ($)</string>
+    <string name="settings_page_usd">USD</string>
+    <string name="settings_page_eur">EUR</string>
+    <string name="settings_page_en">en</string>
+    <string name="settings_page_fr">fr</string>
+    <string name="settings_page_app_version">Version de l\'application: %1$s</string>
+    <string name="settings_page_ui_state_error">Error: %1$s</string>
+</resources>

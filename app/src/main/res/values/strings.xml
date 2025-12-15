@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Real Estate Manager</string>
 
+    <!-- Main Activity -->
+    <string name="location_permission_accepted">Location permission granted</string>
+    <string name="location_required_to_display_your_position_on_the_map">Location required to display your position on the map.</string>
+
+
     <!-- Navigation Titles -->
     <string name="welcome">Welcome</string>
     <string name="contact_info">Contact info</string>
@@ -65,7 +70,7 @@
     <string name="login_forgot_password_content">Forgot my password</string>
     <string name="login_log_in_button">Log in</string>
     <string name="login_log_in_in_progress">Log in in progress…</string>
-    <string name="error_no_account_found">"No Account find for this email."</string>
+    <string name="error_no_account_found">No Account find for this email.</string>
 
     <string name="error_user_sync">An error occurred while syncing.</string>
     <string name="error_null_user">Firebase returned null user.</string>
@@ -112,6 +117,7 @@
     <string name="property_creation_description_modification_title">Modify the property\'s description</string>
     <string name="property_creation_poi_modification_title">Modify the property\'s Poi\'s</string>
     <string name="property_creation_photo_modification_title">Modify the property\'s photos</string>
+    <string name="property_creation_launcher_image">image/*</string>
 
     <string name="property_creation_step_1_apartment_image_description">Apartment image description</string>
     <string name="property_creation_step_1_title_text">Step 1</string>
@@ -170,7 +176,7 @@
     <string name="property_creation_step_5_title_text">Step 5</string>
     <string name="property_creation_step_5_subtitle_text">Property description</string>
     <string name="property_creation_step_5_text">
-        Provide all informations about the property
+        Provide all information\'s about the property
     </string>
     <string name ="property_creation_step_5_price_label">Add the price of the property</string>
     <string name ="property_creation_step_5_surface_label">Add the surface of the property</string>
@@ -183,7 +189,9 @@
     <string name="property_creation_step_5_description_content">Description</string>
     <string name="property_creation_step_5_title_content">Title</string>
     <string name="property_creation_step_5_unit_euro">€</string>
+    <string name="property_creation_step_5_unit_dollars">$</string>
     <string name="property_creation_step_5_unit_square_meter">m²</string>
+    <string name="property_creation_step_5_number_text_field_empty" />
 
     <string name="property_creation_step_6_title_text">Step 6</string>
     <string name="property_creation_step_6_subtitle_text">Add photo</string>
@@ -224,6 +232,11 @@
     <string name="property_creation_step_8_map_title">Map</string>
     <string name="property_creation_step_8_map_content_description">Static map</string>
     <string name="property_creation_step_8_map_unavailable">Map unavailable</string>
+    <string name="property_creation_step_8_poi_text">%1$s (%2$s)</string>
+    <string name="property_creation_step_8_price_text_dollars">%1$s $</string>
+    <string name="property_creation_step_8_price_text_euro">%1$s €</string>
+    <string name="property_creation_step_8_surface_text">%1$s m²</string>
+    <string name="property_creation_step_8_rooms_text">%1$s</string>
 
     <!--Home page -->
     <string name="home_page_user_icon_content_description">User icon</string>
@@ -249,10 +262,24 @@
     <string name="home_page_type_cabin">Cabin</string>
     <string name="home_page_type_castle">Castle</string>
     <string name="home_page_type_motor_home">Motor home</string>
+    <string name="home_page_ui_state_error">Error: %1$s</string>
 
     <!--Property list screen-->
     <string name="property_list_screen_no_data_to_display">No data to display</string>
     <string name="property_list_screen_no_photo_content_description">Placeholder</string>
+    <string name="property_list_screen_ui_state_error">Error: %1$s</string>
+    <string name="property_list_screen_agent_name_message_unknown">Unknown</string>
+    <string name="property_list_screen_async_image_content_description">Thumbnail %1$s</string>
+    <string name="property_list_screen_property_price_text_dollars">%1$s $</string>
+    <string name="property_list_screen_property_price_text_euro">%1$s €</string>
+    <string name="property_list_screen_property_price_square_text_dollars">%1$s $/m²</string>
+    <string name="property_list_screen_property_price_square_text_euro">%1$s €/m²</string>
+    <string name="property_list_screen_property_rooms_surface_text">%1$s rooms • %2$s m²</string>
+
+    <!--Google Map screen-->
+    <string name="google_map_screen_ui_state_error">Error: %1$s</string>
+    <string name="google_map_screen_marker_snippet_dollars">%1$s $</string>
+    <string name="google_map_screen_marker_snippet_euro">%1$s €</string>
 
     <!--Filter screen-->
     <string name="filter_screen_title">Filters</string>
@@ -298,6 +325,18 @@
     <string name="edit_section_property_photos">Photos</string>
     <string name="edit_section_property_poi">Poi</string>
     <string name="edit_section_title_text">Choose what to modify on the property</string>
+    <string name="property_details_page_ui_state_error">Error : %1$s</string>
+    <string name="property_details_page_debug_photo_uri">DEBUG - Photo URI: %1$s</string>
+    <string name="property_details_page_property_entry_date_text">Date added : %1$s</string>
+    <string name="property_details_page_property_sale_date_text">Sale date : %1$s</string>
+    <string name="property_details_page_property_price_text_dollars">%1$s $</string>
+    <string name="property_details_page_property_price_text_euro">%1$s €</string>
+    <string name="property_details_page_property_price_square_text_dollars">%1$s $/m²</string>
+    <string name="property_details_page_property_price_square_text_euro">%1$s €/m²</string>
+    <string name="property_details_page_property_surface_text">%1$s m²</string>
+    <string name="property_details_page_property_rooms_text">%1$s rooms</string>
+    <string name="property_details_page_image_content_description_empty"/>
+    <string name="property_details_page_photo_pager_text">%1$s / %2$s</string>
 
 
     <!--UserProperties page -->
@@ -306,5 +345,46 @@
     <string name="userProperties_page_top_bar_app_text">My properties</string>
     <string name="userProperties_page_top_bar_filter_icon_content_description">Filter icon</string>
     <string name="user_properties_page_empty_properties_message">No properties find</string>
+    <string name="user_properties_page_ui_state_error">Error: %1$s</string>
+    <string name="user_properties_page_async_image_on_error">❌ Failed to load image: %1$s</string>
+    <string name="user_properties_page_property_price_text_dollars">%1$s $</string>
+    <string name="user_properties_page_property_price_text_euro">%1$s €</string>
+    <string name="user_properties_page_property_price_square_text_dollars">%1$s $/m²</string>
+    <string name="user_properties_page_property_price_square_text_euro">%1$s €/m²</string>
+    <string name="user_properties_page_property_rooms_surface_text">%1$s rooms • %2$s m²</string>
+
+    <!--Account page -->
+    <string name="account_page_top_bar_back_button_content_description">back</string>
+    <string name="account_page_top_bar_icon_content_description">App icon</string>
+    <string name="account_page_top_bar_title">Your account</string>
+    <string name="account_page_user_icon_content_description">User icon</string>
+    <string name="account_page_loading">Loading…</string>
+    <string name="account_page_ui_state_error">Error: %1$s</string>
+    <string name="account_page_property_photo_size_text">📷 %1$s photos</string>
+    <string name="account_page_property_poi_size_text">📍 %1$s POIs</string>
+    <string name="account_page_property_price_price_square_text_euro">💰 %1$s € (%2$s €/m²)</string>
+    <string name="account_page_property_price_price_square_text_dollars">💰 %1$s $ (%2$s $/m²)</string>
+    <string name="account_page_edit_account_sheet_title">Modify your information</string>
+    <string name="account_page_edit_account_sheet_agent_name_text_label">Agent name</string>
+    <string name="account_page_edit_account_sheet_cancel_text_button">Cancel</string>
+    <string name="account_page_edit_account_sheet_apply_button_text">Apply</string>
+
+
+    <!--Parameters page -->
+    <string name="settings_page_top_bar_back_button_content_description">back</string>
+    <string name="settings_page_top_bar_icon_content_description">App icon</string>
+    <string name="settings_page_top_bar_title">Settings</string>
+    <string name="settings_page_currency_title">Currency</string>
+    <string name="settings_page_language_title">Language</string>
+    <string name="settings_page_english">English</string>
+    <string name="settings_page_fran_ais">French</string>
+    <string name="settings_page_euro">Euro (€)</string>
+    <string name="settings_page_us_dollar">US Dollar ($)</string>
+    <string name="settings_page_usd">USD</string>
+    <string name="settings_page_eur">EUR</string>
+    <string name="settings_page_en">en</string>
+    <string name="settings_page_fr">fr</string>
+    <string name="settings_page_app_version">App version: %1$s</string>
+    <string name="settings_page_ui_state_error">Error: %1$s</string>
 
 </resources>

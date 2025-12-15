@@ -30,6 +30,7 @@ import javax.inject.Inject
 import android.content.Context
 import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
+import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.UUID
 
@@ -250,7 +251,7 @@ class PropertyCreationViewModel @Inject constructor(
             }
         }
     }
-    override fun createModelFromDraft(context: Context) {
+    override fun createModelFromDraft(context: Context, currency: String) {
         viewModelScope.launch {
             try {
                 val draft = stepState().draft
@@ -280,12 +281,18 @@ class PropertyCreationViewModel @Inject constructor(
                     it.copy(universalLocalPropertyId = propertyId)
                 }
 
+                val priceToStore = if (currency == "EUR") {
+                    CurrencyHelper.convertEuroToDollar(draft.price)
+                } else {
+                    draft.price
+                }
+
                 val property = Property(
                     universalLocalId = propertyId,
                     universalLocalUserId = localUser.universalLocalId,
                     title = draft.title,
                     type = draft.type,
-                    price = draft.price,
+                    price = priceToStore,
                     surface = draft.surface,
                     rooms = draft.rooms,
                     description = draft.description,
@@ -317,16 +324,21 @@ class PropertyCreationViewModel @Inject constructor(
         }
     }
 
-    fun loadDraftFromProperty(property: Property, section: EditSection) {
+    override fun loadDraftFromProperty(property: Property, section: EditSection, currency: String) {
         this.propertyToEdit = property
         this.sectionToEdit = section
 
         val parsedAddress = parseAddress(property.address)
 
+        val price = if (currency == "EUR") {
+            CurrencyHelper.convertDollarToEuro(property.price)
+        } else {
+            property.price
+        }
         val draft = PropertyDraft(
             title = property.title,
             type = property.type,
-            price = property.price,
+            price = price,
             surface = property.surface,
             rooms = property.rooms,
             description = property.description,
@@ -356,7 +368,8 @@ class PropertyCreationViewModel @Inject constructor(
         )
     }
 
-    fun updateModelFromDraft(context: Context) {
+    override fun updateModelFromDraft(context: Context, currency: String) {
+
         viewModelScope.launch {
             try {
                 val draft = stepState().draft
@@ -381,9 +394,16 @@ class PropertyCreationViewModel @Inject constructor(
                     }
 
                     EditSection.DESCRIPTION -> {
+
+                        val priceToStore = if (currency == "EUR") {
+                            CurrencyHelper.convertEuroToDollar(draft.price)
+                        } else {
+                            draft.price
+                        }
+
                         val updated = original.copy(
                             title = draft.title,
-                            price = draft.price,
+                            price = priceToStore,
                             surface = draft.surface,
                             rooms = draft.rooms,
                             description = draft.description

@@ -36,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -50,6 +49,7 @@ import com.dcac.realestatemanager.model.Photo
 import androidx.core.net.toUri
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
+import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 
 @Composable
 fun Step1IntroScreen(
@@ -528,6 +528,10 @@ fun Step5DescriptionScreen(
     onDescriptionChange: (String) -> Unit,
     onTitleChange: (String) -> Unit
 ){
+
+    val currency = CurrencyHelper.LocalCurrency.current
+    val priceUnitString = stringResource(id = CurrencyHelper.getPropertyCreationStep5Unit(currency))
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -580,7 +584,7 @@ fun Step5DescriptionScreen(
                 stringResource(R.string.property_creation_step_5_price_content),
                 price,
                 onPriceChange,
-                unit = stringResource(R.string.property_creation_step_5_unit_euro)
+                unit = priceUnitString
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -629,7 +633,7 @@ fun NumberTextField(
         )
 
         OutlinedTextField(
-            value = if (value == 0) "" else value.toString(),
+            value = if (value == 0) stringResource(R.string.property_creation_step_5_number_text_field_empty) else value.toString(),
             onValueChange = { text ->
                 val number = text.toIntOrNull()
                 if (number != null) {
@@ -873,6 +877,10 @@ fun Step8ConfirmationScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
 
+        val currency = CurrencyHelper.LocalCurrency.current
+        val priceUnitStringRes = CurrencyHelper.getPropertyCreationStep8PriceText(currency)
+        val formattedPrice = stringResource(id = priceUnitStringRes, draft.price)
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -956,7 +964,11 @@ fun Step8ConfirmationScreen(
                                         )
                                         Spacer(modifier = Modifier.weight(1f))
                                         Text(
-                                            text = "${poi.name} (${poi.type})",
+                                            text = stringResource(
+                                                R.string.property_creation_step_8_poi_text,
+                                                poi.name,
+                                                poi.type
+                                            ),
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                     }
@@ -968,9 +980,18 @@ fun Step8ConfirmationScreen(
                 item {
                     SectionTitle(stringResource(R.string.property_creation_step_8_description_title))
                     BorderedBox {
-                        InfoRow(label = stringResource(R.string.property_creation_step_8_price_title), value = "${draft.price} €")
-                        InfoRow(label = stringResource(R.string.property_creation_step_8_surface_title), value = "${draft.surface} m²")
-                        InfoRow(label = stringResource(R.string.property_creation_step_8_rooms_title), value = "${draft.rooms}")
+                        InfoRow(
+                            label = stringResource(R.string.property_creation_step_8_price_title),
+                            value = formattedPrice
+                        )
+                        InfoRow(label = stringResource(R.string.property_creation_step_8_surface_title), value = stringResource(
+                            R.string.property_creation_step_8_surface_text, draft.surface
+                        )
+                        )
+                        InfoRow(label = stringResource(R.string.property_creation_step_8_rooms_title), value = stringResource(
+                            R.string.property_creation_step_8_rooms_text, draft.rooms
+                        )
+                        )
                         InfoRow(label = stringResource(R.string.property_creation_step_8_description_title), value = draft.description)
                     }
                 }

@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.ui.filter.PropertyFilters
 import com.dcac.realestatemanager.utils.Utils
+import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -91,7 +92,7 @@ fun GoogleMapScreen(
 
         is GoogleMapUiState.Error -> {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Error: ${state.message}", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.google_map_screen_ui_state_error, state.message), color = MaterialTheme.colorScheme.error)
             }
         }
 
@@ -123,6 +124,7 @@ fun MapContent(
     onPropertyClick: (PropertyWithLocation) -> Unit
 ) {
     val context = LocalContext.current
+    val currency = CurrencyHelper.LocalCurrency.current
 
     if (userLocation == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -141,7 +143,6 @@ fun MapContent(
         cameraPositionState.animate(
             update = CameraUpdateFactory.newLatLngZoom(latLng, 14f)
         )
-        println("Lat: ${userLocation.latitude}, Lng: ${userLocation.longitude}")
     }
 
     GoogleMap(
@@ -157,10 +158,19 @@ fun MapContent(
         )
 
         properties.forEach { item ->
+
+            val priceUnitStringRes = CurrencyHelper.getGoogleMapScreenMarkerSnippet(currency)
+            val displayPrice = if (currency == "EUR") {
+                CurrencyHelper.convertDollarToEuro(item.property.price)
+            } else {
+                item.property.price
+            }
+            val formattedPrice = stringResource(id = priceUnitStringRes, displayPrice)
+
             Marker(
                 state = MarkerState(position = item.latLng),
                 title = item.property.address,
-                snippet = "${item.property.price} €",
+                snippet = formattedPrice,
                 icon = getCachedPropertyMarker(
                     context = context,
                     type = item.property.type

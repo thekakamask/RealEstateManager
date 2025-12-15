@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,7 @@ import com.dcac.realestatemanager.ui.filter.toUiState
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
+import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,7 +120,7 @@ fun UserPropertiesPage(
         is UserPropertiesUiState.Error -> {
             val errorMessage = (uiState as UserPropertiesUiState.Error).message
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Error: $errorMessage", color = MaterialTheme.colorScheme.error)
+                Text(text = stringResource(R.string.user_properties_page_ui_state_error, errorMessage), color = MaterialTheme.colorScheme.error)
             }
         }
 
@@ -178,10 +180,28 @@ fun UserPropertyItem(
     onClick: () -> Unit
 ){
 
+    val context = LocalContext.current
+
     val photos = property.photos.take(3)
 
-    val pricePerSquareMeter = calculatePricePerSquareMeter(property.price, property.surface)
+    val currency = CurrencyHelper.LocalCurrency.current
 
+    val displayPrice = if (currency == "EUR") {
+        CurrencyHelper.convertDollarToEuro(property.price)
+    } else {
+        property.price
+    }
+
+    val formattedPrice = stringResource(
+        id = CurrencyHelper.getUserPropertiesPagePropertyPriceText(currency),
+        displayPrice
+    )
+
+    val pricePerSquareMeter = calculatePricePerSquareMeter(displayPrice, property.surface)
+    val formattedPricePerSquareMeter = stringResource(
+        id = CurrencyHelper.getUserPropertiesPagePropertyPriceSquareText(currency),
+        pricePerSquareMeter
+    )
 
     Card(
         modifier = Modifier
@@ -199,7 +219,6 @@ fun UserPropertyItem(
             ) {
                 repeat(3) { index ->
                     val uri = photos.getOrNull(index)?.uri
-                    println("📸 URI #$index = $uri")
                     if (uri != null) {
                         AsyncImage(
                             model = uri,
@@ -210,7 +229,11 @@ fun UserPropertyItem(
                                 .height(120.dp)
                                 .clip(RoundedCornerShape(8.dp)),
                             onError = {
-                                println("❌ Failed to load image: $uri")
+                                println(
+                                    context.getString(
+                                        R.string.user_properties_page_async_image_on_error,
+                                        uri
+                                    ))
                             }
                         )
                     } else {
@@ -237,11 +260,11 @@ fun UserPropertyItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${property.price} €",
+                    text = formattedPrice,
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = "$pricePerSquareMeter €/m²",
+                    text = formattedPricePerSquareMeter,
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -269,7 +292,11 @@ fun UserPropertyItem(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "${property.rooms} rooms • ${property.surface} m²",
+                text = stringResource(
+                    R.string.user_properties_page_property_rooms_surface_text,
+                    property.rooms,
+                    property.surface
+                ),
                 style = MaterialTheme.typography.bodyLarge
             )
 

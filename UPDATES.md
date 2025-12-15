@@ -1137,5 +1137,53 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - The top bar dynamically reflects whether the user is in creation or editing mode and adjusts the title accordingly.
 
 
+### 🔹 **Update #39**
+
+  - 👤 **New AccountPage to Display User Info and Properties**
+    - A new AccountPage has been added to allow users to view their personal information (name, email) and their owned properties.
+    - The layout uses a LazyColumn to display the user's properties in a simplified format (title, address, price, price/m², number of photos, number of POIs).
+    - A Floating Action Button (FAB) appears when the user data is successfully loaded (AccountUiState.Success) and allows access to the editing feature.
+
+  - ✏️ **Editing Agent Name with Modal Bottom Sheet**
+    - Clicking the FAB opens a ModalBottomSheet that contains a form for editing the agent's name.
+    - The editing flow is handled via a dedicated UI state (AccountUiState.Editing) which triggers the display of the modal.
+    - The modal includes:   
+      - An OutlinedTextField to change the agent name.
+      - "Cancel" and "Apply" buttons with appropriate behavior.
+    - Once the name is confirmed, it is updated in the database, and the user data is reloaded to reflect the changes.
+    - The modal is dismissed when editing is complete or canceled, and the UI state resets to Idle.
+
+  - **🌍 SettingsPage to Change Application Language (English 🇺🇸 / French 🇫🇷)**
+    - A new SettingsPage allows users to switch between supported languages at runtime.
+    - It integrates a SettingsStateHolder that persists the language preference using Jetpack DataStore.
+    - Language selection updates the app's Locale live, using a centralized SettingsUiManager, without requiring an app restart.
+    - All stringResource() calls in the UI dynamically reflect the selected language.
+
+  - **💱 Added Currency Setting (USD 💵 / EUR 💶)**
+    - Users can now select their preferred currency in the SettingsPage.
+    - Prices are stored in dollars (USD) in Room for consistency, but displayed in the selected currency.
+    - Currency is stored using DataStore and injected via SettingsStateHolder and SettingsUiManager.
+    - Currency symbols and unit strings (€/m², $/m²) update automatically across the app.
+
+  - 🔄 **Dynamic Price Conversion Based on Selected Currency**
+    - Internally, all prices are stored in USD, but when the user selects EUR, the price is converted in real-time using a fixed exchange rate.
+    - CurrencyHelper centralizes conversion logic and provides string resource IDs based on the selected currency.
+    - The conversion affects:
+      - Property creation summary
+      - Account page
+      - Property detail page
+      - Property list
+
+  - **💬 Localization of All Character Strings (EN/FR)**
+    - All UI text strings are now extracted to strings.xml files in values/ and values-fr/.
+    - Composables use stringResource() and switch language live based on current settings.
+    - Newly added strings like price units, labels, placeholders, and settings items are localized in both English and French.
+
+  - **💡 Live Updates Without Restart (Language & Currency)**
+    - Thanks to CompositionLocalProvider and SettingsStateHolder, any change in language or currency reflects immediately across the UI.
+    - No need to restart the app for changes to take effect.
+    - This real-time behavior is integrated deeply into the Composables with proper state hoisting.
+  
+  
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

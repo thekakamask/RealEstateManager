@@ -57,7 +57,9 @@ fun HomeScreen(
     onLogout: () -> Unit,
     onAddPropertyClick: () -> Unit,
     onPropertyClick: (String) -> Unit,
-    onUserPropertiesClick: () -> Unit
+    onUserPropertiesClick: () -> Unit,
+    onUserAccountClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -106,6 +108,9 @@ fun HomeScreen(
                             tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(72.dp)
+                                .clickable {
+                                    onUserAccountClick()
+                                }
                         )
 
                         Text(
@@ -170,6 +175,7 @@ fun HomeScreen(
                         label= {Text(stringResource(R.string.home_page_navigation_drawer_settings_label))},
                         selected = false,
                         onClick = {
+                            onSettingsClick()
                             scope.launch {drawerState.close()}
                         }
                     )
@@ -299,7 +305,7 @@ fun HomeScreen(
     } else if (uiState is HomeUiState.Error) {
         val error = (uiState as HomeUiState.Error).message
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Error: $error", color = MaterialTheme.colorScheme.error)
+            Text(stringResource(R.string.home_page_ui_state_error, error), color = MaterialTheme.colorScheme.error)
         }
     }
 }

@@ -2,73 +2,98 @@ package com.dcac.realestatemanager.ui.accountPage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.model.User
 import com.dcac.realestatemanager.ui.accountPage.AccountUiState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
+    private val propertyRepository: PropertyRepository
 ) : ViewModel(), IAccountViewModel {
 
     private val _uiState = MutableStateFlow<AccountUiState>(Idle)
     override val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
     private var currentUser: User? = null
+    private var currentSuccessState: Success? = null
+
+
+    override fun checkAndLoadUser() {
+        val userId = getUserIdOrNull()
+        if (userId != null) {
+            loadUser(userId)
+        } else {
+            setError("No user connected.")
+        }
+    }
+
+    override fun getUserIdOrNull(): String? = runBlocking {
+        val firebaseUid = authRepository.currentUser?.uid ?: return@runBlocking null
+        val user = userRepository.getUserByFirebaseUid(firebaseUid).firstOrNull()
+        user?.universalLocalId
+    }
 
     override fun loadUser(userId: String) {
         viewModelScope.launch {
             _uiState.value = Loading
-            userRepository.getUserById(userId)
-                .catch { e ->
-                    _uiState.value = Error("Failed to load user: ${e.message}")
+            try {
+                val user = userRepository.getUserById(userId).firstOrNull()
+                if (user != null) {
+                    val properties = propertyRepository.getFullPropertiesByUserIdAlphabetic(userId).firstOrNull().orEmpty()
+                    val newState = Success(user = user, properties = properties)
+                    currentSuccessState = newState
+                    _uiState.value = newState
+                } else {
+                    _uiState.value = Error("User not found")
                 }
-                .collectLatest { user ->
-                    if (user != null) {
-                        currentUser = user
-                        _uiState.value = Viewing(user)
-                    } else {
-                        _uiState.value = Error("User not found")
-                    }
-                }
+            } catch (e: Exception) {
+                _uiState.value = Error("Failed to load user: ${e.message}")
+            }
         }
     }
+
 
     override fun enterEditMode() {
-        val user = currentUser
-        if (user != null) {
-            _uiState.value = Editing(user)
+        val currentState = currentSuccessState
+        if (currentState != null) {
+            _uiState.value = currentState.copy(isEditing = true)
         }
     }
 
-    override fun updateUser(newName: String, newEmail: String) {
-        val user = currentUser
-        if (user == null) {
+    override fun updateUser(newName: String) {
+        val user = (currentSuccessState?.user) ?: run {
             _uiState.value = Error("No user loaded")
             return
         }
 
         viewModelScope.launch {
             try {
-                val updated = user.copy(agentName = newName, email = newEmail)
-                userRepository.updateUser(updated)
-                currentUser = updated
-                _uiState.value = Success(updatedUser = updated)
+                userRepository.updateUser(user.copy(agentName = newName))
+
+                loadUser(user.universalLocalId)
             } catch (e: Exception) {
                 _uiState.value = Error("Update failed: ${e.message}")
             }
         }
     }
 
+    override fun setError(message: String) {
+        _uiState.value = Error(message)
+    }
+
     override fun resetState() {
-        _uiState.value = Idle
+        checkAndLoadUser()
     }
 }
