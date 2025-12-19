@@ -2,6 +2,8 @@ package com.dcac.realestatemanager.ui.homePage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.globalManager.UploadInterfaceManager
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.dcac.realestatemanager.ui.homePage.HomeUiState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,6 +24,8 @@ class HomeViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val uploadManager: UploadInterfaceManager,
     private val downloadManager: DownloadInterfaceManager,
+    private val propertyRepository: PropertyRepository,
+    private val userRepository: UserRepository
 ) : ViewModel(), IHomeViewModel {
 
     // Internal mutable state
@@ -42,14 +47,46 @@ class HomeViewModel @Inject constructor(
     // Load user info from Firebase auth and update UI state
     override fun loadUserInfo() {
         val user = authRepository.currentUser
-        if (user != null) {
-            _uiState.value = Success(
-                userEmail = user.email ?: "No email",
-                userName = user.displayName ?: "Agent",
-                isDrawerOpen = false
-            )
-        } else {
+        if (user == null) {
             _uiState.value = Error("User not logged in")
+            return
+        }
+
+        _uiState.value = Success(
+            userEmail = user.email ?: "No email",
+            userName = user.displayName ?: "Agent",
+            isDrawerOpen = false
+        )
+
+        observeUserProperties()
+    }
+
+    override fun observeUserProperties() {
+        viewModelScope.launch {
+            val firebaseUid = authRepository.currentUser?.uid
+                ?: run {
+                    _uiState.value = Error("User not logged in")
+                    return@launch
+                }
+
+            val user = userRepository
+                .getUserByFirebaseUid(firebaseUid)
+                .firstOrNull()
+                ?: run {
+                    _uiState.value = Error("User not found in local DB")
+                    return@launch
+                }
+
+            propertyRepository
+                .getFullPropertiesByUserIdAlphabetic(user.universalLocalId)
+                .collect { properties ->
+                    _uiState.update { state ->
+                        (state as? Success)?.copy(
+                            totalProperties = properties.size,
+                            soldProperties = properties.count { it.isSold }
+                        ) ?: state
+                    }
+                }
         }
     }
 

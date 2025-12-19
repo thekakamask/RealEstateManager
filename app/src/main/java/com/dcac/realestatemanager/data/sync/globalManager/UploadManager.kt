@@ -21,13 +21,15 @@ class UploadManager(
 
     // SYNCHRONIZES ALL UNSYNCED ENTITIES (CURRENTLY ONLY USERS)
     override suspend fun syncAll(): List<SyncStatus> {
+        Log.e("UploadManager", "Uploading properties...")
         val userResults = userUploadManager.syncUnSyncedUsers()
+        val propertyResults = propertyUploadManager.syncUnSyncedProperties()
         val photoResults = photoUploadManager.syncUnSyncedPhotos()
         val poiResults = poiUploadManager.syncUnSyncedPoiS()
         val crossResults = crossSyncManager.syncUnSyncedPropertyPoiCross()
-        val propertyResults = propertyUploadManager.syncUnSyncedProperties()
 
-        val allResults = userResults + photoResults + poiResults + crossResults + propertyResults
+        val allResults =
+            userResults + propertyResults + photoResults + poiResults + crossResults
 
         allResults.filterIsInstance<SyncStatus.Failure>().forEach {
             Log.e("UploadManager", "Failed to upload: ${it.label} — ${it.error.message}")

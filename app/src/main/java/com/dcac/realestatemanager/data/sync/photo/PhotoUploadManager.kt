@@ -5,6 +5,7 @@ import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineReposit
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.utils.toOnlineEntity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.first
 
@@ -14,9 +15,14 @@ class PhotoUploadManager(
     private val photoOnlineRepository: PhotoOnlineRepository
 ) : PhotoUploadInterfaceManager {
 
+    private val currentUserUid: String
+        get() = FirebaseAuth.getInstance().currentUser?.uid
+            ?: throw IllegalStateException("User must be authenticated to sync data")
+
     override suspend fun syncUnSyncedPhotos(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
         val photosToSync = photoRepository.uploadUnSyncedPhotosToFirebase().first()
+
 
         for (photo in photosToSync) {
             try {
@@ -33,9 +39,10 @@ class PhotoUploadManager(
                 } else {
                     val finalId = firebaseId ?: generateFirestoreId()
                     val updatedOnline = photoOnlineRepository.uploadPhoto(
-                        photo.toOnlineEntity(),
+                        photo.toOnlineEntity(currentUserUid),
                         finalId
                     )
+
 
                     photoRepository.updatePhotoFromFirebase(
                         photo = updatedOnline,

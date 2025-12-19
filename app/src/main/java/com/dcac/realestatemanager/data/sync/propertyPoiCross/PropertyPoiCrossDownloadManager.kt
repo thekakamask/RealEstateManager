@@ -3,7 +3,6 @@ package com.dcac.realestatemanager.data.sync.propertyPoiCross
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
-import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 class PropertyPoiCrossDownloadManager(
@@ -13,38 +12,40 @@ class PropertyPoiCrossDownloadManager(
 
     override suspend fun downloadUnSyncedPropertyPoiCross(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
-        val crossRefsToSync = propertyPoiCrossRepository.uploadUnSyncedCrossRefsToFirebase().first()
 
-        for (crossRef in crossRefsToSync) {
-            val propertyId = crossRef.universalLocalPropertyId
-            val poiId = crossRef.universalLocalPoiId
-            val firestoreId = "$propertyId-$poiId"
+        try {
+            val onlineCrossRefs = propertyPoiCrossOnlineRepository.getAllCrossRefs()
 
-            try {
-                if (crossRef.isDeleted) {
-                    // Delete from Firebase if present
-                    propertyPoiCrossOnlineRepository.deleteCrossRef(propertyId, poiId)
+            for (doc in onlineCrossRefs) {
+                try {
+                    val online = doc.cross
+                    val propertyId = online.universalLocalPropertyId
+                    val poiId = online.universalLocalPoiId
+                    val firestoreId = doc.firebaseId
 
-                    // Hard delete locally
-                    propertyPoiCrossRepository.deleteCrossRef(crossRef)
+                    val local =
+                        propertyPoiCrossRepository.getCrossByIds(propertyId, poiId).first()
 
-                    results.add(SyncStatus.Success("CrossRef $firestoreId deleted from Firebase & Room"))
-                } else {
-                    val uploaded = propertyPoiCrossOnlineRepository.uploadCrossRef(
-                        crossRef = crossRef.toOnlineEntity()
-                    )
+                    val shouldDownload =
+                        local == null || online.updatedAt > local.updatedAt
 
-                    propertyPoiCrossRepository.updateCrossRefFromFirebase(
-                        crossRef = uploaded,
-                        firebaseDocumentId = firestoreId
-                    )
+                    if (shouldDownload) {
+                        propertyPoiCrossRepository.insertCrossRefInsertFromFirebase(
+                            crossRef = online,
+                            firebaseDocumentId = firestoreId
+                        )
+                        results.add(SyncStatus.Success("CrossRef $firestoreId downloaded"))
+                    } else {
+                        results.add(SyncStatus.Success("CrossRef $firestoreId already up-to-date"))
+                    }
 
-                    results.add(SyncStatus.Success("CrossRef $firestoreId uploaded to Firebase"))
+                } catch (e: Exception) {
+                    results.add(SyncStatus.Failure("CrossRef ${doc.firebaseId}", e))
                 }
-
-            } catch (e: Exception) {
-                results.add(SyncStatus.Failure("CrossRef $firestoreId failed to sync", e))
             }
+
+        } catch (e: Exception) {
+            results.add(SyncStatus.Failure("Global CrossRef download failed", e))
         }
 
         return results

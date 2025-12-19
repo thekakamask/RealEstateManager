@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -132,7 +133,7 @@ fun HomeScreen(
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = stringResource(R.string.home_page_user_apartment_handle),
+                                    text = state.totalProperties.toString(),
                                     fontSize = 16.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 Spacer(modifier = Modifier.width(4.dp))
@@ -143,7 +144,7 @@ fun HomeScreen(
                             }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = stringResource(R.string.home_page_user_apartment_sold),
+                                    text = state.soldProperties.toString(),
                                     fontSize = 16.sp
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
@@ -191,6 +192,41 @@ fun HomeScreen(
                             scope.launch { drawerState.close() }
                         }
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Button(
+                            onClick = {
+                            },
+                            modifier = Modifier.padding(horizontal = 24.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.sync_24px),
+                                contentDescription = stringResource(
+                                    R.string.home_page_navigation_drawer_sync_button_content_description
+                                ),
+                                modifier = Modifier.size(24.dp)
+                            )
+
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.home_page_navigation_drawer_sync_button_text)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp))
+
+
                 }
             }
         ) {
@@ -258,6 +294,7 @@ fun HomeScreen(
                         )
                     }
                 },
+
                 bottomBar = {
                     NavigationBar {
                         NavigationBarItem(

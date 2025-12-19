@@ -192,6 +192,10 @@
     <string name="property_creation_step_5_unit_dollars">$</string>
     <string name="property_creation_step_5_unit_square_meter">m²</string>
     <string name="property_creation_step_5_number_text_field_empty" />
+    <string name="property_creation_step_5_is_sold_label">Is the property sold ?</string>
+    <string name="property_creation_step_5_sale_date_label">Property sale date</string>
+    <string name="property_creation_step_5_select_date">Select the property sale date</string>
+    <string name="property_creation_step_5_select_date_confirm">Confirm</string>
 
     <string name="property_creation_step_6_title_text">Step 6</string>
     <string name="property_creation_step_6_subtitle_text">Add photo</string>
@@ -250,6 +254,8 @@
     <string name="home_page_navigation_drawer_settings_label">Settings</string>
     <string name="home_page_navigation_drawer_log_out_icon_content_description">Log out</string>
     <string name="home_page_navigation_drawer_log_out_label">Log out</string>
+    <string name="home_page_navigation_drawer_sync_button_content_description">Sync button</string>
+    <string name="home_page_navigation_drawer_sync_button_text">Data synchronization</string>
     <string name="home_page_top_bar_user_icon_content_description">User</string>
     <string name="home_page_top_bar_app_icon_content_description">App icon</string>
     <string name="home_page_top_bar_filter_icon_content_description">Filter icon</string>
@@ -275,6 +281,9 @@
     <string name="property_list_screen_property_price_square_text_dollars">%1$s $/m²</string>
     <string name="property_list_screen_property_price_square_text_euro">%1$s €/m²</string>
     <string name="property_list_screen_property_rooms_surface_text">%1$s rooms • %2$s m²</string>
+    <string name="property_list_screen_screen_empty_title">No properties yet</string>
+    <string name="property_list_screen_screen_empty_subtitle">Start by creating your first property or sync your app.
+</string>
 
     <!--Google Map screen-->
     <string name="google_map_screen_ui_state_error">Error: %1$s</string>

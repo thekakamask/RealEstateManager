@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.model.User
 import com.dcac.realestatemanager.ui.accountPage.AccountUiState.*
@@ -20,13 +21,13 @@ import javax.inject.Inject
 class AccountViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val propertyRepository: PropertyRepository
+    private val propertyRepository: PropertyRepository,
+    private val syncScheduler: SyncScheduler
 ) : ViewModel(), IAccountViewModel {
 
     private val _uiState = MutableStateFlow<AccountUiState>(Idle)
     override val uiState: StateFlow<AccountUiState> = _uiState.asStateFlow()
 
-    private var currentUser: User? = null
     private var currentSuccessState: Success? = null
 
 
@@ -81,7 +82,7 @@ class AccountViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 userRepository.updateUser(user.copy(agentName = newName))
-
+                syncScheduler.scheduleSync()
                 loadUser(user.universalLocalId)
             } catch (e: Exception) {
                 _uiState.value = Error("Update failed: ${e.message}")

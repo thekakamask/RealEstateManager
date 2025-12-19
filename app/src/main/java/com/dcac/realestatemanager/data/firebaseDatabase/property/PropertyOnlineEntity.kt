@@ -9,6 +9,7 @@ import androidx.annotation.Keep
 
 @Keep
 data class PropertyOnlineEntity(
+    val ownerUid: String = "",
     val universalLocalId: String = "", // 🔑 UUID from Room
     val universalLocalUserId: String = "",  // 🔗 link with user
     val title: String = "",

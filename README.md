@@ -15,19 +15,19 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 👤 Implemented AccountPage to view user info.
-   - ✏️ Agent name can now be edited via modal from AccountPage.
-   - 🌍 Implemented SettingsPage to change the application language (English and French).
-   - 💱 Implementedded currency setting (USD 💵 and EUR 💶).
-   - 🔄 Prices are dynamically converted according to the selected currency (stored in dollars, displayed in euros if selected).
-   - 💬 Character strings are localized, and the display adapts to the selected language.
-   - 💡 All screens adapt to the language and currency in real time without restarting.
+   - 📊 The navigation drawer now displays the total number of managed properties and sold properties.
+   - 🏷️ Properties can now be marked as sold, with a mandatory sale date during creation.
+   - ✏️ The sale status and sale date can be edited when updating an existing property.
+   - 📡 Automatic data synchronization is now triggered when network connectivity is restored.
+   - 🚀 A global sync is automatically scheduled at application startup.
+   - ⚙️ Centralized sync scheduling implemented using WorkManager and a dedicated SyncScheduler.
+   - ✋ User actions that modify data are designed to trigger background synchronization.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - 🔄 Implement synchro in the UI.
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
+   - Implemented responsive design for tablet.
    - 🔔 Notification on property creation.
 
 
@@ -83,7 +83,6 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Upload and download of user and property data with Firebase Firestore.
       - ✅ **DONE** SyncManager to orchestrate entity-level sync logic.
       - ✅ **DONE** Upload/download of associated entities: photos, POIs, and cross-links.
-      - 🟩 **IN PROGRESS** Real-time Firestore listeners (multi-device live updates).
       - ✅ **DONE** Integrated Firebase Storage for image file handling; only metadata is stored in Firestore while files are uploaded to Storage.
 
    - 📡 **Interoperability** :

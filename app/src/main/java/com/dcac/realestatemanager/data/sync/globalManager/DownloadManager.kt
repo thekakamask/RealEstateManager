@@ -18,12 +18,13 @@ class DownloadManager(
 
     override suspend fun downloadAll(): List<SyncStatus> {
         val userResults = userDownloadManager.downloadUnSyncedUsers()
+        val propertyResults = propertyDownloadManager.downloadUnSyncedProperties()
         val photoResults = photoDownloadManager.downloadUnSyncedPhotos()
         val poiResults = poiDownloadManager.downloadUnSyncedPoiS()
         val crossResults = propertyPoiCrossDownloadManager.downloadUnSyncedPropertyPoiCross()
-        val propertyResults = propertyDownloadManager.downloadUnSyncedProperties()
 
-        val allResults = userResults + photoResults + poiResults + crossResults + propertyResults
+        val allResults =
+            userResults + propertyResults + photoResults + poiResults + crossResults
 
         allResults.filterIsInstance<SyncStatus.Failure>().forEach {
             Log.e("DownloadManager", "Failed to download: ${it.label} — ${it.error.message}")

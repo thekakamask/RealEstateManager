@@ -5,6 +5,7 @@ import android.content.Context
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import kotlinx.coroutines.flow.StateFlow
+import org.threeten.bp.LocalDate
 
 interface IPropertyCreationViewModel {
 
@@ -37,6 +38,8 @@ interface IPropertyCreationViewModel {
     fun updateSurface(value: Int)
     fun updateRooms(value: Int)
     fun updateDescription(value: String)
+    fun updateIsSold(isSold: Boolean)
+    fun updateSaleDate(date: LocalDate)
 
     // Step 5
     fun updatePhotoAt(index: Int, uri: Uri, description: String? = null)

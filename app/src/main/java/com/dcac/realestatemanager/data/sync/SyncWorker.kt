@@ -16,6 +16,7 @@ class SyncWorker(
 
     // Main method that WorkManager runs
     override suspend fun doWork(): Result {
+        Log.e("SyncWorker", "🔥 SyncWorker STARTED")
         val networkMonitor = NetworkMonitor(appContext) // Instantiate a helper to check network status
 
         // 1️⃣ Check network connection

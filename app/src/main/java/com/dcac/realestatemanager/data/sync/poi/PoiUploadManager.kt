@@ -5,6 +5,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.utils.toOnlineEntity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.first
 
@@ -12,6 +13,10 @@ class PoiUploadManager(
     private val poiRepository: PoiRepository,
     private val poiOnlineRepository: PoiOnlineRepository
 ): PoiUploadInterfaceManager {
+
+    private val currentUserUid: String
+        get() = FirebaseAuth.getInstance().currentUser?.uid
+            ?: throw IllegalStateException("User must be authenticated to sync data")
 
     override suspend fun syncUnSyncedPoiS(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
@@ -31,7 +36,7 @@ class PoiUploadManager(
                 } else {
                     val finalId = firebaseId ?: generateFirestoreId()
                     val uploadedPoi = poiOnlineRepository.uploadPoi(
-                        poi = poiEntity.toOnlineEntity(),
+                        poi = poiEntity.toOnlineEntity(currentUserUid),
                         firebasePoiId = finalId
                     )
 

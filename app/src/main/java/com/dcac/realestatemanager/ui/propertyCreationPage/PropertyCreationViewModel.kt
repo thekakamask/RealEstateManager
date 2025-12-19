@@ -29,6 +29,7 @@ import org.threeten.bp.LocalDate
 import javax.inject.Inject
 import android.content.Context
 import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -43,7 +44,8 @@ class PropertyCreationViewModel @Inject constructor(
     private val crossRefRepository: PropertyPoiCrossRepository,
     private val authRepository: AuthRepository,
     private val staticMapRepository: StaticMapRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val syncScheduler: SyncScheduler
 ) : ViewModel(), IPropertyCreationViewModel {
 
     private var propertyToEdit: Property? = null
@@ -92,8 +94,13 @@ class PropertyCreationViewModel @Inject constructor(
         PropertyCreationStep.Address -> draft.street.isNotBlank() &&
                 draft.city.isNotBlank() && draft.postalCode.isNotBlank() && draft.country.isNotBlank()
         PropertyCreationStep.PoiS -> draft.poiS.any { it.name.isNotBlank() && it.type.isNotBlank() }
-        PropertyCreationStep.Description -> draft.title.isNotBlank() && draft.price > 0 && draft.surface > 0 &&
-                draft.rooms > 0 && draft.description.isNotBlank()
+        PropertyCreationStep.Description ->
+            draft.title.isNotBlank() &&
+                    draft.price > 0 &&
+                    draft.surface > 0 &&
+                draft.rooms > 0 &&
+                    draft.description.isNotBlank() &&
+                (!draft.isSold || draft.saleDate != null)
         PropertyCreationStep.Photos -> draft.photos.any { it.uri.isNotBlank() }
         else -> true
     }
@@ -144,6 +151,15 @@ class PropertyCreationViewModel @Inject constructor(
     override fun updateSurface(value: Int) = updateDraft { it.copy(surface = value) }
     override fun updateRooms(value: Int) = updateDraft { it.copy(rooms = value) }
     override fun updateDescription(value: String) = updateDraft { it.copy(description = value) }
+    override fun updateIsSold(isSold: Boolean) = updateDraft {
+        it.copy(
+            isSold = isSold,
+            saleDate = if (isSold) it.saleDate else null
+        )
+    }
+    override fun updateSaleDate(date: LocalDate) = updateDraft {
+        it.copy(saleDate = date)
+    }
 
     private fun updatePoi(index: Int, transform: (PoiDraft) -> PoiDraft) {
         val current = stepState().draft
@@ -159,6 +175,7 @@ class PropertyCreationViewModel @Inject constructor(
     override fun updatePoiCity(index: Int, city: String) = updatePoi(index) { it.copy(city = city) }
     override fun updatePoiPostalCode(index: Int, postalCode: String) = updatePoi(index) { it.copy(postalCode = postalCode) }
     override fun updatePoiCountry(index: Int, country: String) = updatePoi(index) { it.copy(country = country) }
+
 
     override fun updatePhotoAt(index: Int, uri: Uri, description: String?) {
         val current = stepState().draft
@@ -299,9 +316,9 @@ class PropertyCreationViewModel @Inject constructor(
                     address = propertyAddress,
                     latitude = propertyLatLng?.latitude,
                     longitude = propertyLatLng?.longitude,
-                    isSold = false,
+                    isSold = draft.isSold,
                     entryDate = LocalDate.now(),
-                    saleDate = null,
+                    saleDate = draft.saleDate,
                     staticMapPath = draft.staticMapPath,
                     photos = photos,
                     poiS = poiS
@@ -314,6 +331,8 @@ class PropertyCreationViewModel @Inject constructor(
                 poiS.forEach {
                     crossRefRepository.insertCrossRefInsertFromUI(PropertyPoiCross(propertyId, it.universalLocalId))
                 }
+
+                syncScheduler.scheduleSync()
 
                 _uiState.value = Success(property, isUpdate = false)
 
@@ -358,7 +377,9 @@ class PropertyCreationViewModel @Inject constructor(
                 )
             },
             photos = property.photos,
-            staticMapPath = property.staticMapPath
+            staticMapPath = property.staticMapPath,
+            isSold = property.isSold,
+            saleDate = property.saleDate
         )
 
         _uiState.value = StepState(
@@ -406,7 +427,9 @@ class PropertyCreationViewModel @Inject constructor(
                             price = priceToStore,
                             surface = draft.surface,
                             rooms = draft.rooms,
-                            description = draft.description
+                            description = draft.description,
+                            isSold = draft.isSold,
+                            saleDate = draft.saleDate
                         )
                         propertyRepository.updatePropertyFromUI(updated)
                     }
@@ -482,6 +505,8 @@ class PropertyCreationViewModel @Inject constructor(
                     }
 
                 }
+
+                syncScheduler.scheduleSync()
 
                 _uiState.value = Success(original.copy(
                 ), isUpdate = true)

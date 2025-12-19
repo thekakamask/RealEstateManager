@@ -19,7 +19,9 @@ sealed class HomeUiState {
         val lastSyncStatus: List<SyncStatus> = emptyList(),
         val currentScreen: HomeDestination = HomeDestination.PropertyList,
         val filters: PropertyFilters = PropertyFilters(),
-        val showFilterSheet: Boolean = false
+        val showFilterSheet: Boolean = false,
+        val totalProperties: Int = 0,
+        val soldProperties: Int = 0
     ) : HomeUiState() {
 
         val isOnPropertyList: Boolean

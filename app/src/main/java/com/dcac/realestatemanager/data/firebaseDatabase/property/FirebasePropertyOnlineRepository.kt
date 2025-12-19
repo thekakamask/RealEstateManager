@@ -1,7 +1,6 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.property
 
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.poi.FirebasePoiDownloadException
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -48,7 +47,9 @@ class FirebasePropertyOnlineRepository(
                     }
                 }
         } catch (e: Exception) {
-            throw FirebasePoiDownloadException("Failed to fetch POIs: ${e.message}", e)
+            throw FirebasePropertyDownloadException(
+                "Failed to fetch properties: ${e.message}", e
+            )
         }
     }
 

@@ -25,14 +25,21 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +57,12 @@ import androidx.core.net.toUri
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
-
+import org.threeten.bp.LocalDate
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.TextButton
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
 @Composable
 fun Step1IntroScreen(
 ) {
@@ -515,6 +527,7 @@ fun PoiIcon(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Step5DescriptionScreen(
     title: String,
@@ -526,11 +539,19 @@ fun Step5DescriptionScreen(
     onSurfaceChange: (Int) -> Unit,
     onRoomsChange: (Int) -> Unit,
     onDescriptionChange: (String) -> Unit,
-    onTitleChange: (String) -> Unit
+    onTitleChange: (String) -> Unit,
+    isSold: Boolean,
+    saleDate: LocalDate?,
+    onIsSoldChange: (Boolean) -> Unit,
+    onSaleDateChange: (LocalDate) -> Unit,
 ){
 
     val currency = CurrencyHelper.LocalCurrency.current
     val priceUnitString = stringResource(id = CurrencyHelper.getPropertyCreationStep5Unit(currency))
+
+
+    val datePickerState = rememberDatePickerState()
+    var showDatePicker by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -603,6 +624,63 @@ fun Step5DescriptionScreen(
                 rooms,
                 onRoomsChange
             )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.property_creation_step_5_is_sold_label),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = isSold,
+                    onCheckedChange = onIsSoldChange
+                )
+            }
+
+            if (isSold) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.property_creation_step_5_sale_date_label),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+
+                OutlinedButton(
+                    onClick = { showDatePicker = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        saleDate?.toString()
+                            ?: stringResource(R.string.property_creation_step_5_select_date)
+                    )
+                }
+            }
+
+            if (showDatePicker) {
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            datePickerState.selectedDateMillis?.let { millis ->
+                                val date = Instant.ofEpochMilli(millis)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                                onSaleDateChange(date)
+                            }
+                            showDatePicker = false
+                        }) {
+                            Text(stringResource(R.string.property_creation_step_5_select_date_confirm))
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             AddressTextField(

@@ -67,12 +67,18 @@ fun PropertiesListScreen(
         }
 
         is PropertiesListUiState.Success -> {
-            val properties = (uiState as PropertiesListUiState.Success).properties
-            PropertyListContent(
-                properties = properties,
-                agentNames = (uiState as PropertiesListUiState.Success).agentNames,
-                onClick = onPropertyClick
-            )
+            val state = uiState as PropertiesListUiState.Success
+            val properties = state.properties
+
+            if (properties.isEmpty()) {
+                EmptyPropertiesContent()
+            } else {
+                PropertyListContent(
+                    properties = properties,
+                    agentNames = state.agentNames,
+                    onClick = onPropertyClick
+                )
+            }
         }
 
         is PropertiesListUiState.Error -> {
@@ -280,6 +286,40 @@ fun PropertyItem(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun EmptyPropertiesContent() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(24.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.home_24px),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(64.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.property_list_screen_screen_empty_title),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.property_list_screen_screen_empty_subtitle),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

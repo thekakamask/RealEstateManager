@@ -3,6 +3,7 @@ package com.dcac.realestatemanager
 import android.app.Application
 import com.dcac.realestatemanager.dI.AppContainer
 import com.dcac.realestatemanager.dI.AppContainerProvider
+import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
@@ -26,10 +27,14 @@ class RealEstateManagerApplication : Application(), AppContainerProvider {
     override val container: AppContainer
         get() = injectedHiltContainer
 
+    @Inject lateinit var syncScheduler: SyncScheduler
+
     override fun onCreate() {
         super.onCreate()
         // Global init
         AndroidThreeTen.init(this)
         FirebaseApp.initializeApp(this)
+        syncScheduler.scheduleSync()
+
     }
 }

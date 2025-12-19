@@ -7,6 +7,7 @@ interface IHomeViewModel {
     val uiState: StateFlow<HomeUiState>
     fun syncAll()
     fun loadUserInfo()
+    fun observeUserProperties()
     fun resetSnackBarMessage()
     fun toggleDrawer(isOpen: Boolean)
     fun navigateTo(screen: HomeDestination)

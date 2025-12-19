@@ -34,8 +34,9 @@ fun UserOnlineEntity.toEntity(
     )
 }
 
-fun PhotoEntity.toOnlineEntity(): PhotoOnlineEntity {
+fun PhotoEntity.toOnlineEntity(ownerUid: String): PhotoOnlineEntity {
     return PhotoOnlineEntity(
+        ownerUid = ownerUid,
         universalLocalId = this.id,
         universalLocalPropertyId = this.universalLocalPropertyId,
         description = this.description,
@@ -43,6 +44,7 @@ fun PhotoEntity.toOnlineEntity(): PhotoOnlineEntity {
         storageUrl = this.uri
     )
 }
+
 
 fun PhotoOnlineEntity.toEntity(
     firestoreId: String
@@ -59,17 +61,19 @@ fun PhotoOnlineEntity.toEntity(
     )
 }
 
-fun PoiEntity.toOnlineEntity(): PoiOnlineEntity {
+fun PoiEntity.toOnlineEntity(ownerUid: String): PoiOnlineEntity {
     return PoiOnlineEntity(
+        ownerUid = ownerUid,
         universalLocalId = this.id,
         name = this.name,
         type = this.type,
-        address= this.address,
+        address = this.address,
         latitude = this.latitude,
         longitude = this.longitude,
-        updatedAt = this.updatedAt,
+        updatedAt = this.updatedAt
     )
 }
+
 
 fun PoiOnlineEntity.toEntity(
     firestoreId: String?,
@@ -89,8 +93,9 @@ fun PoiOnlineEntity.toEntity(
 }
 
 
-fun PropertyEntity.toOnlineEntity(): PropertyOnlineEntity {
+fun PropertyEntity.toOnlineEntity(ownerUid: String): PropertyOnlineEntity {
     return PropertyOnlineEntity(
+        ownerUid = ownerUid,
         universalLocalId = this.id,
         universalLocalUserId = this.universalLocalUserId,
         title = this.title,
@@ -107,6 +112,7 @@ fun PropertyEntity.toOnlineEntity(): PropertyOnlineEntity {
         updatedAt = this.updatedAt
     )
 }
+
 
 fun PropertyOnlineEntity.toEntity(
     firestoreId: String?,
@@ -132,13 +138,15 @@ fun PropertyOnlineEntity.toEntity(
     )
 }
 
-fun PropertyPoiCrossEntity.toOnlineEntity(): PropertyPoiCrossOnlineEntity {
+fun PropertyPoiCrossEntity.toOnlineEntity(ownerUid: String): PropertyPoiCrossOnlineEntity {
     return PropertyPoiCrossOnlineEntity(
-        universalLocalPropertyId = universalLocalPropertyId,
-        universalLocalPoiId = universalLocalPoiId,
-        updatedAt = this.updatedAt,
+        ownerUid = ownerUid,
+        universalLocalPropertyId = this.universalLocalPropertyId,
+        universalLocalPoiId = this.universalLocalPoiId,
+        updatedAt = this.updatedAt
     )
 }
+
 
 fun PropertyPoiCrossOnlineEntity.toEntity(
     firestoreId: String?,

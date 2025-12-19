@@ -32,6 +32,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
+import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadManager
 import com.dcac.realestatemanager.data.sync.globalManager.UploadInterfaceManager
@@ -107,6 +108,8 @@ interface AppContainer {
     val poiUploadManager: PoiUploadInterfaceManager
     val crossSyncManager: PropertyPoiCrossUploadInterfaceManager
     val propertyUploadManager: PropertyUploadInterfaceManager
+
+    val syncScheduler: SyncScheduler
 }
 
 // Manual version for non hilt layers
@@ -135,7 +138,8 @@ class AppDataContainer(
     override val photoUploadManager: PhotoUploadInterfaceManager,
     override val poiUploadManager: PoiUploadInterfaceManager,
     override val crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
-    override val propertyUploadManager: PropertyUploadInterfaceManager
+    override val propertyUploadManager: PropertyUploadInterfaceManager,
+    override val syncScheduler: SyncScheduler
 ) : AppContainer
 
 //AppModule will tell to Hilt how to create object needed by the app.
@@ -173,7 +177,9 @@ object AppModule {
         photoUploadManager: PhotoUploadInterfaceManager,
         poiUploadManager: PoiUploadInterfaceManager,
         crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
-        propertyUploadManager: PropertyUploadInterfaceManager
+        propertyUploadManager: PropertyUploadInterfaceManager,
+        syncScheduler: SyncScheduler
+
     ): AppContainer {
         return AppDataContainer(
             propertyRepository,
@@ -200,7 +206,8 @@ object AppModule {
             photoUploadManager,
             poiUploadManager,
             crossSyncManager,
-            propertyUploadManager
+            propertyUploadManager,
+            syncScheduler
         )
     }
 
@@ -439,4 +446,9 @@ object AppModule {
         propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager
     ): DownloadInterfaceManager = DownloadManager(propertyDownloadManager, photoDownloadManager, poiDownloadManager, userDownloadManager, propertyPoiCrossDownloadManager)
 
+    @Provides
+    @Singleton
+    fun provideSyncScheduler(application: Application): SyncScheduler {
+        return SyncScheduler(application)
+    }
 }

@@ -1184,6 +1184,46 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - No need to restart the app for changes to take effect.
     - This real-time behavior is integrated deeply into the Composables with proper state hoisting.
   
+
+### 🔹 **Update #40**
+
+  - 📊 **Property Counters Added to Navigation Drawer**
+    - The navigation drawer now displays real-time statistics about the user’s properties.
+    - Two indicators are shown: the total number of properties owned by the user and the number of sold properties.
+    - These values are derived from the local Room database and updated reactively using Flow and StateFlow.
+    - This provides quick insight into the agent’s portfolio directly from the main navigation menu.
+
+  - 🏷️ **Sale Status and Sale Date Added to Property Creation**
+    - During property creation, users can now mark a property as sold or available.
+    - When a property is marked as sold, a sale date becomes mandatory and must be selected via a date picker.
+    - The creation flow enforces a business rule that prevents validation if a sold property has no sale date.
+    - The sale date is stored using LocalDate (ThreeTenABP) to ensure compatibility with API 21+.
+
+  - ✏️ **Editing Sale Status and Sale Date for Existing Properties**
+    - The property editing flow now supports updating both the sale status and the sale date.
+    - When editing the description section of a property, the existing sale status and date are preloaded into the draft state.
+    - Any changes made by the user are persisted to the database when the update is confirmed.
+
+  - 📡 **Automatic Synchronization on Network Availability**
+    - A background synchronization job is now automatically triggered when network connectivity becomes available.
+    - This behavior relies on WorkManager constraints to ensure sync tasks only run when the device is connected.
+    - This guarantees that offline changes are safely synchronized once connectivity is restored, without user intervention.
+
+  - 🚀 **Global Sync Scheduled at Application Startup**
+    - A global synchronization task is now scheduled when the application starts.
+    - This ensures that local data is refreshed with remote updates as early as possible.
+    - The scheduling logic is centralized and executed from the Application layer.
+
+  - ⚙️ **Centralized Sync Architecture with SyncScheduler**
+    - A dedicated SyncScheduler component has been introduced to orchestrate all background synchronization tasks.
+    - The scheduler delegates execution to a single SyncWorker, responsible for running upload and download flows.
+    - All synchronization logic is centralized, improving consistency, maintainability, and debuggability.
+
+  - ✋ **User-Initiated Data Changes Prepared for Background Sync**
+    - The architecture is designed so that any user action modifying local data can trigger a background synchronization.
+    - Local changes are first persisted in Room, then flagged for upload during the next scheduled sync.
+    - This reinforces the offline-first approach and avoids direct network calls from the UI layer.
   
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

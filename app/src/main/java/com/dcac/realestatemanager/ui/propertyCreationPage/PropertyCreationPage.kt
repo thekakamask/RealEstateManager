@@ -237,7 +237,11 @@ fun PropertyCreationPage(
                             onSurfaceChange = { viewModel.updateSurface(it) },
                             onRoomsChange = { viewModel.updateRooms(it) },
                             onDescriptionChange = { viewModel.updateDescription(it) },
-                            onTitleChange = {viewModel.updateTitle(it)}
+                            onTitleChange = {viewModel.updateTitle(it)},
+                            isSold = stepState?.draft?.isSold ?: false,
+                            saleDate = stepState?.draft?.saleDate,
+                            onIsSoldChange = {viewModel.updateIsSold(it) },
+                            onSaleDateChange = {viewModel.updateSaleDate(it) }
                         )
                     is PropertyCreationStep.Photos ->
                         Step6PhotosScreen(

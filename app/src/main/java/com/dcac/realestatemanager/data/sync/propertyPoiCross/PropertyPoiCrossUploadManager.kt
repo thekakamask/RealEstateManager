@@ -1,15 +1,21 @@
 package com.dcac.realestatemanager.data.sync.propertyPoiCross
 
+import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.utils.toOnlineEntity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.first
 
 class PropertyPoiCrossUploadManager(
     private val propertyPoiCrossRepository: PropertyPoiCrossRepository,             // Local Room repo
     private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository  // Firestore repo
 ): PropertyPoiCrossUploadInterfaceManager {
+
+    private val currentUserUid: String
+        get() = FirebaseAuth.getInstance().currentUser?.uid
+            ?: throw IllegalStateException("User must be authenticated to sync data")
 
     override suspend fun syncUnSyncedPropertyPoiCross(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
@@ -28,8 +34,11 @@ class PropertyPoiCrossUploadManager(
                     results.add(SyncStatus.Success("CrossRef $firestoreId deleted from Firebase & Room"))
 
                 } else {
+
+                    Log.e("UploadCheck", "Uploading crossRef with UID: $currentUserUid and data: ${crossRef.toOnlineEntity(currentUserUid)}")
+
                     val uploadedCrossRef = propertyPoiCrossOnlineRepository.uploadCrossRef(
-                        crossRef = crossRef.toOnlineEntity()
+                        crossRef = crossRef.toOnlineEntity(currentUserUid)
                     )
 
                     propertyPoiCrossRepository.updateCrossRefFromFirebase(
