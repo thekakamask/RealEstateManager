@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.poi
 
+import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -10,10 +11,24 @@ class FirebasePoiOnlineRepository(
 
     override suspend fun uploadPoi(poi: PoiOnlineEntity, firebasePoiId: String): PoiOnlineEntity {
         try {
+            val map = mapOf(
+                "ownerUid" to poi.ownerUid,
+                "universalLocalId" to poi.universalLocalId,
+                "name" to poi.name,
+                "type" to poi.type,
+                "address" to poi.address,
+                "latitude" to poi.latitude,
+                "longitude" to poi.longitude,
+                "updatedAt" to poi.updatedAt
+            )
+
+            Log.e("DEBUG_FIRESTORE_DATA", map.toString())
+
             firestore.collection(FirestoreCollections.POIS)
                 .document(firebasePoiId)
-                .set(poi)
+                .set(map)
                 .await()
+
             return poi
         } catch (e: Exception) {
             throw FirebasePoiUploadException("Failed to upload POI: ${e.message}", e)

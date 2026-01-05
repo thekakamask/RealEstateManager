@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlineStaticMap
+package com.dcac.realestatemanager.data.offlineDatabase.staticMap
 
 import com.dcac.realestatemanager.model.Property
 

@@ -1225,5 +1225,56 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - This reinforces the offline-first approach and avoids direct network calls from the UI layer.
   
 
+### 🔹 **Update #41**
+
+  - 🎨 **UI Architecture and Layout Improvements**
+    - A large number of UI components have been reviewed, refactored, and refined to improve overall visual quality and user experience.
+    - Spacing, alignment, and layout consistency have been improved across screens to better follow Material 3 guidelines.
+    - Several screens were reworked to properly handle system insets (top bar, bottom bar, IME/keyboard), ensuring content is never clipped or visually broken.
+    - Scrollable containers (LazyColumn, LazyRow, LazyVerticalGrid) were carefully adjusted to behave correctly depending on content size and screen constraints.
+    - Modal components (such as bottom sheets) were refined to avoid layout compression issues when the keyboard appears.
+    - Interactive elements (buttons, chips, icon selectors) were visually harmonized for better consistency and readability.
+    - These changes significantly improve usability on small screens and provide a more polished and professional user interface overall.
+    - Additionally, several structural UI elements such as the navigation drawer width, card elevations, and property detail surfaces were refined to ensure consistent rendering across different screen sizes and devices.
+
+  - 🗺️ **Static Map offline & online support**
+    - Static maps were previously stored only as local file URIs in Room, which caused them to be lost when properties were synchronized and downloaded on another device.
+    - A complete static map system has been introduced to ensure maps are available across devices while remaining accessible offline.
+
+  - 🗄️ **Room persistence for Static Maps**
+    - A dedicated StaticMapEntity was added to the Room database, linked to properties via a foreign key.
+    - A specific DAO and offline repository were implemented, allowing static maps to be queried, inserted, updated, and deleted independently.
+    - This ensures static maps follow the same offline-first persistence model as other core entities such as photos.
+
+  - 🔁 **Offline-first Static Map lifecycle**
+    - Static maps can now be created, edited, and deleted entirely offline.
+    - All changes are tracked locally and marked for synchronization, allowing seamless usage without network connectivity.
+
+  - ☁️ **Firestore metadata synchronization**
+    - A Firebase Firestore repository was introduced to store static map metadata (ownership, property linkage, timestamps).
+    - Firestore acts as the synchronization layer between devices, while Room remains the source of truth locally.
+
+  - 📦 **Firebase Storage integration for images**
+    - Static map images are now uploaded to Firebase Storage instead of relying on device-local files.
+    - Images are downloaded locally when needed and cached, ensuring availability even when the device goes offline after synchronization.
+
+  - 🔄 **Bidirectional synchronization managers**
+    - Dedicated upload and download managers were implemented to synchronize static maps between Room and Firebase (Firestore + Storage).
+    - These managers handle creation, updates, and deletions, and ensure conflicts are resolved based on timestamps.
+    - The synchronization logic follows the same proven architecture used for photo synchronization.
+
+  - 📱 **Cross-device consistency**
+    - When a property is downloaded on another device, its associated static map is now correctly restored and displayed.
+    - This fixes a critical limitation where properties could previously lose their map preview after synchronization.
+
+  - 🧩 **Dependency Injection integration**
+    - Static map repositories and synchronization managers were fully integrated into the Dependency Injection system (Hilt and AppContainer).
+    - This ensures proper lifecycle management, testability, and consistency with the rest of the application architecture.
+
+  - 🛡️ **Security and access control**
+    - Firestore security rules were updated to protect static map documents based on authenticated user ownership.
+    - Only the owner of a static map can create, update, or delete it, ensuring data integrity and user isolation.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

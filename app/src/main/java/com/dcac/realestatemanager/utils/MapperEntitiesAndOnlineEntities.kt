@@ -4,12 +4,14 @@ import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
+import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.StaticMapOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineEntity
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapEntity
 
 fun UserEntity.toOnlineEntity(): UserOnlineEntity {
     return UserOnlineEntity(
@@ -157,6 +159,30 @@ fun PropertyPoiCrossOnlineEntity.toEntity(
         firestoreDocumentId = firestoreId,
         isSynced = true,
         updatedAt = this.updatedAt,
+        isDeleted = false
+    )
+}
+
+fun StaticMapEntity.toOnlineEntity(ownerUid: String): StaticMapOnlineEntity {
+    return StaticMapOnlineEntity(
+        ownerUid = ownerUid,
+        universalLocalId = this.id,
+        universalLocalPropertyId = this.universalLocalPropertyId,
+        updatedAt = this.updatedAt,
+        storageUrl = this.uri
+    )
+}
+
+fun StaticMapOnlineEntity.toEntity(
+    firestoreId: String?,
+): StaticMapEntity {
+    return StaticMapEntity(
+        id = universalLocalId,
+        firestoreDocumentId = firestoreId,
+        universalLocalPropertyId = universalLocalPropertyId,
+        uri = storageUrl,
+        isSynced = true,
+        updatedAt = updatedAt,
         isDeleted = false
     )
 }

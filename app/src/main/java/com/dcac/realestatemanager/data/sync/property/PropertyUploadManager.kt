@@ -24,6 +24,7 @@ class PropertyUploadManager(
         val propertyToSync = propertyRepository.uploadUnSyncedPropertiesToFirebase().first()
 
         for (propertyEntity in propertyToSync) {
+
             val firebaseId = propertyEntity.firestoreDocumentId
             val localId = propertyEntity.id
             try {

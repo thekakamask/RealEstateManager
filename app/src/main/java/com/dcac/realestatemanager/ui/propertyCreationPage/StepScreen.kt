@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -61,6 +62,7 @@ import org.threeten.bp.LocalDate
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.unit.Dp
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 @Composable
@@ -73,7 +75,6 @@ fun Step1IntroScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_1_title_text),
@@ -117,7 +118,8 @@ fun Step1IntroScreen(
 @Composable
 fun Step2TypeScreen(
     selectedType: String?,
-    onTypeSelected: (String) -> Unit
+    onTypeSelected: (String) -> Unit,
+    bottomInset: Dp
 ) {
 
     val propertyTypes = listOf(
@@ -137,7 +139,6 @@ fun Step2TypeScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_2_title_text),
@@ -166,6 +167,7 @@ fun Step2TypeScreen(
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(bottom = bottomInset),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize()
@@ -223,6 +225,7 @@ fun Step3AddressScreen(
     onPostalCodeChange: (String) -> Unit,
     onCityChange: (String) -> Unit,
     onCountryChange: (String) -> Unit,
+    bottomInset: Dp
 ) {
     Column(
         modifier = Modifier
@@ -231,7 +234,6 @@ fun Step3AddressScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_3_title_text),
@@ -258,37 +260,44 @@ fun Step3AddressScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            AddressTextField(
-                stringResource(R.string.property_creation_step_3_number_street_label),
-                stringResource(R.string.property_creation_step_3_number_street_content),
-                street,
-                onStreetChange
-            )
-            Spacer(modifier = Modifier.height(16.dp))
 
-            AddressTextField(
-                stringResource(R.string.property_creation_step_3_postal_code_label),
-                stringResource(R.string.property_creation_step_3_postal_code_content),
-                city,
-                onCityChange
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = bottomInset),
+                )
+            {
+                item {
+                    AddressTextField(
+                        stringResource(R.string.property_creation_step_3_number_street_label),
+                        stringResource(R.string.property_creation_step_3_number_street_content),
+                        street,
+                        onStreetChange
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            AddressTextField(
-                stringResource(R.string.property_creation_step_3_city_label),
-                stringResource(R.string.property_creation_step_3_city_content),
-                postalCode,
-                onPostalCodeChange
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                    AddressTextField(
+                        stringResource(R.string.property_creation_step_3_postal_code_label),
+                        stringResource(R.string.property_creation_step_3_postal_code_content),
+                        city,
+                        onCityChange
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            AddressTextField(
-                stringResource(R.string.property_creation_step_3_country_label),
-                stringResource(R.string.property_creation_step_3_country_content),
-                country,
-                onCountryChange
-            )
+                    AddressTextField(
+                        stringResource(R.string.property_creation_step_3_city_label),
+                        stringResource(R.string.property_creation_step_3_city_content),
+                        postalCode,
+                        onPostalCodeChange
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
+                    AddressTextField(
+                        stringResource(R.string.property_creation_step_3_country_label),
+                        stringResource(R.string.property_creation_step_3_country_content),
+                        country,
+                        onCountryChange
+                    )
+                }
+            }
         }
     }
 }
@@ -332,7 +341,8 @@ fun Step4PoiScreen(
     onStreetChanged: (Int, String) -> Unit,
     onCityChanged: (Int, String) -> Unit,
     onPostalCodeChanged: (Int, String) -> Unit,
-    onCountryChanged: (Int, String) -> Unit
+    onCountryChanged: (Int, String) -> Unit,
+    bottomInset: Dp
 ) {
     Column(
         modifier = Modifier
@@ -344,7 +354,6 @@ fun Step4PoiScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_4_title_text),
@@ -374,7 +383,8 @@ fun Step4PoiScreen(
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
+                contentPadding = PaddingValues(bottom = bottomInset)
+                ) {
                 items(5) { index ->
                     val poi = poiList.getOrNull(index)
                     PoiInputBlock(
@@ -544,12 +554,11 @@ fun Step5DescriptionScreen(
     saleDate: LocalDate?,
     onIsSoldChange: (Boolean) -> Unit,
     onSaleDateChange: (LocalDate) -> Unit,
+    bottomInset: Dp
 ){
 
     val currency = CurrencyHelper.LocalCurrency.current
     val priceUnitString = stringResource(id = CurrencyHelper.getPropertyCreationStep5Unit(currency))
-
-
     val datePickerState = rememberDatePickerState()
     var showDatePicker by remember { mutableStateOf(false) }
 
@@ -559,11 +568,9 @@ fun Step5DescriptionScreen(
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_5_title_text),
@@ -590,106 +597,115 @@ fun Step5DescriptionScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            AddressTextField(
-                stringResource(R.string.property_creation_step_5_title_label),
-                stringResource(R.string.property_creation_step_5_title_content),
-                title,
-                onTitleChange,
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = bottomInset)
             )
+            {
 
-            Spacer(modifier = Modifier.height(16.dp))
+                item {
+                    AddressTextField(
+                        stringResource(R.string.property_creation_step_5_title_label),
+                        stringResource(R.string.property_creation_step_5_title_content),
+                        title,
+                        onTitleChange,
+                    )
 
 
-            NumberTextField(
-                stringResource(R.string.property_creation_step_5_price_label),
-                stringResource(R.string.property_creation_step_5_price_content),
-                price,
-                onPriceChange,
-                unit = priceUnitString
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            NumberTextField(
-                stringResource(R.string.property_creation_step_5_surface_label),
-                stringResource(R.string.property_creation_step_5_surface_content),
-                surface,
-                onSurfaceChange,
-                unit = stringResource(R.string.property_creation_step_5_unit_square_meter)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
 
-            NumberTextField(
-                stringResource(R.string.property_creation_step_5_rooms_label),
-                stringResource(R.string.property_creation_step_5_rooms_content),
-                rooms,
-                onRoomsChange
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                    NumberTextField(
+                        stringResource(R.string.property_creation_step_5_price_label),
+                        stringResource(R.string.property_creation_step_5_price_content),
+                        price,
+                        onPriceChange,
+                        unit = priceUnitString
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(R.string.property_creation_step_5_is_sold_label),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = isSold,
-                    onCheckedChange = onIsSoldChange
-                )
-            }
+                    NumberTextField(
+                        stringResource(R.string.property_creation_step_5_surface_label),
+                        stringResource(R.string.property_creation_step_5_surface_content),
+                        surface,
+                        onSurfaceChange,
+                        unit = stringResource(R.string.property_creation_step_5_unit_square_meter)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            if (isSold) {
-                Spacer(modifier = Modifier.height(16.dp))
+                    NumberTextField(
+                        stringResource(R.string.property_creation_step_5_rooms_label),
+                        stringResource(R.string.property_creation_step_5_rooms_content),
+                        rooms,
+                        onRoomsChange
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = stringResource(R.string.property_creation_step_5_sale_date_label),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(R.string.property_creation_step_5_is_sold_label),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = isSold,
+                            onCheckedChange = onIsSoldChange
+                        )
+                    }
 
-                OutlinedButton(
-                    onClick = { showDatePicker = true },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        saleDate?.toString()
-                            ?: stringResource(R.string.property_creation_step_5_select_date)
+                    if (isSold) {
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = stringResource(R.string.property_creation_step_5_sale_date_label),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+
+                        OutlinedButton(
+                            onClick = { showDatePicker = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                saleDate?.toString()
+                                    ?: stringResource(R.string.property_creation_step_5_select_date)
+                            )
+                        }
+                    }
+
+                    if (showDatePicker) {
+                        DatePickerDialog(
+                            onDismissRequest = { showDatePicker = false },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    datePickerState.selectedDateMillis?.let { millis ->
+                                        val date = Instant.ofEpochMilli(millis)
+                                            .atZone(ZoneId.systemDefault())
+                                            .toLocalDate()
+                                        onSaleDateChange(date)
+                                    }
+                                    showDatePicker = false
+                                }) {
+                                    Text(stringResource(R.string.property_creation_step_5_select_date_confirm))
+                                }
+                            }
+                        ) {
+                            DatePicker(state = datePickerState)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    AddressTextField(
+                        stringResource(R.string.property_creation_step_5_description_label),
+                        stringResource(R.string.property_creation_step_5_description_content),
+                        description,
+                        onDescriptionChange,
+                        minLines = 20
                     )
                 }
             }
-
-            if (showDatePicker) {
-                DatePickerDialog(
-                    onDismissRequest = { showDatePicker = false },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            datePickerState.selectedDateMillis?.let { millis ->
-                                val date = Instant.ofEpochMilli(millis)
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
-                                onSaleDateChange(date)
-                            }
-                            showDatePicker = false
-                        }) {
-                            Text(stringResource(R.string.property_creation_step_5_select_date_confirm))
-                        }
-                    }
-                ) {
-                    DatePicker(state = datePickerState)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AddressTextField(
-                stringResource(R.string.property_creation_step_5_description_label),
-                stringResource(R.string.property_creation_step_5_description_content),
-                description,
-                onDescriptionChange,
-                minLines = 20
-            )
         }
     }
 }
@@ -744,7 +760,8 @@ fun NumberTextField(
 fun Step6PhotosScreen(
     photos: List<Photo>,
     onPhotoClick: (Int) -> Unit,
-    onDeletePhoto: (Int) -> Unit
+    onDeletePhoto: (Int) -> Unit,
+    bottomInset: Dp
 ) {
     Column(
         modifier = Modifier
@@ -754,7 +771,6 @@ fun Step6PhotosScreen(
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_6_title_text),
@@ -781,32 +797,39 @@ fun Step6PhotosScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    repeat(4) { row ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = bottomInset)
+            )
+            {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            repeat(3) { col ->
-                                val index = row * 3 + col
-                                val photo = photos.getOrNull(index)
-                                AddPhotoCell(
-                                    modifier = Modifier.weight(1f),
-                                    imageUri = photo?.uri?.takeIf { it.isNotBlank() }?.toUri(),
-                                    onClick = { onPhotoClick(index) },
-                                    onDeleteClick = if (photo != null) {
-                                        { onDeletePhoto(index) }
-                                    } else null
-                                )
+                            repeat(4) { row ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    repeat(3) { col ->
+                                        val index = row * 3 + col
+                                        val photo = photos.getOrNull(index)
+                                        AddPhotoCell(
+                                            modifier = Modifier.weight(1f),
+                                            imageUri = photo?.uri?.takeIf { it.isNotBlank() }?.toUri(),
+                                            onClick = { onPhotoClick(index) },
+                                            onDeleteClick = if (photo != null) {
+                                                { onDeletePhoto(index) }
+                                            } else null
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -871,7 +894,7 @@ fun AddPhotoCell(
 fun Step7StaticMapScreen(
     mapBytes: ByteArray?,
     isLoading: Boolean,
-    onLoadMap: () -> Unit
+    onLoadMap: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
         onLoadMap()
@@ -884,7 +907,6 @@ fun Step7StaticMapScreen(
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_7_title_text),
@@ -911,34 +933,27 @@ fun Step7StaticMapScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                when {
-                    isLoading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+            when {
+                isLoading -> CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
 
-                    mapBytes != null -> {
-                        val bitmap = remember(mapBytes) {
-                            BitmapFactory.decodeByteArray(mapBytes, 0, mapBytes.size).asImageBitmap()
-                        }
-
-                        Image(
-                            bitmap = bitmap,
-                            contentDescription = stringResource(R.string.property_creation_step_7_static_map_content_description),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(600.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                        )
+                mapBytes != null -> {
+                    val bitmap = remember(mapBytes) {
+                        BitmapFactory.decodeByteArray(mapBytes, 0, mapBytes.size).asImageBitmap()
                     }
 
-                    else -> Text(
-                        stringResource(R.string.property_creation_step_7_static_map_unavailable),
-                        color = MaterialTheme.colorScheme.error)
+                    Image(
+                        bitmap = bitmap,
+                        contentDescription = stringResource(R.string.property_creation_step_7_static_map_content_description),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(400.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
                 }
+
+                else -> Text(
+                    stringResource(R.string.property_creation_step_7_static_map_unavailable),
+                    color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -946,7 +961,8 @@ fun Step7StaticMapScreen(
 
 @Composable
 fun Step8ConfirmationScreen(
-    draft: PropertyDraft
+    draft: PropertyDraft,
+    bottomInset: Dp
 ) {
     Column(
         modifier = Modifier
@@ -962,7 +978,6 @@ fun Step8ConfirmationScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
                 text = stringResource(R.string.property_creation_step_8_title_text),
@@ -992,7 +1007,8 @@ fun Step8ConfirmationScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(bottom = bottomInset)
             ) {
 
                 item {

@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
-import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapRepository
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
-import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapConfig
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapConfig
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Poi
@@ -255,17 +255,21 @@ class PropertyCreationViewModel @Inject constructor(
             )
 
             val bytes = staticMapRepository.getStaticMapImage(config)
-            if (bytes != null) {
-                val uniqueFileName = "static_map_${UUID.randomUUID()}.png"
-                val path = staticMapRepository.saveStaticMapToLocal(context, uniqueFileName, bytes)
-                updateDraft { it.copy(staticMapPath = path) }
-                updateState(
-                    isLoadingMap = false,
-                    staticMapImageBytes = bytes.toList()
-                )
-            } else {
+
+            if (bytes == null) {
                 updateState(isLoadingMap = false)
+                return@launch
             }
+
+            val fileName = "static_map_${UUID.randomUUID()}.png"
+
+            val localPath = staticMapRepository.saveStaticMapToLocal(context, fileName, bytes)
+            updateDraft { it.copy(staticMapPath = localPath) }
+
+            updateState(
+                isLoadingMap = false,
+                staticMapImageBytes = bytes.toList()
+            )
         }
     }
     override fun createModelFromDraft(context: Context, currency: String) {

@@ -6,6 +6,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiWithPropertiesRelation
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyWithPoiSRelation
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapEntity
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 import com.dcac.realestatemanager.model.Photo
 import com.dcac.realestatemanager.model.Poi
@@ -13,6 +14,7 @@ import com.dcac.realestatemanager.model.PoiWithProperties
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyPoiCross
 import com.dcac.realestatemanager.model.PropertyWithPoiS
+import com.dcac.realestatemanager.model.StaticMap
 import com.dcac.realestatemanager.model.User
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
@@ -201,3 +203,23 @@ fun PropertyWithPoiSRelation.toModel(): PropertyWithPoiS {
         poiS = poiS.map { it.toModel() }
     )
 }
+
+fun StaticMapEntity.toModel(): StaticMap = StaticMap(
+    universalLocalId = id,
+    firestoreDocumentId = firestoreDocumentId,
+    universalLocalPropertyId = universalLocalPropertyId,
+    uri = uri,
+    isDeleted = isDeleted,
+    isSynced = isSynced,
+    updatedAt = updatedAt
+)
+
+fun StaticMap.toEntity(): StaticMapEntity = StaticMapEntity(
+    id = universalLocalId,
+    firestoreDocumentId = firestoreDocumentId,
+    universalLocalPropertyId = universalLocalPropertyId,
+    uri = uri,
+    isDeleted = isDeleted,
+    isSynced = isSynced,
+    updatedAt = updatedAt
+)

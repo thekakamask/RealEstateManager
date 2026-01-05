@@ -12,13 +12,15 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyDao
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossEntity
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDao
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapEntity
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
 
 // Room database definition for the application.
 // - Declares entities used by the database: Property, Photo, POI.
 // - Declares DAO accessors to interact with the database.
-@Database(entities = [PropertyEntity::class, PhotoEntity::class, PoiEntity::class, UserEntity::class, PropertyPoiCrossEntity::class],
+@Database(entities = [PropertyEntity::class, PhotoEntity::class, PoiEntity::class, UserEntity::class, PropertyPoiCrossEntity::class, StaticMapEntity::class],
     version = 1, // Version number of the schema. Increment it if the schema (entities, fields, relations) changes.
     exportSchema = false) // If true, Room will export the schema to a folder (used for schema versioning/testing). Disabled here.
 abstract class RealEstateManagerDatabase : RoomDatabase() {
@@ -28,6 +30,7 @@ abstract class RealEstateManagerDatabase : RoomDatabase() {
     abstract fun poiDao(): PoiDao
     abstract fun userDao(): UserDao
     abstract fun propertyCrossDao(): PropertyPoiCrossDao
+    abstract fun staticMapDao(): StaticMapDao
 
     // Singleton instance to avoid multiple database instances at runtime.
     companion object {

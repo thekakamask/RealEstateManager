@@ -302,10 +302,10 @@
     <string name="filter_screen_status_sold_label">Sold</string>
     <string name="filter_screen_status_available_label">Available</string>
     <string name="filter_screen_status_all_label">All</string>
-    <string name="filter_screen_surface_min_label">Minimum surface</string>
-    <string name="filter_screen_surface_max_label">Maximum surface</string>
-    <string name="filter_screen_price_min_label">Minimum price</string>
-    <string name="filter_screen_price_max_label">Maximum price</string>
+    <string name="filter_screen_surface_min_label">Min surface</string>
+    <string name="filter_screen_surface_max_label">Max surface</string>
+    <string name="filter_screen_price_min_label">Min price</string>
+    <string name="filter_screen_price_max_label">Max price</string>
     <string name="filter_screen_reset_button_label">Reset</string>
     <string name="filter_screen_apply_button_label">Apply</string>
 

@@ -45,6 +45,8 @@ import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
+import androidx.compose.ui.text.style.TextAlign
+
 
 @Composable
 fun PropertiesListScreen(
@@ -190,14 +192,14 @@ fun PropertyItem(
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier
                                 .weight(1f)
-                                .height(120.dp)
+                                .height(80.dp)
                                 .clip(RoundedCornerShape(8.dp))
                         )
                     } else {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(120.dp)
+                                .height(80.dp)
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(MaterialTheme.colorScheme.outlineVariant),
                             contentAlignment = Alignment.Center
@@ -318,7 +320,8 @@ fun EmptyPropertiesContent() {
 
             Text(
                 text = stringResource(R.string.property_list_screen_screen_empty_subtitle),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
             )
         }
     }

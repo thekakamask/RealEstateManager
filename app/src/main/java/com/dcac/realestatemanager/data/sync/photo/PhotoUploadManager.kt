@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.sync.photo
 
+import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
@@ -24,6 +25,11 @@ class PhotoUploadManager(
         val photosToSync = photoRepository.uploadUnSyncedPhotosToFirebase().first()
 
 
+        Log.e("SYNC_PHOTO", "PHOTO TO SYNC COUNT = ${photosToSync.size}")
+        photosToSync.forEach {
+            Log.e("SYNC_PHOTO", "PHOTO ENTITY = $it")
+        }
+
         for (photo in photosToSync) {
             try {
                 val firebaseId = photo.firestoreDocumentId
@@ -38,6 +44,11 @@ class PhotoUploadManager(
                     results.add(SyncStatus.Success("Photo ${photo.id} deleted from Firebase & Room"))
                 } else {
                     val finalId = firebaseId ?: generateFirestoreId()
+
+                   Log.e(
+                       "SYNC_PHOTO_UPLOAD",
+                       "Uploading photo localId=${photo.id} firestoreId=$firebaseId finalId=$finalId"
+                   )
                     val updatedOnline = photoOnlineRepository.uploadPhoto(
                         photo.toOnlineEntity(currentUserUid),
                         finalId
@@ -49,10 +60,12 @@ class PhotoUploadManager(
                         firestoreId = finalId
                     )
 
+                    Log.e("SYNC_PHOTO_UPLOAD", "Upload OK for photo ${photo.id}")
                     results.add(SyncStatus.Success("Photo ${photo.id} uploaded to Firebase"))
                 }
 
             } catch (e: Exception) {
+                Log.e("SYNC_PHOTO_ERROR", "Upload failed for photo ${photo.id} : ${e.message}", e)
                 results.add(SyncStatus.Failure("Photo ${photo.id}", e))
             }
         }

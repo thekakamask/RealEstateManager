@@ -6,6 +6,7 @@ import com.dcac.realestatemanager.data.sync.photo.PhotoUploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.poi.PoiUploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.property.PropertyUploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossUploadInterfaceManager
+import com.dcac.realestatemanager.data.sync.staticMap.StaticMapUploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserUploadInterfaceManager
 
 // CENTRAL MANAGER THAT TRIGGERS ALL SYNC TASKS IN THE APP
@@ -15,8 +16,8 @@ class UploadManager(
     private val photoUploadManager: PhotoUploadInterfaceManager,
     private val poiUploadManager: PoiUploadInterfaceManager,
     private val crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
-    private val propertyUploadManager: PropertyUploadInterfaceManager
-    // OTHERS SYNC MANAGERS CAN BE ADDED HERE (E.G. PROPERTY, PHOTO, ETC.)
+    private val propertyUploadManager: PropertyUploadInterfaceManager,
+    private val staticMapUploadManager: StaticMapUploadInterfaceManager
 ): UploadInterfaceManager {
 
     // SYNCHRONIZES ALL UNSYNCED ENTITIES (CURRENTLY ONLY USERS)
@@ -27,9 +28,11 @@ class UploadManager(
         val photoResults = photoUploadManager.syncUnSyncedPhotos()
         val poiResults = poiUploadManager.syncUnSyncedPoiS()
         val crossResults = crossSyncManager.syncUnSyncedPropertyPoiCross()
+        val staticMapResults = staticMapUploadManager.syncUnSyncedStaticMaps()
+
 
         val allResults =
-            userResults + propertyResults + photoResults + poiResults + crossResults
+            userResults + propertyResults + photoResults + poiResults + crossResults + staticMapResults
 
         allResults.filterIsInstance<SyncStatus.Failure>().forEach {
             Log.e("UploadManager", "Failed to upload: ${it.label} — ${it.error.message}")

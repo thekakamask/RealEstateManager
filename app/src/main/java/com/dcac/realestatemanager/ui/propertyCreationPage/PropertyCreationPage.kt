@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
@@ -196,14 +199,21 @@ fun PropertyCreationPage(
         }
     ) { innerPadding ->
         if (state !is PropertyCreationUiState.Success) {
-            Box(modifier = Modifier.padding(innerPadding)) {
+            Box(modifier = Modifier.padding(
+                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                top = innerPadding.calculateTopPadding(),
+                bottom = 0.dp
+            )) {
+
                 when (currentStep) {
                     is PropertyCreationStep.Intro ->
                         Step1IntroScreen()
                     is PropertyCreationStep.PropertyType ->
                         Step2TypeScreen(
                             selectedType = stepState?.draft?.type.orEmpty(),
-                            onTypeSelected = { viewModel.updateType(it) }
+                            onTypeSelected = { viewModel.updateType(it) },
+                            bottomInset = innerPadding.calculateBottomPadding()
                         )
                     is PropertyCreationStep.Address ->
                         Step3AddressScreen(
@@ -215,6 +225,7 @@ fun PropertyCreationPage(
                             onPostalCodeChange = { viewModel.updatePostalCode(it) },
                             onCityChange = { viewModel.updateCity(it) },
                             onCountryChange = { viewModel.updateCountry(it) },
+                            bottomInset = innerPadding.calculateBottomPadding()
                         )
                     is PropertyCreationStep.PoiS ->
                         Step4PoiScreen(
@@ -224,7 +235,8 @@ fun PropertyCreationPage(
                             onStreetChanged = { index, street -> viewModel.updatePoiStreet(index, street)},
                             onPostalCodeChanged = { index, postal -> viewModel.updatePoiPostalCode(index, postal)},
                             onCityChanged = { index, city -> viewModel.updatePoiCity(index, city)},
-                            onCountryChanged = { index, country -> viewModel.updatePoiCountry(index, country)}
+                            onCountryChanged = { index, country -> viewModel.updatePoiCountry(index, country)},
+                            bottomInset = innerPadding.calculateBottomPadding()
                         )
                     is PropertyCreationStep.Description ->
                         Step5DescriptionScreen(
@@ -241,7 +253,8 @@ fun PropertyCreationPage(
                             isSold = stepState?.draft?.isSold ?: false,
                             saleDate = stepState?.draft?.saleDate,
                             onIsSoldChange = {viewModel.updateIsSold(it) },
-                            onSaleDateChange = {viewModel.updateSaleDate(it) }
+                            onSaleDateChange = {viewModel.updateSaleDate(it) },
+                            bottomInset = innerPadding.calculateBottomPadding()
                         )
                     is PropertyCreationStep.Photos ->
                         Step6PhotosScreen(
@@ -253,17 +266,19 @@ fun PropertyCreationPage(
                             },
                             onDeletePhoto = { index ->
                                 viewModel.removePhotoAt(index)
-                            }
+                            },
+                            bottomInset = innerPadding.calculateBottomPadding()
                         )
                     is PropertyCreationStep.StaticMap ->
                         Step7StaticMapScreen(
                             mapBytes = stepState?.staticMapImageBytes?.toByteArray(),
                             isLoading = stepState?.isLoadingMap == true,
-                            onLoadMap = { viewModel.fetchStaticMap(context) }
-                        )
+                            onLoadMap = { viewModel.fetchStaticMap(context) },
+                            )
                     is PropertyCreationStep.Confirmation ->
                         Step8ConfirmationScreen(
-                            draft = stepState?.draft ?: return@Scaffold
+                            draft = stepState?.draft ?: return@Scaffold,
+                            bottomInset = innerPadding.calculateBottomPadding()
                         )
 
                 }

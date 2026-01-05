@@ -1,4 +1,4 @@
-package com.dcac.realestatemanager.data.offlineStaticMap
+package com.dcac.realestatemanager.data.offlineDatabase.staticMap
 
 //Represents the configuration for a static map request.
 // Includes the map center, zoom, size, map type, and marker parameters.

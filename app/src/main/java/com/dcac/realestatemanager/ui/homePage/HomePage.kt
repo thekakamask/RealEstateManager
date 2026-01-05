@@ -101,7 +101,9 @@ fun HomeScreen(
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent ={
-                ModalDrawerSheet {
+                ModalDrawerSheet(
+                    modifier = Modifier.width(300.dp)
+                ) {
                     Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
                             painter = painterResource(id = R.drawable.user_icon),
@@ -195,7 +197,8 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-                    Spacer(modifier = Modifier.height(16.dp))
+
+                    /*Spacer(modifier = Modifier.height(16.dp))
 
                     Box(
                         modifier = Modifier
@@ -225,7 +228,7 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
                     HorizontalDivider(Modifier.padding(horizontal = 16.dp))
-
+*/
 
                 }
             }
@@ -283,7 +286,7 @@ fun HomeScreen(
                     FloatingActionButton(
                         onClick = onAddPropertyClick,
                         modifier = Modifier
-                            .padding(end = 16.dp, bottom = 32.dp),
+                            .padding(end = 16.dp, bottom = 16.dp),
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ) {

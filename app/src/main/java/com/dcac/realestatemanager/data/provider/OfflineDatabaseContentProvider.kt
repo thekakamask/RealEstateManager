@@ -23,6 +23,8 @@ private const val TABLE_PHOTOS = "photos"
 private const val TABLE_POI = "poi"
 private const val TABLE_USERS = "users"
 private const val TABLE_CROSS_REF = "property_poi_cross_ref"
+private const val TABLE_STATIC_MAP = "static_map"
+
 
 class OfflineDatabaseContentProvider : ContentProvider() {
 
@@ -36,6 +38,7 @@ class OfflineDatabaseContentProvider : ContentProvider() {
         const val PATH_POI = "poi"
         const val PATH_USERS = "users"
         const val PATH_CROSS_REF = "property_poi_cross_ref"
+        const val PATH_STATIC_MAP = "static_map"
 
         // Integer codes to match URIs
         const val CODE_PROPERTIES = 1
@@ -43,6 +46,7 @@ class OfflineDatabaseContentProvider : ContentProvider() {
         const val CODE_POI = 3
         const val CODE_USERS = 4
         const val CODE_CROSS_REF = 5
+        const val CODE_STATIC_MAP = 6
     }
 
     // Reference to the Room database (set in onCreate)
@@ -55,6 +59,7 @@ class OfflineDatabaseContentProvider : ContentProvider() {
         addURI(AUTHORITY, PATH_POI, CODE_POI)
         addURI(AUTHORITY, PATH_USERS, CODE_USERS)
         addURI(AUTHORITY, PATH_CROSS_REF, CODE_CROSS_REF)
+        addURI(AUTHORITY, PATH_STATIC_MAP, CODE_STATIC_MAP)
     }
 
     // Called when the ContentProvider is
@@ -89,6 +94,7 @@ class OfflineDatabaseContentProvider : ContentProvider() {
             CODE_POI -> database.poiDao().getAllPoiSAsCursor(query)
             CODE_USERS -> database.userDao().getAllUsersAsCursor(query)
             CODE_CROSS_REF -> database.propertyCrossDao().getAllCrossRefsAsCursor(query)
+            CODE_STATIC_MAP -> database.staticMapDao().getAllStaticMapAsCursor(query)
             else -> null   // If the URI does not match any known paths
         }?.apply {
             // Notifies observers (e.g., content observers) that the URI is being observed
@@ -104,6 +110,7 @@ class OfflineDatabaseContentProvider : ContentProvider() {
             CODE_POI -> "vnd.android.cursor.dir/$PATH_POI"
             CODE_USERS -> "vnd.android.cursor.dir/$PATH_USERS"
             CODE_CROSS_REF -> "vnd.android.cursor.dir/$PATH_CROSS_REF"
+            CODE_STATIC_MAP -> "vnd.android.cursor.dir/$PATH_STATIC_MAP"
             else -> null
         }
     }
@@ -128,6 +135,7 @@ class OfflineDatabaseContentProvider : ContentProvider() {
             CODE_POI -> TABLE_POI
             CODE_USERS -> TABLE_USERS
             CODE_CROSS_REF -> TABLE_CROSS_REF
+            CODE_STATIC_MAP -> TABLE_STATIC_MAP
             else -> throw IllegalArgumentException("Unknown URI code: $uriCode")
         }
 

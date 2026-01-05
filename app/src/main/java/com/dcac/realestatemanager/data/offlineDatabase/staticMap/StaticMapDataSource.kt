@@ -1,8 +1,8 @@
-package com.dcac.realestatemanager.data.offlineStaticMap
+package com.dcac.realestatemanager.data.offlineDatabase.staticMap
 
 import android.content.Context
 
-interface StaticMapRepository {
+interface StaticMapDataSource {
 
     suspend fun getStaticMapImage(config: StaticMapConfig): ByteArray?
     fun saveStaticMapToLocal(context: Context, fileName: String, bytes: ByteArray): String?

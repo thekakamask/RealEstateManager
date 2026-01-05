@@ -6,6 +6,7 @@ import com.dcac.realestatemanager.data.sync.photo.PhotoDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.poi.PoiDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.property.PropertyDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossDownloadInterfaceManager
+import com.dcac.realestatemanager.data.sync.staticMap.StaticMapDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserDownloadInterfaceManager
 
 class DownloadManager(
@@ -14,17 +15,21 @@ class DownloadManager(
     private val poiDownloadManager: PoiDownloadInterfaceManager,
     private val userDownloadManager: UserDownloadInterfaceManager,
     private val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager,
+    private val staticMapDownloadManager: StaticMapDownloadInterfaceManager
 ): DownloadInterfaceManager {
 
     override suspend fun downloadAll(): List<SyncStatus> {
         val userResults = userDownloadManager.downloadUnSyncedUsers()
         val propertyResults = propertyDownloadManager.downloadUnSyncedProperties()
-        val photoResults = photoDownloadManager.downloadUnSyncedPhotos()
         val poiResults = poiDownloadManager.downloadUnSyncedPoiS()
         val crossResults = propertyPoiCrossDownloadManager.downloadUnSyncedPropertyPoiCross()
+        val photoResults = photoDownloadManager.downloadUnSyncedPhotos()
+        val staticMapResults = staticMapDownloadManager.downloadUnSyncedStaticMaps()
+
 
         val allResults =
-            userResults + propertyResults + photoResults + poiResults + crossResults
+            userResults + propertyResults + photoResults + poiResults + crossResults + staticMapResults
+
 
         allResults.filterIsInstance<SyncStatus.Failure>().forEach {
             Log.e("DownloadManager", "Failed to download: ${it.label} — ${it.error.message}")

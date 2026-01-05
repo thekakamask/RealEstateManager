@@ -21,6 +21,10 @@ class PropertyPoiCrossUploadManager(
         val results = mutableListOf<SyncStatus>()
         val crossRefsToSync = propertyPoiCrossRepository.uploadUnSyncedCrossRefsToFirebase().first()
 
+        Log.e("SYNC_CROSSREF", "CROSSREF TO SYNC COUNT = ${crossRefsToSync.size}")
+        crossRefsToSync.forEach {
+            Log.e("SYNC_CROSSREF", "CROSSREF ENTITY = $it")
+        }
         for (crossRef in crossRefsToSync) {
             val propertyId = crossRef.universalLocalPropertyId
             val poiId = crossRef.universalLocalPoiId
@@ -35,8 +39,10 @@ class PropertyPoiCrossUploadManager(
 
                 } else {
 
-                    Log.e("UploadCheck", "Uploading crossRef with UID: $currentUserUid and data: ${crossRef.toOnlineEntity(currentUserUid)}")
-
+                    Log.e(
+                        "SYNC_CROSSREF_UPLOAD",
+                        "Uploading crossRef propertyId=$propertyId poiId=$poiId firestoreId=$firestoreId"
+                    )
                     val uploadedCrossRef = propertyPoiCrossOnlineRepository.uploadCrossRef(
                         crossRef = crossRef.toOnlineEntity(currentUserUid)
                     )
@@ -46,10 +52,12 @@ class PropertyPoiCrossUploadManager(
                         firebaseDocumentId = firestoreId
                     )
 
+                    Log.e("SYNC_CROSSREF_UPLOAD", "Upload OK for crossRef $firestoreId")
                     results.add(SyncStatus.Success("CrossRef $firestoreId uploaded to Firebase"))
                 }
 
             } catch (e: Exception) {
+                Log.e("SYNC_CROSSREF_ERROR", "Upload failed for crossRef $firestoreId : ${e.message}", e)
                 results.add(SyncStatus.Failure("CrossRef $firestoreId failed to sync", e))
             }
         }

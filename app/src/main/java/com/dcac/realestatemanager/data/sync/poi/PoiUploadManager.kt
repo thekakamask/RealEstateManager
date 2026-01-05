@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.sync.poi
 
+import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineRepository
@@ -22,6 +23,12 @@ class PoiUploadManager(
         val results = mutableListOf<SyncStatus>()
         val poiToSync = poiRepository.uploadUnSyncedPoiSToFirebase().first()
 
+        // 🔥 LOG 1 — vérifier ce que Room renvoie
+        Log.e("SYNC_POI", "POI TO SYNC COUNT = ${poiToSync.size}")
+        poiToSync.forEach {
+            Log.e("SYNC_POI", "POI ENTITY = $it")
+        }
+
         for (poiEntity in poiToSync) {
             val firebaseId = poiEntity.firestoreDocumentId
             val localId = poiEntity.id
@@ -35,6 +42,15 @@ class PoiUploadManager(
                     results.add(SyncStatus.Success("Poi $localId deleted from Firebase & Room"))
                 } else {
                     val finalId = firebaseId ?: generateFirestoreId()
+
+                    Log.e(
+                        "SYNC_POI_UPLOAD",
+                        "Uploading POI localId=${poiEntity.id} firestoreId=$firebaseId finalId=$finalId"
+                    )
+
+                    Log.e("DEBUG_AUTH", "AUTH UID = '${FirebaseAuth.getInstance().currentUser?.uid}'")
+                    Log.e("DEBUG_OWNER", "OWNER UID = '$currentUserUid'")
+                    Log.e("DEBUG_POI_UPLOAD", "POI ONLINE = ${poiEntity.toOnlineEntity(currentUserUid)}")
                     val uploadedPoi = poiOnlineRepository.uploadPoi(
                         poi = poiEntity.toOnlineEntity(currentUserUid),
                         firebasePoiId = finalId
@@ -45,10 +61,14 @@ class PoiUploadManager(
                         firebaseDocumentId = finalId
                     )
 
+                    // 🔥 LOG 3 — vérifier que Firestore a accepté le document
+                    Log.e("SYNC_POI_UPLOAD", "Upload OK for POI $localId")
+
                     results.add(SyncStatus.Success("Poi $localId uploaded to Firebase"))
                 }
 
             } catch (e: Exception) {
+                Log.e("SYNC_POI_ERROR", "Upload failed for POI $localId : ${e.message}", e)
                 results.add(SyncStatus.Failure("Poi $localId", e))
             }
         }

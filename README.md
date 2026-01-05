@@ -15,13 +15,16 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 📊 The navigation drawer now displays the total number of managed properties and sold properties.
-   - 🏷️ Properties can now be marked as sold, with a mandatory sale date during creation.
-   - ✏️ The sale status and sale date can be edited when updating an existing property.
-   - 📡 Automatic data synchronization is now triggered when network connectivity is restored.
-   - 🚀 A global sync is automatically scheduled at application startup.
-   - ⚙️ Centralized sync scheduling implemented using WorkManager and a dedicated SyncScheduler.
-   - ✋ User actions that modify data are designed to trigger background synchronization.
+   - 🎨 Significant UI improvements have been made to enhance overall quality, consistency, and user experience.
+   - 🗺️ Static maps are now fully supported offline and online instead of being stored as local-only URIs.
+   - 🗄️ Added a dedicated Room entity for static maps with DAO and offline repository linked to properties.
+   - 🔁 Static maps can be created, updated, and deleted completely offline and synchronized later.
+   - ☁️ Implemented a Firebase Firestore repository to store static map metadata.
+   - 📦 Integrated Firebase Storage to upload and download static map images across devices.
+   - 🔄 Added upload and download sync managers to handle bidirectional synchronization between Room and Firebase.
+   - 📱 Static maps are correctly restored when properties are downloaded on another device.
+   - 🧩 Integrated static map repositories and sync managers into Dependency Injection (Hilt + AppContainer).
+   - 🛡️ Added Firestore security rules to protect static maps based on authenticated user ownership.
 
 
 ## ❌ **NEXT UPDATES**
@@ -45,6 +48,8 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Auto-map property using Static Maps API.
       - ✅ **DONE** Display pins of nearby listings on a map.
       - ✅ **DONE** Retrieve and display user current location.
+      - ✅ **DONE** Generate and store static map previews linked to properties.
+      - ✅ **DONE** Static map images persist offline and are restored after synchronization.
 
    - 🔐 **User Authentication with Firebase** :
 
@@ -60,12 +65,18 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE**  Entity-specific managers for modular synchronization logic.
       - ✅ **DONE** Conflict resolution (e.g. field-level merge or overwrite strategies)
       - ✅ **DONE** Background sync using WorkManager + SyncWorker, enabled via AppContainerProvider.
+      - ✅ **DONE** Full sync of Static Maps (metadata + image files).
+      - ✅ **DONE** Offline-first synchronization for static maps using timestamp-based conflict resolution.
+
 
    - 📷 **Media Management** :
 
       - ✅ **DONE** Take or select photos from gallery.
       - ✅ **DONE** Add multiple images per listing.
       - ✅ **DONE** Downloads images from Firebase Storage and saves them locally on device during sync.
+      - ✅ **DONE** Static map images are uploaded to and downloaded from Firebase Storage.
+      - ✅ **DONE** Local caching of static map images for offline access.
+
 
    - 🔍 **Search** :
 
@@ -77,6 +88,9 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Offline access to all data (users, properties, photos, POIs, links)
       - ✅ **DONE** Full app usability offline (read/write locally, queue for sync).
       - ✅ **DONE** Changes made offline are queued for upload on next connectivity.
+      - ✅ **DONE** Static maps fully supported offline (create, update, delete).
+      - ✅ **DONE** Static map changes are queued and synchronized when connectivity is restored.
+
 
    - ☁️ **Online mode with Firebase Firestore**
 
@@ -84,6 +98,9 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** SyncManager to orchestrate entity-level sync logic.
       - ✅ **DONE** Upload/download of associated entities: photos, POIs, and cross-links.
       - ✅ **DONE** Integrated Firebase Storage for image file handling; only metadata is stored in Firestore while files are uploaded to Storage.
+      - ✅ **DONE** Static map metadata stored in Firestore with ownership-based security rules.
+      - ✅ **DONE** Static map images stored in Firebase Storage and linked via Firestore.
+
 
    - 📡 **Interoperability** :
 
@@ -143,6 +160,9 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Refactored legacy Java into clean MVVM structure.
       - ✅ **DONE** Modularized repositories, DAOs, entities, and mappers with separation of concerns.
       - ✅ **DONE** Migrated dependency injection from manual AppContainer to Dagger Hilt.
+      - ✅ **DONE** Static Map entity follows the same clean architecture pattern as Photos (Room ↔ Repository ↔ Sync ↔ Firebase).
+      - ✅ **DONE** Dedicated upload and download managers for static map synchronization.
+
 
    - 🚀 **Performance and responsiveness**:
    

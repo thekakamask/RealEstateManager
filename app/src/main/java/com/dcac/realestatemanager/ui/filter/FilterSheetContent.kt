@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
@@ -35,7 +38,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
+import androidx.compose.foundation.lazy.LazyColumn
 
+// TODO ICONE QUI DISPARAISSE EN FRANCAIS EGALEMENT DANS LA PARTIE CREATION DE PROPERTY
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun FilterSheetContent(
@@ -52,83 +57,93 @@ fun FilterSheetContent(
     var minPrice by remember { mutableStateOf(filterUi.minPrice) }
     var maxPrice by remember { mutableStateOf(filterUi.maxPrice) }
 
-    Column(modifier = Modifier.padding(24.dp)) {
-        Text(stringResource(R.string.filter_screen_title), style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(16.dp))
-
-        FilterSectionTitle(R.string.filter_screen_sort_order_title)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SortOrderChip(
-                labelRes = R.string.filter_screen_sort_order_alphabetic_label,
-                selected = sortOrder == PropertySortOrder.ALPHABETIC
-            ) { sortOrder = PropertySortOrder.ALPHABETIC }
-
-            SortOrderChip(
-                labelRes = R.string.filter_screen_sort_order_date_added_label,
-                selected = sortOrder == PropertySortOrder.DATE
-            ) { sortOrder = PropertySortOrder.DATE }
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        FilterSectionTitle(R.string.filter_screen_property_type_label)
-        Spacer(Modifier.height(8.dp))
-        TypeIconSelectableRow(
-            selectedType = selectedType,
-            onTypeSelected = { selectedType = it }
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 16.dp,
+            bottom = 16.dp
         )
+    ) {
+        item {
+            Text(stringResource(R.string.filter_screen_title), style = MaterialTheme.typography.headlineSmall)
+            Spacer(Modifier.height(16.dp))
 
-        Spacer(Modifier.height(16.dp))
+            FilterSectionTitle(R.string.filter_screen_sort_order_title)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                SortOrderChip(
+                    labelRes = R.string.filter_screen_sort_order_alphabetic_label,
+                    selected = sortOrder == PropertySortOrder.ALPHABETIC
+                ) { sortOrder = PropertySortOrder.ALPHABETIC }
 
-        FilterSectionTitle(R.string.filter_screen_status_title)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            StatusChip(R.string.filter_screen_status_sold_label, isSold == true) { isSold = true }
-            StatusChip(R.string.filter_screen_status_available_label, isSold == false) { isSold = false }
-            StatusChip(R.string.filter_screen_status_all_label, isSold == null) { isSold = null }
-        }
-
-        Spacer(Modifier.height(16.dp))
-
-        RangeInputRow(
-            labelMin = R.string.filter_screen_surface_min_label,
-            minValue = minSurface,
-            onMinChange = { minSurface = it },
-            labelMax = R.string.filter_screen_surface_max_label,
-            maxValue = maxSurface,
-            onMaxChange = { maxSurface = it }
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        RangeInputRow(
-            labelMin = R.string.filter_screen_price_min_label,
-            minValue = minPrice,
-            onMinChange = { minPrice = it },
-            labelMax = R.string.filter_screen_price_max_label,
-            maxValue = maxPrice,
-            onMaxChange = { maxPrice = it }
-        )
-
-        Spacer(Modifier.height(24.dp))
-
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            OutlinedButton(onClick = onReset) {
-                Text(stringResource(R.string.filter_screen_reset_button_label))
+                SortOrderChip(
+                    labelRes = R.string.filter_screen_sort_order_date_added_label,
+                    selected = sortOrder == PropertySortOrder.DATE
+                ) { sortOrder = PropertySortOrder.DATE }
             }
-            Button(onClick = {
-                onApply(
-                    PropertyFilters(
-                        sortOrder = sortOrder,
-                        selectedType = selectedType.ifBlank { null },
-                        isSold = isSold,
-                        minSurface = minSurface.toIntOrNull(),
-                        maxSurface = maxSurface.toIntOrNull(),
-                        minPrice = minPrice.toIntOrNull(),
-                        maxPrice = maxPrice.toIntOrNull()
+
+            Spacer(Modifier.height(16.dp))
+
+            FilterSectionTitle(R.string.filter_screen_property_type_label)
+            Spacer(Modifier.height(8.dp))
+            TypeIconSelectableRow(
+                selectedType = selectedType,
+                onTypeSelected = { selectedType = it }
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            FilterSectionTitle(R.string.filter_screen_status_title)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                StatusChip(R.string.filter_screen_status_sold_label, isSold == true) { isSold = true }
+                StatusChip(R.string.filter_screen_status_available_label, isSold == false) { isSold = false }
+                StatusChip(R.string.filter_screen_status_all_label, isSold == null) { isSold = null }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            RangeInputRow(
+                labelMin = R.string.filter_screen_surface_min_label,
+                minValue = minSurface,
+                onMinChange = { minSurface = it },
+                labelMax = R.string.filter_screen_surface_max_label,
+                maxValue = maxSurface,
+                onMaxChange = { maxSurface = it }
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            RangeInputRow(
+                labelMin = R.string.filter_screen_price_min_label,
+                minValue = minPrice,
+                onMinChange = { minPrice = it },
+                labelMax = R.string.filter_screen_price_max_label,
+                maxValue = maxPrice,
+                onMaxChange = { maxPrice = it }
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = onReset) {
+                    Text(stringResource(R.string.filter_screen_reset_button_label))
+                }
+                Button(onClick = {
+                    onApply(
+                        PropertyFilters(
+                            sortOrder = sortOrder,
+                            selectedType = selectedType.ifBlank { null },
+                            isSold = isSold,
+                            minSurface = minSurface.toIntOrNull(),
+                            maxSurface = maxSurface.toIntOrNull(),
+                            minPrice = minPrice.toIntOrNull(),
+                            maxPrice = maxPrice.toIntOrNull()
+                        )
                     )
-                )
-            }) {
-                Text(stringResource(R.string.filter_screen_apply_button_label))
+                }) {
+                    Text(stringResource(R.string.filter_screen_apply_button_label))
+                }
             }
         }
     }
@@ -165,13 +180,12 @@ fun TypeIconSelectableRow(
         stringResource(R.string.home_page_type_motor_home)
     )
 
-    Row(
+    LazyRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+        contentPadding = PaddingValues(horizontal = 8.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        allTypes.forEach { type ->
+        items(allTypes) { type ->
             val isSelected = selectedType == type
             val iconRes = getIconForPropertyType(type)
 

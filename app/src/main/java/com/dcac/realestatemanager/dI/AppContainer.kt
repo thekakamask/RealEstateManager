@@ -5,8 +5,8 @@ import androidx.room.Room
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.FirebasePhotoOnlineRepository
 import com.dcac.realestatemanager.data.googleMap.GoogleMapRepository
 import com.dcac.realestatemanager.data.googleMap.OnlineGoogleMapRepository
-import com.dcac.realestatemanager.data.offlineStaticMap.OfflineStaticMapRepository
-import com.dcac.realestatemanager.data.offlineStaticMap.StaticMapRepository
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.OfflineStaticMapRepository
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.offlineDatabase.photo.OfflinePhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.OfflinePoiRepository
@@ -24,6 +24,8 @@ import com.dcac.realestatemanager.data.firebaseDatabase.property.FirebasePropert
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.FirebasePropertyPoiCrossOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.FirebaseStaticMapOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.StaticMapOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.RealEstateManagerDatabase
@@ -31,6 +33,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoDao
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDao
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
 import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
@@ -53,6 +56,10 @@ import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossDow
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossDownloadManager
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossUploadInterfaceManager
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossUploadManager
+import com.dcac.realestatemanager.data.sync.staticMap.StaticMapDownloadInterfaceManager
+import com.dcac.realestatemanager.data.sync.staticMap.StaticMapDownloadManager
+import com.dcac.realestatemanager.data.sync.staticMap.StaticMapUploadInterfaceManager
+import com.dcac.realestatemanager.data.sync.staticMap.StaticMapUploadManager
 import com.dcac.realestatemanager.data.sync.user.UserDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserDownloadManager
 import com.dcac.realestatemanager.data.sync.user.UserUploadInterfaceManager
@@ -94,6 +101,8 @@ interface AppContainer {
     val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository
     val propertyOnlineRepository: PropertyOnlineRepository
 
+    val staticMapOnlineRepository: StaticMapOnlineRepository
+
     val uploadManager: UploadInterfaceManager
     val downloadManager: DownloadInterfaceManager
 
@@ -103,12 +112,13 @@ interface AppContainer {
     val propertyDownloadManager: PropertyDownloadInterfaceManager
     val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager
 
+    val staticMapDownloadManager: StaticMapDownloadInterfaceManager
     val userUploadManager: UserUploadInterfaceManager
     val photoUploadManager: PhotoUploadInterfaceManager
     val poiUploadManager: PoiUploadInterfaceManager
     val crossSyncManager: PropertyPoiCrossUploadInterfaceManager
     val propertyUploadManager: PropertyUploadInterfaceManager
-
+    val staticMapUploadManager: StaticMapUploadInterfaceManager
     val syncScheduler: SyncScheduler
 }
 
@@ -127,6 +137,7 @@ class AppDataContainer(
     override val poiOnlineRepository: PoiOnlineRepository,
     override val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository,
     override val propertyOnlineRepository: PropertyOnlineRepository,
+    override val staticMapOnlineRepository: StaticMapOnlineRepository,
     override val uploadManager: UploadInterfaceManager,
     override val downloadManager: DownloadInterfaceManager,
     override val userDownloadManager: UserDownloadInterfaceManager,
@@ -134,11 +145,13 @@ class AppDataContainer(
     override val poiDownloadManager: PoiDownloadInterfaceManager,
     override val propertyDownloadManager: PropertyDownloadInterfaceManager,
     override val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager,
+    override val staticMapDownloadManager: StaticMapDownloadInterfaceManager,
     override val userUploadManager: UserUploadInterfaceManager,
     override val photoUploadManager: PhotoUploadInterfaceManager,
     override val poiUploadManager: PoiUploadInterfaceManager,
     override val crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
     override val propertyUploadManager: PropertyUploadInterfaceManager,
+    override val staticMapUploadManager: StaticMapUploadInterfaceManager,
     override val syncScheduler: SyncScheduler
 ) : AppContainer
 
@@ -166,6 +179,7 @@ object AppModule {
         poiOnlineRepository: PoiOnlineRepository,
         propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository,
         propertyOnlineRepository: PropertyOnlineRepository,
+        staticMapOnlineRepository: StaticMapOnlineRepository,
         uploadManager: UploadInterfaceManager,
         downloadManager: DownloadInterfaceManager,
         userDownloadManager: UserDownloadInterfaceManager,
@@ -173,11 +187,13 @@ object AppModule {
         poiDownloadManager: PoiDownloadInterfaceManager,
         propertyDownloadManager: PropertyDownloadInterfaceManager,
         propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager,
+        staticMapDownloadManager: StaticMapDownloadInterfaceManager,
         userUploadManager: UserUploadInterfaceManager,
         photoUploadManager: PhotoUploadInterfaceManager,
         poiUploadManager: PoiUploadInterfaceManager,
         crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
         propertyUploadManager: PropertyUploadInterfaceManager,
+        staticMapUploadManager: StaticMapUploadInterfaceManager,
         syncScheduler: SyncScheduler
 
     ): AppContainer {
@@ -195,6 +211,7 @@ object AppModule {
             poiOnlineRepository,
             propertyPoiCrossOnlineRepository,
             propertyOnlineRepository,
+            staticMapOnlineRepository,
             uploadManager,
             downloadManager,
             userDownloadManager,
@@ -202,11 +219,13 @@ object AppModule {
             poiDownloadManager,
             propertyDownloadManager,
             propertyPoiCrossDownloadManager,
+            staticMapDownloadManager,
             userUploadManager,
             photoUploadManager,
             poiUploadManager,
             crossSyncManager,
             propertyUploadManager,
+            staticMapUploadManager,
             syncScheduler
         )
     }
@@ -237,6 +256,9 @@ object AppModule {
 
     @Provides
     fun providePropertyCrossDao(db: RealEstateManagerDatabase) = db.propertyCrossDao()
+
+    @Provides
+    fun provideStaticMapDao(db: RealEstateManagerDatabase) = db.staticMapDao()
 
     @Provides
     @Singleton
@@ -301,8 +323,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideStaticMapRepository(api: StaticMapApiService): StaticMapRepository =
-        OfflineStaticMapRepository(api)
+    fun provideStaticMapRepository(
+        api: StaticMapApiService,
+        staticMapDao: StaticMapDao
+    ): StaticMapRepository = OfflineStaticMapRepository(api, staticMapDao)
 
     @Provides
     @Singleton
@@ -350,6 +374,11 @@ object AppModule {
     fun providePropertyPoiCrossOnlineRepository(firestore: FirebaseFirestore): PropertyPoiCrossOnlineRepository =
         FirebasePropertyPoiCrossOnlineRepository(firestore)
 
+    @Provides
+    @Singleton
+    fun provideStaticMapOnlineRepository(firestore: FirebaseFirestore, storage: FirebaseStorage): StaticMapOnlineRepository =
+        FirebaseStaticMapOnlineRepository(firestore, storage)
+
 
     // --- Upload Managers ---
 
@@ -390,13 +419,22 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideStaticMapUploadManager(
+        staticMapRepository: StaticMapRepository,
+        staticMapOnlineRepository: StaticMapOnlineRepository
+    ): StaticMapUploadInterfaceManager =
+        StaticMapUploadManager(staticMapRepository, staticMapOnlineRepository)
+
+    @Provides
+    @Singleton
     fun provideUploadManager(
         userUploadManager: UserUploadInterfaceManager,
         photoUploadManager: PhotoUploadInterfaceManager,
         poiUploadManager: PoiUploadInterfaceManager,
         crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
-        propertyUploadManager: PropertyUploadInterfaceManager
-    ): UploadInterfaceManager = UploadManager(userUploadManager, photoUploadManager, poiUploadManager, crossSyncManager, propertyUploadManager)
+        propertyUploadManager: PropertyUploadInterfaceManager,
+        staticMapUploadManager: StaticMapUploadInterfaceManager
+    ): UploadInterfaceManager = UploadManager(userUploadManager, photoUploadManager, poiUploadManager, crossSyncManager, propertyUploadManager, staticMapUploadManager)
 
 
     // --- Download Managers ---
@@ -438,13 +476,22 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideStaticMapDownloadManager(
+        staticMapRepository: StaticMapRepository,
+        staticMapOnlineRepository: StaticMapOnlineRepository
+    ): StaticMapDownloadInterfaceManager =
+        StaticMapDownloadManager(staticMapRepository, staticMapOnlineRepository)
+
+    @Provides
+    @Singleton
     fun provideDownloadManager(
         userDownloadManager: UserDownloadInterfaceManager,
         photoDownloadManager: PhotoDownloadInterfaceManager,
         propertyDownloadManager: PropertyDownloadInterfaceManager,
         poiDownloadManager: PoiDownloadInterfaceManager,
-        propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager
-    ): DownloadInterfaceManager = DownloadManager(propertyDownloadManager, photoDownloadManager, poiDownloadManager, userDownloadManager, propertyPoiCrossDownloadManager)
+        propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager,
+        staticMapDownloadManager: StaticMapDownloadInterfaceManager
+    ): DownloadInterfaceManager = DownloadManager(propertyDownloadManager, photoDownloadManager, poiDownloadManager, userDownloadManager, propertyPoiCrossDownloadManager, staticMapDownloadManager )
 
     @Provides
     @Singleton

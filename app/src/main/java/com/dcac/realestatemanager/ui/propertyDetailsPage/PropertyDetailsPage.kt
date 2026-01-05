@@ -183,6 +183,7 @@ fun PropertyDetailsPage(
                                     .fillMaxWidth()
                                     .offset(y = (-22).dp),
                                 shape = RoundedCornerShape(24.dp),
+                                shadowElevation = 8.dp,
                                 tonalElevation = 3.dp,
                                 color = MaterialTheme.colorScheme.surface
                             ) {
