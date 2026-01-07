@@ -6,6 +6,5 @@ object FirestoreCollections {
     const val PHOTOS = "photos"
     const val POIS = "poiS"
     const val PROPERTY_POI_CROSS = "property_poi_cross_refs"
-
     const val STATIC_MAPS = "static_maps"
 }

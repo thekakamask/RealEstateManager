@@ -5,11 +5,12 @@ import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.StaticMapOnlineEntity
 import com.dcac.realestatemanager.model.StaticMap
 import com.dcac.realestatemanager.network.StaticMapApiService
+import com.dcac.realestatemanager.utils.Utils
 import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.io.File
 import java.io.IOException
 
 class OfflineStaticMapRepository(
@@ -46,14 +47,19 @@ class OfflineStaticMapRepository(
     // Save all bytes received into a PNG file in the internal storage
     override fun saveStaticMapToLocal(context: Context, fileName: String, bytes: ByteArray): String? {
         return try {
-            val mapsDir = File(context.filesDir, "maps")
-            if (!mapsDir.exists()) mapsDir.mkdirs()
+            // Save bytes to internal storage and return a file:// Uri string
+            Utils.saveBytesToAppStorage(
+                context = context,
+                bytes = bytes,
+                subDir = "maps",
+                fileName = fileName
+            )?.toString()
 
-            val file = File(mapsDir, fileName)
-            file.writeBytes(bytes)
-            file.absolutePath
         } catch (e: IOException) {
             Log.e("StaticMapRepository", "Error saving static map locally", e)
+            null
+        } catch (e: Exception) {
+            Log.e("StaticMapRepository", "Unexpected error saving static map locally", e)
             null
         }
     }
@@ -97,7 +103,16 @@ class OfflineStaticMapRepository(
         staticMap: StaticMapOnlineEntity,
         firestoreId: String
     ) {
-        staticMapDao.updateStateMapFromFirebaseForceSyncTrue(staticMap.toEntity(firestoreId = firestoreId))
+        val existing = staticMapDao
+            .getStaticMapByIdIncludeDeleted(staticMap.universalLocalId)
+            .first()
+
+        val preservedUri = existing?.uri ?: ""
+
+        staticMapDao.updateStateMapFromFirebaseForceSyncTrue(
+            staticMap.toEntity(firestoreId = firestoreId)
+                .copy(uri = preservedUri)
+        )
     }
 
     //SOFT DELETE

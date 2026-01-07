@@ -283,18 +283,20 @@ fun HomeScreen(
                 },
 
                 floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = onAddPropertyClick,
-                        modifier = Modifier
-                            .padding(end = 16.dp, bottom = 16.dp),
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.add_home_24px),
-                            contentDescription = stringResource(R.string.add_property),
-                            modifier = Modifier.size(32.dp)
-                        )
+                    if (state.currentScreen is HomeDestination.PropertyList) {
+                        FloatingActionButton(
+                            onClick = onAddPropertyClick,
+                            modifier = Modifier
+                                .padding(end = 16.dp, bottom = 16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.add_home_24px),
+                                contentDescription = stringResource(R.string.add_property),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                     }
                 },
 

@@ -47,9 +47,19 @@ class StaticMapUploadManager(
                         "Uploading staticMap localId=${staticMap.id} firestoreId=$firebaseId finalId=$finalId"
                     )
 
-                    val updatedOnline = staticMapOnlineRepository.uploadStaticMap(
-                        staticMap.toOnlineEntity(currentUserUid),
-                        finalId
+                    val online = staticMap.toOnlineEntity(currentUserUid)
+
+                    Log.d(
+                        "STATIC_MAP_UPLOAD",
+                        "Room uri=${staticMap.uri} -> Online storageUrl(before upload)=${online.storageUrl}"
+                    )
+
+                    val updatedOnline = staticMapOnlineRepository.uploadStaticMap(online, finalId)
+
+
+                    Log.d(
+                        "STATIC_MAP_UPLOAD",
+                        "Online storageUrl(after upload)=${updatedOnline.storageUrl}"
                     )
 
                     staticMapRepository.updateStaticMapFromFirebase(

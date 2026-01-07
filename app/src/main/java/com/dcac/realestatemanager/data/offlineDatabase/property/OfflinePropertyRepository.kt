@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.data.offlineDatabase.property
 
+import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
@@ -126,6 +127,7 @@ class OfflinePropertyRepository(
 
     // INSERTIONS
     override suspend fun insertPropertyFromUI(property: Property) {
+        Log.d("INSERT", "insertPropertyFromUI called for ID=${property.universalLocalId}")
         propertyDao.insertPropertyFromUi(property.toEntity())
     }
     override suspend fun insertPropertiesFromUI(properties: List<Property>) {

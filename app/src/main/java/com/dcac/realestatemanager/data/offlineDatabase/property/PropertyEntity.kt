@@ -47,9 +47,7 @@ data class PropertyEntity(
     val entryDate: String,
     @ColumnInfo(name = "sale_date")
     val saleDate: String?,
-    @ColumnInfo(name = "static_map_path")
-    val staticMapPath: String? = null,
-    @ColumnInfo(name = "is_synced")
+   @ColumnInfo(name = "is_synced")
     val isSynced: Boolean = false,
     @ColumnInfo(name = "is_deleted")
     val isDeleted: Boolean = false,

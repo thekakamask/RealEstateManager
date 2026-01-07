@@ -141,14 +141,20 @@ fun MapContent(
     LaunchedEffect(userLocation) {
         val latLng = LatLng(userLocation.latitude, userLocation.longitude)
         cameraPositionState.animate(
-            update = CameraUpdateFactory.newLatLngZoom(latLng, 14f)
+            update = CameraUpdateFactory.newLatLngZoom(latLng, 12f)
         )
     }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        uiSettings = MapUiSettings(zoomControlsEnabled = true)
+        uiSettings = MapUiSettings(
+            zoomControlsEnabled = true,
+            scrollGesturesEnabled = true,
+            zoomGesturesEnabled = true,
+            tiltGesturesEnabled = true,
+            rotationGesturesEnabled = true
+        )
     ) {
         Marker(
             state = MarkerState(position = LatLng(userLocation.latitude, userLocation.longitude)),

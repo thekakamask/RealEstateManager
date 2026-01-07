@@ -34,6 +34,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
 import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDao
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDataSource
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
 import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
@@ -70,6 +71,7 @@ import com.dcac.realestatemanager.network.StaticMapApiService
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,6 +95,7 @@ interface AppContainer {
     val propertyPoiCrossRepository: PropertyPoiCrossRepository
     val userRepository: UserRepository
     val staticMapRepository: StaticMapRepository
+    val staticMapDataSource: StaticMapDataSource
     val googleMapRepository: GoogleMapRepository
     val authRepository: AuthRepository
     val userOnlineRepository: UserOnlineRepository
@@ -100,18 +103,14 @@ interface AppContainer {
     val poiOnlineRepository: PoiOnlineRepository
     val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository
     val propertyOnlineRepository: PropertyOnlineRepository
-
     val staticMapOnlineRepository: StaticMapOnlineRepository
-
     val uploadManager: UploadInterfaceManager
     val downloadManager: DownloadInterfaceManager
-
     val userDownloadManager: UserDownloadInterfaceManager
     val photoDownloadManager: PhotoDownloadInterfaceManager
     val poiDownloadManager: PoiDownloadInterfaceManager
     val propertyDownloadManager: PropertyDownloadInterfaceManager
     val propertyPoiCrossDownloadManager: PropertyPoiCrossDownloadInterfaceManager
-
     val staticMapDownloadManager: StaticMapDownloadInterfaceManager
     val userUploadManager: UserUploadInterfaceManager
     val photoUploadManager: PhotoUploadInterfaceManager
@@ -130,6 +129,7 @@ class AppDataContainer(
     override val propertyPoiCrossRepository: PropertyPoiCrossRepository,
     override val userRepository: UserRepository,
     override val staticMapRepository: StaticMapRepository,
+    override val staticMapDataSource: StaticMapDataSource,
     override val googleMapRepository: GoogleMapRepository,
     override val authRepository: AuthRepository,
     override val userOnlineRepository: UserOnlineRepository,
@@ -172,6 +172,7 @@ object AppModule {
         propertyPoiCrossRepository: PropertyPoiCrossRepository,
         userRepository: UserRepository,
         staticMapRepository: StaticMapRepository,
+        staticMapDataSource: StaticMapDataSource,
         googleMapRepository: GoogleMapRepository,
         authRepository: AuthRepository,
         userOnlineRepository: UserOnlineRepository,
@@ -204,6 +205,7 @@ object AppModule {
             propertyPoiCrossRepository,
             userRepository,
             staticMapRepository,
+            staticMapDataSource,
             googleMapRepository,
             authRepository,
             userOnlineRepository,
@@ -323,10 +325,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideStaticMapRepository(
+    fun provideOfflineStaticMapRepository(
         api: StaticMapApiService,
         staticMapDao: StaticMapDao
-    ): StaticMapRepository = OfflineStaticMapRepository(api, staticMapDao)
+    ): OfflineStaticMapRepository = OfflineStaticMapRepository(api, staticMapDao)
 
     @Provides
     @Singleton
@@ -437,7 +439,7 @@ object AppModule {
     ): UploadInterfaceManager = UploadManager(userUploadManager, photoUploadManager, poiUploadManager, crossSyncManager, propertyUploadManager, staticMapUploadManager)
 
 
-    // --- Download Managers ---
+    // --- Dow- nload Managers ---
 
     @Provides
     @Singleton
@@ -498,4 +500,21 @@ object AppModule {
     fun provideSyncScheduler(application: Application): SyncScheduler {
         return SyncScheduler(application)
     }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class StaticMapBindingModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindStaticMapRepository(
+        impl: OfflineStaticMapRepository
+    ): StaticMapRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStaticMapDataSource(
+        impl: OfflineStaticMapRepository
+    ): StaticMapDataSource
 }

@@ -24,6 +24,5 @@ data class PropertyOnlineEntity(
     val isSold: Boolean = false,
     val entryDate: String = "",
     val saleDate: String? = null,
-    val staticMapPath: String? = null,
     val updatedAt: Long = System.currentTimeMillis()
 )

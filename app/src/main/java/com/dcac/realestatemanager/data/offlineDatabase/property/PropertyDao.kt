@@ -127,7 +127,7 @@ interface PropertyDao {
         }
     }
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun firstPropertyInsert(poi: PropertyEntity)
+    suspend fun firstPropertyInsert(property: PropertyEntity)
 
     //INSERTIONS FROM FIREBASE
     suspend fun insertPropertyFromFirebase(property: PropertyEntity): String? {

@@ -1,10 +1,10 @@
 package com.dcac.realestatemanager.ui.propertyCreationPage
 
 import com.dcac.realestatemanager.model.Photo
+import com.dcac.realestatemanager.model.StaticMap
 import org.threeten.bp.LocalDate
 
 data class PropertyDraft(
-    //var universalLocalUserId: String = "",
     var title: String = "",
     var type: String = "",
     var price: Int = 0,
@@ -15,7 +15,7 @@ data class PropertyDraft(
     var postalCode: String = "",
     var city: String = "",
     var country: String = "",
-    val staticMapPath: String? = null,
+    val staticMap: StaticMap? = null,
     var isSold: Boolean = false,
     var saleDate: LocalDate? = null,
     var photos: List<Photo> = emptyList(),

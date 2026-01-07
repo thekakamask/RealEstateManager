@@ -51,6 +51,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.net.toUri
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
@@ -350,9 +351,16 @@ fun PropertyDetailsPage(
                                         color = MaterialTheme.colorScheme.outlineVariant
                                     )
 
-                                    if (!property.staticMapPath.isNullOrBlank()) {
-                                        val bitmap = remember(property.staticMapPath) {
-                                            BitmapFactory.decodeFile(property.staticMapPath)?.asImageBitmap()
+                                    val staticMapUriStr = property.staticMap?.uri
+
+                                    if (!staticMapUriStr.isNullOrBlank()) {
+                                        val bitmap = remember(staticMapUriStr) {
+                                            val uri = staticMapUriStr.toUri()
+                                            when (uri.scheme) {
+                                                "file" -> BitmapFactory.decodeFile(uri.path)?.asImageBitmap()
+                                                null, "" -> BitmapFactory.decodeFile(staticMapUriStr)?.asImageBitmap() // si c'est déjà un path brut
+                                                else -> null // http/https -> pas géré par decodeFile
+                                            }
                                         }
 
                                         bitmap?.let {
@@ -369,6 +377,7 @@ fun PropertyDetailsPage(
                                             color = MaterialTheme.colorScheme.error
                                         )
                                     }
+
                                 }
                             }
                         }

@@ -9,6 +9,7 @@ import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.DrawableRes
+import androidx.core.net.toUri
 import com.dcac.realestatemanager.R
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
@@ -72,6 +73,26 @@ object Utils {
             }
 
             file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun saveBytesToAppStorage(
+        context: Context,
+        bytes: ByteArray,
+        subDir: String,
+        fileName: String
+    ): Uri? {
+        return try {
+            val dir = File(context.filesDir, subDir)
+            if (!dir.exists()) dir.mkdirs()
+
+            val file = File(dir, fileName)
+            FileOutputStream(file).use { it.write(bytes) }
+
+            file.toUri()
         } catch (e: Exception) {
             e.printStackTrace()
             null

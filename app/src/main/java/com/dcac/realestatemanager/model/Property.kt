@@ -20,7 +20,7 @@ data class Property(
     val isSold: Boolean,
     val entryDate: LocalDate,
     val saleDate: LocalDate?,
-    val staticMapPath: String? = null,
+    val staticMap: StaticMap?,
     val photos: List<Photo> = emptyList(),
     val poiS: List<Poi> = emptyList(),
     val isSynced: Boolean = false,

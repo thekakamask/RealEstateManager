@@ -4,6 +4,7 @@ import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineReposit
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
+import java.io.File
 
 class PhotoDownloadManager(
     private val photoRepository: PhotoRepository,
@@ -27,11 +28,22 @@ class PhotoDownloadManager(
 
                     if (shouldDownload) {
                         val localUri = when {
-                            photoOnline.storageUrl.isNotEmpty() ->
+                            localPhotoEntity?.uri?.isNotBlank() == true &&
+                                    File(localPhotoEntity.uri).exists() -> {
+                                localPhotoEntity.uri
+                            }
+
+                            photoOnline.storageUrl.isNotEmpty() -> {
                                 photoOnlineRepository.downloadImageLocally(photoOnline.storageUrl)
-                            localPhotoEntity != null -> localPhotoEntity.uri
+                            }
+
                             else -> {
-                                results.add(SyncStatus.Failure("Missing URI for photo $localId", Exception("Invalid state")))
+                                results.add(
+                                    SyncStatus.Failure(
+                                        "Missing URI for photo $localId",
+                                        Exception("No local file and no storageUrl")
+                                    )
+                                )
                                 continue
                             }
                         }

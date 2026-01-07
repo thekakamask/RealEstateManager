@@ -1276,5 +1276,53 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Only the owner of a static map can create, update, or delete it, ensuring data integrity and user isolation.
 
 
+### 🔹 **Update #42**
+
+ - 🗺️ **Static Map full offline and online support**
+    - Static maps are now generated automatically during the property creation flow once the address and POIs are set.
+    - The map is stored locally using a temporary ID and later linked to the final property ID when creation is complete.
+    - It is then uploaded to Firebase Storage and synchronized with Firestore, ensuring consistent access across devices.
+
+  - 🗄️ **Dedicated Room entity and repository for Static Maps**
+    - A new StaticMapEntity was added to the local Room database and linked to properties via foreign key.
+    - A dedicated DAO and repository were implemented to support create, read, update, and delete operations offline.
+    - This approach ensures that static maps follow the same robust offline-first architecture as photos and POIs.
+
+  - 📱 **Automatic restoration of Static Maps across devices**
+    - When a property is synchronized and downloaded on another device, its static map is also retrieved and displayed.
+    - The UI can show static maps immediately with no fallback logic or reprocessing needed.
+
+  ### 🔹 **Update #42**
+
+- 🗺️ **Static Map full offline and online support**
+  - Static maps are now generated automatically during the property creation flow once the address and POIs are set.
+  - The map is stored locally using a temporary ID and later linked to the final property ID when creation is complete.
+  - It is then uploaded to Firebase Storage and synchronized with Firestore, ensuring consistent access across devices.
+
+- 🗄️ **Dedicated Room entity and repository for Static Maps**
+  - A new StaticMapEntity was added to the local Room database and linked to properties via foreign key.
+  - A dedicated DAO and repository were implemented to support create, read, update, and delete operations offline.
+  - This approach ensures that static maps follow the same robust offline-first architecture as photos and POIs.
+
+- 📱 **Automatic restoration of Static Maps across devices**
+  - When a property is synchronized and downloaded on another device, its static map is also retrieved and displayed.
+  - The UI can show static maps immediately with no fallback logic or reprocessing needed.
+
+- 🔄 **Safe Firebase sync without breaking local image paths**
+  - The synchronization layer now explicitly preserves local file URIs when updating Room entities after Firebase uploads.
+  - Firebase Storage URLs are never written directly into the local database as display paths.
+  - This guarantees that local images remain accessible even after sync operations or app restarts.
+
+- 📥 **Smart download logic for images**
+  - During synchronization, images are downloaded from Firebase Storage only if the local file does not exist or is outdated.
+  - If a valid local file is already present, it is reused to avoid unnecessary network usage.
+  - This behavior applies consistently to both photos and static maps.
+
+- ✈️ **True offline-first image handling**
+  - Photos and static maps remain fully accessible when the device is offline.
+  - The app no longer depends on network availability or Coil cache to display media.
+  - Clearing cache or restarting the app does not break image rendering, as all required assets are stored locally.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

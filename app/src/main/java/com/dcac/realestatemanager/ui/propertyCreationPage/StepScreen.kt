@@ -1115,12 +1115,16 @@ fun Step8ConfirmationScreen(
                     }
                 }
 
-                if (!draft.staticMapPath.isNullOrBlank()) {
+                if (draft.staticMap != null && draft.staticMap.uri.isNotBlank()) {
                     item {
                         SectionTitle(stringResource(R.string.property_creation_step_8_map_title))
                         BorderedBox {
-                            val bitmap = remember(draft.staticMapPath) {
-                                BitmapFactory.decodeFile(draft.staticMapPath)?.asImageBitmap()
+                            val bitmap = remember(draft.staticMap.uri) {
+                                val uri = draft.staticMap.uri.toUri()
+                                when (uri.scheme) {
+                                    "file" -> BitmapFactory.decodeFile(uri.path)?.asImageBitmap()
+                                    else -> null
+                                }
                             }
 
                             bitmap?.let {

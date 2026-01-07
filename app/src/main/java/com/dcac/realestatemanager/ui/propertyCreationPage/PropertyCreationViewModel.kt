@@ -29,7 +29,9 @@ import org.threeten.bp.LocalDate
 import javax.inject.Inject
 import android.content.Context
 import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDataSource
 import com.dcac.realestatemanager.data.sync.SyncScheduler
+import com.dcac.realestatemanager.model.StaticMap
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -44,6 +46,7 @@ class PropertyCreationViewModel @Inject constructor(
     private val crossRefRepository: PropertyPoiCrossRepository,
     private val authRepository: AuthRepository,
     private val staticMapRepository: StaticMapRepository,
+    private val staticMapDataSource: StaticMapDataSource,
     private val userRepository: UserRepository,
     private val syncScheduler: SyncScheduler
 ) : ViewModel(), IPropertyCreationViewModel {
@@ -254,7 +257,7 @@ class PropertyCreationViewModel @Inject constructor(
                 )
             )
 
-            val bytes = staticMapRepository.getStaticMapImage(config)
+            val bytes = staticMapDataSource.getStaticMapImage(config)
 
             if (bytes == null) {
                 updateState(isLoadingMap = false)
@@ -263,8 +266,16 @@ class PropertyCreationViewModel @Inject constructor(
 
             val fileName = "static_map_${UUID.randomUUID()}.png"
 
-            val localPath = staticMapRepository.saveStaticMapToLocal(context, fileName, bytes)
-            updateDraft { it.copy(staticMapPath = localPath) }
+            val localPath = staticMapDataSource.saveStaticMapToLocal(context, fileName, bytes)
+            Log.d("STATIC_MAP_SAVE", "localPath=$localPath")
+
+            val tempStaticMap = StaticMap(
+                universalLocalPropertyId = "TEMP",
+                uri = localPath ?: return@launch,
+                updatedAt = System.currentTimeMillis()
+            )
+
+            updateDraft { it.copy(staticMap = tempStaticMap) }
 
             updateState(
                 isLoadingMap = false,
@@ -275,19 +286,31 @@ class PropertyCreationViewModel @Inject constructor(
     override fun createModelFromDraft(context: Context, currency: String) {
         viewModelScope.launch {
             try {
+                Log.d("CREATE", "Start createModelFromDraft")
+
                 val draft = stepState().draft
+                Log.d("CREATE", "Draft received: $draft")
 
                 val firebaseUid = authRepository.currentUser?.uid ?: return@launch
+                Log.d("CREATE", "Firebase UID: $firebaseUid")
+
                 val localUser = userRepository.getUserByFirebaseUid(firebaseUid).firstOrNull()
-                    ?: throw IllegalStateException("No local user found for uid=$firebaseUid")
+                Log.d("CREATE", "Local user found: $localUser")
+
+                if (localUser == null) throw IllegalStateException("No local user found for uid=$firebaseUid")
 
                 val propertyId = UUID.randomUUID().toString()
                 val propertyAddress = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}"
+                Log.d("GEOCODING", "Property Address for geocoding: '$propertyAddress'")
+
                 val propertyLatLng = geocodeAddress(context, propertyAddress)
+                Log.d("GEOCODING", "Geocoding result: $propertyLatLng")
 
                 val poiS = draft.poiS.filter { it.name.isNotBlank() && it.type.isNotBlank() }.map {
                     val poiAddress = "${it.street}, ${it.postalCode} ${it.city}, ${it.country}"
                     val latLng = geocodeAddress(context, poiAddress)
+                    Log.d("GEOCODING", "POI '${it.name}' geocoded to: $latLng")
+
                     Poi(
                         name = it.name,
                         type = it.type,
@@ -299,8 +322,12 @@ class PropertyCreationViewModel @Inject constructor(
                 }
 
                 val photos = draft.photos.filter { it.uri.isNotBlank() }.map {
+                    Log.d("CREATE", "Photo added with URI: ${it.uri}")
                     it.copy(universalLocalPropertyId = propertyId)
                 }
+
+                val staticMap = draft.staticMap?.copy(universalLocalPropertyId = propertyId)
+                Log.d("CREATE", "Static map: $staticMap")
 
                 val priceToStore = if (currency == "EUR") {
                     CurrencyHelper.convertEuroToDollar(draft.price)
@@ -323,22 +350,42 @@ class PropertyCreationViewModel @Inject constructor(
                     isSold = draft.isSold,
                     entryDate = LocalDate.now(),
                     saleDate = draft.saleDate,
-                    staticMapPath = draft.staticMapPath,
+                    staticMap = staticMap,
                     photos = photos,
                     poiS = poiS
                 )
 
+                Log.d("CREATE", "Final Property to insert:\n" +
+                        "ID: ${property.universalLocalId},\n" +
+                        "Title: ${property.title},\n" +
+                        "Lat: ${property.latitude}, Lng: ${property.longitude},\n" +
+                        "Address: ${property.address}")
+
                 propertyRepository.insertPropertyFromUI(property)
+                Log.d("CREATE", "Property inserted.")
+
                 poiRepository.insertPoiSInsertFromUi(poiS)
+                Log.d("CREATE", "POIs inserted: count=${poiS.size}")
+
                 photoRepository.insertPhotosInsertFromUI(photos)
+                Log.d("CREATE", "Photos inserted: count=${photos.size}")
+
+                staticMap?.let {
+                    Log.d("STATIC_MAP_DEBUG", "staticMap.uri before insert = ${it.uri}")
+                    staticMapRepository.insertStaticMapInsertFromUI(it)
+                    Log.d("CREATE", "Static map inserted.")
+                }
 
                 poiS.forEach {
                     crossRefRepository.insertCrossRefInsertFromUI(PropertyPoiCross(propertyId, it.universalLocalId))
+                    Log.d("CREATE", "CrossRef inserted for POI ${it.name}")
                 }
 
                 syncScheduler.scheduleSync()
+                Log.d("CREATE", "Sync scheduled.")
 
                 _uiState.value = Success(property, isUpdate = false)
+                Log.d("CREATE", "UI state updated to success.")
 
             } catch (e: Exception) {
                 Log.e("PropertyCreation", "Failed to insert property", e)
@@ -381,7 +428,7 @@ class PropertyCreationViewModel @Inject constructor(
                 )
             },
             photos = property.photos,
-            staticMapPath = property.staticMapPath,
+            staticMap = property.staticMap,
             isSold = property.isSold,
             saleDate = property.saleDate
         )
@@ -506,8 +553,50 @@ class PropertyCreationViewModel @Inject constructor(
                                 crossRefRepository.insertCrossRefInsertFromUI(PropertyPoiCross(propertyId, newPoi.universalLocalId))
                             }
                         }
-                    }
 
+                        val propertyAddress = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}"
+                        val markers = mutableListOf("color:blue|label:P|$propertyAddress")
+
+                        val labelMap = mapOf("Butcher" to "B", "Bakery" to "B", "Restaurant" to "R", "School" to "S", "Grocery" to "G")
+
+                        draft.poiS.forEach { draftPoi ->
+                            val label = labelMap[draftPoi.type] ?: "P"
+                            val poiAddress = "${draftPoi.street}, ${draftPoi.postalCode} ${draftPoi.city}, ${draftPoi.country}"
+                            if (poiAddress.isNotBlank()) {
+                                markers.add("color:red|label:$label|$poiAddress")
+                            }
+                        }
+
+                        val config = StaticMapConfig(
+                            center = propertyAddress,
+                            markers = markers,
+                            styles = listOf(
+                                "feature:poi|visibility:off",
+                                "feature:transit|visibility:off",
+                                "feature:administrative|visibility:off",
+                                "feature:landscape|visibility:simplified",
+                                "feature:water|visibility:simplified"
+                            )
+                        )
+
+                        val imageBytes = staticMapDataSource.getStaticMapImage(config)
+
+                        if (imageBytes != null) {
+                            val fileName = "static_map_${UUID.randomUUID()}.png"
+                            val localPath = staticMapDataSource.saveStaticMapToLocal(context, fileName, imageBytes)
+
+                            val staticMap = localPath?.let {
+                                StaticMap(
+                                    universalLocalPropertyId = propertyId,
+                                    uri = it
+                                )
+                            }
+
+                            if (staticMap != null) {
+                                staticMapRepository.insertStaticMapInsertFromUI(staticMap)
+                            }
+                        }
+                    }
                 }
 
                 syncScheduler.scheduleSync()

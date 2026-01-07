@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.utils
 
+import android.util.Log
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoEntity
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiEntity
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
@@ -22,7 +23,8 @@ import org.threeten.bp.format.DateTimeFormatter
 //PROPERTY
 fun PropertyEntity.toModel(
     photos: List<Photo> = emptyList(),
-    poiS: List<Poi> = emptyList()
+    poiS: List<Poi> = emptyList(),
+    staticMap: StaticMap? = null
 ): Property {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -45,7 +47,7 @@ fun PropertyEntity.toModel(
         isSold = isSold,
         entryDate = entryDateLocal,
         saleDate = saleDateLocal,
-        staticMapPath = staticMapPath,
+        staticMap = staticMap,
         photos = photos,
         poiS = poiS,
         isSynced = isSynced,
@@ -59,20 +61,23 @@ fun PropertyEntity.toFullModel(
     allUsers: List<User>,
     photos: List<Photo>,
     crossRefs: List<PropertyPoiCross>,
-    allPoiS: List<Poi>
+    allPoiS: List<Poi>,
+    staticMap: StaticMap? = null
 ): Property? {
     val userExists = allUsers.any { it.universalLocalId == this.universalLocalUserId }
     if (!userExists) return null
 
     val propertyPhotos = photos.filter { it.universalLocalPropertyId == this.id }
     val poiIds = crossRefs.filter { it.universalLocalPropertyId == this.id }.map { it.universalLocalPoiId }
-    val propertyPois = allPoiS.filter { it.universalLocalId in poiIds }
+    val propertyPoiS = allPoiS.filter { it.universalLocalId in poiIds }
 
-    return this.toModel(propertyPhotos, propertyPois)
+    return this.toModel(propertyPhotos, propertyPoiS, staticMap)
 }
 
 fun Property.toEntity(): PropertyEntity {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    Log.d("MAPPER", "Mapping Property to Entity: id=$universalLocalId, lat=$latitude, lng=$longitude")
     return PropertyEntity(
         id = universalLocalId,
         firestoreDocumentId = firestoreDocumentId,
@@ -89,7 +94,6 @@ fun Property.toEntity(): PropertyEntity {
         isSold = isSold,
         entryDate = entryDate.format(formatter),
         saleDate = saleDate?.format(formatter),
-        staticMapPath = staticMapPath,
         isSynced = isSynced,
         isDeleted = isDeleted,
         updatedAt = updatedAt
@@ -171,8 +175,6 @@ fun User.toEntity(): UserEntity {
         updatedAt = this.updatedAt
     )
 }
-
-//CROSSREFS
 
 fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
     universalLocalPropertyId = universalLocalPropertyId,

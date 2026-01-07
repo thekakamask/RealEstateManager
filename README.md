@@ -15,16 +15,13 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🎨 Significant UI improvements have been made to enhance overall quality, consistency, and user experience.
-   - 🗺️ Static maps are now fully supported offline and online instead of being stored as local-only URIs.
-   - 🗄️ Added a dedicated Room entity for static maps with DAO and offline repository linked to properties.
-   - 🔁 Static maps can be created, updated, and deleted completely offline and synchronized later.
-   - ☁️ Implemented a Firebase Firestore repository to store static map metadata.
-   - 📦 Integrated Firebase Storage to upload and download static map images across devices.
-   - 🔄 Added upload and download sync managers to handle bidirectional synchronization between Room and Firebase.
-   - 📱 Static maps are correctly restored when properties are downloaded on another device.
-   - 🧩 Integrated static map repositories and sync managers into Dependency Injection (Hilt + AppContainer).
-   - 🛡️ Added Firestore security rules to protect static maps based on authenticated user ownership.
+   - 🆕 Static map is automatically generated and saved when a property is created.
+   - 🔁 Static map is regenerated and updated when POIs are modified during property editing.
+   - 👁️ Static map is correctly restored and displayed in the UI even after sync or app restart.
+   - 💾 Local image URIs (photos & static maps) are preserved during Firebase sync to ensure full offline support.
+   - 🔄 When data is downloaded from Firebase, images are re-downloaded only if the local file is missing or outdated.
+   - ✈️ The app remains fully functional offline: photos and static maps are displayed even without network access.
+   - 🛡️ Sync logic prevents Firebase Storage URLs from overwriting valid local file paths in Room.
 
 
 ## ❌ **NEXT UPDATES**

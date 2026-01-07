@@ -55,7 +55,7 @@ fun PhotoOnlineEntity.toEntity(
         id = universalLocalId,
         firestoreDocumentId = firestoreId,
         universalLocalPropertyId = universalLocalPropertyId,
-        uri = storageUrl,
+        uri = "",
         description = description,
         isSynced = true,
         updatedAt = updatedAt,
@@ -107,10 +107,11 @@ fun PropertyEntity.toOnlineEntity(ownerUid: String): PropertyOnlineEntity {
         rooms = this.rooms,
         description = this.description,
         address = this.address,
+        latitude = this.latitude,
+        longitude = this.longitude,
         isSold = this.isSold,
         entryDate = this.entryDate,
         saleDate = this.saleDate,
-        staticMapPath = this.staticMapPath,
         updatedAt = this.updatedAt
     )
 }
@@ -130,10 +131,11 @@ fun PropertyOnlineEntity.toEntity(
         rooms = rooms,
         description = description,
         address = address,
+        latitude = latitude,
+        longitude = longitude,
         isSold = isSold,
         entryDate = entryDate,
         saleDate = saleDate,
-        staticMapPath = staticMapPath,
         isSynced = true,
         isDeleted = false,
         updatedAt = updatedAt
@@ -180,7 +182,7 @@ fun StaticMapOnlineEntity.toEntity(
         id = universalLocalId,
         firestoreDocumentId = firestoreId,
         universalLocalPropertyId = universalLocalPropertyId,
-        uri = storageUrl,
+        uri = "",
         isSynced = true,
         updatedAt = updatedAt,
         isDeleted = false

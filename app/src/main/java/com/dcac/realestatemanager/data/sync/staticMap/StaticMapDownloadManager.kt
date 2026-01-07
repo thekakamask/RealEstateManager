@@ -4,6 +4,7 @@ import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.StaticMapOnlin
 import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
+import java.io.File
 
 class StaticMapDownloadManager(
     private val staticMapRepository: StaticMapRepository,
@@ -27,12 +28,25 @@ class StaticMapDownloadManager(
                         localStaticMapEntity == null || staticMapOnline.updatedAt > localStaticMapEntity.updatedAt
 
                     if (shouldDownload) {
+
                         val localUri = when {
-                            staticMapOnline.storageUrl.isNotEmpty() ->
-                                staticMapOnlineRepository.downloadImageLocally(staticMapOnline.storageUrl)
-                            localStaticMapEntity != null -> localStaticMapEntity.uri
+                            localStaticMapEntity?.uri?.isNotBlank() == true &&
+                                    File(localStaticMapEntity.uri).exists() -> {
+                                localStaticMapEntity.uri
+                            }
+
+                            staticMapOnline.storageUrl.isNotEmpty() -> {
+                                staticMapOnlineRepository
+                                    .downloadImageLocally(staticMapOnline.storageUrl)
+                            }
+
                             else -> {
-                                results.add(SyncStatus.Failure("Missing URI for staticMap $localId", Exception("Invalid state")))
+                                results.add(
+                                    SyncStatus.Failure(
+                                        "Missing URI for staticMap $localId",
+                                        Exception("No local file and no storageUrl")
+                                    )
+                                )
                                 continue
                             }
                         }

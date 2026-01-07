@@ -6,6 +6,7 @@ import com.dcac.realestatemanager.utils.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import com.dcac.realestatemanager.utils.toModel
+import kotlinx.coroutines.flow.first
 
 class OfflinePhotoRepository(
     private val photoDao: PhotoDao
@@ -52,13 +53,34 @@ class OfflinePhotoRepository(
     override suspend fun updatePhotoFromUI(photo: Photo) {
         photoDao.updatePhotoFromUIForceSyncFalse(photo.toEntity())
     }
-    override suspend fun updatePhotoFromFirebase(photo: PhotoOnlineEntity, firestoreId: String) {
-        photoDao.updatePhotoFromFirebaseForceSyncTrue(photo.toEntity(firestoreId = firestoreId))
-    }
-    override suspend fun updateAllPhotosFromFirebase(photos: List<Pair<PhotoOnlineEntity, String>>) {
-        val entities = photos.map { (photo, firestoreId) ->
+
+    override suspend fun updatePhotoFromFirebase(
+        photo: PhotoOnlineEntity,
+        firestoreId: String,
+    ) {
+        val existing = photoDao
+            .getPhotoByIdIncludeDeleted(photo.universalLocalId)
+            .first()
+
+        val preservedUri = existing?.uri ?: ""
+
+        photoDao.updatePhotoFromFirebaseForceSyncTrue(
             photo.toEntity(firestoreId = firestoreId)
+                .copy(uri = preservedUri)
+        )
+    }
+    override suspend fun updateAllPhotosFromFirebase(
+        photos: List<Pair<PhotoOnlineEntity, String>>
+    ) {
+        val entities = photos.map { (photo, firestoreId) ->
+            val existing = photoDao
+                .getPhotoByIdIncludeDeleted(photo.universalLocalId)
+                .first()
+
+            photo.toEntity(firestoreId = firestoreId)
+                .copy(uri = existing?.uri ?: "")
         }
+
         photoDao.updateAllPhotosFromFirebaseForceSyncTrue(entities)
     }
 

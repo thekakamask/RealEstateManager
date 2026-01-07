@@ -31,6 +31,7 @@ class UploadManager(
         val staticMapResults = staticMapUploadManager.syncUnSyncedStaticMaps()
 
 
+
         val allResults =
             userResults + propertyResults + photoResults + poiResults + crossResults + staticMapResults
 

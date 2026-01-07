@@ -5,6 +5,7 @@ import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
+import com.dcac.realestatemanager.utils.toEntity
 import com.dcac.realestatemanager.utils.toOnlineEntity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,6 +41,14 @@ class PropertyUploadManager(
                     val uploadProperty = propertyOnlineRepository.uploadProperty(
                         property = propertyEntity.toOnlineEntity(currentUserUid),
                         firebasePropertyId = finalId
+                    )
+
+                    val entityFromReturnedOnline = uploadProperty.toEntity(firestoreId = finalId)
+
+                    Log.d(
+                        "SYNC_DEBUG",
+                        "Returned online -> entity: id=${entityFromReturnedOnline.id}, " +
+                                "lat=${entityFromReturnedOnline.latitude}, lng=${entityFromReturnedOnline.longitude}"
                     )
                     propertyRepository.updatePropertyFromFirebase(
                         property = uploadProperty,

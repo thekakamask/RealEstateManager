@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.ui.homePage.googleMapScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcac.realestatemanager.data.googleMap.GoogleMapRepository
@@ -37,6 +38,10 @@ class GoogleMapViewModel @Inject constructor(
                 val poiDeferred = async { mapRepository.getAllPoiS().first() }
 
                 val properties = propertiesDeferred.await()
+                Log.d("MAP", "Properties count: ${properties.size}")
+                properties.forEach {
+                    Log.d("MAP", "Property: ${it.universalLocalId}, lat=${it.latitude}, lng=${it.longitude}")
+                }
                 val poiS = poiDeferred.await()
 
                 val propertiesWithLocation = properties.mapNotNull { property ->
@@ -68,6 +73,7 @@ class GoogleMapViewModel @Inject constructor(
     }
 
     override fun applyFilters(filters: PropertyFilters) {
+        Log.d("MAP", "applyFilters called")
         viewModelScope.launch {
             try {
                 val location = mapRepository.getUserLocation()
@@ -108,6 +114,12 @@ class GoogleMapViewModel @Inject constructor(
                     isFiltered = true,
                     activeFilters = filters
                 )
+
+                Log.d("MAP", "Filters used: $filters")
+                Log.d("MAP", "Properties found: ${properties.size}")
+                properties.forEach {
+                    Log.d("MAP", "Property: ${it.universalLocalId}, lat=${it.latitude}, lng=${it.longitude}")
+                }
 
             } catch (e: Exception) {
                 _uiState.value = GoogleMapUiState.Error("Filtered map load failed: ${e.message}")
