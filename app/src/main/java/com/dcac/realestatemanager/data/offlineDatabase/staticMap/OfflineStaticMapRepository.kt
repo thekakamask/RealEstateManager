@@ -137,7 +137,7 @@ class OfflineStaticMapRepository(
         staticMapDao.clearAllStaticMapsDeleted()
     }
 
-    //FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     override fun getStaticMapByIdIncludeDeleted(id: String): Flow<StaticMapEntity?> =
         staticMapDao.getStaticMapByIdIncludeDeleted(id)
 

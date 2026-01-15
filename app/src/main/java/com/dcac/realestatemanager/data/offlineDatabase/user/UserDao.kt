@@ -75,13 +75,13 @@ interface UserDao{
     suspend fun markAllUsersAsDeleted(updatedAt: Long)
 
     //HARD DELETE
-    //AFTER DELETE USER FROM FIREBASE, DELETE USER FROM ROOM
+    //AFTER MARK USER DELETE IN FIREBASE, DELETE USER FROM ROOM
     @Delete
     suspend fun deleteUser(user: UserEntity)
     @Query("DELETE FROM users WHERE is_deleted = 1")
     suspend fun clearAllUsersDeleted()
 
-    //FOR TEST CHECK HARD DELETE
+    // FOR SYNC AND TEST CHECK
     @Query("SELECT * FROM users WHERE id = :id")
     fun getUserByIdIncludeDeleted(id: String): Flow<UserEntity?>
     @Query("SELECT * FROM users")

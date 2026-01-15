@@ -16,5 +16,6 @@ data class PoiOnlineEntity(
     val address: String= "",
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val isDeleted: Boolean = false
 )

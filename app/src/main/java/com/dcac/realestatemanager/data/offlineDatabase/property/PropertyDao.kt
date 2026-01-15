@@ -168,13 +168,13 @@ interface PropertyDao {
     suspend fun markAllPropertiesAsDeleted(updatedAt: Long)
 
     //HARD DELETE
-    //AFTER DELETE PROPERTY FROM FIREBASE, DELETE PROPERTY FROM ROOM
+    //AFTER MARK DELETE PROPERTY IN FIREBASE, DELETE PROPERTY FROM ROOM
     @Delete
     suspend fun deleteProperty(property: PropertyEntity)
     @Query("DELETE FROM properties WHERE is_deleted = 1")
     suspend fun clearAllDeleted()
 
-    //FOR TEST CHECK HARD DELETE
+    // FOR SYNC AND TEST CHECK
     @Query("SELECT * FROM properties WHERE id = :id")
     fun getPropertyByIdIncludeDeleted(id: String): Flow<PropertyEntity?>
     @Query("SELECT * FROM properties")

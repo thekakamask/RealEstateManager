@@ -23,7 +23,6 @@ class PoiUploadManager(
         val results = mutableListOf<SyncStatus>()
         val poiToSync = poiRepository.uploadUnSyncedPoiSToFirebase().first()
 
-        // 🔥 LOG 1 — vérifier ce que Room renvoie
         Log.e("SYNC_POI", "POI TO SYNC COUNT = ${poiToSync.size}")
         poiToSync.forEach {
             Log.e("SYNC_POI", "POI ENTITY = $it")
@@ -36,11 +35,19 @@ class PoiUploadManager(
             try {
                 if (poiEntity.isDeleted) {
                     if (firebaseId != null) {
-                        poiOnlineRepository.deletePoi(firebaseId)
+                        poiOnlineRepository.markPoiAsDeleted(
+                            firebasePoiId = firebaseId,
+                            updatedAt = poiEntity.updatedAt
+                        )
                     }
+
                     poiRepository.deletePoi(poiEntity)
-                    results.add(SyncStatus.Success("Poi $localId deleted from Firebase & Room"))
-                } else {
+
+                    results.add(
+                        SyncStatus.Success("Poi $localId marked deleted online & removed locally")
+                    )
+                }
+                else {
                     val finalId = firebaseId ?: generateFirestoreId()
 
                     Log.e(
@@ -61,7 +68,6 @@ class PoiUploadManager(
                         firebaseDocumentId = finalId
                     )
 
-                    // 🔥 LOG 3 — vérifier que Firestore a accepté le document
                     Log.e("SYNC_POI_UPLOAD", "Upload OK for POI $localId")
 
                     results.add(SyncStatus.Success("Poi $localId uploaded to Firebase"))

@@ -6,8 +6,8 @@ import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
 class UserDownloadManager(
-    private val userRepository: UserRepository,               // Room repository (local)
-    private val userOnlineRepository: UserOnlineRepository    // Firestore repository (remote)
+    private val userRepository: UserRepository,
+    private val userOnlineRepository: UserOnlineRepository
 ) : UserDownloadInterfaceManager {
 
     override suspend fun downloadUnSyncedUsers(): List<SyncStatus> {
@@ -17,30 +17,60 @@ class UserDownloadManager(
             val onlineUsers = userOnlineRepository.getAllUsers()
 
             for (doc in onlineUsers) {
-                try {
-                    val userOnline = doc.user
-                    val localId = userOnline.universalLocalId
-                    val localUser = userRepository.getUserById(localId).first()
+                val online = doc.user
+                val localId = online.universalLocalId
 
-                    val shouldDownload = localUser == null || userOnline.updatedAt > localUser.updatedAt
+                val local =
+                    userRepository.getUserByIdIncludeDeleted(localId).first()
 
-                    if (shouldDownload) {
-                        userRepository.insertUserInsertFromFirebase(
-                            userOnline,doc.firebaseId)
-                        results.add(SyncStatus.Success("User $localId downloaded"))
-                    } else {
-                        results.add(SyncStatus.Success("User $localId already up-to-date"))
+                if (online.isDeleted) {
+                    if (local != null) {
+                        userRepository.deleteUser(local)
+                        results.add(
+                            SyncStatus.Success(
+                                "User $localId deleted locally (remote deleted)"
+                            )
+                        )
                     }
+                    continue
+                }
 
-                } catch (e: Exception) {
-                    results.add(SyncStatus.Failure("User ${doc.firebaseId} failed to sync", e))
+                val shouldDownload =
+                    local == null || online.updatedAt > local.updatedAt
+
+                if (!shouldDownload) {
+                    results.add(
+                        SyncStatus.Success("User $localId already up-to-date")
+                    )
+                    continue
+                }
+
+                if (local == null) {
+                    userRepository.insertUserInsertFromFirebase(
+                        user = online,
+                        firebaseUid = doc.firebaseId
+                    )
+                    results.add(
+                        SyncStatus.Success("User $localId inserted")
+                    )
+                } else {
+                    userRepository.updateUserFromFirebase(
+                        user = online,
+                        firebaseUid = doc.firebaseId
+                    )
+                    results.add(
+                        SyncStatus.Success("User $localId updated")
+                    )
                 }
             }
 
         } catch (e: Exception) {
-            results.add(SyncStatus.Failure("Global user download failed", e))
+            results.add(
+                SyncStatus.Failure("Global user download failed", e)
+            )
         }
 
         return results
     }
 }
+

@@ -11,14 +11,15 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
     tableName = "static_map",
     indices = [
         Index(value = ["property_id"], unique = true),
-        Index(value = ["firestore_document_id"], unique = true)
+        Index(value = ["firestore_document_id"], unique = true),
+        Index(value = ["is_deleted"])
     ],
     foreignKeys = [
         ForeignKey(
             entity = PropertyEntity::class,
             parentColumns = ["id"],
             childColumns = ["property_id"],
-            onDelete = ForeignKey.CASCADE // ou SET_NULL, NO_ACTION, etc.
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )

@@ -78,13 +78,13 @@ interface PoiDao {
     suspend fun markPoiAsDeleted(id: String, updatedAt: Long)
 
     //HARD DELETE
-    //AFTER DELETE POI FROM FIREBASE, DELETE POI FROM ROOM
+    //AFTER MARK POI AS DELETE IN FIREBASE, DELETE POI FROM ROOM
     @Delete
     suspend fun deletePoi(poi: PoiEntity)
     @Query("DELETE FROM poi WHERE is_deleted = 1")
     suspend fun clearAllPoiSDeleted()
 
-    //FOR TEST CHECK HARD DELETE
+    // FOR SYNC AND TEST CHECK
     @Query("SELECT * FROM poi WHERE id = :id")
     fun getPoiByIdIncludeDeleted(id: String): Flow<PoiEntity?>
     @Query("SELECT * FROM poi")

@@ -81,7 +81,7 @@ interface PhotoDao {
     suspend fun markPhotoAsDeleted(id: String, updatedAt: Long)
 
     //HARD DELETE
-    // AFTER DELETE PHOTO FROM FIREBASE, DELETE PHOTO FROM ROOM
+    // AFTER MARK PHOTO AS DELETE IN FIREBASE, DELETE PHOTO FROM ROOM
     @Delete
     suspend fun deletePhoto(photo: PhotoEntity)
     @Query("DELETE FROM photos WHERE property_id = :propertyId")
@@ -89,7 +89,7 @@ interface PhotoDao {
     @Query("DELETE FROM photos WHERE is_deleted = 1")
     suspend fun clearAllPhotosDeleted()
 
-    //FOR TEST CHECK HARD DELETE
+    // FOR SYNC AND TEST CHECK
     @Query("SELECT * FROM photos WHERE id = :id")
     fun getPhotoByIdIncludeDeleted(id: String): Flow<PhotoEntity?>
     @Query("SELECT * FROM photos WHERE property_id = :propertyId")

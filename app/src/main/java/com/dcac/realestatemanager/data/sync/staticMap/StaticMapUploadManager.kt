@@ -1,6 +1,5 @@
 package com.dcac.realestatemanager.data.sync.staticMap
 
-import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.StaticMapOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRepository
@@ -21,63 +20,55 @@ class StaticMapUploadManager(
 
     override suspend fun syncUnSyncedStaticMaps(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
-        val staticMapsToSync = staticMapRepository.uploadUnSyncedStaticMapToFirebase().first()
-
-        Log.e("SYNC_STATIC_MAP", "STATIC MAP TO SYNC COUNT = ${staticMapsToSync.size}")
-        staticMapsToSync.forEach {
-            Log.e("SYNC_STATIC_MAP", "STATIC MAP ENTITY = $it")
-        }
+        val staticMapsToSync =
+            staticMapRepository.uploadUnSyncedStaticMapToFirebase().first()
 
         for (staticMap in staticMapsToSync) {
             try {
                 val firebaseId = staticMap.firestoreDocumentId
 
-                if(staticMap.isDeleted) {
+                if (staticMap.isDeleted) {
                     if (firebaseId != null) {
-                        staticMapOnlineRepository.deleteStaticMap(firebaseId)
+                        staticMapOnlineRepository.markStaticMapAsDeleted(
+                            firebaseStaticMapId = firebaseId,
+                            updatedAt = staticMap.updatedAt
+                        )
                     }
 
                     staticMapRepository.deleteStaticMap(staticMap)
-                    results.add(SyncStatus.Success("StaticMap ${staticMap.id} deleted from Firebase & Room"))
-                } else {
-                    val finalId = firebaseId ?: generateFirestoreId()
 
-                    Log.e(
-                        "SYNC_STATIC_MAP_UPLOAD",
-                        "Uploading staticMap localId=${staticMap.id} firestoreId=$firebaseId finalId=$finalId"
+                    results.add(
+                        SyncStatus.Success(
+                            "StaticMap ${staticMap.id} marked deleted online & removed locally"
+                        )
                     )
-
-                    val online = staticMap.toOnlineEntity(currentUserUid)
-
-                    Log.d(
-                        "STATIC_MAP_UPLOAD",
-                        "Room uri=${staticMap.uri} -> Online storageUrl(before upload)=${online.storageUrl}"
-                    )
-
-                    val updatedOnline = staticMapOnlineRepository.uploadStaticMap(online, finalId)
-
-
-                    Log.d(
-                        "STATIC_MAP_UPLOAD",
-                        "Online storageUrl(after upload)=${updatedOnline.storageUrl}"
-                    )
-
-                    staticMapRepository.updateStaticMapFromFirebase(
-                        staticMap = updatedOnline,
-                        firestoreId = finalId
-                    )
-
-                    Log.e("SYNC_STATIC_MAP_UPLOAD", "Upload OK for staticMap ${staticMap.id}")
-                    results.add(SyncStatus.Success("StaticMap ${staticMap.id} uploaded to Firebase"))
+                    continue
                 }
+
+                val finalId = firebaseId ?: generateFirestoreId()
+
+                val updatedOnline = staticMapOnlineRepository.uploadStaticMap(
+                    staticMap.toOnlineEntity(currentUserUid),
+                    finalId
+                )
+
+                staticMapRepository.updateStaticMapFromFirebase(
+                    staticMap = updatedOnline,
+                    firestoreId = finalId
+                )
+
+                results.add(
+                    SyncStatus.Success("StaticMap ${staticMap.id} uploaded to Firebase")
+                )
+
             } catch (e: Exception) {
-                Log.e("SYNC_STATIC_MAP_ERROR", "Upload failed for staticMap ${staticMap.id} : ${e.message}", e)
-                results.add(SyncStatus.Failure("StaticMap ${staticMap.id}", e))
+                results.add(
+                    SyncStatus.Failure("StaticMap ${staticMap.id}", e)
+                )
             }
         }
 
         return results
-
     }
 
     private fun generateFirestoreId(): String {

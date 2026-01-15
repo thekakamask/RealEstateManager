@@ -42,7 +42,7 @@ interface PropertyPoiCrossRepository {
     suspend fun deleteCrossRefsForPoi(poiId: String)
     suspend fun clearAllDeleted()
 
-    //FOR TEST HARD DELETE
+    // FOR SYNC AND TEST CHECK
     fun getCrossRefsByIdsIncludedDeleted(propertyId: String, poiId: String): Flow<PropertyPoiCrossEntity?>
     fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PropertyPoiCrossEntity>>
     fun getCrossRefsByPoiIdIncludeDeleted(poiId: String): Flow<List<PropertyPoiCrossEntity>>

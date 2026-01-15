@@ -50,6 +50,8 @@ import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.User
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
+import androidx.compose.material3.AlertDialog
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +63,7 @@ fun AccountPage(
     val uiState by viewModel.uiState.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val showBottomSheet = (uiState as? AccountUiState.Success)?.isEditing == true
+    val propertyToDelete = remember { mutableStateOf<Property?>(null) }
 
     LaunchedEffect(uiState) {
         if (uiState is AccountUiState.Idle) {
@@ -119,7 +122,13 @@ fun AccountPage(
                         Spacer(modifier = Modifier.height(16.dp))
                         LazyColumn(modifier = Modifier.fillMaxHeight()) {
                             items(state.properties.size) { index ->
-                                UserPropertyItem(property = state.properties[index])
+                                UserPropertyItem(
+                                    property = state.properties[index],
+                                    onDeleteClick = { property ->
+                                        propertyToDelete.value = property
+                                    }
+
+                                )
                             }
                         }
                     }
@@ -151,6 +160,44 @@ fun AccountPage(
                 }
             )
         }
+    }
+
+    propertyToDelete.value?.let { property ->
+        AlertDialog(
+            onDismissRequest = {
+                propertyToDelete.value = null
+            },
+            title = {
+                Text(stringResource(R.string.account_page_delete_section_title))
+            },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.account_page_delete_property_text,
+                        property.title
+                    )
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteProperty(property)
+                        propertyToDelete.value = null
+                    }
+                ) {
+                    Text(stringResource(R.string.account_page_delete_section_confirm_button_text))
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        propertyToDelete.value = null
+                    }
+                ) {
+                    Text(stringResource(R.string.account_page_delete_property_cancel_button_text))
+                }
+            }
+        )
     }
 }
 
@@ -187,7 +234,8 @@ fun UserInfoSection(user: User) {
 @Composable
 fun UserPropertyItem(
     property: Property,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDeleteClick: (Property) -> Unit
 ) {
     val currency = CurrencyHelper.LocalCurrency.current
 
@@ -219,42 +267,57 @@ fun UserPropertyItem(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ){
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-        ) {
-            Text(
-                text = property.title,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = property.address,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    stringResource(
-                        R.string.account_page_property_photo_size_text,
-                        property.photos.size
-                    ), modifier = Modifier.weight(1f))
-                Text(
-                    stringResource(
-                        R.string.account_page_property_poi_size_text,
-                        property.poiS.size
-                    ), modifier = Modifier.weight(1f))
+        Box {
+            IconButton(
+                onClick = {
+                    onDeleteClick(property)
+                          },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.delete_24px),
+                    contentDescription = stringResource(R.string.delete_section_button_text),
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                Text(property.title, style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    property.address,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
-            Text(
-                text = formattedPrice,
-                style = MaterialTheme.typography.bodyLarge
-            )
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row {
+                    Text(
+                        stringResource(
+                            R.string.account_page_property_photo_size_text,
+                            property.photos.size
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        stringResource(
+                            R.string.account_page_property_poi_size_text,
+                            property.poiS.size
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(formattedPrice, style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }

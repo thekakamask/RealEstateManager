@@ -17,35 +17,60 @@ class PropertyPoiCrossDownloadManager(
             val onlineCrossRefs = propertyPoiCrossOnlineRepository.getAllCrossRefs()
 
             for (doc in onlineCrossRefs) {
-                try {
-                    val online = doc.cross
-                    val propertyId = online.universalLocalPropertyId
-                    val poiId = online.universalLocalPoiId
-                    val firestoreId = doc.firebaseId
+                val online = doc.cross
+                val propertyId = online.universalLocalPropertyId
+                val poiId = online.universalLocalPoiId
+                val firestoreId = doc.firebaseId
 
-                    val local =
-                        propertyPoiCrossRepository.getCrossByIds(propertyId, poiId).first()
+                val local = propertyPoiCrossRepository
+                    .getCrossRefsByIdsIncludedDeleted(propertyId, poiId)
+                    .first()
 
-                    val shouldDownload =
-                        local == null || online.updatedAt > local.updatedAt
-
-                    if (shouldDownload) {
-                        propertyPoiCrossRepository.insertCrossRefInsertFromFirebase(
-                            crossRef = online,
-                            firebaseDocumentId = firestoreId
+                if (online.isDeleted) {
+                    if (local != null) {
+                        propertyPoiCrossRepository.deleteCrossRef(local)
+                        results.add(
+                            SyncStatus.Success(
+                                "CrossRef $firestoreId deleted locally (remote deleted)"
+                            )
                         )
-                        results.add(SyncStatus.Success("CrossRef $firestoreId downloaded"))
-                    } else {
-                        results.add(SyncStatus.Success("CrossRef $firestoreId already up-to-date"))
                     }
+                    continue
+                }
 
-                } catch (e: Exception) {
-                    results.add(SyncStatus.Failure("CrossRef ${doc.firebaseId}", e))
+                val shouldDownload =
+                    local == null || online.updatedAt > local.updatedAt
+
+                if (!shouldDownload) {
+                    results.add(
+                        SyncStatus.Success("CrossRef $firestoreId already up-to-date")
+                    )
+                    continue
+                }
+
+                if (local == null) {
+                    propertyPoiCrossRepository.insertCrossRefInsertFromFirebase(
+                        crossRef = online,
+                        firebaseDocumentId = firestoreId
+                    )
+                    results.add(
+                        SyncStatus.Success("CrossRef $firestoreId inserted")
+                    )
+                } else {
+                    propertyPoiCrossRepository.updateCrossRefFromFirebase(
+                        crossRef = online,
+                        firebaseDocumentId = firestoreId
+                    )
+                    results.add(
+                        SyncStatus.Success("CrossRef $firestoreId updated")
+                    )
                 }
             }
 
         } catch (e: Exception) {
-            results.add(SyncStatus.Failure("Global CrossRef download failed", e))
+            results.add(
+                SyncStatus.Failure("Global CrossRef download failed", e)
+            )
         }
 
         return results

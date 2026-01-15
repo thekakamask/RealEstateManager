@@ -44,14 +44,18 @@ import coil.compose.rememberAsyncImagePainter
 import com.dcac.realestatemanager.model.Photo
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.net.toUri
+import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
@@ -62,13 +66,14 @@ fun PropertyDetailsPage(
     propertyId: String,
     viewModel: PropertyDetailsViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onEditSectionSelected: (EditSection, String) -> Unit
+    onEditSectionSelected: (EditSection, String) -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
     val showEditSheet = remember { mutableStateOf(false) }
     val propertyLocalId = (uiState as? PropertyDetailsUiState.Success)?.property?.universalLocalId
     val currency = CurrencyHelper.LocalCurrency.current
+    val propertyToDelete = remember { mutableStateOf<Property?>(null) }
 
     LaunchedEffect(propertyId) {
         viewModel.loadPropertyDetails(propertyId)
@@ -83,6 +88,11 @@ fun PropertyDetailsPage(
                 if (propertyLocalId != null) {
                     onEditSectionSelected(section, propertyLocalId)
                 }
+            },
+            onDeleteProperty = {
+                val state = uiState as? PropertyDetailsUiState.Success ?: return@EditPropertyBottomSheet
+                propertyToDelete.value = state.property
+                showEditSheet.value = false
             }
         )
     }
@@ -386,6 +396,50 @@ fun PropertyDetailsPage(
             }
         }
     }
+
+    propertyToDelete.value?.let { property ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = {
+                propertyToDelete.value = null
+            },
+            title = {
+                Text(stringResource(R.string.property_details_page_delete_section_title))
+            },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.property_details_page_delete_property_text,
+                        property.title
+                    )
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteProperty(
+                            property = property,
+                            onDeleted = {
+                                propertyToDelete.value = null
+                                onBack()
+                            }
+                        )
+                    }
+                ) {
+                    Text(stringResource(R.string.property_details_page_delete_section_confirm_button_text))
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        propertyToDelete.value = null
+                    }
+                ) {
+                    Text(stringResource(R.string.property_details_page_delete_property_cancel_button_text))
+                }
+            }
+        )
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -476,9 +530,15 @@ fun PhotoSlider(photos: List<Photo>) {
 @Composable
 fun EditPropertyBottomSheet(
     onDismiss: () -> Unit,
-    onOptionSelected: (EditSection) -> Unit
+    onOptionSelected: (EditSection) -> Unit,
+    onDeleteProperty: () -> Unit
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        sheetState = bottomSheetState,
+        onDismissRequest = onDismiss) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.edit_section_title_text), style = MaterialTheme.typography.titleLarge)
 
@@ -496,6 +556,39 @@ fun EditPropertyBottomSheet(
                         .padding(vertical = 12.dp),
                     style = MaterialTheme.typography.bodyLarge
                 )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        onDeleteProperty()
+                        onDismiss()
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    ),
+                    border = androidx.compose.material3.ButtonDefaults.outlinedButtonBorder.copy(
+                        brush = androidx.compose.ui.graphics.SolidColor(
+                            MaterialTheme.colorScheme.error
+                        )
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.delete_24px),
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.delete_section_button_text))
+                }
             }
         }
     }

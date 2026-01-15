@@ -36,12 +36,17 @@ class PhotoUploadManager(
 
                 if (photo.isDeleted) {
                     if (firebaseId != null) {
-                        photoOnlineRepository.deletePhoto(firebaseId)
+                        photoOnlineRepository.markPhotoAsDeleted(
+                            firebasePhotoId = firebaseId,
+                            updatedAt = photo.updatedAt
+                        )
                     }
 
                     photoRepository.deletePhoto(photo)
 
-                    results.add(SyncStatus.Success("Photo ${photo.id} deleted from Firebase & Room"))
+                    results.add(
+                        SyncStatus.Success("Photo ${photo.id} marked deleted online & removed locally")
+                    )
                 } else {
                     val finalId = firebaseId ?: generateFirestoreId()
 

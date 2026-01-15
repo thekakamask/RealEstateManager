@@ -5,5 +5,6 @@ data class StaticMapOnlineEntity(
     val universalLocalId: String = "", // 🔑 UUID from Room
     val universalLocalPropertyId: String = "",  // 🔗 link with property
     val updatedAt: Long = System.currentTimeMillis(),
-    val storageUrl: String = ""
+    val storageUrl: String = "",
+    val isDeleted: Boolean = false
 )

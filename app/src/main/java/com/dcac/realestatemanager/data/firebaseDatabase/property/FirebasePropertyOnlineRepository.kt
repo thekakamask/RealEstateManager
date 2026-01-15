@@ -1,6 +1,8 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.property
 
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PHOTOS
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PROPERTIES
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -77,6 +79,18 @@ class FirebasePropertyOnlineRepository(
         } catch (e: Exception) {
             throw FirebasePropertyDeleteException("Failed to delete properties for user: ${e.message}", e)
         }
+    }
+
+    override suspend fun markPropertyAsDeleted(firebasePropertyId: String, updatedAt: Long) {
+        firestore.collection(PROPERTIES)
+            .document(firebasePropertyId)
+            .update(
+                mapOf(
+                    "isDeleted" to true,
+                    "updatedAt" to updatedAt
+                )
+            )
+            .await()
     }
 }
 

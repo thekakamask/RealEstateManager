@@ -35,6 +35,7 @@ import com.dcac.realestatemanager.model.StaticMap
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.File
 import java.util.UUID
 
 @HiltViewModel
@@ -514,33 +515,50 @@ class PropertyCreationViewModel @Inject constructor(
 
                         originalPhotos
                             .filter { it.uri !in draftPhotos.map { p -> p.uri } }
-                            .forEach { photoRepository.markPhotoAsDeleted(it) }
+                            .forEach { photo ->
+                                photo.uri.toUri().path?.let { path ->
+                                    runCatching {
+                                        val file = File(path)
+                                        if (file.exists()) file.delete()
+                                    }.onFailure {
+                                        Log.e("PHOTO_DELETE", "Failed to delete photo file", it)
+                                    }
+                                }
+                                photoRepository.markPhotoAsDeleted(photo)
+                            }
                     }
 
                     EditSection.POIS -> {
                         val propertyId = original.universalLocalId
-                        val originalPoiS = original.poiS
-                        val draftPoiS = draft.poiS
 
-                        for (i in draftPoiS.indices) {
-                            val draftPoi = draftPoiS[i]
+                        original.staticMap?.let { oldMap ->
+                            oldMap.uri.toUri().path?.let { path ->
+                                runCatching { File(path).delete() }
+                            }
+                            staticMapRepository.markStaticMapAsDeleted(oldMap)
+                        }
+
+
+                        crossRefRepository.markCrossRefsAsDeletedForProperty(propertyId)
+
+                        val existingPoiS = original.poiS
+                        val finalPoiS = mutableListOf<Poi>()
+
+                        for (draftPoi in draft.poiS) {
+
                             val address = "${draftPoi.street}, ${draftPoi.postalCode} ${draftPoi.city}, ${draftPoi.country}"
                             val latLng = geocodeAddress(context, address)
 
-                            if (i < originalPoiS.size) {
-                                val existingPoi = originalPoiS[i]
-                                val updatedPoi = existingPoi.copy(
-                                    name = draftPoi.name,
-                                    type = draftPoi.type,
-                                    address = address,
-                                    latitude = latLng?.latitude,
-                                    longitude = latLng?.longitude,
-                                    updatedAt = System.currentTimeMillis()
-                                )
-                                poiRepository.updatePoiFromUI(updatedPoi)
+                            val matchingPoi = existingPoiS.firstOrNull {
+                                it.name == draftPoi.name &&
+                                        it.type == draftPoi.type &&
+                                        it.address == address
+                            }
 
+                            val poi = if (matchingPoi != null) {
+                                matchingPoi
                             } else {
-                                val newPoi = Poi(
+                                Poi(
                                     universalLocalId = UUID.randomUUID().toString(),
                                     name = draftPoi.name,
                                     type = draftPoi.type,
@@ -548,10 +566,18 @@ class PropertyCreationViewModel @Inject constructor(
                                     latitude = latLng?.latitude,
                                     longitude = latLng?.longitude,
                                     updatedAt = System.currentTimeMillis()
-                                )
-                                poiRepository.insertPoiInsertFromUI(newPoi)
-                                crossRefRepository.insertCrossRefInsertFromUI(PropertyPoiCross(propertyId, newPoi.universalLocalId))
+                                ).also {
+                                    poiRepository.insertPoiInsertFromUI(it)
+                                }
                             }
+
+                            finalPoiS.add(poi)
+                        }
+
+                        finalPoiS.forEach { poi ->
+                            crossRefRepository.insertCrossRefInsertFromUI(
+                                PropertyPoiCross(propertyId, poi.universalLocalId)
+                            )
                         }
 
                         val propertyAddress = "${draft.street}, ${draft.postalCode} ${draft.city}, ${draft.country}"

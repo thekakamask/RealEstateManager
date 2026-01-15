@@ -5,4 +5,5 @@ interface PoiOnlineRepository {
     suspend fun getPoi(firebasePoiId: String): PoiOnlineEntity?
     suspend fun getAllPoiS(): List<FirestorePoiDocument>
     suspend fun deletePoi(firebasePoiId: String)
+    suspend fun markPoiAsDeleted(firebasePoiId: String, updatedAt: Long)
 }

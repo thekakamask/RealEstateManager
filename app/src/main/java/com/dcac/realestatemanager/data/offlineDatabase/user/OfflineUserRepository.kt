@@ -77,7 +77,7 @@ class OfflineUserRepository(
         userDao.clearAllUsersDeleted()
     }
 
-    // FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     override fun getUserByIdIncludeDeleted(id: String): Flow<UserEntity?> =
         userDao.getUserByIdIncludeDeleted(id)
     override fun getAllUsersIncludeDeleted(): Flow<List<UserEntity>> =

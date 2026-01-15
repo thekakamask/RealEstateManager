@@ -18,7 +18,8 @@ fun UserEntity.toOnlineEntity(): UserOnlineEntity {
         email = this.email,
         agentName = this.agentName,
         updatedAt = this.updatedAt,
-        universalLocalId = this.id // ✅ Same UUID
+        universalLocalId = this.id, // ✅ Same UUID
+        isDeleted = this.isDeleted
     )
 }
 
@@ -32,7 +33,7 @@ fun UserOnlineEntity.toEntity(
         isSynced = true,
         firebaseUid = firebaseUid,
         updatedAt = this.updatedAt,
-        isDeleted = false
+        isDeleted = this.isDeleted
     )
 }
 
@@ -43,7 +44,8 @@ fun PhotoEntity.toOnlineEntity(ownerUid: String): PhotoOnlineEntity {
         universalLocalPropertyId = this.universalLocalPropertyId,
         description = this.description,
         updatedAt = this.updatedAt,
-        storageUrl = this.uri
+        storageUrl = this.uri,
+        isDeleted = this.isDeleted
     )
 }
 
@@ -59,7 +61,8 @@ fun PhotoOnlineEntity.toEntity(
         description = description,
         isSynced = true,
         updatedAt = updatedAt,
-        isDeleted = false
+        isDeleted = isDeleted
+
     )
 }
 
@@ -72,7 +75,8 @@ fun PoiEntity.toOnlineEntity(ownerUid: String): PoiOnlineEntity {
         address = this.address,
         latitude = this.latitude,
         longitude = this.longitude,
-        updatedAt = this.updatedAt
+        updatedAt = this.updatedAt,
+        isDeleted = this.isDeleted
     )
 }
 
@@ -90,7 +94,7 @@ fun PoiOnlineEntity.toEntity(
         longitude = this.longitude,
         isSynced = true,
         updatedAt = this.updatedAt,
-        isDeleted = false,
+        isDeleted = this.isDeleted
     )
 }
 
@@ -112,7 +116,8 @@ fun PropertyEntity.toOnlineEntity(ownerUid: String): PropertyOnlineEntity {
         isSold = this.isSold,
         entryDate = this.entryDate,
         saleDate = this.saleDate,
-        updatedAt = this.updatedAt
+        updatedAt = this.updatedAt,
+        isDeleted = this.isDeleted
     )
 }
 
@@ -137,7 +142,7 @@ fun PropertyOnlineEntity.toEntity(
         entryDate = entryDate,
         saleDate = saleDate,
         isSynced = true,
-        isDeleted = false,
+        isDeleted = isDeleted,
         updatedAt = updatedAt
     )
 }
@@ -147,7 +152,8 @@ fun PropertyPoiCrossEntity.toOnlineEntity(ownerUid: String): PropertyPoiCrossOnl
         ownerUid = ownerUid,
         universalLocalPropertyId = this.universalLocalPropertyId,
         universalLocalPoiId = this.universalLocalPoiId,
-        updatedAt = this.updatedAt
+        updatedAt = this.updatedAt,
+        isDeleted = this.isDeleted
     )
 }
 
@@ -161,7 +167,7 @@ fun PropertyPoiCrossOnlineEntity.toEntity(
         firestoreDocumentId = firestoreId,
         isSynced = true,
         updatedAt = this.updatedAt,
-        isDeleted = false
+        isDeleted = isDeleted
     )
 }
 
@@ -171,7 +177,8 @@ fun StaticMapEntity.toOnlineEntity(ownerUid: String): StaticMapOnlineEntity {
         universalLocalId = this.id,
         universalLocalPropertyId = this.universalLocalPropertyId,
         updatedAt = this.updatedAt,
-        storageUrl = this.uri
+        storageUrl = this.uri,
+        isDeleted = this.isDeleted
     )
 }
 
@@ -185,6 +192,6 @@ fun StaticMapOnlineEntity.toEntity(
         uri = "",
         isSynced = true,
         updatedAt = updatedAt,
-        isDeleted = false
+        isDeleted = isDeleted
     )
 }

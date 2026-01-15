@@ -93,7 +93,7 @@ interface PropertyPoiCrossDao {
     suspend fun markAllCrossRefsAsDeleted(updatedAt: Long)
 
     //HARD DELETE
-    // AFTER DELETE CROSSREFS FROM FIREBASE, DELETE CROSSREFS FROM ROOM
+    // AFTER MARK CROSSREFS DELETE IN FIREBASE, DELETE CROSSREFS FROM ROOM
     @Delete
     suspend fun deleteCrossRef(crossRef: PropertyPoiCrossEntity)
     @Query("DELETE FROM property_poi_cross_ref WHERE property_id = :propertyId")
@@ -103,7 +103,7 @@ interface PropertyPoiCrossDao {
     @Query("DELETE FROM property_poi_cross_ref WHERE is_deleted = 1")
     suspend fun clearAllDeleted()
 
-    //FOR TEST CHECK HARD DELETE
+    // FOR SYNC AND TEST CHECK
     @Query("SELECT * FROM property_poi_cross_ref WHERE property_id = :propertyId AND poi_id = :poiId")
     fun getCrossRefsByIdsIncludedDeleted(propertyId: String, poiId: String): Flow<PropertyPoiCrossEntity?>
     @Query("SELECT * FROM property_poi_cross_ref WHERE property_id = :propertyId")

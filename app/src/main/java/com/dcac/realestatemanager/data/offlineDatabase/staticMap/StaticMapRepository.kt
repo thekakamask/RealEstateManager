@@ -33,7 +33,7 @@ interface StaticMapRepository {
     suspend fun deleteStaticMap(staticMap: StaticMapEntity)
     suspend fun clearAllStaticMapsDeleted()
 
-    //FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     fun getStaticMapByIdIncludeDeleted(id: String): Flow<StaticMapEntity?>
     fun getStaticMapByPropertyIdIncludeDeleted(propertyId: String): Flow<StaticMapEntity?>
     fun getAllStaticMapIncludeDeleted(): Flow<List<StaticMapEntity>>

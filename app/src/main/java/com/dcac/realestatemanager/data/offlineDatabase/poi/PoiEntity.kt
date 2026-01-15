@@ -4,13 +4,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.util.UUID
 
 // Represents a point of interest (POI) independent from properties
 @Entity(
     tableName = "poi",
     indices = [
-        Index(value = ["firestore_document_id"], unique = true)
+        Index(value = ["firestore_document_id"], unique = true),
+        Index(value = ["is_deleted"])
     ])
 data class PoiEntity(
     @PrimaryKey

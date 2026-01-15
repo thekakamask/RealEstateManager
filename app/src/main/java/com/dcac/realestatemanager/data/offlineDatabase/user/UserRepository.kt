@@ -35,7 +35,7 @@ interface UserRepository {
     suspend fun deleteUser(user : UserEntity)
     suspend fun clearAllUsersDeleted()
 
-    // FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     fun getUserByIdIncludeDeleted(id: String): Flow<UserEntity?>
     fun getAllUsersIncludeDeleted(): Flow<List<UserEntity>>
 

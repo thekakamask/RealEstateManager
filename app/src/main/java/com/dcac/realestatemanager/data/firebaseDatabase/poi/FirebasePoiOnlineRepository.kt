@@ -2,6 +2,8 @@ package com.dcac.realestatemanager.data.firebaseDatabase.poi
 
 import android.util.Log
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PHOTOS
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.POIS
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -75,6 +77,18 @@ class FirebasePoiOnlineRepository(
         } catch (e: Exception) {
             throw FirebasePoiDeleteException("Failed to delete POI: ${e.message}", e)
         }
+    }
+
+    override suspend fun markPoiAsDeleted(firebasePoiId: String, updatedAt: Long) {
+        firestore.collection(POIS)
+            .document(firebasePoiId)
+            .update(
+                mapOf(
+                    "isDeleted" to true,
+                    "updatedAt" to updatedAt
+                )
+            )
+            .await()
     }
 }
 

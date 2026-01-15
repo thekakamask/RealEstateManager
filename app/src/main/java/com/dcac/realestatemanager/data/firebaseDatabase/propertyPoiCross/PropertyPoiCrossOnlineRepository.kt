@@ -8,4 +8,5 @@ interface PropertyPoiCrossOnlineRepository {
     suspend fun deleteAllCrossRefsForProperty(firebasePropertyId: String)
     suspend fun deleteAllCrossRefsForPoi(firebasePoiId: String)
     suspend fun getAllCrossRefs(): List<FirestoreCrossDocument>
+    suspend fun markCrossRefAsDeleted(firebasePoiId: String, firebasePropertyId: String, updatedAt: Long)
 }

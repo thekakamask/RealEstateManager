@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import androidx.core.net.toUri
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PHOTOS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -101,6 +102,11 @@ class FirebasePhotoOnlineRepository(
         }
     }
 
+    override suspend fun deletePhotoFromStorage(storageUrl: String) {
+        val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl)
+        storageRef.delete().await()
+    }
+
     override suspend fun deletePhotosByPropertyId(firebasePropertyId: String) {
         try {
             val snapshots = firestore.collection(FirestoreCollections.PHOTOS)
@@ -122,6 +128,18 @@ class FirebasePhotoOnlineRepository(
         }
         storageRef.getFile(localFile).await()
         return localFile.toURI().toString()
+    }
+
+    override suspend fun markPhotoAsDeleted(firebasePhotoId: String, updatedAt: Long) {
+        firestore.collection(PHOTOS)
+            .document(firebasePhotoId)
+            .update(
+                mapOf(
+                    "isDeleted" to true,
+                    "updatedAt" to updatedAt
+                )
+            )
+            .await()
     }
 }
 

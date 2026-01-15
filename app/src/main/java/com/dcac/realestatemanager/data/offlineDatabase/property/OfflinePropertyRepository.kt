@@ -176,7 +176,7 @@ class OfflinePropertyRepository(
     }
 
 
-    //FOR TEST HARD DELETE
+    // FOR SYNC AND TEST CHECK
     override fun getPropertyByIdIncludeDeleted(id: String): Flow<PropertyEntity?> =
         propertyDao.getPropertyByIdIncludeDeleted(id)
     override fun getAllPropertyIncludeDeleted(): Flow<List<PropertyEntity>> =

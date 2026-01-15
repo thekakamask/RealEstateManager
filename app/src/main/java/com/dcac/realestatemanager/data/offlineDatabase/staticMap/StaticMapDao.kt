@@ -85,7 +85,7 @@ interface StaticMapDao {
     @Query("DELETE FROM static_map WHERE is_deleted = 1")
     suspend fun clearAllStaticMapsDeleted()
 
-    //FOR TEST CHECK HARD DELETE
+    // FOR SYNC AND TEST CHECK
     @Query("SELECT * FROM static_map WHERE id = :id")
     fun getStaticMapByIdIncludeDeleted(id: String): Flow<StaticMapEntity?>
     @Query("SELECT * FROM static_map WHERE property_id = :propertyId")

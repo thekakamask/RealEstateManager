@@ -9,7 +9,8 @@ import androidx.room.PrimaryKey
     tableName = "users",
     indices = [
         Index(value = ["email"], unique = true),
-        Index(value = ["firebase_uid"], unique = true)
+        Index(value = ["firebase_uid"], unique = true),
+        Index(value = ["is_deleted"])
     ]
 )
 data class UserEntity(

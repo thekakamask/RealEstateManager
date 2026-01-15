@@ -10,34 +10,58 @@ class PropertyDownloadManager(
     private val propertyOnlineRepository: PropertyOnlineRepository
 ): PropertyDownloadInterfaceManager {
 
-   override suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
-       val results = mutableListOf<SyncStatus>()
+    override suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
+        val results = mutableListOf<SyncStatus>()
 
-       try {
-           val onlineProperties = propertyOnlineRepository.getAllProperties()
+        try {
+            val onlineProperties = propertyOnlineRepository.getAllProperties()
 
-           for (doc in onlineProperties){
-               try {
-                   val propertyOnline = doc.property
-                   val localId = propertyOnline.universalLocalId
-                   val localProperty = propertyRepository.getPropertyById(localId).first()
+            for (doc in onlineProperties) {
+                val propertyOnline = doc.property
+                val localId = propertyOnline.universalLocalId
+                val localProperty =
+                    propertyRepository.getPropertyByIdIncludeDeleted(localId).first()
 
-                   val shouldDownload = localProperty == null || propertyOnline.updatedAt > localProperty.updatedAt
+                if (propertyOnline.isDeleted) {
+                    if (localProperty != null) {
+                        propertyRepository.deleteProperty(localProperty)
+                        results.add(
+                            SyncStatus.Success("Property $localId deleted locally (remote deleted)")
+                        )
+                    }
+                    continue
+                }
 
-                   if (shouldDownload) {
-                       propertyRepository.insertPropertyInsertFromFirebase(propertyOnline, doc.firebaseId)
-                       results.add(SyncStatus.Success("Property $localId downloaded"))
-                   } else {
-                       results.add(SyncStatus.Success("Property $localId already up-to-date"))
-                   }
-               } catch (e :Exception) {
-                   results.add(SyncStatus.Failure("Property ${doc.firebaseId} failed to sync", e))
-               }
-           }
-       } catch (e: Exception) {
-           results.add(SyncStatus.Failure("Global property download failed", e))
-       }
-       return results
-   }
+                val shouldDownload =
+                    localProperty == null ||
+                            propertyOnline.updatedAt > localProperty.updatedAt
+
+                if (!shouldDownload) {
+                    results.add(SyncStatus.Success("Property $localId already up-to-date"))
+                    continue
+                }
+
+                if (localProperty == null) {
+                    propertyRepository.insertPropertyInsertFromFirebase(
+                        property = propertyOnline,
+                        firebaseDocumentId = doc.firebaseId
+                    )
+                    results.add(SyncStatus.Success("Property $localId inserted"))
+                } else {
+                    propertyRepository.updatePropertyFromFirebase(
+                        property = propertyOnline,
+                        firebaseDocumentId = doc.firebaseId
+                    )
+                    results.add(SyncStatus.Success("Property $localId updated"))
+                }
+            }
+
+        } catch (e: Exception) {
+            results.add(SyncStatus.Failure("Global property download failed", e))
+        }
+
+        return results
+    }
+
 
 }

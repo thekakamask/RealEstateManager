@@ -5,6 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import androidx.core.net.toUri
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PROPERTIES
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.STATIC_MAPS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -29,6 +31,7 @@ class FirebaseStaticMapOnlineRepository(
             }
 
             val uri = staticMap.storageUrl.toUri()
+            //TODO .JPG SUPERFLU CAR DONNE EN PNG
             val storageRef = storage.reference.child("staticMaps/${firebaseStaticMapId}.jpg")
 
             storageRef.putFile(uri).await()
@@ -129,6 +132,18 @@ class FirebaseStaticMapOnlineRepository(
         }
         storageRef.getFile(localFile).await()
         return localFile.toURI().toString()
+    }
+
+    override suspend fun markStaticMapAsDeleted(firebaseStaticMapId: String, updatedAt: Long) {
+        firestore.collection(STATIC_MAPS)
+            .document(firebaseStaticMapId)
+            .update(
+                mapOf(
+                    "isDeleted" to true,
+                    "updatedAt" to updatedAt
+                )
+            )
+            .await()
     }
 }
 

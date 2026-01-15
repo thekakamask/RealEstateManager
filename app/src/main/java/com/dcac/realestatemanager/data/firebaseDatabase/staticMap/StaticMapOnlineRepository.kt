@@ -15,4 +15,6 @@ interface StaticMapOnlineRepository {
     suspend fun deleteStaticMapByPropertyId(firebasePropertyId: String)
 
     suspend fun downloadImageLocally(storageUrl: String): String
+
+    suspend fun markStaticMapAsDeleted(firebaseStaticMapId: String, updatedAt: Long)
 }

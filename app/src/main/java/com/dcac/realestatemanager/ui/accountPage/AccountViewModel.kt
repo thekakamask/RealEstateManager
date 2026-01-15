@@ -1,12 +1,16 @@
 package com.dcac.realestatemanager.ui.accountPage
 
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
-import com.dcac.realestatemanager.model.User
+import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.ui.accountPage.AccountUiState.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +27,9 @@ class AccountViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
     private val propertyRepository: PropertyRepository,
+    private val photoRepository: PhotoRepository,
+    private val staticMapRepository: StaticMapRepository,
+    private val crossRefRepository: PropertyPoiCrossRepository,
     private val syncScheduler: SyncScheduler
 ) : ViewModel(), IAccountViewModel {
 
@@ -86,6 +94,44 @@ class AccountViewModel @Inject constructor(
                 loadUser(user.universalLocalId)
             } catch (e: Exception) {
                 _uiState.value = Error("Update failed: ${e.message}")
+            }
+        }
+    }
+
+    override fun deleteProperty(property: Property) {
+        viewModelScope.launch {
+            try {
+                val propertyId = property.universalLocalId
+
+                property.photos.forEach { photo ->
+                    photo.uri.toUri().path?.let { path ->
+                        runCatching {
+                            val file = File(path)
+                            if (file.exists()) file.delete()
+                        }
+                    }
+                    photoRepository.markPhotoAsDeleted(photo)
+                }
+
+                property.staticMap?.let { map ->
+                    map.uri.toUri().path?.let { path ->
+                        runCatching {
+                            val file = File(path)
+                            if (file.exists()) file.delete()
+                        }
+                    }
+                    staticMapRepository.markStaticMapAsDeleted(map)
+                }
+
+                crossRefRepository.markCrossRefsAsDeletedForProperty(propertyId)
+                propertyRepository.markPropertyAsDeleted(property)
+
+                syncScheduler.scheduleSync()
+
+                loadUser(property.universalLocalUserId)
+
+            } catch (e: Exception) {
+                _uiState.value = Error("Failed to delete property: ${e.message}")
             }
         }
     }

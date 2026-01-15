@@ -68,7 +68,7 @@ class OfflinePoiRepository(
         poiDao.clearAllPoiSDeleted()
     }
 
-    // FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     override fun getAllPoiSByIdIncludeDeleted(id: String): Flow<PoiEntity?> =
         poiDao.getPoiByIdIncludeDeleted(id)
     override fun getAllPoiIncludeDeleted(): Flow<List<PoiEntity>> =

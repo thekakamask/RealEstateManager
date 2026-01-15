@@ -12,7 +12,8 @@ import com.dcac.realestatemanager.data.offlineDatabase.user.UserEntity
     tableName = "properties",
     indices = [
         Index(value = ["user_id"]),
-        Index(value = ["firestore_document_id"], unique = true)
+        Index(value = ["firestore_document_id"], unique = true),
+        Index(value = ["is_deleted"])
               ],
     foreignKeys = [
         ForeignKey(

@@ -34,7 +34,7 @@ interface PoiRepository {
     suspend fun deletePoi(poi:PoiEntity)
     suspend fun clearAllPoiSDeleted()
 
-    // FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     fun getAllPoiSByIdIncludeDeleted(id: String): Flow<PoiEntity?>
     fun getAllPoiIncludeDeleted(): Flow<List<PoiEntity>>
 

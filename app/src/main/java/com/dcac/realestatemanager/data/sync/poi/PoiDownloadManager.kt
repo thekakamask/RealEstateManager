@@ -17,22 +17,41 @@ class PoiDownloadManager(
             val onlinePoiS = poiOnlineRepository.getAllPoiS()
 
             for (doc in onlinePoiS) {
-                try {
-                    val poiOnline = doc.poi
-                    val localId = poiOnline.universalLocalId
-                    val localPoi = poiRepository.getPoiById(localId).first()
+                val poiOnline = doc.poi
+                val localId = poiOnline.universalLocalId
+                val localPoiS =
+                    poiRepository.getAllPoiSByIdIncludeDeleted(localId).first()
 
-                    val shouldDownload = localPoi == null || poiOnline.updatedAt > localPoi.updatedAt
-
-                    if (shouldDownload) {
-                        poiRepository.insertPoiInsertFromFirebase(poiOnline, doc.firebaseId)
-                        results.add(SyncStatus.Success("Poi $localId downloaded"))
-                    } else {
-                        results.add(SyncStatus.Success("Poi $localId already up-to-date"))
+                if (poiOnline.isDeleted) {
+                    if (localPoiS != null) {
+                        poiRepository.deletePoi(localPoiS)
+                        results.add(
+                            SyncStatus.Success("Poi $localId deleted locally (remote deleted)")
+                        )
                     }
+                    continue
+                }
 
-                } catch (e: Exception) {
-                    results.add(SyncStatus.Failure("Poi ${doc.firebaseId} failed to sync", e))
+                val shouldDownload =
+                    localPoiS == null || poiOnline.updatedAt > localPoiS.updatedAt
+
+                if (!shouldDownload) {
+                    results.add(SyncStatus.Success("Poi $localId already up-to-date"))
+                    continue
+                }
+
+                if (localPoiS == null) {
+                    poiRepository.insertPoiInsertFromFirebase(
+                        poi = poiOnline,
+                        firebaseDocumentId = doc.firebaseId
+                    )
+                    results.add(SyncStatus.Success("Poi $localId inserted"))
+                } else {
+                    poiRepository.updatePoiFromFirebase(
+                        poi = poiOnline,
+                        firebaseDocumentId = doc.firebaseId
+                    )
+                    results.add(SyncStatus.Success("Poi $localId updated"))
                 }
             }
 

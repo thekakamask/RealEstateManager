@@ -56,7 +56,7 @@ interface PropertyRepository {
     suspend fun deleteProperty(property: PropertyEntity)
     suspend fun clearAllDeleted()
 
-    //FOR TEST HARD DELETE
+    // FOR SYNC AND TEST CHECK
     fun getPropertyByIdIncludeDeleted(id: String): Flow<PropertyEntity?>
     fun getAllPropertyIncludeDeleted(): Flow<List<PropertyEntity>>
 

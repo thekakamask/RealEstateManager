@@ -7,9 +7,9 @@ import com.dcac.realestatemanager.utils.toOnlineEntity
 import kotlinx.coroutines.flow.first
 
 class UserUploadManager(
-    private val userRepository: UserRepository,              // Room repository (local)
-    private val userOnlineRepository: UserOnlineRepository   // Firestore repository (remote)
-): UserUploadInterfaceManager {
+    private val userRepository: UserRepository,
+    private val userOnlineRepository: UserOnlineRepository
+) : UserUploadInterfaceManager {
 
     override suspend fun syncUnSyncedUsers(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
@@ -21,22 +21,34 @@ class UserUploadManager(
 
             try {
                 if (userEntity.isDeleted) {
-                    userOnlineRepository.deleteUser(firebaseId)
+                    userOnlineRepository.markUserAsDeleted(
+                        firebaseUserId = firebaseId,
+                        updatedAt = userEntity.updatedAt
+                    )
+
                     userRepository.deleteUser(userEntity)
-                    results.add(SyncStatus.Success("User $localId deleted from Firebase & Room"))
-                } else {
-                    val uploadedUser = userOnlineRepository.uploadUser(
-                        user = userEntity.toOnlineEntity(),
-                        firebaseUserId = firebaseId
-                    )
 
-                    userRepository.updateUserFromFirebase(
-                        user = uploadedUser,
-                        firebaseUid = firebaseId
+                    results.add(
+                        SyncStatus.Success(
+                            "User $localId marked deleted online & removed locally"
+                        )
                     )
-
-                    results.add(SyncStatus.Success("User $localId uploaded to Firebase"))
+                    continue
                 }
+
+                val uploadedUser = userOnlineRepository.uploadUser(
+                    user = userEntity.toOnlineEntity(),
+                    firebaseUserId = firebaseId
+                )
+
+                userRepository.updateUserFromFirebase(
+                    user = uploadedUser,
+                    firebaseUid = firebaseId
+                )
+
+                results.add(
+                    SyncStatus.Success("User $localId uploaded to Firebase")
+                )
 
             } catch (e: Exception) {
                 results.add(SyncStatus.Failure("User $localId", e))
@@ -45,5 +57,4 @@ class UserUploadManager(
 
         return results
     }
-
 }

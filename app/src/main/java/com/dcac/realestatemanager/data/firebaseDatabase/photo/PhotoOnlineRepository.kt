@@ -7,6 +7,8 @@ interface PhotoOnlineRepository {
     suspend fun getPhotosByPropertyId(firebasePropertyId: String): List<PhotoOnlineEntity>
     suspend fun getAllPhotos(): List<FirestorePhotoDocument>
     suspend fun deletePhoto(firebasePhotoId: String)
+    suspend fun deletePhotoFromStorage(storageUrl: String)
     suspend fun deletePhotosByPropertyId(firebasePropertyId: String)
     suspend fun downloadImageLocally(storageUrl: String): String
+    suspend fun markPhotoAsDeleted(firebasePhotoId: String, updatedAt: Long)
 }

@@ -14,5 +14,6 @@ data class PhotoOnlineEntity(
     val universalLocalPropertyId: String = "",  // 🔗 link with property
     val description: String? = null,
     val updatedAt: Long = System.currentTimeMillis(),
-    val storageUrl: String = ""
+    val storageUrl: String = "",
+    val isDeleted: Boolean = false
 )

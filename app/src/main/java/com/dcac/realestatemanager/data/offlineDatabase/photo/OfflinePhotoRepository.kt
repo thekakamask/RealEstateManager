@@ -103,7 +103,7 @@ class OfflinePhotoRepository(
         photoDao.clearAllPhotosDeleted()
     }
 
-    // FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     override fun getPhotoByIdIncludeDeleted(id: String): Flow<PhotoEntity?> =
         photoDao.getPhotoByIdIncludeDeleted(id)
     override fun getPhotosByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PhotoEntity>> =

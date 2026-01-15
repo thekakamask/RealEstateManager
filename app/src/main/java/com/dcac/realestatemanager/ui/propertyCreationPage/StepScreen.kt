@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -1086,7 +1085,13 @@ fun Step8ConfirmationScreen(
                             R.string.property_creation_step_8_rooms_text, draft.rooms
                         )
                         )
-                        InfoRow(label = stringResource(R.string.property_creation_step_8_description_title), value = draft.description)
+                        InfoRow(label = stringResource(R.string.property_creation_step_8_description_title), value = "")
+                        Text(
+                            text = draft.description,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
 
@@ -1188,16 +1193,9 @@ fun InfoRow(label: String, value: String) {
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
         )
 
-        val textModifier = if (label == stringResource(R.string.property_creation_step_8_description_title)) {
-            Modifier.widthIn(max = 300.dp)
-        } else {
-            Modifier
-        }
-
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = textModifier
+            style = MaterialTheme.typography.bodyLarge
         )
     }
 }

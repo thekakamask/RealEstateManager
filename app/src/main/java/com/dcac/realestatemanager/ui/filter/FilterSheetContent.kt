@@ -40,7 +40,6 @@ import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 import androidx.compose.foundation.lazy.LazyColumn
 
-// TODO ICONE QUI DISPARAISSE EN FRANCAIS EGALEMENT DANS LA PARTIE CREATION DE PROPERTY
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun FilterSheetContent(

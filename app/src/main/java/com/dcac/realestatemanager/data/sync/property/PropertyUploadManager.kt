@@ -31,11 +31,19 @@ class PropertyUploadManager(
             try {
                 if (propertyEntity.isDeleted) {
                     if (firebaseId != null) {
-                        propertyOnlineRepository.deleteProperty(firebaseId)
+                        propertyOnlineRepository.markPropertyAsDeleted(
+                            firebasePropertyId = firebaseId,
+                            updatedAt = propertyEntity.updatedAt
+                        )
                     }
+
                     propertyRepository.deleteProperty(propertyEntity)
-                    results.add(SyncStatus.Success("Property $localId deleted from Firebase & Room"))
-                } else {
+
+                    results.add(
+                        SyncStatus.Success("Property $localId marked deleted online & removed locally")
+                    )
+                }
+                else {
                     Log.e("PropertyUpload", "Uploading property ${propertyEntity.id}")
                     val finalId = firebaseId?: generateFirestoreId()
                     val uploadProperty = propertyOnlineRepository.uploadProperty(

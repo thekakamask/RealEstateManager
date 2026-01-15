@@ -5,4 +5,5 @@ interface UserOnlineRepository {
     suspend fun getUser(firebaseUserId: String): FirestoreUserDocument?
     suspend fun deleteUser(firebaseUserId: String)
     suspend fun getAllUsers(): List<FirestoreUserDocument>
+    suspend fun markUserAsDeleted(firebaseUserId: String, updatedAt: Long)
 }

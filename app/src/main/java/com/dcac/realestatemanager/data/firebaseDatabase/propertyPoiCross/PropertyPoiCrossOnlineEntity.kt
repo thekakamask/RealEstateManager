@@ -13,5 +13,6 @@ data class PropertyPoiCrossOnlineEntity(
     val ownerUid: String = "",
     val universalLocalPropertyId: String = "", // 🔗 UUID of the property
     val universalLocalPoiId: String = "",      // 🔗 UUID of the poi
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val isDeleted: Boolean = false
 )

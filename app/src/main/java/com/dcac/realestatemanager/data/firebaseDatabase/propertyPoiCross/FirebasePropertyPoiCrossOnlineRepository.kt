@@ -1,6 +1,6 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross
 
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PROPERTY_POI_CROSS
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -12,7 +12,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
         val documentId = "${crossRef.universalLocalPropertyId}-${crossRef.universalLocalPoiId}"
 
         try {
-            firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+            firestore.collection(PROPERTY_POI_CROSS)
                 .document(documentId)
                 .set(crossRef)
                 .await()
@@ -24,7 +24,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
 
     override suspend fun getCrossRefsByPropertyId(firebasePropertyId: String): List<PropertyPoiCrossOnlineEntity> {
         return try {
-            firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+            firestore.collection(PROPERTY_POI_CROSS)
                 .whereEqualTo("propertyId", firebasePropertyId)
                 .get()
                 .await()
@@ -38,7 +38,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
 
     override suspend fun getCrossRefsByPoiId(firebasePoiId: String): List<PropertyPoiCrossOnlineEntity> {
         return try {
-            firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+            firestore.collection(PROPERTY_POI_CROSS)
                 .whereEqualTo("poiId", firebasePoiId)
                 .get()
                 .await()
@@ -52,7 +52,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
 
     override suspend fun getAllCrossRefs(): List<FirestoreCrossDocument> {
         return try {
-            firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+            firestore.collection(PROPERTY_POI_CROSS)
                 .get()
                 .await()
                 .documents.mapNotNull { doc ->
@@ -71,7 +71,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
     override suspend fun deleteCrossRef(firebasePropertyId: String, firebasePoiId: String) {
         val docId = "$firebasePropertyId-$firebasePoiId"
         try {
-            firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+            firestore.collection(PROPERTY_POI_CROSS)
                 .document(docId)
                 .delete()
                 .await()
@@ -82,7 +82,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
 
     override suspend fun deleteAllCrossRefsForProperty(firebasePropertyId: String) {
         try {
-            val snapshots = firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+            val snapshots = firestore.collection(PROPERTY_POI_CROSS)
                 .whereEqualTo("propertyId", firebasePropertyId)
                 .get()
                 .await()
@@ -97,7 +97,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
 
     override suspend fun deleteAllCrossRefsForPoi(firebasePoiId: String) {
         try {
-            val snapshots = firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS)
+            val snapshots = firestore.collection(PROPERTY_POI_CROSS)
                 .whereEqualTo("poiId", firebasePoiId)
                 .get()
                 .await()
@@ -108,6 +108,25 @@ class FirebasePropertyPoiCrossOnlineRepository(
         } catch (e: Exception) {
             throw FirebasePropertyPoiCrossDeleteException("Failed to delete all crossRefs for POI: ${e.message}", e)
         }
+    }
+
+    override suspend fun markCrossRefAsDeleted(
+        firebasePoiId: String,
+        firebasePropertyId: String,
+        updatedAt: Long
+    ) {
+
+        val docId = "$firebasePropertyId-$firebasePoiId"
+
+        firestore.collection(PROPERTY_POI_CROSS)
+            .document(docId)
+            .update(
+                mapOf(
+                    "isDeleted" to true,
+                    "updatedAt" to updatedAt
+                )
+            )
+            .await()
     }
 }
 

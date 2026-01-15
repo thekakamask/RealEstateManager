@@ -1,6 +1,8 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.user
 
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.STATIC_MAPS
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.USERS
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -72,6 +74,18 @@ class FirebaseUserOnlineRepository(
         } catch (e: Exception) {
             throw FirebaseUserDeleteException("Failed to delete user: ${e.message}", e)
         }
+    }
+
+    override suspend fun markUserAsDeleted(firebaseUserId: String, updatedAt: Long) {
+        firestore.collection(USERS)
+            .document(firebaseUserId)
+            .update(
+                mapOf(
+                    "isDeleted" to true,
+                    "updatedAt" to updatedAt
+                )
+            )
+            .await()
     }
 }
 

@@ -334,6 +334,7 @@
     <string name="edit_section_property_photos">Photos</string>
     <string name="edit_section_property_poi">Poi</string>
     <string name="edit_section_title_text">Choisissez ce que vous souhaitez modifier dans la propriété</string>
+    <string name="delete_section_button_text">Supprimez la propriété</string>
     <string name="property_details_page_ui_state_error">Error : %1$s</string>
     <string name="property_details_page_debug_photo_uri">DEBUG - Photo URI: %1$s</string>
     <string name="property_details_page_property_entry_date_text">Date d\'ajout : %1$s</string>
@@ -346,6 +347,10 @@
     <string name="property_details_page_property_rooms_text">%1$s pièces</string>
     <string name="property_details_page_image_content_description_empty" />
     <string name="property_details_page_photo_pager_text">%1$s / %2$s</string>
+    <string name="property_details_page_delete_section_title">Supprimer la propriété</string>
+    <string name="property_details_page_delete_property_text">Etes vous sur de vouloir supprimer la propriété</string>
+    <string name="property_details_page_delete_property_cancel_button_text">Annuler la suppression</string>
+    <string name="property_details_page_delete_section_confirm_button_text">Valider la suppression</string>
 
 
     <!--UserProperties page -->
@@ -377,7 +382,10 @@
     <string name="account_page_edit_account_sheet_agent_name_text_label">Nom de l\'agent</string>
     <string name="account_page_edit_account_sheet_cancel_text_button">Annuler</string>
     <string name="account_page_edit_account_sheet_apply_button_text">Appliquer</string>
-
+    <string name="account_page_delete_section_title">Supprimer la propriété</string>
+    <string name="account_page_delete_property_text">Etes vous sur de vouloir supprimer la propriété</string>
+    <string name="account_page_delete_property_cancel_button_text">Annuler la suppression</string>
+    <string name="account_page_delete_section_confirm_button_text">Valider la suppression</string>
 
     <!--Parameters page -->
     <string name="settings_page_top_bar_back_button_content_description">retour</string>

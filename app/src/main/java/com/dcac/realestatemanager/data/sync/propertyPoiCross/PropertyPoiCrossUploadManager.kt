@@ -32,12 +32,19 @@ class PropertyPoiCrossUploadManager(
 
             try {
                 if (crossRef.isDeleted) {
-                    propertyPoiCrossOnlineRepository.deleteCrossRef(propertyId, poiId)
+                    propertyPoiCrossOnlineRepository.markCrossRefAsDeleted(
+                        firebasePropertyId = propertyId,
+                        firebasePoiId = poiId,
+                        updatedAt = crossRef.updatedAt
+                    )
+
                     propertyPoiCrossRepository.deleteCrossRef(crossRef)
 
-                    results.add(SyncStatus.Success("CrossRef $firestoreId deleted from Firebase & Room"))
-
-                } else {
+                    results.add(
+                        SyncStatus.Success("CrossRef $firestoreId marked deleted online & removed locally")
+                    )
+                }
+                else {
 
                     Log.e(
                         "SYNC_CROSSREF_UPLOAD",

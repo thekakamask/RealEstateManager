@@ -98,7 +98,7 @@ class OfflinePropertyPoiCrossRepository(
         dao.clearAllDeleted()
     }
 
-    //FOR TEST HARD DELETE
+    // FOR SYNC AND TEST CHECK
     override fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PropertyPoiCrossEntity>> =
         dao.getCrossRefsByPropertyIdIncludeDeleted(propertyId)
     override fun getCrossRefsByPoiIdIncludeDeleted(poiId: String): Flow<List<PropertyPoiCrossEntity>> =

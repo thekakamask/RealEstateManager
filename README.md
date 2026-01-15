@@ -15,20 +15,32 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🆕 Static map is automatically generated and saved when a property is created.
-   - 🔁 Static map is regenerated and updated when POIs are modified during property editing.
-   - 👁️ Static map is correctly restored and displayed in the UI even after sync or app restart.
-   - 💾 Local image URIs (photos & static maps) are preserved during Firebase sync to ensure full offline support.
-   - 🔄 When data is downloaded from Firebase, images are re-downloaded only if the local file is missing or outdated.
-   - ✈️ The app remains fully functional offline: photos and static maps are displayed even without network access.
-   - 🛡️ Sync logic prevents Firebase Storage URLs from overwriting valid local file paths in Room.
+   - ❌ Properties can be deleted both from the Property Details screen and from the Account page via a dedicated delete action.
+   - 🛑 Property deletion is protected by a confirmation AlertDialog to prevent accidental removal.
+   - 🧹 Deleting a property marks the property, its photos, static map and POI cross-references as deleted in Room (soft delete).
+   - 🗂️ Local files linked to deleted or replaced photos and static maps are physically removed from device storage.
+   - ♻️ Editing a property automatically cleans obsolete photos, static maps and POI links before saving new data.
+   - 🔄 All deletions and updates are scheduled for Firebase synchronization to ensure data consistency across devices.
+   - 🧠 Global soft-delete strategy using an isDeleted flag across all local and remote entities.
+   - 🔄 Synchronization managers now handle soft-deleted data to propagate deletions safely across multiple devices.
+   - ⏱️ Conflict resolution is based on updatedAt timestamps to ensure last-write-wins consistency.
+   - ☁️ Firebase Firestore entities now mirror deletion state to avoid zombie data on secondary devices.
+   - 📥 Download managers automatically remove local data when corresponding remote entities are marked as deleted.
+   - 📤 Upload managers propagate deletions to Firebase without performing immediate hard deletes.
+   - 🔐 Firestore security rules were updated to forbid client-side hard deletes and enforce ownership-based writes.
+   - 🗄️ Room database indices were added on isDeleted fields to improve sync and cleanup performance.
+   - 🧱 Cross-reference entities (Property Poi) now fully support soft deletion and multi-device synchronization.
+   - 🗺️ Static maps and photos are synced with proper local file lifecycle management.
 
 
 ## ❌ **NEXT UPDATES**
 
+   - ☁️ Scheduled Firebase cleanup (hard delete)
+   - 🧩 Tablet & large-screen UI
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - Implemented responsive design for tablet.
    - 🔔 Notification on property creation.
+   - 🧪 Testing coverage
 
 
 ## 📋 **Features**
@@ -60,11 +72,10 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** One-way sync from local to Firebase (upload).
       - ✅ **DONE** One-way sync from Firebase to local (download).
       - ✅ **DONE**  Entity-specific managers for modular synchronization logic.
-      - ✅ **DONE** Conflict resolution (e.g. field-level merge or overwrite strategies)
+      - ✅ **DONE** Conflict resolution using timestamp-based last-write-wins strategy (updatedAt).
       - ✅ **DONE** Background sync using WorkManager + SyncWorker, enabled via AppContainerProvider.
       - ✅ **DONE** Full sync of Static Maps (metadata + image files).
       - ✅ **DONE** Offline-first synchronization for static maps using timestamp-based conflict resolution.
-
 
    - 📷 **Media Management** :
 
@@ -73,7 +84,7 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Downloads images from Firebase Storage and saves them locally on device during sync.
       - ✅ **DONE** Static map images are uploaded to and downloaded from Firebase Storage.
       - ✅ **DONE** Local caching of static map images for offline access.
-
+      - ✅ **DONE** Local file lifecycle management (cleanup on delete or replace).
 
    - 🔍 **Search** :
 
@@ -88,7 +99,6 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Static maps fully supported offline (create, update, delete).
       - ✅ **DONE** Static map changes are queued and synchronized when connectivity is restored.
 
-
    - ☁️ **Online mode with Firebase Firestore**
 
       - ✅ **DONE** Upload and download of user and property data with Firebase Firestore.
@@ -97,7 +107,17 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Integrated Firebase Storage for image file handling; only metadata is stored in Firestore while files are uploaded to Storage.
       - ✅ **DONE** Static map metadata stored in Firestore with ownership-based security rules.
       - ✅ **DONE** Static map images stored in Firebase Storage and linked via Firestore.
+      - ✅ **DONE** Firestore security rules enforcing ownership-based access and forbidding client-side hard deletes.
 
+   - 🧹 **Data Deletion & Lifecycle Management** :
+
+      - ✅ **DONE** Global soft-delete strategy using isDeleted flags.
+      - ✅ **DONE** Soft deletion applied consistently across all entities (Room + Firestore).
+      - ✅ **DONE** Deletions propagated safely across devices via sync managers.
+      - ✅ **DONE** Remote deletion state mirrored locally to prevent zombie data.
+      - ✅ **DONE** Conflict resolution for deletions using updatedAt timestamps.
+      - ✅ **DONE** Local hard delete performed only after successful sync.
+      - ❌ **NOT IMPLEMENTED** Server-side cleanup of deleted data (Firestore & Storage).
 
    - 📡 **Interoperability** :
 
@@ -160,7 +180,6 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Static Map entity follows the same clean architecture pattern as Photos (Room ↔ Repository ↔ Sync ↔ Firebase).
       - ✅ **DONE** Dedicated upload and download managers for static map synchronization.
 
-
    - 🚀 **Performance and responsiveness**:
    
       - 🟩 **IN PROGRESS** Optimize UI scrolling and animations.
@@ -171,11 +190,11 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Unit test for euro to dollar conversion.
       - ✅ **DONE** Unit test for date formatting.
       - ❌ **NOT IMPLEMENTED** Integration test for network availability.
-      - ✅ **DONE** Unit test for Models/Entities/OnlineEntities mappers.
-      - ✅ **DONE** DAO tests using instrumented tests for Room database.
-      - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation.
-      - ✅ **DONE** Firebase Repository unit tests using offline/online entities separation.
-      - ✅ **DONE** Unit test for Sync layer (download/upload managers) unit tests between Room and Firebase Repositories.
+      - 🟩 **IN PROGRESS** Unit test for Models/Entities/OnlineEntities mappers.
+      - 🟩 **IN PROGRESS** DAO tests using instrumented tests for Room database.
+      - 🟩 **IN PROGRESS** Repository unit tests using fake DAO architecture and model/entity separation.
+      - 🟩 **IN PROGRESS** Firebase Repository unit tests using offline/online entities separation.
+      - 🟩 **IN PROGRESS** Unit test for Sync layer (download/upload managers) unit tests between Room and Firebase Repositories.
 
 
 ## 🛠️ **Tech Stack**

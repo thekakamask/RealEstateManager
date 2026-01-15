@@ -36,7 +36,7 @@ interface PhotoRepository {
     suspend fun deletePhoto(photo: PhotoEntity)
     suspend fun clearAllPhotosDeleted()
 
-    // FOR TEST HARD DELETE CHECK
+    // FOR SYNC AND TEST CHECK
     fun getPhotoByIdIncludeDeleted(id: String): Flow<PhotoEntity?>
     fun getPhotosByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PhotoEntity>>
     fun getAllPhotosIncludeDeleted(): Flow<List<PhotoEntity>>

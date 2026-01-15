@@ -1278,22 +1278,6 @@ This file documents key technical updates applied to the RealEstateManager Andro
 
 ### 🔹 **Update #42**
 
- - 🗺️ **Static Map full offline and online support**
-    - Static maps are now generated automatically during the property creation flow once the address and POIs are set.
-    - The map is stored locally using a temporary ID and later linked to the final property ID when creation is complete.
-    - It is then uploaded to Firebase Storage and synchronized with Firestore, ensuring consistent access across devices.
-
-  - 🗄️ **Dedicated Room entity and repository for Static Maps**
-    - A new StaticMapEntity was added to the local Room database and linked to properties via foreign key.
-    - A dedicated DAO and repository were implemented to support create, read, update, and delete operations offline.
-    - This approach ensures that static maps follow the same robust offline-first architecture as photos and POIs.
-
-  - 📱 **Automatic restoration of Static Maps across devices**
-    - When a property is synchronized and downloaded on another device, its static map is also retrieved and displayed.
-    - The UI can show static maps immediately with no fallback logic or reprocessing needed.
-
-  ### 🔹 **Update #42**
-
 - 🗺️ **Static Map full offline and online support**
   - Static maps are now generated automatically during the property creation flow once the address and POIs are set.
   - The map is stored locally using a temporary ID and later linked to the final property ID when creation is complete.
@@ -1322,6 +1306,126 @@ This file documents key technical updates applied to the RealEstateManager Andro
   - Photos and static maps remain fully accessible when the device is offline.
   - The app no longer depends on network availability or Coil cache to display media.
   - Clearing cache or restarting the app does not break image rendering, as all required assets are stored locally.
+
+
+### 🔹 **Update #43**
+
+  - ❌ **Property deletion available from multiple entry points**
+    - Properties can now be deleted both from the Property Details screen and from the Account page.
+    - Each property card in the Account page includes a dedicated delete icon for quick access.
+    - Deletion actions are only available for properties owned by the current user.
+
+  - 🛑 **Deletion protected by confirmation dialog**
+    - All property deletions are gated behind a AlertDialog confirmation.
+    - This prevents accidental deletions and provides a clear, explicit user decision step.
+    - The dialog is reused consistently across Property Details and Account screens.
+
+  - 🧹 **Cascade soft delete across all related data**
+    - Deleting a property performs a soft delete in Room rather than immediate removal.
+    - The following related entities are also marked as deleted:
+      - Property entity
+      - Photos
+      - Static map
+      - Cross references
+    - This preserves offline-first integrity and allows safe synchronization.
+  
+  - 🗂️ **Physical cleanup of obsolete local files**
+    - Local files linked to deleted or replaced photos are physically removed from device storage.
+    - The same cleanup logic applies to static map image files.
+    - This prevents storage leaks and ensures long-term local cache hygiene.
+
+  - ♻️ **Automatic cleanup during property editing**
+    - Editing a property now automatically detects obsolete photos, static maps, and POI links.
+    - Outdated entities are marked as deleted in Room before new data is saved.
+    - Unchanged POIs are reused to avoid duplication, while modified POIs are recreated safely.
+
+  - 🔄 **Deletion and update operations scheduled for Firebase sync**
+    - All delete and update operations are queued via the sync scheduler.
+    - Actual deletion in Firebase is deferred until synchronization occurs.
+    - This guarantees consistent behavior across devices while keeping the app fully usable offline.
+
+  - 🧠 **Global soft-delete strategy (Room + Firebase)**
+    - A unified soft-delete mechanism based on an isDeleted flag has been introduced.
+    - This flag is now present in:
+      - All Room entities
+      - All Firestore online entities
+    - This replaces the previous behavior where deletions were often performed as immediate hard deletes, leading to sync inconsistencies.
+
+  - 🔄 **Safe multi-device deletion propagation**
+    - Deletions are now:
+      - Marked as isDeleted = true
+      - Timestamped using updatedAt
+    - This allows deletions to be:
+      - Properly synchronized
+      - Correctly propagated to other devices
+    - Prevents zombie data on secondary devices when one device deletes data offline.
+    - Before: A deletion on one device could permanently remove data from Firebase before other devices synced.
+    - Now: Deletions are propagated as state changes and applied safely on all devices.
+
+  - 📤 **Upload managers: no more hard deletes in Firebase**
+    - Upload managers no longer call delete() on Firestore documents.
+    - Instead:
+      - Entities are marked as deleted remotely
+      - updatedAt is always propagated to Firebase
+    - Local hard delete (Room) is performed only after the deletion state has been successfully uploaded.
+    - This ensures:
+      - Offline-first safety
+      - Deterministic sync behavior
+      - No accidental remote data loss
+  
+  - 📥 **Download managers now handle remote deletions**
+    - Download managers now explicitly:
+      - Detect isDeleted = true on remote entities
+      - Remove the corresponding local Room entity
+    - This guarantees:
+      - Clean local state
+      - No resurrection of deleted data after sync
+
+  - ⏱️ **Conflict resolution based on updatedAt**
+    - All sync decisions follow a last-write-wins strategy.
+    - An entity is updated if:
+      - It does not exist locally
+      - OR its remote updatedAt is newer than the local one
+    - This applies uniformly to:
+      - Properties
+      - Photos
+      - Static maps
+      - POIs
+      - Cross-references
+      - Users
+
+  - 🧱 **Cross-reference entities fully integrated into sync logic**
+    - Property Poi cross references now:
+      - Support soft deletion
+      - Are synced like first-class entities
+    - Prevents dangling or orphaned relations after deletions.
+
+  - 🗺️ **Photo & Static Map lifecycle fully controlled**
+    - Local file lifecycle is now correctly tied to sync state:
+    - Files are deleted locally when entities are deleted or replaced
+    - Files are downloaded only when needed
+    - Prevents:
+      - Disk leaks
+      - Orphaned images
+      - Redundant downloads
+
+  - 🗄️ **Room database optimizations**
+    - Added indices on:
+      - isDeleted
+      - firestoreDocumentId
+    - Improves:
+      - Sync queries
+      - Cleanup performance
+      - Large dataset scalability
+
+  - 🔐 **Firestore security rules hardened**
+    - Client-side hard deletes are now explicitly forbidden.
+    - Rules enforce:
+      - Ownership-based create/update
+      - No delete permission from the client
+    - This ensures:
+      - Deletions always go through the soft-delete flow
+      - Server-side control over data lifecycle
 
 
 ## 🤝 **Contributions**

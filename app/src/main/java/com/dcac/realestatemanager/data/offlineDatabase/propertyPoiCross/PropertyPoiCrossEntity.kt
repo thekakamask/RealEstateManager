@@ -12,7 +12,8 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
     primaryKeys = ["property_id", "poi_id"],
     indices = [
         Index(value = ["property_id"]),
-        Index(value = ["poi_id"])
+        Index(value = ["poi_id"]),
+        Index(value = ["is_deleted"])
     ],
     foreignKeys = [
         ForeignKey(
