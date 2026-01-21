@@ -1,7 +1,6 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.photo
 
 
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
@@ -34,7 +33,7 @@ class FirebasePhotoOnlineRepository(
 
             val updatedPhoto = photo.copy(storageUrl = downloadUrl)
 
-            firestore.collection(FirestoreCollections.PHOTOS)
+            firestore.collection(PHOTOS)
                 .document(firebasePhotoId)
                 .set(updatedPhoto)
                 .await()
@@ -50,7 +49,7 @@ class FirebasePhotoOnlineRepository(
 
     override suspend fun getPhoto(firebasePhotoId: String): PhotoOnlineEntity? {
         return try {
-            val snapshot = firestore.collection(FirestoreCollections.PHOTOS)
+            val snapshot = firestore.collection(PHOTOS)
                 .document(firebasePhotoId)
                 .get()
                 .await()
@@ -63,7 +62,7 @@ class FirebasePhotoOnlineRepository(
 
     override suspend fun getPhotosByPropertyId(firebasePropertyId: String): List<PhotoOnlineEntity> {
         return try {
-            firestore.collection(FirestoreCollections.PHOTOS)
+            firestore.collection(PHOTOS)
                 .whereEqualTo("propertyId", firebasePropertyId)
                 .get()
                 .await()
@@ -75,7 +74,7 @@ class FirebasePhotoOnlineRepository(
 
     override suspend fun getAllPhotos(): List<FirestorePhotoDocument> {
         return try {
-            firestore.collection(FirestoreCollections.PHOTOS)
+            firestore.collection(PHOTOS)
                 .get()
                 .await()
                 .documents.mapNotNull { doc ->
@@ -91,7 +90,7 @@ class FirebasePhotoOnlineRepository(
         }
     }
 
-    override suspend fun deletePhoto(firebasePhotoId: String) {
+    /*override suspend fun deletePhoto(firebasePhotoId: String) {
         try {
             firestore.collection(FirestoreCollections.PHOTOS)
                 .document(firebasePhotoId)
@@ -119,7 +118,7 @@ class FirebasePhotoOnlineRepository(
         } catch (e: Exception) {
             throw FirebasePhotoDeleteException("Failed to delete photos by propertyId: ${e.message}", e)
         }
-    }
+    }*/
 
     override suspend fun downloadImageLocally(storageUrl: String): String {
         val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl)
@@ -145,7 +144,7 @@ class FirebasePhotoOnlineRepository(
 
 class FirebasePhotoUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePhotoDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
-class FirebasePhotoDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+//class FirebasePhotoDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
 
 data class FirestorePhotoDocument(
     val firebaseId: String,                      // => Firebase UID (document ID)

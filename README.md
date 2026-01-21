@@ -15,27 +15,14 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - ❌ Properties can be deleted both from the Property Details screen and from the Account page via a dedicated delete action.
-   - 🛑 Property deletion is protected by a confirmation AlertDialog to prevent accidental removal.
-   - 🧹 Deleting a property marks the property, its photos, static map and POI cross-references as deleted in Room (soft delete).
-   - 🗂️ Local files linked to deleted or replaced photos and static maps are physically removed from device storage.
-   - ♻️ Editing a property automatically cleans obsolete photos, static maps and POI links before saving new data.
-   - 🔄 All deletions and updates are scheduled for Firebase synchronization to ensure data consistency across devices.
-   - 🧠 Global soft-delete strategy using an isDeleted flag across all local and remote entities.
-   - 🔄 Synchronization managers now handle soft-deleted data to propagate deletions safely across multiple devices.
-   - ⏱️ Conflict resolution is based on updatedAt timestamps to ensure last-write-wins consistency.
-   - ☁️ Firebase Firestore entities now mirror deletion state to avoid zombie data on secondary devices.
-   - 📥 Download managers automatically remove local data when corresponding remote entities are marked as deleted.
-   - 📤 Upload managers propagate deletions to Firebase without performing immediate hard deletes.
-   - 🔐 Firestore security rules were updated to forbid client-side hard deletes and enforce ownership-based writes.
-   - 🗄️ Room database indices were added on isDeleted fields to improve sync and cleanup performance.
-   - 🧱 Cross-reference entities (Property Poi) now fully support soft deletion and multi-device synchronization.
-   - 🗺️ Static maps and photos are synced with proper local file lifecycle management.
+   - 🗓️ Long-term cleanup is handled by a scheduled Firebase Cloud Function (weekly job).
+   - 🧹 Soft-deleted Firestore documents (properties, photos, static maps, POIs, cross-references) older than 30 days are permanently removed.
+   - 🗑️ Associated Firebase Storage files (photos, static maps) are hard-deleted during cleanup to prevent orphaned files.
+   - ☁️ Hard deletes are executed server-side only via Firebase Admin SDK, ensuring clients can never bypass soft-delete rules.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - ☁️ Scheduled Firebase cleanup (hard delete)
    - 🧩 Tablet & large-screen UI
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - Implemented responsive design for tablet.
@@ -76,6 +63,8 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Background sync using WorkManager + SyncWorker, enabled via AppContainerProvider.
       - ✅ **DONE** Full sync of Static Maps (metadata + image files).
       - ✅ **DONE** Offline-first synchronization for static maps using timestamp-based conflict resolution.
+      - ✅ **DONE** Deferred hard deletion handled by backend cleanup after successful multi-device synchronization.
+
 
    - 📷 **Media Management** :
 
@@ -117,7 +106,11 @@ This project is developed using modern Android architecture principles, with a f
       - ✅ **DONE** Remote deletion state mirrored locally to prevent zombie data.
       - ✅ **DONE** Conflict resolution for deletions using updatedAt timestamps.
       - ✅ **DONE** Local hard delete performed only after successful sync.
-      - ❌ **NOT IMPLEMENTED** Server-side cleanup of deleted data (Firestore & Storage).
+      - ✅ **DONE** Server-side cleanup of deleted data using Firebase Cloud Functions.
+      - ✅ **DONE** Weekly scheduled cleanup job permanently removes soft-deleted data older than 30 days.
+      - ✅ **DONE** Hard deletion of Firestore documents and associated Firebase Storage files.
+      - ✅ **DONE** Cleanup executed exclusively server-side via Firebase Admin SDK.
+
 
    - 📡 **Interoperability** :
 
@@ -229,6 +222,9 @@ This project is developed using modern Android architecture principles, with a f
    - **ContentProvider** : External data access layer.
    - **Room Cursor Support** : Custom DAO queries returning Cursor for inter-process access through ContentProvider.
    - **Jetpack DataStore (Preferences)** : Modern, asynchronous key-value storage used for persisting user preferences (language, currency, etc.).
+   - **Firebase Cloud Functions (v2)** : Server-side scheduled jobs for data lifecycle management and cleanup.
+   - **Firebase Admin SDK** : Privileged backend access to Firestore and Storage (bypasses client security rules).
+   - **Cloud Scheduler** : Time-based execution of backend cleanup tasks.
 
 
 ## 🚀 **How to Use**

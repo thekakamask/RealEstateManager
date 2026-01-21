@@ -1,8 +1,6 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.poi
 
 import android.util.Log
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PHOTOS
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.POIS
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -26,7 +24,7 @@ class FirebasePoiOnlineRepository(
 
             Log.e("DEBUG_FIRESTORE_DATA", map.toString())
 
-            firestore.collection(FirestoreCollections.POIS)
+            firestore.collection(POIS)
                 .document(firebasePoiId)
                 .set(map)
                 .await()
@@ -39,7 +37,7 @@ class FirebasePoiOnlineRepository(
 
     override suspend fun getPoi(firebasePoiId: String): PoiOnlineEntity? {
         return try {
-            val snapshot = firestore.collection(FirestoreCollections.POIS)
+            val snapshot = firestore.collection(POIS)
                 .document(firebasePoiId)
                 .get()
                 .await()
@@ -52,7 +50,7 @@ class FirebasePoiOnlineRepository(
 
     override suspend fun getAllPoiS(): List<FirestorePoiDocument> {
         return try {
-            firestore.collection(FirestoreCollections.POIS)
+            firestore.collection(POIS)
                 .get()
                 .await()
                 .documents.mapNotNull { doc ->
@@ -68,7 +66,7 @@ class FirebasePoiOnlineRepository(
         }
     }
 
-    override suspend fun deletePoi(firebasePoiId: String) {
+    /*override suspend fun deletePoi(firebasePoiId: String) {
         try {
             firestore.collection(FirestoreCollections.POIS)
                 .document(firebasePoiId)
@@ -77,7 +75,7 @@ class FirebasePoiOnlineRepository(
         } catch (e: Exception) {
             throw FirebasePoiDeleteException("Failed to delete POI: ${e.message}", e)
         }
-    }
+    }*/
 
     override suspend fun markPoiAsDeleted(firebasePoiId: String, updatedAt: Long) {
         firestore.collection(POIS)
@@ -94,7 +92,7 @@ class FirebasePoiOnlineRepository(
 
 class FirebasePoiUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePoiDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
-class FirebasePoiDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+//class FirebasePoiDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
 
 data class FirestorePoiDocument(
     val firebaseId: String,                      // => Firebase UID (document ID)

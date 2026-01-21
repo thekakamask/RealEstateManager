@@ -1428,5 +1428,22 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - Server-side control over data lifecycle
 
 
+### 🔹 **Update #44**
+
+  - 🧹 **Firebase Long-Term Cleanup (Cloud Functions)**
+    - Added a scheduled Firebase Cloud Function (v2, Node.js 24) running once per week.
+    - The function permanently deletes Firestore documents marked as isDeleted = true and older than 30 days.
+    - Cleanup applies to all related entities:
+      - properties
+      - photos
+      - static maps
+      - POIs
+      - Cross-references
+    - Firebase Storage files linked to deleted photos and static maps are also removed.
+    - Hard deletes are forbidden on the client side and executed exclusively by the backend using Firebase Admin SDK.
+    - This prevents zombie data, orphaned files, and uncontrolled storage growth.
+    - The cleanup job is single-instance and region-scoped (europe-west1) to avoid parallel execution issues.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

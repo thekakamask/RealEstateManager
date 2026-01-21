@@ -68,7 +68,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
         }
     }
 
-    override suspend fun deleteCrossRef(firebasePropertyId: String, firebasePoiId: String) {
+    /*override suspend fun deleteCrossRef(firebasePropertyId: String, firebasePoiId: String) {
         val docId = "$firebasePropertyId-$firebasePoiId"
         try {
             firestore.collection(PROPERTY_POI_CROSS)
@@ -108,7 +108,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
         } catch (e: Exception) {
             throw FirebasePropertyPoiCrossDeleteException("Failed to delete all crossRefs for POI: ${e.message}", e)
         }
-    }
+    }*/
 
     override suspend fun markCrossRefAsDeleted(
         firebasePoiId: String,
@@ -132,7 +132,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
 
 class FirebasePropertyPoiCrossUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePropertyPoiCrossDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
-class FirebasePropertyPoiCrossDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+//class FirebasePropertyPoiCrossDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
 
 data class FirestoreCrossDocument(
     val firebaseId: String,                      // => Firebase UID (document ID)

@@ -1,7 +1,5 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.user
 
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.STATIC_MAPS
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.USERS
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -13,7 +11,7 @@ class FirebaseUserOnlineRepository(
     override suspend fun uploadUser(user: UserOnlineEntity, firebaseUserId: String): UserOnlineEntity {
         try {
             // Check if email already exists in Firestore
-            val emailExists = firestore.collection(FirestoreCollections.USERS)
+            val emailExists = firestore.collection(USERS)
                 .whereEqualTo("email", user.email)
                 .get()
                 .await()
@@ -24,7 +22,7 @@ class FirebaseUserOnlineRepository(
                 throw FirebaseUserUploadException("Email already in use", null)
             }
 
-            firestore.collection(FirestoreCollections.USERS)
+            firestore.collection(USERS)
                 .document(firebaseUserId)
                 .set(user)
                 .await()
@@ -38,7 +36,7 @@ class FirebaseUserOnlineRepository(
 
     override suspend fun getUser(firebaseUserId: String): FirestoreUserDocument? {
         return try {
-            val snapshot = firestore.collection(FirestoreCollections.USERS)
+            val snapshot = firestore.collection(USERS)
                 .document(firebaseUserId)
                 .get()
                 .await()
@@ -52,7 +50,7 @@ class FirebaseUserOnlineRepository(
 
     override suspend fun getAllUsers(): List<FirestoreUserDocument> {
         return try {
-            firestore.collection(FirestoreCollections.USERS)
+            firestore.collection(USERS)
                 .get()
                 .await()
                 .documents
@@ -65,7 +63,7 @@ class FirebaseUserOnlineRepository(
         }
     }
 
-    override suspend fun deleteUser(firebaseUserId: String) {
+    /*override suspend fun deleteUser(firebaseUserId: String) {
         try {
             firestore.collection(FirestoreCollections.USERS)
                 .document(firebaseUserId)
@@ -74,7 +72,7 @@ class FirebaseUserOnlineRepository(
         } catch (e: Exception) {
             throw FirebaseUserDeleteException("Failed to delete user: ${e.message}", e)
         }
-    }
+    }*/
 
     override suspend fun markUserAsDeleted(firebaseUserId: String, updatedAt: Long) {
         firestore.collection(USERS)
@@ -91,7 +89,7 @@ class FirebaseUserOnlineRepository(
 
 // Custom exception to signal upload failures to Firestore
 class FirebaseUserUploadException(message: String, cause: Throwable?) : Exception(message, cause)
-class FirebaseUserDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+//class FirebaseUserDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebaseUserDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
 
 data class FirestoreUserDocument(

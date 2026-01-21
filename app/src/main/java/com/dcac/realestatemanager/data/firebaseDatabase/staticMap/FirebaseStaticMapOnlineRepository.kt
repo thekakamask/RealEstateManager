@@ -1,11 +1,9 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.staticMap
 
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import androidx.core.net.toUri
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PROPERTIES
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.STATIC_MAPS
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,7 +29,7 @@ class FirebaseStaticMapOnlineRepository(
             }
 
             val uri = staticMap.storageUrl.toUri()
-            //TODO .JPG SUPERFLU CAR DONNE EN PNG
+            //TODO .JPG SUPERFLUOUS CAR GIVEN IN PNG
             val storageRef = storage.reference.child("staticMaps/${firebaseStaticMapId}.jpg")
 
             storageRef.putFile(uri).await()
@@ -39,7 +37,7 @@ class FirebaseStaticMapOnlineRepository(
 
             val updatedStaticMap = staticMap.copy(storageUrl = downloadUrl)
 
-            firestore.collection(FirestoreCollections.STATIC_MAPS)
+            firestore.collection(STATIC_MAPS)
                 .document(firebaseStaticMapId)
                 .set(updatedStaticMap)
                 .await()
@@ -55,7 +53,7 @@ class FirebaseStaticMapOnlineRepository(
 
     override suspend fun getStaticMap(firebaseStaticMapId: String): StaticMapOnlineEntity? {
         return try {
-            val snapshot = firestore.collection(FirestoreCollections.STATIC_MAPS)
+            val snapshot = firestore.collection(STATIC_MAPS)
                 .document(firebaseStaticMapId)
                 .get()
                 .await()
@@ -68,7 +66,7 @@ class FirebaseStaticMapOnlineRepository(
 
     override suspend fun getStaticMapByPropertyId(firebasePropertyId: String): StaticMapOnlineEntity? {
         return try {
-            val snapshot = firestore.collection(FirestoreCollections.STATIC_MAPS)
+            val snapshot = firestore.collection(STATIC_MAPS)
                 .whereEqualTo("universalLocalPropertyId", firebasePropertyId) // ⚠️ champ exact à utiliser
                 .limit(1)
                 .get()
@@ -86,7 +84,7 @@ class FirebaseStaticMapOnlineRepository(
 
     override suspend fun getAllStaticMaps(): List<FirestoreStaticMapDocument> {
         return try {
-            firestore.collection(FirestoreCollections.STATIC_MAPS)
+            firestore.collection(STATIC_MAPS)
                 .get()
                 .await()
                 .documents.mapNotNull { doc ->
@@ -102,7 +100,7 @@ class FirebaseStaticMapOnlineRepository(
         }
     }
 
-    override suspend fun deleteStaticMap(firebaseStaticMapId: String) {
+   /* override suspend fun deleteStaticMap(firebaseStaticMapId: String) {
         try {
             firestore.collection(FirestoreCollections.STATIC_MAPS)
                 .document(firebaseStaticMapId)
@@ -123,7 +121,7 @@ class FirebaseStaticMapOnlineRepository(
         } catch (e: Exception) {
             throw FirebaseStaticMapDeleteException("Failed to delete static maps by propertyId: ${e.message}", e)
         }
-    }
+    }*/
 
     override suspend fun downloadImageLocally(storageUrl: String): String {
         val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl)
@@ -149,7 +147,7 @@ class FirebaseStaticMapOnlineRepository(
 
 class FirebaseStaticMapUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebaseStaticMapDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
-class FirebaseStaticMapDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+//class FirebaseStaticMapDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
 
 data class FirestoreStaticMapDocument(
     val firebaseId: String,                      // => Firebase UID (document ID)

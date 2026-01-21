@@ -1,7 +1,5 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.property
 
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PHOTOS
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PROPERTIES
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -12,7 +10,7 @@ class FirebasePropertyOnlineRepository(
 
     override suspend fun uploadProperty(property: PropertyOnlineEntity, firebasePropertyId: String): PropertyOnlineEntity {
         try {
-            firestore.collection(FirestoreCollections.PROPERTIES)
+            firestore.collection(PROPERTIES)
                 .document(firebasePropertyId)
                 .set(property)
                 .await()
@@ -24,7 +22,7 @@ class FirebasePropertyOnlineRepository(
 
     override suspend fun getProperty(firebasePropertyId: String): PropertyOnlineEntity? {
         return try {
-            val snapshot = firestore.collection(FirestoreCollections.PROPERTIES)
+            val snapshot = firestore.collection(PROPERTIES)
                 .document(firebasePropertyId)
                 .get()
                 .await()
@@ -37,7 +35,7 @@ class FirebasePropertyOnlineRepository(
 
     override suspend fun getAllProperties(): List<FirestorePropertyDocument> {
         return try {
-            firestore.collection(FirestoreCollections.PROPERTIES)
+            firestore.collection(PROPERTIES)
                 .get()
                 .await()
                 .documents.mapNotNull { doc ->
@@ -55,7 +53,7 @@ class FirebasePropertyOnlineRepository(
         }
     }
 
-    override suspend fun deleteProperty(firebasePropertyId: String) {
+    /*override suspend fun deleteProperty(firebasePropertyId: String) {
         try {
             firestore.collection(FirestoreCollections.PROPERTIES)
                 .document(firebasePropertyId)
@@ -79,7 +77,7 @@ class FirebasePropertyOnlineRepository(
         } catch (e: Exception) {
             throw FirebasePropertyDeleteException("Failed to delete properties for user: ${e.message}", e)
         }
-    }
+    }*/
 
     override suspend fun markPropertyAsDeleted(firebasePropertyId: String, updatedAt: Long) {
         firestore.collection(PROPERTIES)
@@ -96,7 +94,7 @@ class FirebasePropertyOnlineRepository(
 
 class FirebasePropertyUploadException(message: String, cause: Throwable?) : Exception(message, cause)
 class FirebasePropertyDownloadException(message: String, cause: Throwable?) : Exception(message, cause)
-class FirebasePropertyDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
+//class FirebasePropertyDeleteException(message: String, cause: Throwable?) : Exception(message, cause)
 
 data class FirestorePropertyDocument(
     val firebaseId: String,                      // => Firebase UID (document ID)
