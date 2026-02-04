@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.model.Property
@@ -60,6 +61,7 @@ fun PropertyCreationPage(
     val isNextEnabled = stepState?.isNextEnabled == true
     val context = LocalContext.current
     val currency = CurrencyHelper.LocalCurrency.current
+    val editingIndex by viewModel.editingPhotoIndex.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -264,6 +266,9 @@ fun PropertyCreationPage(
                                     launcher.launch(context.getString(R.string.property_creation_launcher_image))
                                 }
                             },
+                            onEditPhoto = { index ->
+                                viewModel.startEditingPhoto(index)
+                            },
                             onDeletePhoto = { index ->
                                 viewModel.removePhotoAt(index)
                             },
@@ -292,6 +297,31 @@ fun PropertyCreationPage(
                 CircularProgressIndicator()
             }
         }
+
+        editingIndex?.let { index ->
+            val photo = (state as? PropertyCreationUiState.StepState)
+                ?.draft
+                ?.photos
+                ?.getOrNull(index)
+
+            if (photo != null && photo.uri.isNotBlank()) {
+                PhotoEditDialog(
+                    photo = photo,
+                    onDismiss = {
+                        viewModel.stopEditingPhoto()
+                    },
+                    onSave = { desc ->
+                        viewModel.updatePhotoAt(
+                            index = index,
+                            uri = photo.uri.toUri(),
+                            description = desc
+                        )
+                        viewModel.stopEditingPhoto()
+                    }
+                )
+            }
+        }
+
     }
 }
 

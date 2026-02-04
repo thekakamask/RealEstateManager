@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.ui.navigation
 
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,7 +13,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dcac.realestatemanager.ui.accountPage.AccountPage
-import com.dcac.realestatemanager.ui.homePage.HomeScreen
+import com.dcac.realestatemanager.ui.homePage.HomeScreenAdaptive
 import com.dcac.realestatemanager.ui.initialLoginPage.WelcomePage
 import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.AccountCreationPage
 import com.dcac.realestatemanager.ui.initialLoginPage.accountScreen.ForgotPasswordPage
@@ -24,7 +25,7 @@ import com.dcac.realestatemanager.ui.settingsPage.SettingsPage
 import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationMode
 import com.dcac.realestatemanager.ui.propertyCreationPage.PropertyCreationPage
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
-import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsPage
+import com.dcac.realestatemanager.ui.propertyDetailsPage.propertyDetailsResponsive.PropertyDetailsSmartphone
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsUiState
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsViewModel
 import com.dcac.realestatemanager.ui.userPropertiesPage.UserPropertiesPage
@@ -33,6 +34,7 @@ import com.dcac.realestatemanager.ui.userPropertiesPage.UserPropertiesPage
 fun RealEstateNavGraph(
     navController: NavHostController,
     isUserLoggedIn: Boolean,
+    windowsSizeClass: WindowSizeClass
 ) {
     NavHost(
         navController = navController,
@@ -115,7 +117,7 @@ fun RealEstateNavGraph(
             )
         }
 
-        composable( route = RealEstateDestination.Home.route) {
+        /*composable( route = RealEstateDestination.Home.route) {
             HomeScreen(
                 onPropertyClick = { propertyId ->
                     navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
@@ -132,6 +134,34 @@ fun RealEstateNavGraph(
                 onAddPropertyClick = {
                     navController.navigate(RealEstateDestination.CreateProperty.route)
                                      },
+                onLogout = {
+                    navController.navigate(RealEstateDestination.Welcome.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }*/
+
+        composable(route = RealEstateDestination.Home.route) {
+            HomeScreenAdaptive(
+                windowSizeClass = windowsSizeClass,
+                onPropertyClick = { propertyId ->
+                    navController.navigate(
+                        RealEstateDestination.PropertyDetails.createRoute(propertyId)
+                    )
+                },
+                onUserPropertiesClick = {
+                    navController.navigate(RealEstateDestination.UserProperties.route)
+                },
+                onUserAccountClick = {
+                    navController.navigate(RealEstateDestination.Account.route)
+                },
+                onSettingsClick = {
+                    navController.navigate(RealEstateDestination.Settings.route)
+                },
+                onAddPropertyClick = {
+                    navController.navigate(RealEstateDestination.CreateProperty.route)
+                },
                 onLogout = {
                     navController.navigate(RealEstateDestination.Welcome.route) {
                         popUpTo(0) { inclusive = true }
@@ -194,7 +224,7 @@ fun RealEstateNavGraph(
             arguments = listOf(navArgument("propertyId") { type = NavType.StringType })
         ) { backStackEntry ->
             val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
-            PropertyDetailsPage(
+            PropertyDetailsSmartphone(
                 propertyId = propertyId,
                 onBack = { navController.popBackStack() },
                 onEditSectionSelected = { section, propertyId ->

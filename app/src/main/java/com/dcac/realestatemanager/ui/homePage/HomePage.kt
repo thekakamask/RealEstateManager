@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +41,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +55,388 @@ import com.dcac.realestatemanager.ui.filter.FilterSheetContent
 import com.dcac.realestatemanager.ui.filter.toUiState
 import com.dcac.realestatemanager.ui.homePage.googleMapScreen.GoogleMapScreen
 import com.dcac.realestatemanager.ui.homePage.propertiesListScreen.PropertiesListScreen
+import com.dcac.realestatemanager.ui.propertyDetailsPage.propertyDetailsResponsive.PropertyDetailsTablet
+import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsViewModel
+import androidx.compose.material3.VerticalDivider
+
+@Composable
+fun HomeScreenAdaptive(
+    windowSizeClass: WindowSizeClass,
+    onLogout: () -> Unit,
+    onAddPropertyClick: () -> Unit,
+    onPropertyClick: (String) -> Unit,
+    onUserPropertiesClick: () -> Unit,
+    onUserAccountClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    when (windowSizeClass.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            //Smartphone
+            HomeScreen(
+                onLogout = onLogout,
+                onAddPropertyClick = onAddPropertyClick,
+                onPropertyClick = onPropertyClick,
+                onUserPropertiesClick = onUserPropertiesClick,
+                onUserAccountClick = onUserAccountClick,
+                onSettingsClick = onSettingsClick
+            )
+        }
+        else -> {
+            //Tablet
+            HomeScreenTablet(
+                onLogout = onLogout,
+                onAddPropertyClick = onAddPropertyClick,
+                onPropertyClick = onPropertyClick,
+                onUserPropertiesClick = onUserPropertiesClick,
+                onUserAccountClick = onUserAccountClick,
+                onSettingsClick = onSettingsClick
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeMainContent(
+    state: HomeUiState.Success,
+    onPropertySelected: (String) -> Unit
+) {
+    when (state.currentScreen) {
+        is HomeDestination.PropertyList -> {
+            PropertiesListScreen(
+                filters = state.filters,
+                onPropertyClick = { property ->
+                    onPropertySelected(property.universalLocalId)
+                }
+            )
+        }
+
+        is HomeDestination.GoogleMap -> {
+            GoogleMapScreen(
+                filters = state.filters,
+                onPropertyClick = { property ->
+                    onPropertySelected(property.property.universalLocalId)
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenTablet(
+    viewModel: HomeViewModel = hiltViewModel(),
+    onLogout: () -> Unit,
+    onAddPropertyClick: () -> Unit,
+    onPropertyClick: (String) -> Unit,
+    onUserPropertiesClick: () -> Unit,
+    onUserAccountClick: () -> Unit,
+    onSettingsClick: () -> Unit
+){
+    val uiState by viewModel.uiState.collectAsState()
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+
+    val detailsViewModel: PropertyDetailsViewModel = hiltViewModel()
+    val detailsUiState by detailsViewModel.uiState.collectAsState()
+
+    var selectedPropertyId by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val filterSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
+    if (uiState !is HomeUiState.Success) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    val state = uiState as HomeUiState.Success
+
+    LaunchedEffect(selectedPropertyId) {
+        selectedPropertyId?.let {
+            detailsViewModel.loadPropertyDetails(it)
+        }
+    }
+    LaunchedEffect(state.showFilterSheet) {
+        if (state.showFilterSheet) {
+            filterSheetState.show()
+        } else {
+            filterSheetState.hide()
+        }
+    }
+
+    if (state.showFilterSheet) {
+        ModalBottomSheet(
+            sheetState = filterSheetState,
+            onDismissRequest = {
+                viewModel.toggleFilterSheet(false)
+            }
+        ) {
+            FilterSheetContent(
+                filterUi = state.filters.toUiState(),
+                onApply = { filters ->
+                    viewModel.applyFilters(filters)
+                    viewModel.toggleFilterSheet(false)
+                },
+                onReset = {
+                    viewModel.resetFilters()
+                    viewModel.toggleFilterSheet(false)
+                }
+            )
+        }
+    }
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
+                modifier = Modifier.width(300.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.user_icon),
+                        contentDescription = stringResource(R.string.home_page_user_icon_content_description),
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .size(72.dp)
+                            .clickable {
+                                onUserAccountClick()
+                            }
+                    )
+
+                    Text(
+                        text = state.userName,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = state.userEmail,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = state.totalProperties.toString(),
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.apartment_24px),
+                                contentDescription = stringResource(R.string.home_page_user_apartment_handle_content_description)
+                            )
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = state.soldProperties.toString(),
+                                fontSize = 16.sp
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.money_24px),
+                                contentDescription = stringResource(R.string.home_page_user_apartment_sold_content_description)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    HorizontalDivider()
+                }
+
+                NavigationDrawerItem(
+                    icon = {Icon (painterResource(id = R.drawable.apartment_24px),
+                        contentDescription = stringResource(R.string.home_page_navigation_drawer_user_properties_icon_content_description))} ,
+                    label = {Text(stringResource(R.string.home_page_navigation_drawer_user_properties_label))},
+                    selected = false,
+                    onClick = {
+                        onUserPropertiesClick()
+                        scope.launch { drawerState.close() }
+                    }
+                )
+                NavigationDrawerItem(
+                    icon = {Icon (painterResource(id = R.drawable.settings_24px),
+                        contentDescription = stringResource(R.string.home_page_navigation_drawer_settings_icon_content_description)
+                    )},
+                    label= {Text(stringResource(R.string.home_page_navigation_drawer_settings_label))},
+                    selected = false,
+                    onClick = {
+                        onSettingsClick()
+                        scope.launch {drawerState.close()}
+                    }
+                )
+                NavigationDrawerItem(
+                    icon = {Icon(painterResource(id = R.drawable.log_out_24px),
+                        contentDescription =  stringResource(R.string.home_page_navigation_drawer_log_out_icon_content_description)
+                    )},
+                    label = { Text(stringResource(R.string.home_page_navigation_drawer_log_out_label))},
+                    selected = false,
+                    onClick = {
+                        viewModel.logout()
+                        onLogout()
+                        scope.launch { drawerState.close() }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(Modifier.padding(horizontal = 16.dp))
+            }
+        }
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(stringResource(R.string.app_name))
+                    },
+                    navigationIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.user_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .clickable {
+                                    scope.launch {
+                                        if (drawerState.isClosed) drawerState.open()
+                                        else drawerState.close()
+                                    }
+                                },
+                            tint = Color.Unspecified
+                        )
+                    },
+                    actions = {
+                        Icon(
+                            painter = painterResource(R.drawable.filter_24px),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .clickable {
+                                    viewModel.toggleFilterSheet(true)
+                                }
+                        )
+                    }
+                )
+            },
+            bottomBar = {
+                NavigationBar {
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                painterResource(R.drawable.list_24px),
+                                contentDescription = null
+                            )
+                        },
+                        selected = state.isOnPropertyList,
+                        onClick = {
+                            viewModel.navigateTo(HomeDestination.PropertyList)
+                        }
+                    )
+                    NavigationBarItem(
+                        icon = {
+                            Icon(
+                                painterResource(R.drawable.map_24px),
+                                contentDescription = null
+                            )
+                        },
+                        selected = state.isOnMap,
+                        onClick = {
+                            viewModel.navigateTo(HomeDestination.GoogleMap)
+                        }
+                    )
+                }
+            }
+        ) { padding ->
+            Row(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+            ) {
+
+                // Home content at left
+                Box(
+                    modifier = Modifier
+                        .weight(0.4f)
+                        .fillMaxHeight()
+                ) {
+
+                    HomeMainContent(
+                        state = state,
+                        onPropertySelected = {
+                            selectedPropertyId = it
+                        }
+                    )
+
+                    if (state.currentScreen is HomeDestination.PropertyList) {
+                        FloatingActionButton(
+                            onClick = onAddPropertyClick,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.add_home_24px),
+                                contentDescription = stringResource(R.string.add_property),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+
+
+                VerticalDivider(
+                    modifier = Modifier.fillMaxHeight(),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
+                // Details at right
+                Box(
+                    modifier = Modifier
+                        .weight(0.6f)
+                        .fillMaxHeight()
+                ) {
+                    if (selectedPropertyId != null) {
+                        PropertyDetailsTablet(
+                            uiState = detailsUiState,
+                            onEditSectionSelected = { section, propertyLocalId ->
+                                onPropertyClick(propertyLocalId)
+                            },
+                            onDeleteConfirmed = { property ->
+                                detailsViewModel.deleteProperty(
+                                    property = property,
+                                    onDeleted = {
+                                        selectedPropertyId = null
+                                    }
+                                )
+                            }
+                        )
+                    } else {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.home_page_tablet_property_title),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -319,7 +706,11 @@ fun HomeScreen(
                 }
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    when (state.currentScreen) {
+                    HomeMainContent(
+                        state = state,
+                        onPropertySelected = onPropertyClick
+                    )
+                    /*when (state.currentScreen) {
                         is HomeDestination.PropertyList -> {
                             PropertiesListScreen(
                                 filters = state.filters,
@@ -336,7 +727,7 @@ fun HomeScreen(
                                 }
                             )
                         }
-                    }
+                    }*/
                 }
             }
         }

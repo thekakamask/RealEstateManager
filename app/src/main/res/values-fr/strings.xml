@@ -205,7 +205,9 @@
     </string>
     <string name="property_creation_step_6_add_photo_icon_content_description">Ajouter une photo</string>
     <string name="property_creation_step_6_delete_photo_icon_content_description">Supprimer la photo</string>
-
+    <string name="property_creation_step_6_photo_description_title">Description (optionelle)</string>
+    <string name="property_creation_step_6_photo_description_save">Confirmer</string>
+    <string name="property_creation_step_6_photo_description_cancel">Annuler</string>
     <string name="property_creation_step_7_title_text">Étape 7</string>
     <string name="property_creation_step_7_subtitle_text">Carte statique du bien immobilier</string>
     <string name="property_creation_step_7_text">
@@ -270,6 +272,8 @@
     <string name="home_page_type_castle">Chateau</string>
     <string name="home_page_type_motor_home">Camping car</string>
     <string name="home_page_ui_state_error">Error: %1$s</string>
+    <string name="home_page_tablet_property_title">Selectionnez une propriété</string>
+
 
     <!--Property list screen-->
     <string name="property_list_screen_no_data_to_display">Aucune donnée à afficher</string>

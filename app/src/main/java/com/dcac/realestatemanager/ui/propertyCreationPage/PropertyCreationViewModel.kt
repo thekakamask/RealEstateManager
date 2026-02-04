@@ -180,6 +180,16 @@ class PropertyCreationViewModel @Inject constructor(
     override fun updatePoiPostalCode(index: Int, postalCode: String) = updatePoi(index) { it.copy(postalCode = postalCode) }
     override fun updatePoiCountry(index: Int, country: String) = updatePoi(index) { it.copy(country = country) }
 
+    private val _editingPhotoIndex = MutableStateFlow<Int?>(null)
+    val editingPhotoIndex = _editingPhotoIndex.asStateFlow()
+
+    fun startEditingPhoto(index: Int) {
+        _editingPhotoIndex.value = index
+    }
+
+    fun stopEditingPhoto() {
+        _editingPhotoIndex.value = null
+    }
 
     override fun updatePhotoAt(index: Int, uri: Uri, description: String?) {
         val current = stepState().draft
@@ -196,6 +206,9 @@ class PropertyCreationViewModel @Inject constructor(
     }
 
     override fun removePhotoAt(index: Int) {
+        if (_editingPhotoIndex.value == index) {
+            _editingPhotoIndex.value = null
+        }
         val current = stepState().draft
         val photos = current.photos.toMutableList()
         if (index in photos.indices) {
@@ -214,9 +227,22 @@ class PropertyCreationViewModel @Inject constructor(
     override fun handlePhotoPicked(context: Context, uri: Uri) {
         val index = pendingPhotoIndex ?: return
         val file = saveUriToAppStorage(context, uri) ?: return
-        updatePhotoAt(index, file.toUri())
+
+        val currentDescription = stepState()
+            .draft
+            .photos
+            .getOrNull(index)
+            ?.description
+
+        updatePhotoAt(
+            index = index,
+            uri = file.toUri(),
+            description = currentDescription
+        )
+
         pendingPhotoIndex = null
     }
+
 
     override fun fetchStaticMap(context: Context) {
         viewModelScope.launch {

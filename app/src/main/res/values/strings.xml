@@ -204,7 +204,9 @@
     </string>
     <string name="property_creation_step_6_add_photo_icon_content_description">Add photo</string>
     <string name="property_creation_step_6_delete_photo_icon_content_description">Delete photo</string>
-
+    <string name="property_creation_step_6_photo_description_title">Description (optional)</string>
+    <string name="property_creation_step_6_photo_description_save">Save</string>
+    <string name="property_creation_step_6_photo_description_cancel">Cancel</string>
     <string name="property_creation_step_7_title_text">Step 7</string>
     <string name="property_creation_step_7_subtitle_text">Property static map</string>
     <string name="property_creation_step_7_text">
@@ -269,6 +271,7 @@
     <string name="home_page_type_castle">Castle</string>
     <string name="home_page_type_motor_home">Motor home</string>
     <string name="home_page_ui_state_error">Error: %1$s</string>
+    <string name="home_page_tablet_property_title">Select a property</string>
 
     <!--Property list screen-->
     <string name="property_list_screen_no_data_to_display">No data to display</string>

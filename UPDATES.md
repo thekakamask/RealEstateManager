@@ -1445,5 +1445,100 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - The cleanup job is single-instance and region-scoped (europe-west1) to avoid parallel execution issues.
 
 
+### 🔹 **Update #45**
+
+  - 🖼️ **Photo descriptions support (creation & display)**
+    - Photos can now include an optional textual description defined at creation or during later editing.
+    - A dedicated photo edit dialog allows users to preview the image in full size and add or update its description in a smooth, focused UI flow.
+    - Photo descriptions are persisted alongside photo metadata and fully integrated into the offline-first and sync mechanisms.
+    - In the Property Details screen, photo descriptions are displayed directly on top of the currently visible image in the photo slider.
+    - The description is shown as a bottom overlay with a gradient background, ensuring optimal readability without obstructing the image.
+    - The overlay is displayed only when a description is present, keeping the UI clean and context-aware.
+
+  - 📱📲 **Fully adaptive Home screen (smartphone & tablet)**
+    - Introduced a responsive Home screen powered by WindowSizeClass.
+    - The UI now dynamically adapts to screen size without duplicating ViewModels or business logic.
+    - Smartphone uses a single-pane navigation model.
+    - Tablet uses an expanded layout optimized for larger screens.
+
+  - 🧩 **Tablet master detail layout**
+    - Tablet layout now follows a master detail architecture.
+    - The left pane displays:
+      - Property list
+      - Google Map view
+    - The right pane displays live property details.
+
+  - 🗺️ **Live property selection without navigation on tablet**
+    - Selecting a property from:
+      - The property list
+      - The Google Map
+    - No navigation or screen replacement is required.
+
+  - 🧠 **Unified PropertyDetailsStateHost**
+    - Introduced a shared PropertyDetailsStateHost composable.
+    - Centralizes handling of:
+      - Loading
+      - Error
+      - Success
+      - Edit
+      - Delete states
+    - Used consistently on both smartphone and tablet.
+
+  - ♻️ **Property Details UI refactored into pure composables**
+    - Property Details screen has been split into:
+      - Stateless UI content composables
+      - A dedicated state host
+    - UI rendering is now fully state-agnostic.
+
+  - ✏️ **Consistent edit & delete flows across devices**
+    - Property edit actions are now available on both smartphone and tablet.
+    - Includes:
+      - Edit section selection
+      - Property deletion
+    - Interaction patterns are identical across devices.
+
+  - 🧾 **Reusable edit options bottom sheet**
+    - Edit actions are exposed via a shared modal bottom sheet.
+    - The same component is reused on phone and tablet.
+
+  - 🗑️ **Centralized delete confirmation handling**
+    - Property deletion confirmation is now managed centrally.
+    - The confirmation dialog is reused across layouts.
+    - Deletion logic is delegated via callbacks to the owning ViewModel.
+
+  - ➕ **Context-aware Add Property action**
+    - The Add Property FloatingActionButton is now context-driven.
+    - It appears only when:
+      - The property list screen is active
+    - It is hidden on the map view.
+
+  - 📲 **Tablet-scoped Add Property button**
+    - On tablet, the Add Property button is scoped to the left pane.
+    - The action is visually and functionally tied to the property list.
+
+  - 🔀 **Global navigation shared across layouts**
+    - Bottom navigation (List / Map) is now global.
+    - Shared between smartphone and tablet layouts.
+    - Navigation state is driven by a single source of truth.
+
+  - 🎛️ **State-driven property filtering**
+    - Property filtering is fully driven by HomeUiState.
+    - Filters are applied consistently to:
+      - Property list
+      - Google Map view
+
+  - 🧩 **Reusable filter modal with persistent state**
+    - Filter UI is implemented as a reusable modal bottom sheet.
+    - Filter state persists across:
+      - Recomposition
+      - Configuration changes
+
+  - 🧹 **Improved architecture & separation of concerns**
+    - Clear separation between:
+      - UI composables
+      - State hosts
+      - ViewModels
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

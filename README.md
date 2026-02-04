@@ -15,15 +15,21 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🗓️ Long-term cleanup is handled by a scheduled Firebase Cloud Function (weekly job).
-   - 🧹 Soft-deleted Firestore documents (properties, photos, static maps, POIs, cross-references) older than 30 days are permanently removed.
-   - 🗑️ Associated Firebase Storage files (photos, static maps) are hard-deleted during cleanup to prevent orphaned files.
-   - ☁️ Hard deletes are executed server-side only via Firebase Admin SDK, ensuring clients can never bypass soft-delete rules.
+   - 🖼️ Photo descriptions can now be added via a dedicated edit dialog when selecting images during property creation or edition.
+   - 📝 Photo descriptions are displayed directly on top of images in the property details photo slider, using a smooth bottom overlay for optimal readability.
+   - 📱📲 Fully adaptive Home screen with dedicated smartphone and tablet layouts using WindowSizeClass.
+   - 🧩 Tablet master detail layout with side-by-side property list / map and live property details pane.
+   - 🧠 Unified PropertyDetailsStateHost to centralize loading, error, edit, and delete states across form factors.
+   - ♻️ Refactored Property Details UI into pure, reusable, state-free composables.
+   - ✏️ Consistent edit & delete flows available on both smartphone and tablet via shared bottom sheets and dialogs.
+   - ➕ Context-aware Add Property action, scoped to the property list and left pane on tablet.
+   - 🎛️ Global navigation and filtering, driven by HomeUiState and applied consistently to list and map views.
+   - 🧹 Improved architecture and separation of concerns for better scalability, testability, and long-term maintenance.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - 🧩 Tablet & large-screen UI
+   - 🧩 Tablet & large-screen UI (continue to implement screens)
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - Implemented responsive design for tablet.
    - 🔔 Notification on property creation.
@@ -133,7 +139,7 @@ This project is developed using modern Android architecture principles, with a f
         - Implementing a central NavHost in the main activity.
         - Defining the NavGraph with all destinations and actions.
         - Using a single NavController to manage navigation events.
-      - ❌ **NOT IMPLEMENTED** Two-pane mode support for tablets.
+      - 🟩 **IN PROGRESS** Two-pane mode support for tablets.
 
    - 🎨 **Modern and Fluid Interface**:
 
@@ -225,6 +231,7 @@ This project is developed using modern Android architecture principles, with a f
    - **Firebase Cloud Functions (v2)** : Server-side scheduled jobs for data lifecycle management and cleanup.
    - **Firebase Admin SDK** : Privileged backend access to Firestore and Storage (bypasses client security rules).
    - **Cloud Scheduler** : Time-based execution of backend cleanup tasks.
+   - **WindowSizeClass & WindowInsets** : Responsive UI adaptation across smartphones and tablets.
 
 
 ## 🚀 **How to Use**

@@ -20,10 +20,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -61,7 +63,10 @@ import org.threeten.bp.LocalDate
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.window.Dialog
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneId
 @Composable
@@ -759,6 +764,7 @@ fun NumberTextField(
 fun Step6PhotosScreen(
     photos: List<Photo>,
     onPhotoClick: (Int) -> Unit,
+    onEditPhoto: (Int) -> Unit,
     onDeletePhoto: (Int) -> Unit,
     bottomInset: Dp
 ) {
@@ -822,7 +828,10 @@ fun Step6PhotosScreen(
                                         AddPhotoCell(
                                             modifier = Modifier.weight(1f),
                                             imageUri = photo?.uri?.takeIf { it.isNotBlank() }?.toUri(),
-                                            onClick = { onPhotoClick(index) },
+                                            onAddClick = { onPhotoClick(index) },
+                                            onEditClick = if (photo?.uri?.isNotBlank() == true) {
+                                                { onEditPhoto(index) }
+                                            } else null,
                                             onDeleteClick = if (photo != null) {
                                                 { onDeletePhoto(index) }
                                             } else null
@@ -842,48 +851,56 @@ fun Step6PhotosScreen(
 fun AddPhotoCell(
     modifier: Modifier = Modifier,
     imageUri: Uri? = null,
-    onClick: () -> Unit,
+    onAddClick: () -> Unit,
+    onEditClick: (() -> Unit)? = null,
     onDeleteClick: (() -> Unit)? = null
 ) {
     Surface(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
-        tonalElevation = 2.dp,
-        color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(12.dp)
+            .clip(RoundedCornerShape(12.dp)),
+        tonalElevation = 2.dp
     ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
+        Box {
+
             if (imageUri != null) {
+
                 AsyncImage(
                     model = imageUri,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { onEditClick?.invoke() }
                 )
 
                 Icon(
                     painter = painterResource(id = R.drawable.delete_24px),
-                    contentDescription = stringResource(R.string.property_creation_step_6_delete_photo_icon_content_description),
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                        .size(40.dp)
+                        .padding(6.dp)
+                        .size(32.dp)
                         .clickable {
                             onDeleteClick?.invoke()
                         }
                 )
+
             } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.add_24px),
-                    contentDescription = stringResource(R.string.property_creation_step_6_add_photo_icon_content_description),
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(36.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { onAddClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.add_24px),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
             }
         }
     }
@@ -1199,5 +1216,77 @@ fun InfoRow(label: String, value: String) {
         )
     }
 }
+
+@Composable
+fun PhotoEditDialog(
+    photo: Photo,
+    onDismiss: () -> Unit,
+    onSave: (String?) -> Unit
+) {
+    var description by remember { mutableStateOf(photo.description.orEmpty()) }
+
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 8.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+
+                AsyncImage(
+                    model = photo.uri.toUri(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(320.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text(stringResource(R.string.property_creation_step_6_photo_description_title)) },
+                    minLines = 3,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    shape = RoundedCornerShape(16.dp)
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.property_creation_step_6_photo_description_cancel))
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            onSave(description.takeIf { it.isNotBlank() })
+                        }
+                    ) {
+                        Text(stringResource(R.string.property_creation_step_6_photo_description_save))
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 

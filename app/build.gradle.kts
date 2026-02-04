@@ -101,6 +101,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
+    //For tablet responsive UI
+    implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.material3)
     //Makes it easy to integrate Google Fonts directly into Jetpack Compose.
