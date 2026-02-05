@@ -15,16 +15,11 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🖼️ Photo descriptions can now be added via a dedicated edit dialog when selecting images during property creation or edition.
-   - 📝 Photo descriptions are displayed directly on top of images in the property details photo slider, using a smooth bottom overlay for optimal readability.
-   - 📱📲 Fully adaptive Home screen with dedicated smartphone and tablet layouts using WindowSizeClass.
-   - 🧩 Tablet master detail layout with side-by-side property list / map and live property details pane.
-   - 🧠 Unified PropertyDetailsStateHost to centralize loading, error, edit, and delete states across form factors.
-   - ♻️ Refactored Property Details UI into pure, reusable, state-free composables.
-   - ✏️ Consistent edit & delete flows available on both smartphone and tablet via shared bottom sheets and dialogs.
-   - ➕ Context-aware Add Property action, scoped to the property list and left pane on tablet.
-   - 🎛️ Global navigation and filtering, driven by HomeUiState and applied consistently to list and map views.
-   - 🧹 Improved architecture and separation of concerns for better scalability, testability, and long-term maintenance.
+   - 🧭 Fixed tablet edit navigation : editing a property section on tablet no longer triggers smartphone detail navigation and now stays within the master detail context.
+   - 🔁 Introduced explicit edit callbacks to fully decouple property edition flow from navigation and avoid unintended screen relaunches.
+   - 💾 Fixed property update persistence : edited sections (type, address, description, photos, POIs, static map) are now correctly written to Room and marked as unsynced.
+   - 🧩 Added a dedicated master detail layout for the User Properties screen on tablet, mirroring the Home screen behavior with a persistent list on the left and live property details on the right.
+   - 🔒 Enforced orientation policy: smartphones are locked to portrait mode while tablets are locked to landscape to ensure a stable and consistent master detail experience.
 
 
 ## ❌ **NEXT UPDATES**

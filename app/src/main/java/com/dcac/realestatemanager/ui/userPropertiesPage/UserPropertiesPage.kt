@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,11 +31,17 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,16 +58,165 @@ import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.ui.filter.FilterSheetContent
 import com.dcac.realestatemanager.ui.filter.PropertyFilters
 import com.dcac.realestatemanager.ui.filter.toUiState
+import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
+import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsViewModel
+import com.dcac.realestatemanager.ui.propertyDetailsPage.propertyDetailsResponsive.PropertyDetailsTablet
 import com.dcac.realestatemanager.utils.Utils.calculatePricePerSquareMeter
 import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getIconForPropertyType
 import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 
+@Composable
+fun UserPropertiesScreenAdaptive(
+    windowsSizeClass: WindowSizeClass,
+    onBack: () -> Unit,
+    onNavigateToDetails: (String) -> Unit,
+    onEditProperty: (EditSection, String) -> Unit
+) {
+    when (windowsSizeClass.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
+            UserPropertiesPage(
+                onNavigateToDetails = onNavigateToDetails,
+                onBack = onBack
+            )
+        }
+        else -> {
+            UserPropertiesPageTablet(
+                onBack = onBack,
+                onEditProperty = onEditProperty
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserPropertiesPageTablet(
+    viewModel: UserPropertiesViewModel = hiltViewModel(),
+    onBack: () -> Unit,
+    onEditProperty: (EditSection, String) -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(Unit) {
+        val userId = viewModel.getUserIdOrNull()
+        userId?.let {
+            viewModel.applyFilters(it, PropertyFilters())
+        }
+    }
+    var selectedPropertyId by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val detailsViewModel: PropertyDetailsViewModel = hiltViewModel()
+    val detailsUiState by detailsViewModel.uiState.collectAsState()
+
+    val filterSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+
+    if (uiState !is UserPropertiesUiState.Success) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+    val state = uiState as UserPropertiesUiState.Success
+
+    LaunchedEffect(selectedPropertyId) {
+        selectedPropertyId?.let {
+            detailsViewModel.loadPropertyDetails(it)
+        }
+    }
+    LaunchedEffect(state.showFilterSheet) {
+        if (state.showFilterSheet) {
+            filterSheetState.show()
+        } else {
+            filterSheetState.hide()
+        }
+    }
+
+    if (state.showFilterSheet) {
+        ModalBottomSheet(
+            sheetState = filterSheetState,
+            onDismissRequest = {
+                viewModel.toggleFilterSheet(false)
+            }
+        ) {
+            FilterSheetContent(
+                filterUi = state.filters.toUiState(),
+                onApply = { filters ->
+                    viewModel.applyFilters(filters)
+                    viewModel.toggleFilterSheet(false)
+                },
+                onReset = {
+                    viewModel.resetFilters()
+                    viewModel.toggleFilterSheet(false)
+                }
+            )
+        }
+    }
+
+    Row(Modifier.fillMaxSize()) {
+
+        Box(
+            modifier = Modifier
+                .weight(0.4f)
+                .fillMaxHeight()
+        ) {
+            UserPropertiesListContent(
+                properties = state.properties,
+                selectedPropertyId = selectedPropertyId,
+                onPropertySelected = { selectedPropertyId = it },
+                onBack = onBack,
+                viewModel = viewModel
+            )
+        }
+
+        VerticalDivider(
+            modifier = Modifier.fillMaxHeight(),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
+
+        Box(
+            modifier = Modifier
+                .weight(0.6f)
+                .fillMaxHeight()
+        ) {
+            if (selectedPropertyId != null) {
+                PropertyDetailsTablet(
+                    uiState = detailsUiState,
+                    onEditSectionSelected = { section, propertyId ->
+                        onEditProperty(section, propertyId)
+                    },
+                    onDeleteConfirmed = { property ->
+                        detailsViewModel.deleteProperty(
+                            property = property,
+                            onDeleted = {
+                                selectedPropertyId = null
+                            }
+                        )
+                    }
+                )
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_page_tablet_property_title),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserPropertiesPage(
     viewModel: UserPropertiesViewModel = hiltViewModel(),
-    onPropertyClick: (String) -> Unit,
+    onNavigateToDetails: (String) -> Unit,
     onBack: () -> Unit
 ){
     val uiState by viewModel.uiState.collectAsState()
@@ -111,9 +267,10 @@ fun UserPropertiesPage(
             }
             UserPropertiesListContent(
                 properties = properties,
-                onClick = onPropertyClick,
                 onBack = onBack,
-                viewModel = viewModel
+                viewModel = viewModel,
+                selectedPropertyId = null,
+                onPropertySelected = onNavigateToDetails
             )
         }
 
@@ -135,9 +292,10 @@ fun UserPropertiesPage(
 @Composable
 fun UserPropertiesListContent(
     properties: List<Property>,
-    onClick: (String) -> Unit,
     onBack: () -> Unit,
-    viewModel: UserPropertiesViewModel
+    viewModel: UserPropertiesViewModel,
+    selectedPropertyId: String?,
+    onPropertySelected: (String) -> Unit
 ){
     Scaffold(
         topBar = {
@@ -163,9 +321,12 @@ fun UserPropertiesListContent(
                 contentPadding = PaddingValues(vertical = 6.dp)
             ) {
                 items(properties) { property ->
+                    val isSelected = property.universalLocalId == selectedPropertyId
                     UserPropertyItem(
                         property = property,
-                        onClick = { onClick(property.universalLocalId) }
+                        isSelected = isSelected,
+                        onClick = { onPropertySelected(property.universalLocalId)
+                        }
                     )
                 }
             }
@@ -177,6 +338,7 @@ fun UserPropertiesListContent(
 @Composable
 fun UserPropertyItem(
     property: Property,
+    isSelected: Boolean,
     onClick: () -> Unit
 ){
 
@@ -209,6 +371,12 @@ fun UserPropertyItem(
             .padding(8.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected)
+                MaterialTheme.colorScheme.primaryContainer
+            else
+                MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ){
         Column(

@@ -469,16 +469,31 @@ class PropertyCreationViewModel @Inject constructor(
 
     override fun updateModelFromDraft(context: Context, currency: String) {
 
+
+        Log.e("UPDATE_DEBUG", "START updateModelFromDraft")
+
         viewModelScope.launch {
             try {
                 val draft = stepState().draft
                 val original = propertyToEdit ?: return@launch
                 val section = sectionToEdit ?: return@launch
 
+                Log.e(
+                    "UPDATE_DEBUG",
+                    "updateModelFromDraft called | section=$section | propertyId=${original.universalLocalId}"
+                )
+
+                var updatedProperty: Property? = null
+
                 when (section) {
                     EditSection.TYPE -> {
                         val updated = original.copy(type = draft.type)
+                        Log.e(
+                            "UPDATE_DEBUG",
+                            "Updating property id=${updated.universalLocalId}"
+                        )
                         propertyRepository.updatePropertyFromUI(updated)
+                        updatedProperty = updated
                     }
 
                     EditSection.ADDRESS -> {
@@ -490,6 +505,7 @@ class PropertyCreationViewModel @Inject constructor(
                             longitude = latLng?.longitude
                         )
                         propertyRepository.updatePropertyFromUI(updated)
+                        updatedProperty = updated
                     }
 
                     EditSection.DESCRIPTION -> {
@@ -510,6 +526,7 @@ class PropertyCreationViewModel @Inject constructor(
                             saleDate = draft.saleDate
                         )
                         propertyRepository.updatePropertyFromUI(updated)
+                        updatedProperty = updated
                     }
 
                     EditSection.PHOTOS -> {
@@ -649,12 +666,19 @@ class PropertyCreationViewModel @Inject constructor(
                             }
                         }
                     }
+                    else -> {
+                        Log.e("UPDATE_DEBUG", "Unhandled section = $section")
+                    }
                 }
 
                 syncScheduler.scheduleSync()
 
-                _uiState.value = Success(original.copy(
-                ), isUpdate = true)
+                Log.e("UPDATE_DEBUG", "END updateModelFromDraft")
+
+                _uiState.value = Success(
+                    updatedProperty ?: original,
+                    isUpdate = true
+                )
 
             } catch (e: Exception) {
                 Log.e("PropertyUpdate", "Failed to update property", e)

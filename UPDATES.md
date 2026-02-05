@@ -1539,6 +1539,31 @@ This file documents key technical updates applied to the RealEstateManager Andro
       - State hosts
       - ViewModels
 
+### 🔹 **Update #46**
+
+  - 🧭 **Tablet edit navigation fixed (master detail safe)**
+    - Editing a property section on tablet no longer triggers a smartphone-style navigation to the property details screen.
+    - The edit flow now stays fully inside the tablet master detail layout, preserving the selected property and context.
+
+  - 🔁 **Explicit edit callbacks to decouple UI events from navigation**
+    - Property section edits now rely on explicit callbacks (onEditProperty, onEditSectionSelected) instead of direct navigation calls from UI components.
+    - UI composables no longer decide how navigation happens, they only emit user intentions.
+    - Each form factor (smartphone vs tablet) independently decides whether to navigate, open a bottom sheet, or stay in-place.
+
+  - 💾 **Property update persistence fully fixed (Room)**
+    - Edited property sections (type, address, description, photos, POIs, static map) are now correctly written to the Room database.
+    - Update logic now propagates the modified Property model instead of incorrectly reusing the original instance.
+    - Updated entities are properly marked as isSynced = false, ensuring they are picked up by the sync pipeline.
+
+  - 🧩 **Tablet master detail layout for User Properties**
+    - The User Properties screen now has a dedicated tabletn only master detail layout.
+    - The property list is permanently displayed on the left pane, while the selected property details are shown live on the right.
+    - This behavior mirrors the Home screen tablet experience, ensuring UI consistency and reducing unnecessary navigation.
+
+  - 🔒 **Device-specific orientation enforcement**
+    - Smartphones are now locked to portrait orientation to preserve a simple and predictable navigation flow.
+    - Tablets are locked to landscape orientation to guarantee layout stability for master detail screens.
+
 
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

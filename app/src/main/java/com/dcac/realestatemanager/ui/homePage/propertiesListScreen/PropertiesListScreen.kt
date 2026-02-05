@@ -52,7 +52,8 @@ import androidx.compose.ui.text.style.TextAlign
 fun PropertiesListScreen(
     viewModel: PropertiesListViewModel = hiltViewModel(),
     onPropertyClick: (Property) -> Unit,
-    filters: PropertyFilters
+    filters: PropertyFilters,
+    selectedPropertyId: String?
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -78,6 +79,7 @@ fun PropertiesListScreen(
                 PropertyListContent(
                     properties = properties,
                     agentNames = state.agentNames,
+                    selectedPropertyId = selectedPropertyId,
                     onClick = onPropertyClick
                 )
             }
@@ -102,6 +104,7 @@ fun PropertiesListScreen(
 fun PropertyListContent(
     properties: List<Property>,
     agentNames: Map<String, String>,
+    selectedPropertyId: String?,
     onClick: (Property) -> Unit
 ) {
     val context = LocalContext.current
@@ -116,7 +119,8 @@ fun PropertyListContent(
         items(properties) { property ->
             PropertyItem(
                 property = property,
-                agentName = agentNames[property.universalLocalUserId] ?: context.getString(R.string.property_list_screen_agent_name_message_unknown),
+                agentName = agentNames[property.universalLocalUserId] ?: "...",
+                isSelected = property.universalLocalId == selectedPropertyId,
                 onClick = { onClick(property) }
             )
         }
@@ -127,6 +131,7 @@ fun PropertyListContent(
 fun PropertyItem(
     property: Property,
     agentName: String,
+    isSelected: Boolean,
     onClick: () -> Unit
 ){
 
@@ -147,12 +152,26 @@ fun PropertyItem(
     val pricePerSquareMeter = calculatePricePerSquareMeter(displayPrice, property.surface)
     val formattedPricePerSquareMeter = stringResource(id = priceSquareUnitText, pricePerSquareMeter)
 
+    val containerColor =
+        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.surface
+
+    val border =
+        if (isSelected)
+            androidx.compose.foundation.BorderStroke(
+                2.dp,
+                MaterialTheme.colorScheme.primary
+            )
+        else null
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        border = border,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ){
         Column(

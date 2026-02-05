@@ -73,7 +73,7 @@ fun PropertyCreationPage(
 
     LaunchedEffect(propertyToEdit?.universalLocalId) {
         if (mode == PropertyCreationMode.EDIT_SECTION && propertyToEdit != null && sectionToEdit != null) {
-            viewModel.loadDraftFromProperty(propertyToEdit, section = EditSection.DESCRIPTION, currency = currency)
+            viewModel.loadDraftFromProperty(propertyToEdit, section = sectionToEdit, currency = currency)
 
             val step = when (sectionToEdit) {
                 EditSection.TYPE -> PropertyCreationStep.PropertyType

@@ -28,7 +28,7 @@ import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 import com.dcac.realestatemanager.ui.propertyDetailsPage.propertyDetailsResponsive.PropertyDetailsSmartphone
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsUiState
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsViewModel
-import com.dcac.realestatemanager.ui.userPropertiesPage.UserPropertiesPage
+import com.dcac.realestatemanager.ui.userPropertiesPage.UserPropertiesScreenAdaptive
 
 @Composable
 fun RealEstateNavGraph(
@@ -145,9 +145,14 @@ fun RealEstateNavGraph(
         composable(route = RealEstateDestination.Home.route) {
             HomeScreenAdaptive(
                 windowSizeClass = windowsSizeClass,
-                onPropertyClick = { propertyId ->
+                onNavigateToDetails = { propertyId ->
                     navController.navigate(
                         RealEstateDestination.PropertyDetails.createRoute(propertyId)
+                    )
+                },
+                onEditProperty = { section, propertyId ->
+                    navController.navigate(
+                        "edit_property/${section.name}/$propertyId"
                     )
                 },
                 onUserPropertiesClick = {
@@ -211,7 +216,14 @@ fun RealEstateNavGraph(
                     sectionToEdit = section,
                     propertyToEdit = property,
                     onExit = { navController.popBackStack() },
-                    onFinish = { navController.popBackStack() },
+                    onFinish = {
+                        navController.navigate(RealEstateDestination.Home.route) {
+                            popUpTo(RealEstateDestination.Home.route) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    },
                     onInfoClick = {}
                 )
             } else {
@@ -234,11 +246,19 @@ fun RealEstateNavGraph(
         }
 
         composable(route = RealEstateDestination.UserProperties.route) {
-            UserPropertiesPage(
-                onPropertyClick = { propertyId ->
-                    navController.navigate(RealEstateDestination.PropertyDetails.createRoute(propertyId))
+            UserPropertiesScreenAdaptive(
+                windowsSizeClass = windowsSizeClass,
+                onBack = { navController.popBackStack() },
+                onNavigateToDetails = { propertyId ->
+                    navController.navigate(
+                        RealEstateDestination.PropertyDetails.createRoute(propertyId)
+                    )
                 },
-                onBack = { navController.popBackStack() }
+                onEditProperty = { section, propertyId ->
+                    navController.navigate(
+                        "edit_property/${section.name}/$propertyId"
+                    )
+                },
             )
         }
 

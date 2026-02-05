@@ -58,13 +58,15 @@ import com.dcac.realestatemanager.ui.homePage.propertiesListScreen.PropertiesLis
 import com.dcac.realestatemanager.ui.propertyDetailsPage.propertyDetailsResponsive.PropertyDetailsTablet
 import com.dcac.realestatemanager.ui.propertyDetailsPage.PropertyDetailsViewModel
 import androidx.compose.material3.VerticalDivider
+import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
 
 @Composable
 fun HomeScreenAdaptive(
     windowSizeClass: WindowSizeClass,
     onLogout: () -> Unit,
     onAddPropertyClick: () -> Unit,
-    onPropertyClick: (String) -> Unit,
+    onNavigateToDetails: (String) -> Unit,
+    onEditProperty: (EditSection, String) -> Unit,
     onUserPropertiesClick: () -> Unit,
     onUserAccountClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -75,7 +77,7 @@ fun HomeScreenAdaptive(
             HomeScreen(
                 onLogout = onLogout,
                 onAddPropertyClick = onAddPropertyClick,
-                onPropertyClick = onPropertyClick,
+                onNavigateToDetails = onNavigateToDetails,
                 onUserPropertiesClick = onUserPropertiesClick,
                 onUserAccountClick = onUserAccountClick,
                 onSettingsClick = onSettingsClick
@@ -86,7 +88,7 @@ fun HomeScreenAdaptive(
             HomeScreenTablet(
                 onLogout = onLogout,
                 onAddPropertyClick = onAddPropertyClick,
-                onPropertyClick = onPropertyClick,
+                onEditProperty = onEditProperty,
                 onUserPropertiesClick = onUserPropertiesClick,
                 onUserAccountClick = onUserAccountClick,
                 onSettingsClick = onSettingsClick
@@ -98,12 +100,14 @@ fun HomeScreenAdaptive(
 @Composable
 fun HomeMainContent(
     state: HomeUiState.Success,
+    selectedPropertyId: String?,
     onPropertySelected: (String) -> Unit
 ) {
     when (state.currentScreen) {
         is HomeDestination.PropertyList -> {
             PropertiesListScreen(
                 filters = state.filters,
+                selectedPropertyId = selectedPropertyId,
                 onPropertyClick = { property ->
                     onPropertySelected(property.universalLocalId)
                 }
@@ -127,7 +131,7 @@ fun HomeScreenTablet(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit,
     onAddPropertyClick: () -> Unit,
-    onPropertyClick: (String) -> Unit,
+    onEditProperty: (EditSection, String) -> Unit,
     onUserPropertiesClick: () -> Unit,
     onUserAccountClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -368,9 +372,8 @@ fun HomeScreenTablet(
 
                     HomeMainContent(
                         state = state,
-                        onPropertySelected = {
-                            selectedPropertyId = it
-                        }
+                        selectedPropertyId = selectedPropertyId,
+                        onPropertySelected = { selectedPropertyId = it }
                     )
 
                     if (state.currentScreen is HomeDestination.PropertyList) {
@@ -407,8 +410,8 @@ fun HomeScreenTablet(
                     if (selectedPropertyId != null) {
                         PropertyDetailsTablet(
                             uiState = detailsUiState,
-                            onEditSectionSelected = { section, propertyLocalId ->
-                                onPropertyClick(propertyLocalId)
+                            onEditSectionSelected = { section, propertyId ->
+                                onEditProperty(section, propertyId)
                             },
                             onDeleteConfirmed = { property ->
                                 detailsViewModel.deleteProperty(
@@ -444,7 +447,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onLogout: () -> Unit,
     onAddPropertyClick: () -> Unit,
-    onPropertyClick: (String) -> Unit,
+    onNavigateToDetails: (String) -> Unit,
     onUserPropertiesClick: () -> Unit,
     onUserAccountClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -708,7 +711,8 @@ fun HomeScreen(
                 Box(modifier = Modifier.padding(innerPadding)) {
                     HomeMainContent(
                         state = state,
-                        onPropertySelected = onPropertyClick
+                        selectedPropertyId = null,
+                        onPropertySelected = onNavigateToDetails
                     )
                     /*when (state.currentScreen) {
                         is HomeDestination.PropertyList -> {
