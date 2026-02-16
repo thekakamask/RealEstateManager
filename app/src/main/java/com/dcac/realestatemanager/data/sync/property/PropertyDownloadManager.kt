@@ -4,6 +4,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyReposito
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
+import android.util.Log
 
 class PropertyDownloadManager(
     private val propertyRepository: PropertyRepository,
@@ -22,6 +23,11 @@ class PropertyDownloadManager(
                 val localProperty =
                     propertyRepository.getPropertyByIdIncludeDeleted(localId).first()
 
+                Log.d(
+                    "SYNC_DEBUG",
+                    "Remote property $localId | isDeleted=${propertyOnline.isDeleted} | " +
+                            "updatedAt=${propertyOnline.updatedAt} | localExists=${localProperty != null}"
+                )
                 if (propertyOnline.isDeleted) {
                     if (localProperty != null) {
                         propertyRepository.deleteProperty(localProperty)
@@ -29,6 +35,13 @@ class PropertyDownloadManager(
                             SyncStatus.Success("Property $localId deleted locally (remote deleted)")
                         )
                     }
+                    continue
+                }
+
+                if (localProperty?.isDeleted == true) {
+                    results.add(
+                        SyncStatus.Success("Property $localId locally deleted → skip download")
+                    )
                     continue
                 }
 

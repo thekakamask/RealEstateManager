@@ -2,12 +2,16 @@ package com.dcac.realestatemanager.data.sync.propertyPoiCross
 
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
+import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
+import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 
 class PropertyPoiCrossDownloadManager(
-    private val propertyPoiCrossRepository: PropertyPoiCrossRepository,             // Local Room repo
-    private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository  // Firestore repo
+    private val propertyPoiCrossRepository: PropertyPoiCrossRepository,
+    private val propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository,
+    private val propertyRepository: PropertyRepository,
+    private val poiRepository: PoiRepository
 ): PropertyPoiCrossDownloadInterfaceManager {
 
     override suspend fun downloadUnSyncedPropertyPoiCross(): List<SyncStatus> {
@@ -35,6 +39,34 @@ class PropertyPoiCrossDownloadManager(
                             )
                         )
                     }
+                    continue
+                }
+
+                if (local?.isDeleted == true) {
+                    results.add(
+                        SyncStatus.Success(
+                            "CrossRef ($propertyId-$poiId) locally deleted → skip download"
+                        )
+                    )
+                    continue
+                }
+
+                val propertyDeleted =
+                    propertyRepository
+                        .getPropertyByIdIncludeDeleted(propertyId)
+                        .first()
+                        ?.isDeleted == true
+
+                val poiDeleted =
+                    poiRepository
+                        .getPoiByIdIncludeDeleted(poiId)
+                        .first()
+                        ?.isDeleted == true
+
+                if (propertyDeleted || poiDeleted) {
+                    results.add(
+                        SyncStatus.Success("CrossRef ($propertyId-$poiId) skipped (parent deleted)")
+                    )
                     continue
                 }
 

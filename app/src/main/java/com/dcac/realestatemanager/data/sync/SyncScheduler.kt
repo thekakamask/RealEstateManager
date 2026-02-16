@@ -1,16 +1,22 @@
 package com.dcac.realestatemanager.data.sync
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.firebase.auth.FirebaseAuth
 
 class SyncScheduler(
     private val context: Context
 ) {
     fun scheduleSync() {
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            Log.d("SYNC", "No user, sync skipped")
+            return
+        }
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()

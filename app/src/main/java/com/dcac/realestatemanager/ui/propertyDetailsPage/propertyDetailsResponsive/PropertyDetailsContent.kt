@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.dcac.realestatemanager.R
@@ -97,7 +98,7 @@ fun PropertyDetailsSuccessContent(
                             R.string.property_details_page_property_entry_date_text,
                             property.entryDate
                         ),
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodySmall
                         )
                         Text(
                             text = property.saleDate?.let {
@@ -107,7 +108,7 @@ fun PropertyDetailsSuccessContent(
                                 ) } ?: stringResource(
                                 R.string.details_page_text_available
                             ),
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -129,7 +130,8 @@ fun PropertyDetailsSuccessContent(
                         text = property.title,
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        textAlign = TextAlign.Center
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -174,6 +176,8 @@ fun PropertyDetailsSuccessContent(
                         text = property.address,
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        textAlign = TextAlign.Center
                     )
 
                     HorizontalDivider(

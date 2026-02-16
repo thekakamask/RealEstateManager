@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -180,6 +181,8 @@ fun UserPropertiesPageTablet(
             modifier = Modifier
                 .weight(0.6f)
                 .fillMaxHeight()
+                .padding(horizontal = 24.dp)
+                .navigationBarsPadding()
         ) {
             if (selectedPropertyId != null) {
                 PropertyDetailsTablet(
@@ -365,6 +368,18 @@ fun UserPropertyItem(
         pricePerSquareMeter
     )
 
+    val containerColor =
+        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.surface
+
+    val border =
+        if (isSelected)
+            androidx.compose.foundation.BorderStroke(
+                2.dp,
+                MaterialTheme.colorScheme.primary
+            )
+        else null
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -372,11 +387,9 @@ fun UserPropertyItem(
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected)
-                MaterialTheme.colorScheme.primaryContainer
-            else
-                MaterialTheme.colorScheme.surface
+            containerColor = containerColor
         ),
+        border = border,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ){
         Column(

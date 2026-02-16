@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.dcac.realestatemanager.R
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.data.userConnection.AuthRepository
 import com.dcac.realestatemanager.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userOnlineRepository: UserOnlineRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val syncScheduler: SyncScheduler
 ): ViewModel(), ILoginViewModel {
 
     private val _uiState = MutableStateFlow<LoginUiState>(Idle)
@@ -59,6 +61,8 @@ class LoginViewModel @Inject constructor(
                                 return@fold
                             }
                         }
+
+                        syncScheduler.scheduleSync()
 
                         _uiState.value = Success(firebaseUser)
                         delay(500)
@@ -122,6 +126,8 @@ class LoginViewModel @Inject constructor(
                                 val userOnline = userWithId.toEntity().toOnlineEntity()
 
                                 userOnlineRepository.uploadUser(userOnline, it.uid)
+                                syncScheduler.scheduleSync()
+
                             }
 
                             // Emit success and reset state

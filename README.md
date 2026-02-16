@@ -15,11 +15,10 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🧭 Fixed tablet edit navigation : editing a property section on tablet no longer triggers smartphone detail navigation and now stays within the master detail context.
-   - 🔁 Introduced explicit edit callbacks to fully decouple property edition flow from navigation and avoid unintended screen relaunches.
-   - 💾 Fixed property update persistence : edited sections (type, address, description, photos, POIs, static map) are now correctly written to Room and marked as unsynced.
-   - 🧩 Added a dedicated master detail layout for the User Properties screen on tablet, mirroring the Home screen behavior with a persistent list on the left and live property details on the right.
-   - 🔒 Enforced orientation policy: smartphones are locked to portrait mode while tablets are locked to landscape to ensure a stable and consistent master detail experience.
+   - 🔄 Fixed POI synchronization issues : resolved Firestore permission errors caused by collection name mismatch and ensured POIs are now correctly uploaded, linked, and synced across devices.
+   - 🔐 Improved sync lifecycle handling: synchronization is now triggered only when a user is authenticated (on login, signup, and app restart with an active session), preventing missed or premature sync attempts.
+   - ⚙️ Stabilized global sync mechanism: introduced guarded, network-aware background sync using WorkManager with unique work policies to avoid duplicate or concurrent sync executions.
+   - 🧩 Resolved Firestore boolean mapping issue: fixed incorrect deserialization of isDeleted fields caused by JavaBean naming conventions, preventing soft-deleted entities from being unintentionally re-downloaded during sync.
 
 
 ## ❌ **NEXT UPDATES**

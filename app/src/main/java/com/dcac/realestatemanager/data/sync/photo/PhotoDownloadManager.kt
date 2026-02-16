@@ -33,6 +33,13 @@ class PhotoDownloadManager(
                     continue
                 }
 
+                if (localPhotoEntity?.isDeleted == true) {
+                    results.add(
+                        SyncStatus.Success("Photo $localId locally deleted → skip download")
+                    )
+                    continue
+                }
+
                 val shouldDownload =
                     localPhotoEntity == null ||
                             photoOnline.updatedAt > localPhotoEntity.updatedAt

@@ -40,6 +40,13 @@ class StaticMapDownloadManager(
                     continue
                 }
 
+                if (local?.isDeleted == true) {
+                    results.add(
+                        SyncStatus.Success("Static map $localId locally deleted → skip download")
+                    )
+                    continue
+                }
+
                 val shouldDownload =
                     local == null || online.updatedAt > local.updatedAt
 

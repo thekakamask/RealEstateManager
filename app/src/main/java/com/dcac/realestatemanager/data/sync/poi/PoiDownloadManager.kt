@@ -20,7 +20,7 @@ class PoiDownloadManager(
                 val poiOnline = doc.poi
                 val localId = poiOnline.universalLocalId
                 val localPoiS =
-                    poiRepository.getAllPoiSByIdIncludeDeleted(localId).first()
+                    poiRepository.getPoiByIdIncludeDeleted(localId).first()
 
                 if (poiOnline.isDeleted) {
                     if (localPoiS != null) {
@@ -29,6 +29,13 @@ class PoiDownloadManager(
                             SyncStatus.Success("Poi $localId deleted locally (remote deleted)")
                         )
                     }
+                    continue
+                }
+
+                if (localPoiS?.isDeleted == true) {
+                    results.add(
+                        SyncStatus.Success("PoiS $localId locally deleted → skip download")
+                    )
                     continue
                 }
 

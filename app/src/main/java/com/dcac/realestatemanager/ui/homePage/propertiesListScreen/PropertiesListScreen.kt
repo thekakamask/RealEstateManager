@@ -170,7 +170,9 @@ fun PropertyItem(
             .padding(8.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor
+        ),
         border = border,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ){

@@ -1565,5 +1565,28 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Tablets are locked to landscape orientation to guarantee layout stability for master detail screens.
 
 
+### 🔹 **Update #47**
+
+  - 🔄 **POI synchronization fully fixed**
+    - Fixed a critical Firestore synchronization issue where POIs were not uploaded despite being correctly stored in Room.
+    - The root cause was a collection name mismatch between Firestore rules and client-side constants (pois vs poiS), resulting in silent PERMISSION_DENIED errors.
+    - POIs are now correctly created, uploaded, and linked via cross-references, ensuring full consistency between Room and Firestore.
+
+  - 🔐 **Authentication-aware sync lifecycle**
+    - Synchronization is now strictly tied to the authentication state.
+    - The sync process no longer runs at app startup when no user is logged in, preventing missed or invalid sync attempts.
+    - A sync is explicitly triggered immediately after a successful login or signup, guaranteeing that locally stored data is pushed as soon as authentication is available.
+
+  - ⚙️ **Global sync scheduling stabilized with WorkManager**
+    - Introduced a guarded, network-aware sync scheduler based on WorkManager.
+    - Sync tasks now require an active network connection and are enqueued as unique work to avoid duplicate or concurrent executions.
+
+  - 🧠 **Soft delete deserialization bug fixed**
+    - Resolved a boolean field mapping conflict between Kotlin data classes and Firestore's JavaBean conventions affecting isDeleted properties.
+    - The mismatch caused Firestore to interpret isDeleted as deleted, leading to incorrect sync state evaluation and reappearance of deleted entities.
+    - Added explicit getter-level @PropertyName("isDeleted") annotations to enforce deterministic field mapping.
+    - Soft delete behavior is now fully stable and consistent across upload and download pipelines.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

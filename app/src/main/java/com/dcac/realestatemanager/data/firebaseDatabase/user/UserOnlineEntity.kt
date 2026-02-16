@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.user
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.PropertyName
 
 /**
  * @Keep ensures that this data class and its fields are not removed or renamed by R8/ProGuard.
@@ -13,5 +14,6 @@ data class UserOnlineEntity(
     val email: String = "",
     val agentName: String = "",
     val updatedAt: Long = System.currentTimeMillis(),
+    @get:PropertyName("isDeleted")
     val isDeleted: Boolean = false
 )

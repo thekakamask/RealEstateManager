@@ -35,6 +35,13 @@ class UserDownloadManager(
                     continue
                 }
 
+                if (local?.isDeleted == true) {
+                    results.add(
+                        SyncStatus.Success("User $localId locally deleted → skip download")
+                    )
+                    continue
+                }
+
                 val shouldDownload =
                     local == null || online.updatedAt > local.updatedAt
 

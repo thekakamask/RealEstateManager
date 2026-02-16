@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.photo
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.PropertyName
 
 /**
  * @Keep ensures that this data class and its fields are not removed or renamed by R8/ProGuard.
@@ -15,5 +16,6 @@ data class PhotoOnlineEntity(
     val description: String? = null,
     val updatedAt: Long = System.currentTimeMillis(),
     val storageUrl: String = "",
+    @get:PropertyName("isDeleted")
     val isDeleted: Boolean = false
 )

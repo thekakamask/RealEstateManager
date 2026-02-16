@@ -406,6 +406,7 @@ fun HomeScreenTablet(
                     modifier = Modifier
                         .weight(0.6f)
                         .fillMaxHeight()
+                        .padding(horizontal = 24.dp)
                 ) {
                     if (selectedPropertyId != null) {
                         PropertyDetailsTablet(

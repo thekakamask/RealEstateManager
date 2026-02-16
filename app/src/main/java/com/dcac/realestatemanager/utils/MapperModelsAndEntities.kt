@@ -135,6 +135,7 @@ fun PoiEntity.toModel(): Poi = Poi(
     latitude = latitude,
     longitude = longitude,
     isSynced = isSynced,
+    isDeleted = isDeleted,
     updatedAt = updatedAt
 )
 
@@ -147,6 +148,7 @@ fun Poi.toEntity(): PoiEntity = PoiEntity(
     latitude = latitude,
     longitude = longitude,
     isSynced = isSynced,
+    isDeleted = isDeleted,
     updatedAt = updatedAt
 )
 
@@ -180,6 +182,7 @@ fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
     universalLocalPropertyId = universalLocalPropertyId,
     universalLocalPoiId = universalLocalPoiId,
     isSynced = isSynced,
+    isDeleted = isDeleted,
     updatedAt = updatedAt
 )
 
@@ -187,6 +190,7 @@ fun PropertyPoiCross.toEntity(): PropertyPoiCrossEntity = PropertyPoiCrossEntity
     universalLocalPropertyId = universalLocalPropertyId,
     universalLocalPoiId = universalLocalPoiId,
     isSynced = isSynced,
+    isDeleted = isDeleted,
     updatedAt = updatedAt
 )
 

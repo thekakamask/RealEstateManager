@@ -1,6 +1,7 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.poi
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.PropertyName
 
 /**
  * @Keep ensures that this data class and its fields are not removed or renamed by R8/ProGuard.
@@ -17,5 +18,6 @@ data class PoiOnlineEntity(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val updatedAt: Long = System.currentTimeMillis(),
+    @get:PropertyName("isDeleted")
     val isDeleted: Boolean = false
 )

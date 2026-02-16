@@ -473,8 +473,15 @@ object AppModule {
     @Singleton
     fun providePropertyPoiCrossDownloadManager(
         propertyPoiCrossRepository: PropertyPoiCrossRepository,
-        propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository
-    ): PropertyPoiCrossDownloadInterfaceManager = PropertyPoiCrossDownloadManager(propertyPoiCrossRepository, propertyPoiCrossOnlineRepository)
+        propertyPoiCrossOnlineRepository: PropertyPoiCrossOnlineRepository,
+        propertyRepository: PropertyRepository,
+        poiRepository: PoiRepository
+    ): PropertyPoiCrossDownloadInterfaceManager = PropertyPoiCrossDownloadManager(
+        propertyPoiCrossRepository,
+        propertyPoiCrossOnlineRepository,
+        propertyRepository,
+        poiRepository
+    )
 
     @Provides
     @Singleton

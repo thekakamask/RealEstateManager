@@ -6,6 +6,7 @@ import com.dcac.realestatemanager.dI.AppContainerProvider
 import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -34,7 +35,9 @@ class RealEstateManagerApplication : Application(), AppContainerProvider {
         // Global init
         AndroidThreeTen.init(this)
         FirebaseApp.initializeApp(this)
-        syncScheduler.scheduleSync()
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            syncScheduler.scheduleSync()
+        }
 
     }
 }
