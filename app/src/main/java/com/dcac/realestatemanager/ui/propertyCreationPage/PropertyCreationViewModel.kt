@@ -391,8 +391,8 @@ class PropertyCreationViewModel @Inject constructor(
                 propertyRepository.insertPropertyFromUI(property)
                 Log.d("CREATE", "Property inserted.")
 
-                poiRepository.insertPoiSInsertFromUi(poiS)
-                Log.d("CREATE", "POIs inserted: count=${poiS.size}")
+                val finalPoiS = poiRepository.insertPoiSInsertFromUi(poiS)
+                Log.d("CREATE", "POIs processed: count=${finalPoiS.size}")
 
                 photoRepository.insertPhotosInsertFromUI(photos)
                 Log.d("CREATE", "Photos inserted: count=${photos.size}")
@@ -403,9 +403,11 @@ class PropertyCreationViewModel @Inject constructor(
                     Log.d("CREATE", "Static map inserted.")
                 }
 
-                poiS.forEach {
-                    crossRefRepository.insertCrossRefInsertFromUI(PropertyPoiCross(propertyId, it.universalLocalId))
-                    Log.d("CREATE", "CrossRef inserted for POI ${it.name}")
+                finalPoiS.forEach { poi ->
+                    crossRefRepository.insertCrossRefInsertFromUI(
+                        PropertyPoiCross(propertyId, poi.universalLocalId)
+                    )
+                    Log.d("CREATE", "CrossRef inserted for POI ${poi.name}")
                 }
 
                 syncScheduler.scheduleSync()
@@ -592,26 +594,24 @@ class PropertyCreationViewModel @Inject constructor(
                             val address = "${draftPoi.street}, ${draftPoi.postalCode} ${draftPoi.city}, ${draftPoi.country}"
                             val latLng = geocodeAddress(context, address)
 
-                            val matchingPoi = existingPoiS.firstOrNull {
+                            val matchingInProperty = existingPoiS.firstOrNull {
                                 it.name == draftPoi.name &&
                                         it.type == draftPoi.type &&
                                         it.address == address
                             }
 
-                            val poi = if (matchingPoi != null) {
-                                matchingPoi
+                            val poi = if (matchingInProperty != null) {
+                                matchingInProperty
                             } else {
-                                Poi(
-                                    universalLocalId = UUID.randomUUID().toString(),
+                                val candidate = Poi(
                                     name = draftPoi.name,
                                     type = draftPoi.type,
                                     address = address,
                                     latitude = latLng?.latitude,
                                     longitude = latLng?.longitude,
                                     updatedAt = System.currentTimeMillis()
-                                ).also {
-                                    poiRepository.insertPoiInsertFromUI(it)
-                                }
+                                )
+                                poiRepository.insertPoiInsertFromUI(candidate)
                             }
 
                             finalPoiS.add(poi)

@@ -1588,5 +1588,41 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Soft delete behavior is now fully stable and consistent across upload and download pipelines.
 
 
+### 🔹 **Update #48**
+
+  - 🧩 **POI deduplication system implemented (Room-level matching)**
+    - Introduced normalized name and address matching in the POI repository to prevent duplicate POI creation.
+    - When creating or editing a property, existing POIs are now automatically reused if an equivalent entry already exists in Room.
+    - This ensures database consistency and avoids unnecessary entity duplication across properties.
+
+  - ✏️ **Improved POI edition workflow**
+    - Refactored the ViewModel POI update logic to distinguish between unchanged and modified POIs at the UI level.
+    - Existing POIs linked to a property are reused when unchanged, while modified entries are validated against Room before insertion.
+    - This guarantees correct cross-reference rebuilding without generating redundant POI entities.
+
+  - 🔁 **Cross-reference conflict strategy hardened**
+    - Updated PropertyPoiCrossDao insert strategy to use OnConflictStrategy.REPLACE.
+    - This allows previously soft-deleted cross-references to be safely reactivated during property edits.
+    - Prevents duplicate link issues and ensures stable many-to-many relation integrity.
+
+  - 🔐 **Firestore POI rules aligned with shared usage model**
+    - Updated security rules to allow multi-user POI reuse while maintaining controlled creation ownership.
+    - POIs can now be safely shared and linked across properties without permission conflicts.
+
+  - 🧪 **Testing architecture fully aligned with new sync contract**
+    - Refactored all Fake Room entities, Fake Firestore online entities, and Fake domain models to reflect the latest synchronization rules (soft delete handling, isSynced lifecycle, updatedAt consistency, and cross-relation integrity).
+    - Ensured test datasets now accurately simulate real-world sync edge cases including deleted entities, reactivated links, and multi-user POI reuse scenarios.
+
+  - 🧩 **Complete rebuild of in-memory Fake DAOs for unit testing**
+    - Reimplemented all Fake DAO classes using an in-memory ConcurrentHashMap + StateFlow architecture mirroring real Room behavior.
+    - Fully aligned method signatures with production DAO interfaces, including insert-from-UI, insert-from-Firebase, soft delete, conflict handling, and relation queries.
+    - Enables isolated, database-free unit testing of repositories, synchronization pipelines, and utility layers while preserving reactive Flow semantics.
+
+  - 📱 **Instrumented DAO test dataset modernization**
+    - Updated Android instrumented test fake entities to strictly match the real Room schema and query behavior.
+    - Soft delete states, cross-reference consistency, and relation integrity are now explicitly validated against the production database configuration.
+    - Strengthens confidence that DAO queries, filters, sorting, and conflict strategies behave identically in both test and runtime environments.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

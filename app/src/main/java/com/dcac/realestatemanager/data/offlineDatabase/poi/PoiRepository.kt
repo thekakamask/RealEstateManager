@@ -16,8 +16,8 @@ interface PoiRepository {
 
     //INSERTIONS
     //INSERTIONS FROM UI
-    suspend fun insertPoiInsertFromUI(poi: Poi)
-    suspend fun insertPoiSInsertFromUi(poiS: List<Poi>)
+    suspend fun insertPoiInsertFromUI(poi: Poi): Poi
+    suspend fun insertPoiSInsertFromUi(poiS: List<Poi>): List<Poi>
     //INSERTIONS FROM FIREBASE
     suspend fun insertPoiInsertFromFirebase(poi : PoiOnlineEntity, firebaseDocumentId: String)
     suspend fun insertPoiSInsertFromFirebase(poiS: List<Pair<PoiOnlineEntity, String>>)

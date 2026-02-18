@@ -19,7 +19,6 @@ import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.roundToInt
 
 // Utility class for currency conversion, date formatting and network checks.
 
@@ -141,5 +140,10 @@ object Utils {
         "Restaurant" -> Color.MAGENTA
         else -> Color.GRAY
     }
+
+    fun String.normalize(): String =
+        trim()
+            .replace("\\s+".toRegex(), " ")
+            .lowercase()
 
 }

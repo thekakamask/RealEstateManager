@@ -29,17 +29,17 @@ object FakeUserOnlineEntity {
     )
 
     val firestoreUserDocument1 = FirestoreUserDocument(
-        id = "firebase_uid_1",
+        firebaseId = "firebase_uid_1",
         user = userOnline1
     )
 
     val firestoreUserDocument2 = FirestoreUserDocument(
-        id = "firebase_uid_2",
+        firebaseId = "firebase_uid_2",
         user = userOnline2
     )
 
     val firestoreUserDocument3 = FirestoreUserDocument(
-        id = "firebase_uid_3",
+        firebaseId = "firebase_uid_3",
         user = userOnline3
     )
 

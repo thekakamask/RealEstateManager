@@ -3,6 +3,7 @@ package com.dcac.realestatemanager.data.offlineDatabase.poi
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
 import com.dcac.realestatemanager.model.Poi
 import com.dcac.realestatemanager.model.PoiWithProperties
+import com.dcac.realestatemanager.utils.Utils.normalize
 import com.dcac.realestatemanager.utils.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,11 +24,29 @@ class OfflinePoiRepository(
         poiDao.uploadUnSyncedPoiS()
 
     // INSERTIONS
-    override suspend fun insertPoiInsertFromUI(poi: Poi) {
-        poiDao.insertPoiInsertFromUi(poi.toEntity())
+    override suspend fun insertPoiInsertFromUI(poi: Poi): Poi {
+
+        val normalizedName = poi.name.normalize()
+        val normalizedAddress = poi.address.normalize()
+
+        val existing = poiDao.findExistingPoi(
+            name = normalizedName,
+            address = normalizedAddress
+        )
+
+        return if (existing != null) {
+            existing.toModel()
+        } else {
+            val entity = poi.toEntity().copy(
+                isSynced = false,
+                updatedAt = System.currentTimeMillis()
+            )
+            poiDao.insertPoiInsertFromUi(entity)
+            entity.toModel()
+        }
     }
-    override suspend fun insertPoiSInsertFromUi(poiS: List<Poi>) {
-        poiDao.insertPoiSInsertFromUi(poiS.map { it.toEntity() })
+    override suspend fun insertPoiSInsertFromUi(poiS: List<Poi>): List<Poi> {
+        return poiS.map { insertPoiInsertFromUI(it) }
     }
     //INSERTIONS FROM FIREBASE
     override suspend fun insertPoiInsertFromFirebase(poi: PoiOnlineEntity, firebaseDocumentId: String) {
@@ -79,4 +98,5 @@ class OfflinePoiRepository(
             relation.toModel()
         }
     }
+
 }

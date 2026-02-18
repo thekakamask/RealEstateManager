@@ -32,11 +32,11 @@ interface PoiDao {
         firstPoiInsert(poi.copy(isSynced = false))
         return poi.id
     }
-    suspend fun insertPoiSInsertFromUi(poiS: List<PoiEntity>){
+    /*suspend fun insertPoiSInsertFromUi(poiS: List<PoiEntity>){
         poiS.forEach { poi ->
             firstPoiInsert(poi.copy(isSynced = false))
         }
-    }
+    }*/
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun firstPoiInsert(poi: PoiEntity)
 
@@ -65,12 +65,12 @@ interface PoiDao {
         return poi.firestoreDocumentId
     }
     suspend fun updateAllPoiFromFirebaseForceSyncTrue(poiS: List<PoiEntity>) {
-        poiS.forEach { photo ->
-            updatePoi(photo.copy(isSynced = true))
+        poiS.forEach { poi ->
+            updatePoi(poi.copy(isSynced = true))
         }
     }
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updatePoi(photo: PoiEntity)
+    suspend fun updatePoi(poi: PoiEntity)
 
     //SOFT DELETE
     //MARK FROM UI POIS AS DELETED BEFORE REAL DELETE
@@ -89,6 +89,18 @@ interface PoiDao {
     fun getPoiByIdIncludeDeleted(id: String): Flow<PoiEntity?>
     @Query("SELECT * FROM poi")
     fun getAllPoiSIncludeDeleted(): Flow<List<PoiEntity>>
+
+    @Query("""
+    SELECT * FROM poi
+    WHERE LOWER(name) = LOWER(:name)
+    AND LOWER(address) = LOWER(:address)
+    AND is_deleted = 0
+    LIMIT 1
+""")
+    suspend fun findExistingPoi(
+        name: String,
+        address: String
+    ): PoiEntity?
 
     @Transaction
     @Query("SELECT * FROM poi WHERE id = :poiId AND is_deleted = 0")

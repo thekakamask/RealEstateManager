@@ -7,38 +7,53 @@ object FakePoiOnlineEntity {
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
     val poiOnline1 = PoiOnlineEntity(
+        ownerUid = "firebase_uid_1",
         universalLocalId = "poi-1",
         name = "Franprix République",
         type = "Supermarché",
-        updatedAt = DEFAULT_TIMESTAMP + 1
+        address = "10 Place de la République, 75011 Paris",
+        latitude = 48.867,
+        longitude = 2.363,
+        updatedAt = DEFAULT_TIMESTAMP + 1,
+        isDeleted = false
     )
 
     val poiOnline2 = PoiOnlineEntity(
+        ownerUid = "firebase_uid_2",
         universalLocalId = "poi-2",
         name = "École Primaire Jean Jaurès",
         type = "École",
-        updatedAt = DEFAULT_TIMESTAMP + 2
+        address = "5 Rue Jean Jaurès, 75011 Paris",
+        latitude = 48.868,
+        longitude = 2.361,
+        updatedAt = DEFAULT_TIMESTAMP + 2,
+        isDeleted = false
     )
 
     val poiOnline3 = PoiOnlineEntity(
+        ownerUid = "firebase_uid_3",
         universalLocalId = "poi-3",
         name = "Pharmacie République",
         type = "Pharmacie",
-        updatedAt = DEFAULT_TIMESTAMP + 3
+        address = "2 Boulevard Magenta, 75011 Paris",
+        latitude = 48.869,
+        longitude = 2.364,
+        updatedAt = DEFAULT_TIMESTAMP + 3,
+        isDeleted = true
     )
 
     val firestorePoiDocument1 = FirestorePoiDocument(
-        id = "firestore-poi-1",
+        firebaseId = "firestore-poi-1",
         poi = poiOnline1
     )
 
     val firestorePoiDocument2 = FirestorePoiDocument(
-        id = "firestore-poi-2",
+        firebaseId = "firestore-poi-2",
         poi = poiOnline2
     )
 
     val firestorePoiDocument3 = FirestorePoiDocument(
-        id = "firestore-poi-3",
+        firebaseId = "firestore-poi-3",
         poi = poiOnline3
     )
 

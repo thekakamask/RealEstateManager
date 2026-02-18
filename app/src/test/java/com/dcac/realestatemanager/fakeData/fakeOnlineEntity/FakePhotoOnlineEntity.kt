@@ -7,41 +7,47 @@ object FakePhotoOnlineEntity {
     private const val DEFAULT_TIMESTAMP = 1700000000000L
 
     val photoOnline1 = PhotoOnlineEntity(
+        ownerUid = "firebase_uid_1",
         universalLocalId = "photo-1",
         universalLocalPropertyId = "property-1",
         description = "Living room of Loft République",
         updatedAt = DEFAULT_TIMESTAMP + 1,
-        storageUrl = "https://firebase.storage.com/photo_1.jpg"
+        storageUrl = "https://firebase.storage.com/photo_1.jpg",
+        isDeleted = false
     )
 
     val photoOnline2 = PhotoOnlineEntity(
+        ownerUid = "firebase_uid_2",
         universalLocalId = "photo-2",
         universalLocalPropertyId = "property-2",
         description = "Kitchen of Loft République",
         updatedAt = DEFAULT_TIMESTAMP + 2,
-        storageUrl = "https://firebase.storage.com/photo_2.jpg"
+        storageUrl = "https://firebase.storage.com/photo_2.jpg",
+        isDeleted = false
     )
 
     val photoOnline3 = PhotoOnlineEntity(
+        ownerUid = "firebase_uid_3",
         universalLocalId = "photo-3",
         universalLocalPropertyId = "property-3",
         description = "Garden view of Villa Montmartre",
         updatedAt = DEFAULT_TIMESTAMP + 3,
-        storageUrl = "https://firebase.storage.com/photo_3.jpg"
+        storageUrl = "https://firebase.storage.com/photo_3.jpg",
+        isDeleted = true
     )
 
     val firestorePhotoDocument1 = FirestorePhotoDocument(
-        id = "firestore-photo-1",
+        firebaseId = "firestore-photo-1",
         photo = photoOnline1
     )
 
     val firestorePhotoDocument2 = FirestorePhotoDocument(
-        id = "firestore-photo-2",
+        firebaseId = "firestore-photo-2",
         photo = photoOnline2
     )
 
     val firestorePhotoDocument3 = FirestorePhotoDocument(
-        id = "firestore-photo-3",
+        firebaseId = "firestore-photo-3",
         photo = photoOnline3
     )
 

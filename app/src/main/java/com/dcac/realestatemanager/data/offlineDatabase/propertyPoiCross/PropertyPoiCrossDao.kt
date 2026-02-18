@@ -42,7 +42,7 @@ interface PropertyPoiCrossDao {
             firstCrossRefInsert(crossRef.copy(isSynced = false))
         }
     }
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun firstCrossRefInsert(crossRef: PropertyPoiCrossEntity)
 
     //INSERTIONS FROM FIREBASE

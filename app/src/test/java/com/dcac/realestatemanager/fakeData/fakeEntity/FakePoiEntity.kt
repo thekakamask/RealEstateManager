@@ -12,6 +12,9 @@ object FakePoiEntity {
         firestoreDocumentId = "firestore-poi-1",
         name = "Franprix République",
         type = "Supermarché",
+        address = "10 Place de la République, 75011 Paris",
+        latitude = 48.867,
+        longitude = 2.363,
         isSynced = false,
         isDeleted = false,
         updatedAt = DEFAULT_TIMESTAMP + 1
@@ -22,6 +25,9 @@ object FakePoiEntity {
         firestoreDocumentId = "firestore-poi-2",
         name = "École Primaire Jean Jaurès",
         type = "École",
+        address = "5 Rue Jean Jaurès, 75011 Paris",
+        latitude = 48.868,
+        longitude = 2.361,
         isSynced = true,
         isDeleted = false,
         updatedAt = DEFAULT_TIMESTAMP + 2
@@ -32,6 +38,9 @@ object FakePoiEntity {
         firestoreDocumentId = "firestore-poi-3",
         name = "Pharmacie République",
         type = "Pharmacie",
+        address = "2 Boulevard Magenta, 75011 Paris",
+        latitude = 48.869,
+        longitude = 2.364,
         isSynced = false,
         isDeleted = true,
         updatedAt = DEFAULT_TIMESTAMP + 3

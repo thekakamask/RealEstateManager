@@ -9,177 +9,176 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class FakePropertyPoiCrossDao : PropertyPoiCrossDao,
-    BaseFakeDao<Pair<Long, Long>, PropertyPoiCrossEntity>({ Pair(it.propertyId, it.poiId) }) {
+    BaseFakeDao<Pair<String, String>, PropertyPoiCrossEntity>({ Pair(it.universalLocalPropertyId, it.universalLocalPoiId) }) {
 
     init {
         seed(FakePropertyPoiCrossEntity.allCrossRefs)
     }
 
-    override fun getCrossRefsForProperty(propertyId: Long): Flow<List<PropertyPoiCrossEntity>> =
+    override fun getCrossRefsForProperty(propertyId: String): Flow<List<PropertyPoiCrossEntity>> =
         entityFlow.map { list ->
-            list.filter { it.propertyId == propertyId && !it.isDeleted }
+            list.filter { it.universalLocalPropertyId== propertyId && !it.isDeleted }
         }
 
-    override fun getPoiIdsForProperty(propertyId: Long): Flow<List<Long>> =
+    override fun getPoiIdsForProperty(propertyId: String): Flow<List<String>> =
         entityFlow.map { list ->
-            list.filter { it.propertyId == propertyId && !it.isDeleted }.map { it.poiId }
+            list.filter { it.universalLocalPropertyId == propertyId && !it.isDeleted }.map { it.universalLocalPoiId }
         }
 
-    override fun getPropertyIdsForPoi(poiId: Long): Flow<List<Long>> =
+    override fun getPropertyIdsForPoi(poiId: String): Flow<List<String>> =
         entityFlow.map { list ->
-            list.filter { it.poiId == poiId && !it.isDeleted }.map { it.propertyId }
+            list.filter { it.universalLocalPoiId == poiId && !it.isDeleted }.map { it.universalLocalPropertyId }
         }
 
     override fun getAllCrossRefs(): Flow<List<PropertyPoiCrossEntity>> =
         entityFlow.map { list -> list.filter { !it.isDeleted } }
 
-    override fun getCrossByIds(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?> =
+    override fun getCrossByIds(propertyId: String, poiId: String): Flow<PropertyPoiCrossEntity?> =
         entityFlow.map { list ->
-            list.find { it.propertyId == propertyId && it.poiId == poiId && !it.isDeleted }
+            list.find { it.universalLocalPropertyId == propertyId && it.universalLocalPoiId == poiId && !it.isDeleted }
         }
 
-    override suspend fun insertCrossRefForcedSyncFalse(
-        propertyId: Long,
-        poiId: Long,
-        isDeleted: Boolean,
+    override fun uploadUnSyncedCrossRefs(): Flow<List<PropertyPoiCrossEntity>> =
+        entityFlow.map { list ->
+            list.filter { !it.isSynced }
+        }
+
+    override suspend fun firstCrossRefInsert(crossRef: PropertyPoiCrossEntity) {
+        upsert(crossRef)
+    }
+
+    override suspend fun insertCrossRefIfNotExists(propertyPoiCrossEntity: PropertyPoiCrossEntity) {
+        val key = Pair(
+            propertyPoiCrossEntity.universalLocalPropertyId,
+            propertyPoiCrossEntity.universalLocalPoiId
+        )
+        if (!entityMap.containsKey(key)) {
+            upsert(propertyPoiCrossEntity)
+        }
+    }
+
+    override suspend fun updateCrossRef(crossRef: PropertyPoiCrossEntity) {
+        upsert(crossRef)
+    }
+
+    override suspend fun markCrossRefAsDeleted(
+        propertyId: String,
+        poiId: String,
         updatedAt: Long
     ) {
-        upsert(
-            PropertyPoiCrossEntity(
-                propertyId = propertyId,
-                poiId = poiId,
-                isDeleted = isDeleted,
-                isSynced = false,
-                updatedAt = updatedAt
+        val key = Pair(propertyId, poiId)
+
+        entityMap[key]?.let {
+            upsert(
+                it.copy(
+                    isDeleted = true,
+                    isSynced = false,
+                    updatedAt = updatedAt
+                )
             )
-        )
+        }
     }
 
-    override suspend fun insertCrossRef(crossRef: PropertyPoiCrossEntity) {
-        insertCrossRefForcedSyncFalse(
-            propertyId = crossRef.propertyId,
-            poiId = crossRef.poiId,
-            isDeleted = crossRef.isDeleted,
-            updatedAt = crossRef.updatedAt
-        )
-    }
-
-    override suspend fun insertAllCrossRefs(crossRefs: List<PropertyPoiCrossEntity>) {
-        crossRefs.forEach { insertCrossRef(it) }
-    }
-
-    override suspend fun updateCrossRefForcedSyncFalse(
-        propertyId: Long,
-        poiId: Long,
-        isDeleted: Boolean,
+    override suspend fun markCrossRefsAsDeletedForProperty(
+        propertyId: String,
         updatedAt: Long
     ) {
-        insertCrossRefForcedSyncFalse(propertyId, poiId, isDeleted, updatedAt)
+        entityMap.values
+            .filter { it.universalLocalPropertyId == propertyId }
+            .toList()
+            .forEach {
+                upsert(
+                    it.copy(
+                        isDeleted = true,
+                        isSynced = false,
+                        updatedAt = updatedAt
+                    )
+                )
+            }
     }
 
-    override suspend fun updateCrossRef(propertyPoiCrossEntity: PropertyPoiCrossEntity) {
-        updateCrossRefForcedSyncFalse(
-            propertyId = propertyPoiCrossEntity.propertyId,
-            poiId = propertyPoiCrossEntity.poiId,
-            isDeleted = propertyPoiCrossEntity.isDeleted,
-            updatedAt = propertyPoiCrossEntity.updatedAt
-        )
-    }
-
-    override suspend fun markCrossRefAsDeleted(propertyId: Long, poiId: Long, updatedAt: Long) {
-        entityMap[Pair(propertyId, poiId)]?.let {
-            val updated = it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
-            upsert(updated)
-        }
-    }
-
-    override suspend fun markCrossRefsAsDeletedForProperty(propertyId: Long, updatedAt: Long) {
-        val updated = entityMap.values.map {
-            if (it.propertyId == propertyId)
-                it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
-            else it
-        }
-        seed(updated)
-    }
-
-    override suspend fun markCrossRefsAsDeletedForPoi(poiId: Long, updatedAt: Long) {
-        val updated = entityMap.values.map {
-            if (it.poiId == poiId)
-                it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
-            else it
-        }
-        seed(updated)
+    override suspend fun markCrossRefsAsDeletedForPoi(
+        poiId: String,
+        updatedAt: Long
+    ) {
+        entityMap.values
+            .filter { it.universalLocalPoiId == poiId }
+            .toList()
+            .forEach {
+                upsert(
+                    it.copy(
+                        isDeleted = true,
+                        isSynced = false,
+                        updatedAt = updatedAt
+                    )
+                )
+            }
     }
 
     override suspend fun markAllCrossRefsAsDeleted(updatedAt: Long) {
-        val updated = entityMap.values.map {
-            it.copy(isDeleted = true, isSynced = false, updatedAt = updatedAt)
+        entityMap.values.toList().forEach {
+            upsert(
+                it.copy(
+                    isDeleted = true,
+                    isSynced = false,
+                    updatedAt = updatedAt
+                )
+            )
         }
-        seed(updated)
-    }
-
-
-    override suspend fun clearAllDeleted() {
-        val toDelete = entityMap.values.filter { it.isDeleted }
-        toDelete.forEach { delete(it) }
     }
 
     override suspend fun deleteCrossRef(crossRef: PropertyPoiCrossEntity) {
         delete(crossRef)
     }
 
-    override suspend fun deleteCrossRefsForProperty(propertyId: Long) {
-        val toDelete = entityMap.values.filter { it.propertyId == propertyId }
-        toDelete.forEach { delete(it) }
+    override suspend fun deleteCrossRefsForProperty(propertyId: String) {
+        entityMap.values
+            .filter { it.universalLocalPropertyId == propertyId }
+            .toList()
+            .forEach { delete(it) }
     }
 
-    override suspend fun deleteCrossRefsForPoi(poiId: Long) {
-        val toDelete = entityMap.values.filter { it.poiId == poiId }
-        toDelete.forEach { delete(it) }
+    override suspend fun deleteCrossRefsForPoi(poiId: String) {
+        entityMap.values
+            .filter { it.universalLocalPoiId == poiId }
+            .toList()
+            .forEach { delete(it) }
     }
+
+    override suspend fun clearAllDeleted() {
+        entityMap.values
+            .filter { it.isDeleted }
+            .toList()
+            .forEach { delete(it) }
+    }
+
+    override fun getCrossRefsByIdsIncludedDeleted(
+        propertyId: String,
+        poiId: String
+    ): Flow<PropertyPoiCrossEntity?> =
+        entityFlow.map { list ->
+            list.find {
+                it.universalLocalPropertyId == propertyId &&
+                        it.universalLocalPoiId == poiId
+            }
+        }
+
+    override fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: String)
+            : Flow<List<PropertyPoiCrossEntity>> =
+        entityFlow.map { list ->
+            list.filter { it.universalLocalPropertyId == propertyId }
+        }
+
+    override fun getCrossRefsByPoiIdIncludeDeleted(poiId: String)
+            : Flow<List<PropertyPoiCrossEntity>> =
+        entityFlow.map { list ->
+            list.filter { it.universalLocalPoiId == poiId }
+        }
 
     override fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>> =
         entityFlow
 
-    override fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: Long): Flow<List<PropertyPoiCrossEntity>> =
-        entityFlow.map { list -> list.filter { it.propertyId == propertyId } }
-
-    override fun getCrossRefsByPoiIdIncludeDeleted(poiId: Long): Flow<List<PropertyPoiCrossEntity>> =
-        entityFlow.map { list -> list.filter { it.poiId == poiId } }
-
-    override fun getCrossRefsByIdsIncludedDeleted(propertyId: Long, poiId: Long): Flow<PropertyPoiCrossEntity?> =
-        entityFlow.map { list -> list.find { it.propertyId == propertyId && it.poiId == poiId } }
-
-    override fun uploadUnSyncedPropertiesPoiSCross(): Flow<List<PropertyPoiCrossEntity>> =
-        entityFlow.map { list -> list.filter { !it.isSynced } }
-
-    override suspend fun saveCrossRefFromFirebaseForcedSyncTrue(
-        propertyId: Long,
-        poiId: Long,
-        isDeleted: Boolean,
-        updatedAt: Long
-    ) {
-        upsert(
-            PropertyPoiCrossEntity(
-                propertyId = propertyId,
-                poiId = poiId,
-                isDeleted = isDeleted,
-                isSynced = true,
-                updatedAt = updatedAt
-            )
-        )
-    }
-
-    override suspend fun saveCrossRefFromFirebase(crossRef: PropertyPoiCrossEntity) {
-        saveCrossRefFromFirebaseForcedSyncTrue(
-            propertyId = crossRef.propertyId,
-            poiId = crossRef.poiId,
-            isDeleted = crossRef.isDeleted,
-            updatedAt = crossRef.updatedAt
-        )
-    }
-
     override fun getAllCrossRefsAsCursor(query: SupportSQLiteQuery): Cursor {
-        throw NotImplementedError("getAllCrossRefsAsCursor is not used in unit tests.")
+        throw NotImplementedError("Cursor not needed in unit tests.")
     }
 }

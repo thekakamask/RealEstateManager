@@ -14,16 +14,18 @@ This project is developed using modern Android architecture principles, with a f
 
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
-
-   - 🔄 Fixed POI synchronization issues : resolved Firestore permission errors caused by collection name mismatch and ensured POIs are now correctly uploaded, linked, and synced across devices.
-   - 🔐 Improved sync lifecycle handling: synchronization is now triggered only when a user is authenticated (on login, signup, and app restart with an active session), preventing missed or premature sync attempts.
-   - ⚙️ Stabilized global sync mechanism: introduced guarded, network-aware background sync using WorkManager with unique work policies to avoid duplicate or concurrent sync executions.
-   - 🧩 Resolved Firestore boolean mapping issue: fixed incorrect deserialization of isDeleted fields caused by JavaBean naming conventions, preventing soft-deleted entities from being unintentionally re-downloaded during sync.
+   
+   - 🔐 Updated Firestore security rules for POIs: adjusted permissions to allow shared POI reuse across users while maintaining controlled creation ownership.
+   - 🔎 Implemented smart POI matching in repository: added normalized Room-level lookup to prevent duplicates and automatically reuse existing POIs during creation.
+   - ✏️ Refactored POI handling in ViewModel (creation & edition): introduced UI-level comparison logic to detect unchanged POIs and recreate cross-references safely when modifications occur.
+   - 🔁 Strengthened Property POI relation integrity: migrated CrossRef DAO insert strategy to OnConflictStrategy.REPLACE to correctly reactivate soft-deleted links and prevent duplicate relation issues.
+   - 🧪 Refactored fake data layer for unit testing: updated all Fake Room entities, Fake Firestore online entities, and Fake models to fully align with the current synchronization contract (soft delete, isSynced, cross-relations) to ensure deterministic repository and sync testing.
+   - 🧩 Rebuilt all Fake DAOs for unit testing: implemented in-memory, Flow-based DAO replicas matching the real Room interfaces, enabling reliable testing of repositories, sync engine, and utility logic without database dependencies.
+   - 📱 Updated fake entities for instrumented DAO tests: aligned Android test fakes with the real Room schema to validate DAO behavior (queries, soft delete, conflict strategies, relations) against the production database configuration.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - 🧩 Tablet & large-screen UI (continue to implement screens)
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - Implemented responsive design for tablet.
    - 🔔 Notification on property creation.
@@ -128,21 +130,21 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🧭 **Navigation** :
 
-      - 🟩 **IN PROGRESS** Navigation between list and detail.
+      - ✅ **DONE** Navigation between list and detail.
       - ✅ **DONE** Setting up core navigation components:
         - Implementing a central NavHost in the main activity.
         - Defining the NavGraph with all destinations and actions.
         - Using a single NavController to manage navigation events.
-      - 🟩 **IN PROGRESS** Two-pane mode support for tablets.
+      - ✅ **DONE** Two-pane mode support for tablets.
 
    - 🎨 **Modern and Fluid Interface**:
 
-      - 🟩 **IN PROGRESS** Follows Material Design 3 guidelines.
-      - 🟩 **IN PROGRESS** Smooth transitions with Navigation Component.
-      - 🟩 **IN PROGRESS** Responsive layout with adaptive UI.
+      - ✅ **DONE** Follows Material Design 3 guidelines.
+      - ✅ **DONE** Smooth transitions with Navigation Component.
+      - ✅ **DONE** Responsive layout with adaptive UI.
 
       - **TopBar**:
-         - 🟩 **IN PROGRESS** Display application title and possible future actions.
+         - ✅ **DONE** Display application title and possible future actions.
 
       - **Light/Dark Mode**:
          - ✅ **DONE** Supports light/dark mode.
