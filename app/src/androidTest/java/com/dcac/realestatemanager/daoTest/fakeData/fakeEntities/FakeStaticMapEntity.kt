@@ -37,5 +37,5 @@ object FakeStaticMapEntity {
     )
 
     val staticMapEntityList = listOf(staticMap1, staticMap2, staticMap3)
-    val staticMapEntityListNotDeleted = listOf(staticMap1, staticMap2)
+    val staticMapEntityListNotDeleted = staticMapEntityList.filter { !it.isDeleted }
 }

@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">874 ms</div>
+                <div class="time" xmlns="">749 ms</div>
                 <h1>
-                    PoiDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">13 total, </span><span class="passed">13 passed</span></strong>
+                    PoiDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">21 total, </span><span class="passed">21 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,136 +593,216 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">874 ms</div>
+                                <div class="time">749 ms</div>
                             </em>com.dcac.realestatemanager.daoTest.PoiDaoTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">259 ms</div>
-                                    </em><em class="status">passed</em>insertPoi_shouldInsertSinglePoi</span>
+                                        <div class="time">29 ms</div>
+                                    </em><em class="status">passed</em>findExistingPoi_shouldReturnPoi_withNameAndAddressMatchIgnoringCase_andNotDeleted</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:36:48.134 30751 30777 I TestRunner: started: insertPoi_shouldInsertSinglePoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.171  1567  1869 I BugleRcsEngine: Connected state: [1], networkType: [WIFI] [CONTEXT thread_id=55 ]&#13;<br/>09-18 16:36:48.171  1280  1294 I ChimeraSrvcProxy: NullBinder for android.net.action.RECOMMEND_NETWORKS triggering remote TransactionTooLargeException due to Service without Chimera impl&#13;<br/>09-18 16:36:48.172  1280  1294 W .gms.persistent: Large reply transaction of 1056768 bytes, interface descriptor , code 1&#13;<br/>09-18 16:36:48.173  1567  2259 I BugleRcsEngine: handleMessage processing message:[NOTIFY_UPTIME_IGNORE_STATE_CHANGED] with [non-null]:RcsEngineImpl reference [CONTEXT log_prefix="RcsEngineImpl[DUAL_REG]:[bb52fd5c-19c6]&gt;Handler" thread_id=60 ]&#13;<br/>09-18 16:36:48.191  1567  2259 I BugleRcsEngine: No RCS Configuration was found in Bugle for simID: redacted-pii:sim_id[chars:20,last3:897] [CONTEXT log_prefix="ProvisioningEngineDataRetriever" thread_id=60 ]&#13;<br/>09-18 16:36:48.337  1226  1299 D PackageUpdatedTask: Package updated: mOp=UPDATE packages=[com.dcac.realestatemanager]&#13;<br/>09-18 16:36:48.338  1527  1527 I AiAiEcho: AppFetcherImpl onPackageChanged com.dcac.realestatemanager.&#13;<br/>09-18 16:36:48.362   989   989 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0&#13;<br/>09-18 16:36:48.363  1158  1158 D CarrierSvcBindHelper: onPackageModified: com.dcac.realestatemanager&#13;<br/>09-18 16:36:48.366  1527 30671 I AiAiEcho: AppIndexer Package:[com.dcac.realestatemanager] UserProfile:[0] Enabled:[true].&#13;<br/>09-18 16:36:48.371  1527 30671 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.dcac.realestatemanager], userId:[0], reason:[package is updated.].&#13;<br/>09-18 16:36:48.374  1158  1158 D CarrierSvcBindHelper: No carrier app for: 0&#13;<br/>09-18 16:36:48.378   714   837 I RoleService: Granting default roles...&#13;<br/>09-18 16:36:48.383   714  1096 W Role    : Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80&#13;<br/>09-18 16:36:48.385   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION&#13;<br/>09-18 16:36:48.389   714   714 W IPCThreadState: Sending oneway calls to frozen process.&#13;<br/>09-18 16:36:48.393 16759 18833 I PermissionControllerServiceImpl: Updating user sensitive for uid 10291&#13;<br/>09-18 16:36:48.396  1158  1158 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>09-18 16:36:48.402   714  1096 W Role    : Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58&#13;<br/>09-18 16:36:48.416 30751 30777 I TestRunner: finished: insertPoi_shouldInsertSinglePoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:42:25.513 19927 19966 I TestRunner: started: findExistingPoi_shouldReturnPoi_withNameAndAddressMatchIgnoringCase_andNotDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.522  1627  3362 D ConnectivityService: requestNetwork for uid/pid:10472/19927 activeRequest: null callbackRequest: 1716 [NetworkRequest [ REQUEST id=1717, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST|NC&#13;<br/>02-24 04:42:25.522 11082 18460 I Finsky  : [231] Package com.google.android.gms is verified.&#13;<br/>02-24 04:42:25.525  1627  1854 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=1717, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.526  1627  1854 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1717, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.526  1627  1854 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1717, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.526  1627  1854 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1717, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.526  1627  1861 D ConnectivityService: NetReassign [1717 : null &rarr; 104] [c 1] [a 2] [i 1]&#13;<br/>02-24 04:42:25.530 12480 19824 W FA-SVC  : Service response is missing Install Referrer install timestamp&#13;<br/>02-24 04:42:25.540 11082 11082 I Finsky  : [2] Memory trim requested to level 40&#13;<br/>02-24 04:42:25.540 11082 11082 I Finsky  : [2] Flushing in-memory image cache&#13;<br/>02-24 04:42:25.547 19927 19993 E SyncWorker: &#128293; SyncWorker STARTED&#13;<br/>02-24 04:42:25.549 19927 19993 E UploadManager: Uploading properties...&#13;<br/>02-24 04:42:25.561 19927 19966 I TestRunner: finished: findExistingPoi_shouldReturnPoi_withNameAndAddressMatchIgnoringCase_andNotDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">34 ms</div>
-                                    </em><em class="status">passed</em>updatePoi_shouldUpdateExistingPoi</span>
+                                    </em><em class="status">passed</em>uploadUnSyncedPoiS_shouldReturnOnlyPoiSWithIsSyncedFalse</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:36:48.428 30751 30777 I TestRunner: started: updatePoi_shouldUpdateExistingPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.435  1158  1357 D ImsResolver: maybeAddedImsService, packageName: com.dcac.realestatemanager&#13;<br/>09-18 16:36:48.477 30751 30777 I TestRunner: finished: updatePoi_shouldUpdateExistingPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">37 ms</div>
-                                    </em><em class="status">passed</em>getPoiById_shouldReturnCorrectPoi</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.485 30751 30777 I TestRunner: started: getPoiById_shouldReturnCorrectPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.489   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER&#13;<br/>09-18 16:36:48.529 30751 30777 I TestRunner: finished: getPoiById_shouldReturnCorrectPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">36 ms</div>
-                                    </em><em class="status">passed</em>savePoiFromFirebase_shouldInsertPoiCorrectly</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.535 30751 30777 I TestRunner: started: savePoiFromFirebase_shouldInsertPoiCorrectly(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.575 30751 30777 I TestRunner: finished: savePoiFromFirebase_shouldInsertPoiCorrectly(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">36 ms</div>
-                                    </em><em class="status">passed</em>insertAllPoiS_shouldInsertMultiplePoi</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.579 30751 30777 I TestRunner: started: insertAllPoiS_shouldInsertMultiplePoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.626 30751 30777 I TestRunner: finished: insertAllPoiS_shouldInsertMultiplePoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">62 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPoiS_shouldReturnOnlyUnSyncedPoi</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.630 30751 30777 I TestRunner: started: getUnSyncedPoiS_shouldReturnOnlyUnSyncedPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.685 30751 30777 I TestRunner: finished: getUnSyncedPoiS_shouldReturnOnlyUnSyncedPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">85 ms</div>
-                                    </em><em class="status">passed</em>deletePoi_shouldRemovePoiFromDatabase</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.691 30751 30777 I TestRunner: started: deletePoi_shouldRemovePoiFromDatabase(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.765 30751 30777 I TestRunner: finished: deletePoi_shouldRemovePoiFromDatabase(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">56 ms</div>
-                                    </em><em class="status">passed</em>getAllPoiS_shouldReturnAllInsertedPoiSNotMarkAsDeleted</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.771 30751 30777 I TestRunner: started: getAllPoiS_shouldReturnAllInsertedPoiSNotMarkAsDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.825 30751 30777 I TestRunner: finished: getAllPoiS_shouldReturnAllInsertedPoiSNotMarkAsDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">31 ms</div>
-                                    </em><em class="status">passed</em>markPoiAsDeleted_shouldHidePhotoFromQueries</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.830 30751 30777 I TestRunner: started: markPoiAsDeleted_shouldHidePhotoFromQueries(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.830 15051 15090 I Bugle   : BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of buoi@cd3b7b3&#13;<br/>09-18 16:36:48.868 30751 30777 I TestRunner: finished: markPoiAsDeleted_shouldHidePhotoFromQueries(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">60 ms</div>
-                                    </em><em class="status">passed</em>getAllPoiSAsCursor_shouldReturnValidCursor</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.872 30751 30777 I TestRunner: started: getAllPoiSAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.914 30751 30777 I TestRunner: finished: getAllPoiSAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">59 ms</div>
-                                    </em><em class="status">passed</em>getPoiIncludeDeletedById_shouldReturnCorrectPoi</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.920 30751 30777 I TestRunner: started: getPoiIncludeDeletedById_shouldReturnCorrectPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:48.972 30751 30777 I TestRunner: finished: getPoiIncludeDeletedById_shouldReturnCorrectPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">36 ms</div>
-                                    </em><em class="status">passed</em>getAllPoiIncludeDeleted_shouldReturnAllInsertedPoiS</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">09-18 16:36:48.977 30751 30777 I TestRunner: started: getAllPoiIncludeDeleted_shouldReturnAllInsertedPoiS(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:49.026 30751 30777 I TestRunner: finished: getAllPoiIncludeDeleted_shouldReturnAllInsertedPoiS(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:42:25.563 19927 19966 I TestRunner: started: uploadUnSyncedPoiS_shouldReturnOnlyPoiSWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.589  1166  1623 E md_thermal: interval=40 temp: 37200 30800 27500 27700&#13;<br/>02-24 04:42:25.601 19927 19994 E SYNC_PHOTO: PHOTO TO SYNC COUNT = 0&#13;<br/>02-24 04:42:25.612 19927 19993 E SYNC_POI: POI TO SYNC COUNT = 15&#13;<br/>02-24 04:42:25.612 19927 19993 E SYNC_POI: POI ENTITY = PoiEntity(id=a6577e32-e09f-423e-a321-97c49ca7d16b, firestoreDocumentId=null, name=Chez Meunier, type=School, address=55 rue Caulaincourt, 75018 Paris, France, latitude=48.8895787, longitude=2.3345851, isSynced=false, isDeleted=false, updatedAt=1769015108432)&#13;<br/>02-24 04:42:25.612 19927 19993 E SYNC_POI: POI ENTITY = PoiEntity(id=80249490-070b-4dc0-ba70-eff6c08b2c33, firestoreDocumentId=null, name=Chez Meunier, type=Bakery, address=153 boulevard Malesherbes, 75017 Paris, France, latitude=48.8849722, longitude=2.3071481, isSynced=false, isDeleted=false, updatedAt=1769520330243)&#13;<br/>02-24 04:42:25.613 19927 19966 I TestRunner: finished: uploadUnSyncedPoiS_shouldReturnOnlyPoiSWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">83 ms</div>
-                                    </em><em class="status">passed</em>getPoiWithProperties_shouldReturnAssociatedProperties</span>
+                                    </em><em class="status">passed</em>updatePoiFromUIForceSyncFalse_shouldSetIsSyncedFalse</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:36:49.031 30751 30777 I TestRunner: started: getPoiWithProperties_shouldReturnAssociatedProperties(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>09-18 16:36:49.087 30751 30782 W alestatemanager: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;-&gt;getThreadSession()Landroid/database/sqlite/SQLiteSession; (unsupported, reflection, allowed)&#13;<br/>09-18 16:36:49.087 30751 30782 W alestatemanager: Accessing hidden method Landroid/database/sqlite/SQLiteSession;-&gt;beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (unsupported, reflection, allowed)&#13;<br/>09-18 16:36:49.105 30751 30777 I TestRunner: finished: getPoiWithProperties_shouldReturnAssociatedProperties(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:42:25.617 19927 19966 I TestRunner: started: updatePoiFromUIForceSyncFalse_shouldSetIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.638 19927 19993 E SYNC_POI_UPLOAD: Uploading POI localId=a6577e32-e09f-423e-a321-97c49ca7d16b firestoreId=null finalId=GIAF2zZbMb1vGphfaNLp&#13;<br/>02-24 04:42:25.638 19927 19993 E DEBUG_AUTH: AUTH UID = 'cbUoEZuty5S2oTT8KOt8cc2B27h2'&#13;<br/>02-24 04:42:25.638 19927 19993 E DEBUG_OWNER: OWNER UID = 'cbUoEZuty5S2oTT8KOt8cc2B27h2'&#13;<br/>02-24 04:42:25.638 19927 19993 E DEBUG_POI_UPLOAD: POI ONLINE = PoiOnlineEntity(ownerUid=cbUoEZuty5S2oTT8KOt8cc2B27h2, universalLocalId=a6577e32-e09f-423e-a321-97c49ca7d16b, name=Chez Meunier, type=School, address=55 rue Caulaincourt, 75018 Paris, France, latitude=48.8895787, longitude=2.3345851, updatedAt=1769015108432, isDeleted=false)&#13;<br/>02-24 04:42:25.639 19927 19993 E DEBUG_FIRESTORE_DATA: {ownerUid=cbUoEZuty5S2oTT8KOt8cc2B27h2, universalLocalId=a6577e32-e09f-423e-a321-97c49ca7d16b, name=Chez Meunier, type=School, address=55 rue Caulaincourt, 75018 Paris, France, latitude=48.8895787, longitude=2.3345851, updatedAt=1769015108432}&#13;<br/>02-24 04:42:25.647 19927 19955 W DynamiteModule: Local module descriptor class for com.google.android.gms.providerinstaller.dynamite not found.&#13;<br/>02-24 04:42:25.648  2285  5671 W ProviderHelper: Unknown dynamite feature providerinstaller.dynamite&#13;<br/>02-24 04:42:25.652 19927 19955 I DynamiteModule: Considering local module com.google.android.gms.providerinstaller.dynamite:0 and remote module com.google.android.gms.providerinstaller.dynamite:0&#13;<br/>02-24 04:42:25.653 19927 19955 W ProviderInstaller: Failed to load providerinstaller module: No acceptable module com.google.android.gms.providerinstaller.dynamite found. Local version is 0 and remote version is 0.&#13;<br/>02-24 04:42:25.656 19927 19955 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/org.apache.http.legacy.jar&#13;<br/>02-24 04:42:25.656 19927 19955 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.location.provider.jar&#13;<br/>02-24 04:42:25.656 19927 19955 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.media.remotedisplay.jar&#13;<br/>02-24 04:42:25.656 19927 19955 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar&#13;<br/>02-24 04:42:25.656 19927 19955 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar&#13;<br/>02-24 04:42:25.661  1627  2291 D ConnectivityService: requestNetwork for uid/pid:10472/19927 activeRequest: null callbackRequest: 1718 [NetworkRequest [ REQUEST id=1719, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST&#13;<br/>02-24 04:42:25.663 19927 19955 W alestatemanager: Loading /data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/oat/arm64/base.odex non-executable as it requires an image which we failed to load&#13;<br/>02-24 04:42:25.665  1627  1854 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=1719, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.665  1627  1854 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1719, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.666  1627  1854 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1719, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.666  1627  1854 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1719, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.666  1627  1861 D ConnectivityService: NetReassign [1719 : null &rarr; 104] [c 1] [a 1] [i 2]&#13;<br/>02-24 04:42:25.671 19927 19955 D nativeloader: Configuring clns-13 for other apk /data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/lib/arm64:/data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms&#13;<br/>02-24 04:42:25.674 19927 19955 W ProviderInstaller: Failed to report request stats: com.google.android.gms.common.security.ProviderInstallerImpl.reportRequestStats [class android.content.Context, long, long]&#13;<br/>02-24 04:42:25.676   634  2422 D StNfcHal: (#013D1) Rx 6f 02 27 (hidden)&#13;<br/>02-24 04:42:25.677   634  2420 D StNfcHal: HalStopTimer&#13;<br/>02-24 04:42:25.686 19927 19966 I TestRunner: finished: updatePoiFromUIForceSyncFalse_shouldSetIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">59 ms</div>
+                                    </em><em class="status">passed</em>getPoiById_shouldReturnCorrectPoi</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:25.688 19927 19966 I TestRunner: started: getPoiById_shouldReturnCorrectPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: Failed to get service from broker.&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3339)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Parcel.createException(Parcel.java:3323)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Parcel.readException(Parcel.java:3306)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Parcel.readException(Parcel.java:3248)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at beut.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):36)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at besu.z(:com.google.android.gms@260534035@26.05.34 (260400-869443408):143)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at bdza.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):42)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Handler.handleCallback(Handler.java:995)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Handler.dispatchMessage(Handler.java:103)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at ctdu.mv(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at ctdu.dispatchMessage(:com.google.android.gms@260534035@26.05.34 (260400-869443408):5)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Looper.loopOnce(Looper.java:283)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.Looper.loop(Looper.java:392)&#13;<br/>02-24 04:42:25.699 19927 19998 E GoogleApiManager: 	at android.os.HandlerThread.run(HandlerThread.java:94)&#13;<br/>02-24 04:42:25.700 19927 19955 D nativeloader: Load /data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk!/lib/arm64-v8a/libconscrypt_gmscore_jni.so using class loader ns clns-13 (caller=/data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk): ok&#13;<br/>02-24 04:42:25.700 19927 19998 W GoogleApiManager: Not showing notification since connectionResult is not user-facing: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null, clientMethodKey=null}&#13;<br/>02-24 04:42:25.701 19927 19955 V NativeCrypto: Registering com/google/android/gms/org/conscrypt/NativeCrypto's 334 native methods...&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: Failed to register com.google.android.gms.providerinstaller#com.dcac.realestatemanager&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: gach: 17: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null, clientMethodKey=null}&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gacj.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):13)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gykp.d(:com.google.android.gms@260534035@26.05.34 (260400-869443408):3)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gykr.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):130)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gymy.execute(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gykz.f(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gykz.m(:com.google.android.gms@260534035@26.05.34 (260400-869443408):99)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gykz.r(:com.google.android.gms@260534035@26.05.34 (260400-869443408):17)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at fsqk.hy(:com.google.android.gms@260534035@26.05.34 (260400-869443408):35)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at ffth.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):12)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at gymy.execute(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at ffti.b(:com.google.android.gms@260534035@26.05.34 (260400-869443408):18)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at fftx.b(:com.google.android.gms@260534035@26.05.34 (260400-869443408):34)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at fftz.d(:com.google.android.gms@260534035@26.05.34 (260400-869443408):25)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdwj.c(:com.google.android.gms@260534035@26.05.34 (260400-869443408):9)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdyy.q(:com.google.android.gms@260534035@26.05.34 (260400-869443408):48)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdyy.d(:com.google.android.gms@260534035@26.05.34 (260400-869443408):10)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdyy.g(:com.google.android.gms@260534035@26.05.34 (260400-869443408):191)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdyy.onConnectionFailed(:com.google.android.gms@260534035@26.05.34 (260400-869443408):2)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdza.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):70)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at android.os.Handler.handleCallback(Handler.java:995)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at android.os.Handler.dispatchMessage(Handler.java:103)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at ctdu.mv(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at ctdu.dispatchMessage(:com.google.android.gms@260534035@26.05.34 (260400-869443408):5)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at android.os.Looper.loopOnce(Looper.java:283)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at android.os.Looper.loop(Looper.java:392)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at android.os.HandlerThread.run(HandlerThread.java:94)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: Caused by: bduq: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null, clientMethodKey=null}&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at besg.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):15)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdwm.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	at bdwj.c(:com.google.android.gms@260534035@26.05.34 (260400-869443408):5)&#13;<br/>02-24 04:42:25.706 19927 19996 W FlagRegistrar: 	... 12 more&#13;<br/>02-24 04:42:25.710 19927 19975 D FirebaseAuth: Notifying id token listeners about a sign-out event.&#13;<br/>02-24 04:42:25.710 19927 19975 D FirebaseAuth: Notifying auth state listeners about a sign-out event.&#13;<br/>02-24 04:42:25.711 19927 19955 I alestatemanager: hiddenapi: Accessing hidden method Ljava/security/spec/ECParameterSpec;-&gt;getCurveName()Ljava/lang/String; (runtime_flags=0, domain=core-platform, api=unsupported) from Lcom/google/android/gms/org/conscrypt/Platform; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:42:25.717 19927 19955 I ProviderInstaller: Installed default security provider GmsCore_OpenSSL&#13;<br/>02-24 04:42:25.741  1627  2291 D ConnectivityService: requestNetwork for uid/pid:10472/19927 activeRequest: null callbackRequest: 1720 [NetworkRequest [ REQUEST id=1721, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|BLK&#13;<br/>02-24 04:42:25.745  1627  1854 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=1721, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.746  1627  1854 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1721, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.746  1627  1854 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1721, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.746  1627  1854 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1721, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10472 RequestorUid: 10472 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:42:25.746  1627  1861 D ConnectivityService: NetReassign [1721 : null &rarr; 104] [c 1] [a 1] [i 3]&#13;<br/>02-24 04:42:25.753 19927 19966 I TestRunner: finished: getPoiById_shouldReturnCorrectPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">60 ms</div>
+                                    </em><em class="status">passed</em>insertPoiInsertFromUI_shouldInsertWithIsSyncedFalse</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:25.755 19927 19966 I TestRunner: started: insertPoiInsertFromUI_shouldInsertWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.802 19927 20008 I alestatemanager: hiddenapi: Accessing hidden field Ljava/net/Socket;-&gt;impl:Ljava/net/SocketImpl; (runtime_flags=0, domain=core-platform, api=unsupported) from Lcom/google/android/gms/org/conscrypt/Platform; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:42:25.815 19927 19966 I TestRunner: finished: insertPoiInsertFromUI_shouldInsertWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">61 ms</div>
+                                    </em><em class="status">passed</em>insertPoiSInsertFromUI_shouldInsertAllWithIsSyncedFalse</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:25.817 19927 19966 I TestRunner: started: insertPoiSInsertFromUI_shouldInsertAllWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.824 19927 20008 I alestatemanager: hiddenapi: Accessing hidden method Ljava/security/spec/ECParameterSpec;-&gt;setCurveName(Ljava/lang/String;)V (runtime_flags=0, domain=core-platform, api=unsupported) from Lcom/google/android/gms/org/conscrypt/Platform; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:42:25.844  2285  5671 I FontLog : (REDACTED) Received query %s, URI %s&#13;<br/>02-24 04:42:25.845  2285  5671 I FontLog : (REDACTED) Query [%s] resolved to %s&#13;<br/>02-24 04:42:25.848  2285  5671 I FontLog : (REDACTED) Fetch %s end status %s&#13;<br/>02-24 04:42:25.850  2285  2322 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d&#13;<br/>02-24 04:42:25.856  2285  2322 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d&#13;<br/>02-24 04:42:25.863 19788 20012 W android.youtube: ClassLoaderContext classpath size mismatch. expected=1, found=0 (DLC[];PCL[base.apk*2701253676]{PCL[/system/framework/org.apache.http.legacy.jar*4247870504]#PCL[/system/framework/com.android.location.provider.jar*1570284764]#PCL[/system/framework/com.android.media.remotedisplay.jar*487574312]#PCL[/system_ext/framework/androidx.window.extensions.jar*1030441313]#PCL[/system_ext/framework/androidx.window.sidecar.jar*3860983653]} | DLC[];PCL[])&#13;<br/>02-24 04:42:25.874 19927 19966 I TestRunner: finished: insertPoiSInsertFromUI_shouldInsertAllWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">8 ms</div>
+                                    </em><em class="status">passed</em>getPoiByIdIncludeDeleted_shouldReturnPoiIncludeDeleted</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:25.876 19927 19966 I TestRunner: started: getPoiByIdIncludeDeleted_shouldReturnPoiIncludeDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.878 19788 19837 W JobInfo : Requested important-while-foreground flag for job72865 is ignored and takes no effect&#13;<br/>02-24 04:42:25.888 19788 20028 I FA      : App measurement initialized, version: 155001&#13;<br/>02-24 04:42:25.888 19788 20028 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE&#13;<br/>02-24 04:42:25.888 19788 20028 I FA      : To enable faster debug mode event logging run:&#13;<br/>02-24 04:42:25.888 19788 20028 I FA      :   adb shell setprop debug.firebase.analytics.app com.google.android.youtube&#13;<br/>02-24 04:42:25.891  2285 12550 I .gms.persistent: AssetManager2(0xb400006dce872038) locale list changing from [] to [fr-FR]&#13;<br/>02-24 04:42:25.901 19927 19966 I TestRunner: finished: getPoiByIdIncludeDeleted_shouldReturnPoiIncludeDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">33 ms</div>
+                                    </em><em class="status">passed</em>deletePoi_shouldRemovePoi</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:25.904 19927 19966 I TestRunner: started: deletePoi_shouldRemovePoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.928 12480 19824 D AdvertisingIdClient: AdvertisingIdClient already created.&#13;<br/>02-24 04:42:25.931 12480 19824 I AdvertisingIdClient: shouldSendLog 29831105&#13;<br/>02-24 04:42:25.931 12480 19824 I AdvertisingIdClient: GetInfoInternal elapse 2ms&#13;<br/>02-24 04:42:25.942 19927 19966 I TestRunner: finished: deletePoi_shouldRemovePoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">61 ms</div>
+                                    </em><em class="status">passed</em>getAllPoiS_shouldReturnAllNotDeleted</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:25.944 19927 19966 I TestRunner: started: getAllPoiS_shouldReturnAllNotDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:25.988 19927 19966 I TestRunner: finished: getAllPoiS_shouldReturnAllNotDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">9 ms</div>
+                                    </em><em class="status">passed</em>updatePoiFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:25.990 19927 19966 I TestRunner: started: updatePoiFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.021 19927 19966 I TestRunner: finished: updatePoiFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">31 ms</div>
+                                    </em><em class="status">passed</em>getAllPoiIncludeDeleted_shouldReturnAll</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.023 19927 19966 I TestRunner: started: getAllPoiIncludeDeleted_shouldReturnAll(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.029   983  1029 I libPerfCtl: xgfGetFPS pid:2282 fps:-1&#13;<br/>02-24 04:42:26.029   983  1029 I libPerfCtl: xgfGetFPS pid:7988 fps:-1&#13;<br/>02-24 04:42:26.055 19927 19966 I TestRunner: finished: getAllPoiIncludeDeleted_shouldReturnAll(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">30 ms</div>
+                                    </em><em class="status">passed</em>findExistingPoi_shouldReturnNull_whenPoiIsDeleted</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.057 19927 19966 I TestRunner: started: findExistingPoi_shouldReturnNull_whenPoiIsDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.083 19927 19966 I TestRunner: finished: findExistingPoi_shouldReturnNull_whenPoiIsDeleted(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">34 ms</div>
+                                    </em><em class="status">passed</em>insertAllPoiSNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.084 19927 19966 I TestRunner: started: insertAllPoiSNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.093 12480 19824 W FA-SVC  : Storing bundle outside of the max uploading time span. appId, now, timestamp: com.dcac.realestatemanager, 1771904546093, 1768496477993&#13;<br/>02-24 04:42:26.095 12480 19824 W FA-SVC  : Storing bundle outside of the max uploading time span. appId, now, timestamp: com.dcac.realestatemanager, 1771904546095, 1769715058789&#13;<br/>02-24 04:42:26.115 19927 19966 I TestRunner: finished: insertAllPoiSNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>findExistingPoi_shouldReturnNull_whenNameMatchesButAddressDifferent</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.117 19927 19966 I TestRunner: started: findExistingPoi_shouldReturnNull_whenNameMatchesButAddressDifferent(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.140 19927 19966 I TestRunner: finished: findExistingPoi_shouldReturnNull_whenNameMatchesButAddressDifferent(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">30 ms</div>
+                                    </em><em class="status">passed</em>clearAllPoiSDeleted_shouldRemoveOnlyDeletedPoiS</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.142 19927 19966 I TestRunner: started: clearAllPoiSDeleted_shouldRemoveOnlyDeletedPoiS(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.169 19927 19966 I TestRunner: finished: clearAllPoiSDeleted_shouldRemoveOnlyDeletedPoiS(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">34 ms</div>
+                                    </em><em class="status">passed</em>insertPoiInsertFromFirebase_shouldInsertWithIsSyncedTrue</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.170 19927 19966 I TestRunner: started: insertPoiInsertFromFirebase_shouldInsertWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.190 19927 19966 I TestRunner: finished: insertPoiInsertFromFirebase_shouldInsertWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">11 ms</div>
+                                    </em><em class="status">passed</em>getAllPoiSAsCursor_shouldReturnValidCursor</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.191 19927 19966 I TestRunner: started: getAllPoiSAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.214 19927 19966 I TestRunner: finished: getAllPoiSAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">34 ms</div>
+                                    </em><em class="status">passed</em>updateAllPoiSFromFirebaseForceSyncTrue_shouldUpdateAll</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.216 19927 19966 I TestRunner: started: updateAllPoiSFromFirebaseForceSyncTrue_shouldUpdateAll(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.267 19927 19966 I TestRunner: finished: updateAllPoiSFromFirebaseForceSyncTrue_shouldUpdateAll(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">37 ms</div>
+                                    </em><em class="status">passed</em>getPoiWithProperties_shouldReturnPoiWithLinkedProperties</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.268 19927 19966 I TestRunner: started: getPoiWithProperties_shouldReturnPoiWithLinkedProperties(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.278  1627  1627 D NtThemeManager: setExtraDark, currentUser:0, enableOverlay:false, mCurrentExtraDarkMode:false&#13;<br/>02-24 04:42:26.283   969   969 I android.hardware.thermal@2.0-service.mtk: fill_temperatures filterType1 name: SKIN type: SKIN throttlingStatus: NONE value: 29.076 ret_temps size 0&#13;<br/>02-24 04:42:26.284   987   987 E NtChgAidl: NtChgAidl: mBattTempRegion _aidl_return:0&#13;<br/>02-24 04:42:26.285  1985  2108 D ChargeStateMonitor: syncNtChgData() adaptorPowerRate = 0 phoneMaxPowerRate = 50&#13;<br/>02-24 04:42:26.285  1985  1985 D BatteryController: onBatteryStateChange&#13;<br/>02-24 04:42:26.287   987   987 E NtChgAidl: NtChgAidl: setChargeFccIn user:2,val = 9000&#13;<br/>02-24 04:42:26.298 19927 19989 I alestatemanager: hiddenapi: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;-&gt;getThreadSession()Landroid/database/sqlite/SQLiteSession; (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/sqlite/db/framework/FrameworkSQLiteDatabase; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:42:26.298 19927 19989 I alestatemanager: hiddenapi: Accessing hidden method Landroid/database/sqlite/SQLiteSession;-&gt;beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/sqlite/db/framework/FrameworkSQLiteDatabase; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:42:26.302 19927 19966 I TestRunner: finished: getPoiWithProperties_shouldReturnPoiWithLinkedProperties(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">31 ms</div>
+                                    </em><em class="status">passed</em>getPoiById_shouldNotReturnDeletedPoi</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.319 19927 19966 I TestRunner: started: getPoiById_shouldNotReturnDeletedPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.320 12889 17668 I PermissionControllerServiceImpl: Updating user sensitive for uid 10472&#13;<br/>02-24 04:42:26.325  2282  2359 I othing.launcher: AssetManager2(0xb400006dce8fabb8) locale list changing from [] to [en]&#13;<br/>02-24 04:42:26.329 12889 17668 I PermissionControllerServiceImpl: Updating user sensitive for uid 10472&#13;<br/>02-24 04:42:26.332  1627  1789 I RoleService: Granting default roles...&#13;<br/>02-24 04:42:26.333  1627  1657 D AES     : AEEIOCTL_GET/SET_SF_STATE IOCTL,cmd= 1074294797, lParam=0.&#13;<br/>02-24 04:42:26.334  1627  1657 D AES     : AEEIOCTL_RT_MON_Kick IOCTL,cmd= 2147774474, lParam=300.&#13;<br/>02-24 04:42:26.334 18367 18367 I ContentProtectionServic: CP service destroyed&#13;<br/>02-24 04:42:26.335  1627  4248 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION, user: 0&#13;<br/>02-24 04:42:26.337  2282  2359 W HWUI    : Image decoding logging dropped!&#13;<br/>02-24 04:42:26.338  1627  4248 W SignedPackage: Package doesn't have required signing certificate: com.google.android.apps.work.clouddpc&#13;<br/>02-24 04:42:26.340  2282  2359 I NT-AllAppDataModel: Receive app install, fill status info. size = 1&#13;<br/>02-24 04:42:26.341  2282  3381 I NT-CategoryNetDataSource: batchRequestNetCategory request size = 1}&#13;<br/>02-24 04:42:26.342  2282  2282 D AllAppsStore: setApps: apps.length=150&#13;<br/>02-24 04:42:26.342  2282  2282 D AllAppsStore: notifyUpdate: notifying listeners&#13;<br/>02-24 04:42:26.342  2282  2282 D ActivityAllAppsContainerView: onAppsUpdated; number of apps: 150&#13;<br/>02-24 04:42:26.342  2282  2282 D ActivityAllAppsContainerView: rebindAdapters: force: false&#13;<br/>02-24 04:42:26.342  2282  2282 D ActivityAllAppsContainerView: rebindAdapters: Not needed.&#13;<br/>02-24 04:42:26.343  2282  2282 D StatsLog: LAUNCHER_ALLAPPS_COUNT&#13;<br/>02-24 04:42:26.341  2192  2559 D ImsResolver: maybeAddedImsService, packageName: com.dcac.realestatemanager&#13;<br/>02-24 04:42:26.343  2192  2559 V ImsResolver: searchForImsServices: package=com.dcac.realestatemanager, users=[UserHandle{0}]&#13;<br/>02-24 04:42:26.345  2192  2559 V ImsResolver: searchForImsServices: package=com.dcac.realestatemanager, users=[UserHandle{0}]&#13;<br/>02-24 04:42:26.351  2192  2192 D SatelliteController: packageStateChanged: package:com.dcac.realestatemanager DefaultSmsPackageName:com.google.android.apps.messaging&#13;<br/>02-24 04:42:26.351  2192  2192 V SatelliteController: Neither SMS or SatelliteGateway package&#13;<br/>02-24 04:42:26.353  2282  2282 I NT-NTLauncherAllAppsContainerView: collectAllAppInfo 150 0&#13;<br/>02-24 04:42:26.354  2282  2282 I NT-AlphabeticalAppsList: Default AllApp onAppsUpdated: canShow: true mApps: 150&#13;<br/>02-24 04:42:26.354  2282  2282 D AlphabeticalAppsList: Clearing FastScrollerSections.&#13;<br/>02-24 04:42:26.354  2282  2282 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false&#13;<br/>02-24 04:42:26.354  2282  2282 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.&#13;<br/>02-24 04:42:26.355 19927 19966 I TestRunner: finished: getPoiById_shouldNotReturnDeletedPoi(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">33 ms</div>
+                                    </em><em class="status">passed</em>markPoiAsDeleted_shouldHideFromQueries</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:42:26.357 19927 19966 I TestRunner: started: markPoiAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/>02-24 04:42:26.359  2192  2192 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>02-24 04:42:26.365  2192  2192 D SatelliteAccessController: Current default SMS app:ComponentInfo{com.google.android.apps.messaging/com.google.android.apps.messaging.shared.receiver.SmsDeliverReceiver}&#13;<br/>02-24 04:42:26.365  2192  2192 D SatelliteController: getSelectedSatelliteSubId: subId=-1&#13;<br/>02-24 04:42:26.365  2192  2192 D SatelliteAccessController: supportedMsgApps:com.google.android.apps.messaging&#13;<br/>02-24 04:42:26.380  1627  4248 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER, user: 0&#13;<br/>02-24 04:42:26.390  1006  1006 I BufferQueueProducer: [com.nothing.launcher/com.android.searchlauncher.SearchLauncher#2417](this:0xb40000765822cf58,id:-1,api:0,p:-1,c:1006) queueBuffer: fps=16.76 dur=3280.84 max=2329.30 min=7.95&#13;<br/>02-24 04:42:26.395 19927 19966 I TestRunner: finished: markPoiAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PoiDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>

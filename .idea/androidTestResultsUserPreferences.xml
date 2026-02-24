@@ -75,6 +75,7 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Medium_Phone_API_36.0" value="120" />
+                  <entry key="Nothing A142" value="120" />
                   <entry key="Nothing_Phone_2A" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
@@ -102,6 +103,7 @@
                 <map>
                   <entry key="Duration" value="96" />
                   <entry key="Medium_Phone_API_36.0" value="126" />
+                  <entry key="Nothing A142" value="120" />
                   <entry key="Nothing_Phone_2A" value="120" />
                   <entry key="Tests" value="366" />
                 </map>
@@ -116,6 +118,7 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Medium_Phone_API_36.0" value="120" />
+                  <entry key="Nothing A142" value="120" />
                   <entry key="Nothing_Phone_2A" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
@@ -215,6 +218,19 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="344465338">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Nothing A142" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="469518717">
           <value>
             <AndroidTestResultsTableState>
@@ -235,6 +251,7 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Medium_Phone_API_36.0" value="120" />
+                  <entry key="Nothing A142" value="120" />
                   <entry key="Nothing_Phone_2A" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
@@ -262,7 +279,21 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Medium_Phone_API_36.0" value="120" />
+                  <entry key="Nothing A142" value="120" />
                   <entry key="Nothing_Phone_2A" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1103446028">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Nothing A142" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>
@@ -303,6 +334,19 @@
                   <entry key="Duration" value="90" />
                   <entry key="Medium_Phone_API_36.0" value="120" />
                   <entry key="Nothing_Phone_2A" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1933705135">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Nothing A142" value="120" />
                   <entry key="Tests" value="360" />
                 </map>
               </option>

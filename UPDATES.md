@@ -1624,5 +1624,16 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Strengthens confidence that DAO queries, filters, sorting, and conflict strategies behave identically in both test and runtime environments.
 
 
+### 🔹 **Update #49**
+
+  - 🧪 **Full instrumented DAO test suite revision**
+    - Reviewed and updated all Android instrumented DAO tests to fully reflect the current Room schema, synchronization contract, and soft delete lifecycle.
+    - Ensured each DAO test now explicitly validates isDeleted, isSynced, conflict strategies, and filtering logic against real database behavior.
+
+  - 🗺️ **StaticMapDao instrumented test coverage added**
+    - Implemented a complete instrumented test suite for StaticMapDao, covering single-entity queries, property-based lookups, and include-deleted scenarios.
+    - Validated synchronization flows including UI insert (force unsynced), Firebase insert (force synced), update transitions, and soft delete handling.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

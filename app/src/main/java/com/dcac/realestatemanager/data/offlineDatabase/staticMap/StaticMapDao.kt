@@ -17,10 +17,8 @@ interface StaticMapDao {
     // FOR UI
     @Query("SELECT * FROM static_map WHERE id = :id AND is_deleted = 0")
     fun getStaticMapById(id: String): Flow<StaticMapEntity?>
-
     @Query("SELECT * FROM static_map WHERE property_id = :propertyId AND is_deleted = 0")
     fun getStaticMapByPropertyId(propertyId: String): Flow<StaticMapEntity?>
-
     @Query("SELECT * FROM static_map WHERE is_deleted = 0")
     fun getAllStaticMap(): Flow<List<StaticMapEntity>>
 
@@ -33,7 +31,6 @@ interface StaticMapDao {
         firstStaticMapInsert(staticMap.copy(isSynced = false))
         return staticMap.id
     }
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun firstStaticMapInsert(staticMap: StaticMapEntity)
 

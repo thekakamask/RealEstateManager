@@ -45,19 +45,17 @@ object FakePropertyPoiCrossEntity {
     )
 
     val propertyPoiCross6 = PropertyPoiCrossEntity(
-        universalLocalPropertyId = FakePropertyEntity.property3.id,
+        universalLocalPropertyId = FakePropertyEntity.property1.id,
         universalLocalPoiId = FakePoiEntity.poi3.id,
         firestoreDocumentId = "firestore-cross-6",
         isDeleted = true,
         updatedAt = DEFAULT_TIMESTAMP + 6
     )
 
-    val allCrossRefsNotDeleted = listOf(
-        propertyPoiCross1, propertyPoiCross2, propertyPoiCross3, propertyPoiCross4
-    )
-
     val allCrossRefs = listOf(
         propertyPoiCross1, propertyPoiCross2, propertyPoiCross3,
         propertyPoiCross4, propertyPoiCross5, propertyPoiCross6
     )
+
+    val allCrossRefsNotDeleted = allCrossRefs.filter { !it.isDeleted }
 }

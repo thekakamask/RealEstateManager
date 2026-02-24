@@ -43,7 +43,5 @@ object FakePhotoEntity {
         photo1, photo2, photo3
     )
 
-    val photoEntityListNotDeleted = listOf(
-        photo1, photo2
-    )
+    val photoEntityListNotDeleted = photoEntityList.filter { !it.isDeleted }
 }

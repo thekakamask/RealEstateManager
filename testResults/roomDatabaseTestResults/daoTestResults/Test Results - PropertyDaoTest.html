@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">720 ms</div>
+                <div class="time" xmlns="">4.21 s</div>
                 <h1>
-                    PropertyDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">18 total, </span><span class="passed">18 passed</span></strong>
+                    PropertyDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">46 total, </span><span class="passed">46 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,186 +593,466 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">720 ms</div>
+                                <div class="time">4.21 s</div>
                             </em>com.dcac.realestatemanager.daoTest.PropertyDaoTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">163 ms</div>
-                                    </em><em class="status">passed</em>searchProperties_shouldFilterCorrectly</span>
+                                        <div class="time">64 ms</div>
+                                    </em><em class="status">passed</em>getPropertyByUserIdDate_shouldNotReturnDeletedProperty</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.480  5321  5346 I TestRunner: started: searchProperties_shouldFilterCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.663  5321  5346 I TestRunner: finished: searchProperties_shouldFilterCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:39.815 21286 21316 I TestRunner: started: getPropertyByUserIdDate_shouldNotReturnDeletedProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:39.828 21286 21369 E SyncWorker: &#128293; SyncWorker STARTED&#13;<br/>02-24 04:45:39.829 11082 19711 I Finsky  : [253] Package com.google.android.gms is verified.&#13;<br/>02-24 04:45:39.830 21286 21369 E UploadManager: Uploading properties...&#13;<br/>02-24 04:45:39.833 12480 21173 W FA-SVC  : Service response is missing Install Referrer install timestamp&#13;<br/>02-24 04:45:39.836 11082 11082 I Finsky  : [2] Memory trim requested to level 40&#13;<br/>02-24 04:45:39.837 11082 11082 I Finsky  : [2] Flushing in-memory image cache&#13;<br/>02-24 04:45:39.841  1627  1758 D ConnectivityService: requestNetwork for uid/pid:10476/21286 activeRequest: null callbackRequest: 1754 [NetworkRequest [ REQUEST id=1755, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST|NC&#13;<br/>02-24 04:45:39.845  1627  1854 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=1755, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.845  1627  1854 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1755, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.846  1627  1854 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1755, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.848  1627  1854 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1755, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.849  1627  1861 D ConnectivityService: NetReassign [1755 : null &rarr; 104] [c 0] [a 2] [i 5]&#13;<br/>02-24 04:45:39.849   461   461 D lowmemorykiller: medium pressure event polling check&#13;<br/>02-24 04:45:39.849   461   461 I lowmemorykiller: nr_free_pages: 74388 nr_inactive_file: 572401 nr_active_file: 1006818 workingset_refault: 4111388 pgscan_kswapd: 6091121 pgscan_direct: 327184 pgscan_direct_throttle: 0 init_pgscan_direct: 321296 init_pgscan_kswapd: 6091121 base_file_lru: 1583954 init_ws_refault: 4111267 free_swap: 917719 total_swap: 1048575 swap_free_percentage: 87%&#13;<br/>02-24 04:45:39.849   461   461 D lowmemorykiller: get_lowest_watermark: file:1006818, inactive file:572401&#13;<br/>02-24 04:45:39.887 21286 21316 I TestRunner: finished: getPropertyByUserIdDate_shouldNotReturnDeletedProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">35 ms</div>
-                                    </em><em class="status">passed</em>getPropertyByIdIncludeDeleted_shouldReturnCorrectProperty</span>
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>insertPropertyInsertFromUI_shouldInsertWithIsSyncedFalse</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.670  5321  5346 I TestRunner: started: getPropertyByIdIncludeDeleted_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.727  5321  5346 I TestRunner: finished: getPropertyByIdIncludeDeleted_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:39.891 21286 21316 I TestRunner: started: insertPropertyInsertFromUI_shouldInsertWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI TO SYNC COUNT = 15&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=a6577e32-e09f-423e-a321-97c49ca7d16b, firestoreDocumentId=null, name=Chez Meunier, type=School, address=55 rue Caulaincourt, 75018 Paris, France, latitude=48.8895787, longitude=2.3345851, isSynced=false, isDeleted=false, updatedAt=1769015108432)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=80249490-070b-4dc0-ba70-eff6c08b2c33, firestoreDocumentId=null, name=Chez Meunier, type=Bakery, address=153 boulevard Malesherbes, 75017 Paris, France, latitude=48.8849722, longitude=2.3071481, isSynced=false, isDeleted=false, updatedAt=1769520330243)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=0abbdc7e-94c3-4ffe-b682-25e07795c7b8, firestoreDocumentId=null, name=Carnot, type=School, address=145 boulevard Malesherbes, 75017 Paris, France, latitude=48.8839627, longitude=2.3076632999999998, isSynced=false, isDeleted=false, updatedAt=1769520330386)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=7a7d9815-d028-447f-a05e-f426caf89b0a, firestoreDocumentId=null, name=Franprix, type=Grocery, address=48 rue Jouffroy d'Abbans, 75017 Paris, France, latitude=48.8856916, longitude=2.3076266, isSynced=false, isDeleted=false, updatedAt=1769520330651)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=245cbf51-f172-4ad8-b652-a68f7aeaf229, firestoreDocumentId=null, name=Berbeche 17eme, type=Butcher, address=39 rue Jouffroy d'Abbans, 75017 Paris, France, latitude=48.8854437, longitude=2.3083625999999997, isSynced=false, isDeleted=false, updatedAt=1769520330798)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=06cbb69a-6f20-46bf-bbb6-26c11b27774d, firestoreDocumentId=null, name=Maison Pillet, type=Restaurant, address=1 rue Ampere, 75017 Paris, France, latitude=48.885093, longitude=2.306209, isSynced=false, isDeleted=false, updatedAt=1769520330960)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=403558f0-c70d-4db5-bb31-1b81a3e24c91, firestoreDocumentId=null, name=Saint-Jean de Montmartre, type=School, address=31 rue Caulaincourt, 75018 Paris, France, latitude=48.8882617, longitude=2.3335109, isSynced=false, isDeleted=false, updatedAt=1769521123747)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=67b18614-1d1f-4eda-b8b5-d6677a18d2ab, firestoreDocumentId=null, name=Franprix, type=Grocery, address=44 rue Caulaincourt, 75018 Paris, France, latitude=48.8886414, longitude=2.3347034, isSynced=false, isDeleted=false, updatedAt=1769521123861)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=2134ffae-29cf-4673-bedd-9850d3f7a9e9, firestoreDocumentId=null, name=Boris Boulangerie, type=Bakery, address=48 rue Caulaincourt, 75018 Paris, France, latitude=48.8889912, longitude=2.334834, isSynced=false, isDeleted=false, updatedAt=1769521123983)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=a31e14fc-c979-438d-9ba2-1b72c357ebbd, firestoreDocumentId=null, name=Bos Family Butchers, type=Butcher, address=61 rue Caulaincourt, 75018 Paris, France, latitude=48.8896379, longitude=2.3354008, isSynced=false, isDeleted=false, updatedAt=1769521124097)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=08268b52-13bc-457c-bcfe-570b26f25e9e, firestoreDocumentId=null, name=Tonton de la Butte, type=Restaurant, address=62 rue Caulaincourt, 75018 Paris, France, latitude=48.8893867, longitude=2.3363696, isSynced=false, isDeleted=false, updatedAt=1769521124257)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=8d2ade05-2599-4b18-a0b1-83bcdbf2dc54, firestoreDocumentId=null, name=Carnot, type=School, address=145 boulevard Malesherbes, 75017 Paris, France, latitude=48.8839627, longitude=2.3076632999999998, isSynced=false, isDeleted=false, updatedAt=1769521525086)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=d72d277b-61af-49df-b7aa-bc40f4185d38, firestoreDocumentId=null, name=G20, type=Grocery, address=120 Boulevard Malesherbes, 75017 Paris, France, latitude=48.8844116, longitude=2.3086875, isSynced=false, isDeleted=false, updatedAt=1769521525210)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=d3ab9138-39b8-4bef-b07f-bb57cd6ad98a, firestoreDocumentId=null, name=Boulangerie tatata, type=Bakery, address=115 boulevard Malesherbes, 75017 Paris, France, latitude=48.8804595, longitude=2.3125915, isSynced=false, isDeleted=false, updatedAt=1769521525393)&#13;<br/>02-24 04:45:39.909 21286 21369 E SYNC_POI: POI ENTITY = PoiEntity(id=1e8c14f9-f37b-4034-ac58-f8a7c4cc253b, firestoreDocumentId=null, name=Butchers Aja le top, type=Butcher, address=3 rue Jacques Bingen, 75017 Paris, France, latitude=48.8832665, longitude=2.3109823, isSynced=false, isDeleted=false, updatedAt=1769521525508)&#13;<br/>02-24 04:45:39.930 21286 21316 I TestRunner: finished: insertPropertyInsertFromUI_shouldInsertWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">34 ms</div>
-                                    </em><em class="status">passed</em>deleteProperty_shouldRemovePropertyFromDatabase</span>
+                                        <div class="time">86 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByAlphabetic_withoutFilters_shouldReturnUserPropertiesSortedByTitle</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.731  5321  5346 I TestRunner: started: deleteProperty_shouldRemovePropertyFromDatabase(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.767  5321  5346 I TestRunner: finished: deleteProperty_shouldRemovePropertyFromDatabase(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:39.931 21286 21316 I TestRunner: started: searchUserPropertiesByAlphabetic_withoutFilters_shouldReturnUserPropertiesSortedByTitle(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:39.932 21286 21369 E SYNC_POI_UPLOAD: Uploading POI localId=a6577e32-e09f-423e-a321-97c49ca7d16b firestoreId=null finalId=saVTNrOmLsjQtutyxylc&#13;<br/>02-24 04:45:39.934 21286 21369 E DEBUG_AUTH: AUTH UID = 'cbUoEZuty5S2oTT8KOt8cc2B27h2'&#13;<br/>02-24 04:45:39.935 21286 21369 E DEBUG_OWNER: OWNER UID = 'cbUoEZuty5S2oTT8KOt8cc2B27h2'&#13;<br/>02-24 04:45:39.935 21286 21369 E DEBUG_POI_UPLOAD: POI ONLINE = PoiOnlineEntity(ownerUid=cbUoEZuty5S2oTT8KOt8cc2B27h2, universalLocalId=a6577e32-e09f-423e-a321-97c49ca7d16b, name=Chez Meunier, type=School, address=55 rue Caulaincourt, 75018 Paris, France, latitude=48.8895787, longitude=2.3345851, updatedAt=1769015108432, isDeleted=false)&#13;<br/>02-24 04:45:39.935 21286 21369 E DEBUG_FIRESTORE_DATA: {ownerUid=cbUoEZuty5S2oTT8KOt8cc2B27h2, universalLocalId=a6577e32-e09f-423e-a321-97c49ca7d16b, name=Chez Meunier, type=School, address=55 rue Caulaincourt, 75018 Paris, France, latitude=48.8895787, longitude=2.3345851, updatedAt=1769015108432}&#13;<br/>02-24 04:45:39.939 21286 21307 W DynamiteModule: Local module descriptor class for com.google.android.gms.providerinstaller.dynamite not found.&#13;<br/>02-24 04:45:39.940  2285  7216 W ProviderHelper: Unknown dynamite feature providerinstaller.dynamite&#13;<br/>02-24 04:45:39.942 21286 21307 I DynamiteModule: Considering local module com.google.android.gms.providerinstaller.dynamite:0 and remote module com.google.android.gms.providerinstaller.dynamite:0&#13;<br/>02-24 04:45:39.943 21286 21307 W ProviderInstaller: Failed to load providerinstaller module: No acceptable module com.google.android.gms.providerinstaller.dynamite found. Local version is 0 and remote version is 0.&#13;<br/>02-24 04:45:39.945 21286 21307 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/org.apache.http.legacy.jar&#13;<br/>02-24 04:45:39.945 21286 21307 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.location.provider.jar&#13;<br/>02-24 04:45:39.945 21286 21307 D ApplicationLoaders: Returning zygote-cached class loader: /system/framework/com.android.media.remotedisplay.jar&#13;<br/>02-24 04:45:39.945 21286 21307 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar&#13;<br/>02-24 04:45:39.945 21286 21307 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar&#13;<br/>02-24 04:45:39.949   461   461 D lowmemorykiller: medium pressure event polling check&#13;<br/>02-24 04:45:39.950   461   461 I lowmemorykiller: nr_free_pages: 73131 nr_inactive_file: 572401 nr_active_file: 1006818 workingset_refault: 4111388 pgscan_kswapd: 6091121 pgscan_direct: 327184 pgscan_direct_throttle: 0 init_pgscan_direct: 321296 init_pgscan_kswapd: 6091121 base_file_lru: 1583954 init_ws_refault: 4111267 free_swap: 917719 total_swap: 1048575 swap_free_percentage: 87%&#13;<br/>02-24 04:45:39.950 21286 21307 W alestatemanager: Loading /data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/oat/arm64/base.odex non-executable as it requires an image which we failed to load&#13;<br/>02-24 04:45:39.954 21286 21307 D nativeloader: Configuring clns-13 for other apk /data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/lib/arm64:/data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms&#13;<br/>02-24 04:45:39.956 21286 21307 W ProviderInstaller: Failed to report request stats: com.google.android.gms.common.security.ProviderInstallerImpl.reportRequestStats [class android.content.Context, long, long]&#13;<br/>02-24 04:45:39.962  1627  3469 D ConnectivityService: requestNetwork for uid/pid:10476/21286 activeRequest: null callbackRequest: 1756 [NetworkRequest [ REQUEST id=1757, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST&#13;<br/>02-24 04:45:39.966  1627  1854 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=1757, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.966  1627  1854 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1757, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.967  1627  1854 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1757, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.967  1627  1861 D ConnectivityService: NetReassign [1757 : null &rarr; 104] [c 1] [a 1] [i 2]&#13;<br/>02-24 04:45:39.967  1627  1854 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1757, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:39.973 21286 21352 D FirebaseAuth: Notifying id token listeners about a sign-out event.&#13;<br/>02-24 04:45:39.973 21286 21352 D FirebaseAuth: Notifying auth state listeners about a sign-out event.&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: Failed to get service from broker.&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'.&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Parcel.createExceptionOrNull(Parcel.java:3339)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Parcel.createException(Parcel.java:3323)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Parcel.readException(Parcel.java:3306)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Parcel.readException(Parcel.java:3248)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at beut.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):36)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at besu.z(:com.google.android.gms@260534035@26.05.34 (260400-869443408):143)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at bdza.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):42)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Handler.handleCallback(Handler.java:995)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Handler.dispatchMessage(Handler.java:103)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at ctdu.mv(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at ctdu.dispatchMessage(:com.google.android.gms@260534035@26.05.34 (260400-869443408):5)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Looper.loopOnce(Looper.java:283)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.Looper.loop(Looper.java:392)&#13;<br/>02-24 04:45:39.985 21286 21383 E GoogleApiManager: 	at android.os.HandlerThread.run(HandlerThread.java:94)&#13;<br/>02-24 04:45:39.986 21286 21383 W GoogleApiManager: Not showing notification since connectionResult is not user-facing: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null, clientMethodKey=null}&#13;<br/>02-24 04:45:39.989 21286 21307 D nativeloader: Load /data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk!/lib/arm64-v8a/libconscrypt_gmscore_jni.so using class loader ns clns-13 (caller=/data/app/~~pUnwPsCH3l3xSvNb-lETkA==/com.google.android.gms-oT46clufwyHoRi5QDijsaQ==/base.apk): ok&#13;<br/>02-24 04:45:39.990 21286 21307 V NativeCrypto: Registering com/google/android/gms/org/conscrypt/NativeCrypto's 334 native methods...&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: Failed to register com.google.android.gms.providerinstaller#com.dcac.realestatemanager&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: gach: 17: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null, clientMethodKey=null}&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gacj.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):13)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gykp.d(:com.google.android.gms@260534035@26.05.34 (260400-869443408):3)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gykr.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):130)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gymy.execute(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gykz.f(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gykz.m(:com.google.android.gms@260534035@26.05.34 (260400-869443408):99)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gykz.r(:com.google.android.gms@260534035@26.05.34 (260400-869443408):17)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at fsqk.hy(:com.google.android.gms@260534035@26.05.34 (260400-869443408):35)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at ffth.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):12)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at gymy.execute(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at ffti.b(:com.google.android.gms@260534035@26.05.34 (260400-869443408):18)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at fftx.b(:com.google.android.gms@260534035@26.05.34 (260400-869443408):34)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at fftz.d(:com.google.android.gms@260534035@26.05.34 (260400-869443408):25)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdwj.c(:com.google.android.gms@260534035@26.05.34 (260400-869443408):9)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdyy.q(:com.google.android.gms@260534035@26.05.34 (260400-869443408):48)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdyy.d(:com.google.android.gms@260534035@26.05.34 (260400-869443408):10)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdyy.g(:com.google.android.gms@260534035@26.05.34 (260400-869443408):191)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdyy.onConnectionFailed(:com.google.android.gms@260534035@26.05.34 (260400-869443408):2)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdza.run(:com.google.android.gms@260534035@26.05.34 (260400-869443408):70)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at android.os.Handler.handleCallback(Handler.java:995)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at android.os.Handler.dispatchMessage(Handler.java:103)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at ctdu.mv(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at ctdu.dispatchMessage(:com.google.android.gms@260534035@26.05.34 (260400-869443408):5)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at android.os.Looper.loopOnce(Looper.java:283)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at android.os.Looper.loop(Looper.java:392)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at android.os.HandlerThread.run(HandlerThread.java:94)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: Caused by: bduq: 17: API: Phenotype.API is not available on this device. Connection failed with: ConnectionResult{statusCode=DEVELOPER_ERROR, resolution=null, message=null, clientMethodKey=null}&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at besg.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):15)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdwm.a(:com.google.android.gms@260534035@26.05.34 (260400-869443408):1)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	at bdwj.c(:com.google.android.gms@260534035@26.05.34 (260400-869443408):5)&#13;<br/>02-24 04:45:39.992 21286 21381 W FlagRegistrar: 	... 12 more&#13;<br/>02-24 04:45:39.996 21286 21307 I alestatemanager: hiddenapi: Accessing hidden method Ljava/security/spec/ECParameterSpec;-&gt;getCurveName()Ljava/lang/String; (runtime_flags=0, domain=core-platform, api=unsupported) from Lcom/google/android/gms/org/conscrypt/Platform; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:45:40.003 21286 21307 I ProviderInstaller: Installed default security provider GmsCore_OpenSSL&#13;<br/>02-24 04:45:40.006 21286 21316 I TestRunner: finished: searchUserPropertiesByAlphabetic_withoutFilters_shouldReturnUserPropertiesSortedByTitle(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">35 ms</div>
-                                    </em><em class="status">passed</em>markPropertyAsSold_shouldUpdateFields</span>
+                                        <div class="time">59 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByAlphabetic_shouldFilterByMultipleCriteria</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.770  5321  5346 I TestRunner: started: markPropertyAsSold_shouldUpdateFields(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.799  5321  5346 I TestRunner: finished: markPropertyAsSold_shouldUpdateFields(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.008 21286 21316 I TestRunner: started: searchPropertiesByAlphabetic_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.026   983  1029 I libPerfCtl: xgfGetFPS pid:2282 fps:-1&#13;<br/>02-24 04:45:40.026   983  1029 I libPerfCtl: xgfGetFPS pid:7988 fps:-1&#13;<br/>02-24 04:45:40.033  1627  3469 D ConnectivityService: requestNetwork for uid/pid:10476/21286 activeRequest: null callbackRequest: 1758 [NetworkRequest [ REQUEST id=1759, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|BLK&#13;<br/>02-24 04:45:40.037  1627  1854 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=1759, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:40.037  1627  1854 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1759, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:40.037  1627  1854 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1759, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:40.037  1627  1854 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=1759, [ Capabilities: INTERNET&amp;NOT_RESTRICTED&amp;TRUSTED&amp;NOT_VCN_MANAGED&amp;NOT_BANDWIDTH_CONSTRAINED Uid: 10476 RequestorUid: 10476 RequestorPkg: com.dcac.realestatemanager UnderlyingNetworks: Null] ]&#13;<br/>02-24 04:45:40.038  1627  1861 D ConnectivityService: NetReassign [1759 : null &rarr; 104] [c 1] [a 1] [i 2]&#13;<br/>02-24 04:45:40.050   461   461 D lowmemorykiller: medium pressure event polling check&#13;<br/>02-24 04:45:40.050   461   461 I lowmemorykiller: nr_free_pages: 71178 nr_inactive_file: 572401 nr_active_file: 1006818 workingset_refault: 4111388 pgscan_kswapd: 6091121 pgscan_direct: 327184 pgscan_direct_throttle: 0 init_pgscan_direct: 321296 init_pgscan_kswapd: 6091121 base_file_lru: 1583954 init_ws_refault: 4111267 free_swap: 917719 total_swap: 1048575 swap_free_percentage: 87%&#13;<br/>02-24 04:45:40.074 21286 21393 I alestatemanager: hiddenapi: Accessing hidden field Ljava/net/Socket;-&gt;impl:Ljava/net/SocketImpl; (runtime_flags=0, domain=core-platform, api=unsupported) from Lcom/google/android/gms/org/conscrypt/Platform; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:45:40.074 21286 21316 I TestRunner: finished: searchPropertiesByAlphabetic_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">10 ms</div>
-                                    </em><em class="status">passed</em>getPropertyByUserID_shouldReturnCorrectProperty</span>
+                                        <div class="time">56 ms</div>
+                                    </em><em class="status">passed</em>uploadUnSyncedProperties_shouldReturnOnlyPropertiesWithIsSyncedFalse</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.802  5321  5346 I TestRunner: started: getPropertyByUserID_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.833  5321  5346 I TestRunner: finished: getPropertyByUserID_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.076 21286 21316 I TestRunner: started: uploadUnSyncedProperties_shouldReturnOnlyPropertiesWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.077  1006  1412 D Scheduler: MtkOverrideDuration: update vsync 60&#13;<br/>02-24 04:45:40.077  1006  1412 E SurfaceFlinger: MtkDuration override mode is disabled&#13;<br/>02-24 04:45:40.077  1006  1412 D Scheduler: MtkOverrideDuration: reset override duration&#13;<br/>02-24 04:45:40.077  1006  1412 I PowerHalWrapper: updateFps(): 60&#13;<br/>02-24 04:45:40.077   964  1383 I hwcomposer: [DRMDEV] (0:60) failed to waitNextVsync: -1&#13;<br/>02-24 04:45:40.078   964  1383 I hwcomposer: [DRMDEV] (0:60) failed to waitNextVsync: -1&#13;<br/>02-24 04:45:40.080   964   964 I hwcomposer: [HWCDisplay] (0) setActiveConfigWithConstraints config:0&#13;<br/>02-24 04:45:40.080   964   964 I hwcomposer: [HWCDisplay] setActiveConfigWithConstraints(), now 10441762790622, diff 121539, estimated_applied_time 8333333 queued_size:0&#13;<br/>02-24 04:45:40.081   964   964 I hwcomposer: [HWCDisplay] [Display_0 (type:1, mode:2)] fps:21.280724,dur:3289.36,max:2628.57,min:6.39&#13;<br/>02-24 04:45:40.087   964  1383 I hwcomposer: [DRMDEV] (0:60) failed to waitNextVsync: -1&#13;<br/>02-24 04:45:40.091  1006  1006 I PowerHalWrapper: updateFps(): 60&#13;<br/>02-24 04:45:40.091  1006  1006 D SurfaceFlinger: finalizeDisplayModeChange: display size = 1&#13;<br/>02-24 04:45:40.091  1006  1006 I PowerHalWrapper: mEnableMultiDisplayMode enable=0 fps=60&#13;<br/>02-24 04:45:40.091  1006  1006 I mtkpower_client: PowerHal_Wrap_EnableMultiDisplayMode, enable:0 fps:60 CurMultiDisplayMode:-1&#13;<br/>02-24 04:45:40.092  1006  1006 I PowerHalWrapper: updateFps(): 60&#13;<br/>02-24 04:45:40.099 21286 21393 I alestatemanager: hiddenapi: Accessing hidden method Ljava/security/spec/ECParameterSpec;-&gt;setCurveName(Ljava/lang/String;)V (runtime_flags=0, domain=core-platform, api=unsupported) from Lcom/google/android/gms/org/conscrypt/Platform; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:45:40.101   964  1421 I hwcomposer: [HWCDisplay] updateAppliedConfigState: applied config complete[idx:10441771123955, config:0]&#13;<br/>02-24 04:45:40.126 21286 21316 I TestRunner: finished: uploadUnSyncedProperties_shouldReturnOnlyPropertiesWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">33 ms</div>
-                                    </em><em class="status">passed</em>insertProperty_shouldInsertCorrectly</span>
+                                    </em><em class="status">passed</em>searchUserPropertiesByDate_shouldFilterByMultipleCriteria</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.836  5321  5346 I TestRunner: started: insertProperty_shouldInsertCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.872  5321  5346 I TestRunner: finished: insertProperty_shouldInsertCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.128 21286 21316 I TestRunner: started: searchUserPropertiesByDate_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.150   461   461 D lowmemorykiller: medium pressure event polling check&#13;<br/>02-24 04:45:40.151   461   461 I lowmemorykiller: nr_free_pages: 70366 nr_inactive_file: 572542 nr_active_file: 1006829 workingset_refault: 4111463 pgscan_kswapd: 6091121 pgscan_direct: 327184 pgscan_direct_throttle: 0 init_pgscan_direct: 321296 init_pgscan_kswapd: 6091121 base_file_lru: 1583954 init_ws_refault: 4111267 free_swap: 917719 total_swap: 1048575 swap_free_percentage: 87%&#13;<br/>02-24 04:45:40.151   461   461 D lowmemorykiller: get_lowest_watermark: file:1006829, inactive file:572542&#13;<br/>02-24 04:45:40.165 21286 21316 I TestRunner: finished: searchUserPropertiesByDate_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">57 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertiesByDate_shouldReturnSorted</span>
+                                    </em><em class="status">passed</em>searchPropertiesByDate_shouldFilterByIsSold</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.875  5321  5346 I TestRunner: started: getAllPropertiesByDate_shouldReturnSorted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.911  5321  5346 I TestRunner: finished: getAllPropertiesByDate_shouldReturnSorted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.167 21286 21316 I TestRunner: started: searchPropertiesByDate_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.221 21286 21316 I TestRunner: finished: searchPropertiesByDate_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">9 ms</div>
-                                    </em><em class="status">passed</em>updateProperty_shouldUpdateCorrectly</span>
+                                        <div class="time">57 ms</div>
+                                    </em><em class="status">passed</em>getPropertyByIdIncludeDeleted_shouldReturnPropertyIncludeDeleted</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.914  5321  5346 I TestRunner: started: updateProperty_shouldUpdateCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.943  5321  5346 I TestRunner: finished: updateProperty_shouldUpdateCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.224 21286 21316 I TestRunner: started: getPropertyByIdIncludeDeleted_shouldReturnPropertyIncludeDeleted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.252   461   461 D lowmemorykiller: medium pressure event polling check&#13;<br/>02-24 04:45:40.253   461   461 I lowmemorykiller: nr_free_pages: 69925 nr_inactive_file: 572542 nr_active_file: 1006829 workingset_refault: 4111463 pgscan_kswapd: 6091121 pgscan_direct: 327184 pgscan_direct_throttle: 0 init_pgscan_direct: 321296 init_pgscan_kswapd: 6091121 base_file_lru: 1583954 init_ws_refault: 4111267 free_swap: 917719 total_swap: 1048575 swap_free_percentage: 87%&#13;<br/>02-24 04:45:40.290 21286 21316 I TestRunner: finished: getPropertyByIdIncludeDeleted_shouldReturnPropertyIncludeDeleted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">73 ms</div>
-                                    </em><em class="status">passed</em>clearAllDeleted_shouldRemoveOnlySoftDeletedProperties</span>
+                                        <div class="time">64 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByDate_shouldFilterByMinSurface</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.945  5321  5346 I TestRunner: started: clearAllDeleted_shouldRemoveOnlySoftDeletedProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:47.993  5321  5346 I TestRunner: finished: clearAllDeleted_shouldRemoveOnlySoftDeletedProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.295 21286 21316 I TestRunner: started: searchUserPropertiesByDate_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.353   461   461 D lowmemorykiller: medium pressure event polling check&#13;<br/>02-24 04:45:40.353   461   461 I lowmemorykiller: nr_free_pages: 69799 nr_inactive_file: 572546 nr_active_file: 1006829 workingset_refault: 4111463 pgscan_kswapd: 6091121 pgscan_direct: 327184 pgscan_direct_throttle: 0 init_pgscan_direct: 321296 init_pgscan_kswapd: 6091121 base_file_lru: 1583954 init_ws_refault: 4111267 free_swap: 917719 total_swap: 1048575 swap_free_percentage: 87%&#13;<br/>02-24 04:45:40.364 21286 21316 I TestRunner: finished: searchUserPropertiesByDate_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">5 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedProperties_shouldReturnOnlyUnSyncedProperties</span>
+                                        <div class="time">81 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByAlphabetic_shouldFilterByIsSold</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:47.995  5321  5346 I TestRunner: started: getUnSyncedProperties_shouldReturnOnlyUnSyncedProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.032  5321  5346 I TestRunner: finished: getUnSyncedProperties_shouldReturnOnlyUnSyncedProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.367 21286 21316 I TestRunner: started: searchUserPropertiesByAlphabetic_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.449 21286 21316 I TestRunner: finished: searchUserPropertiesByAlphabetic_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">30 ms</div>
-                                    </em><em class="status">passed</em>savePropertyFromFirebase_shouldInsertPropertyCorrectly</span>
+                                        <div class="time">56 ms</div>
+                                    </em><em class="status">passed</em>insertPropertyFromFirebase_shouldInsertWithIsSyncedTrue</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:48.035  5321  5346 I TestRunner: started: savePropertyFromFirebase_shouldInsertPropertyCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.067  5321  5346 I TestRunner: finished: savePropertyFromFirebase_shouldInsertPropertyCorrectly(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:40.452 21286 21316 I TestRunner: started: insertPropertyFromFirebase_shouldInsertWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.454   461   461 D lowmemorykiller: medium pressure event polling check&#13;<br/>02-24 04:45:40.454   461   461 I lowmemorykiller: nr_free_pages: 69673 nr_inactive_file: 572551 nr_active_file: 1006829 workingset_refault: 4111463 pgscan_kswapd: 6091121 pgscan_direct: 327184 pgscan_direct_throttle: 0 init_pgscan_direct: 321296 init_pgscan_kswapd: 6091121 base_file_lru: 1583954 init_ws_refault: 4111267 free_swap: 917719 total_swap: 1048575 swap_free_percentage: 87%&#13;<br/>02-24 04:45:40.484 12480 21173 W FA-SVC  : Storing bundle outside of the max uploading time span. appId, now, timestamp: com.dcac.realestatemanager, 1771904740483, 1768496477993&#13;<br/>02-24 04:45:40.489 12480 21173 W FA-SVC  : Storing bundle outside of the max uploading time span. appId, now, timestamp: com.dcac.realestatemanager, 1771904740488, 1769715058789&#13;<br/>02-24 04:45:40.510 21286 21316 I TestRunner: finished: insertPropertyFromFirebase_shouldInsertWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">54 ms</div>
+                                        <div class="time">61 ms</div>
+                                    </em><em class="status">passed</em>updatePropertyFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:40.514 21286 21316 I TestRunner: started: updatePropertyFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.583 21286 21316 I TestRunner: finished: updatePropertyFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">58 ms</div>
+                                    </em><em class="status">passed</em>insertPropertiesFromUI_shouldInsertAllWithIsSyncedFalse</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:40.589 21286 21316 I TestRunner: started: insertPropertiesFromUI_shouldInsertAllWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.629  2192  2192 D CarrierSvcBindHelper: onPackageModified: com.dcac.realestatemanager&#13;<br/>02-24 04:45:40.629  2192  2564 I SatelliteAppTracker: onPackageModified : com.dcac.realestatemanager&#13;<br/>02-24 04:45:40.632  1627  1789 I RoleService: Granting default roles...&#13;<br/>02-24 04:45:40.632  1985  1985 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0&#13;<br/>02-24 04:45:40.635  2192  2192 D CarrierSvcBindHelper: No carrier app for: 0&#13;<br/>02-24 04:45:40.635  2159  2159 I RegisteredComponentCache: generateComponentsList: New Components =&gt;&#13;<br/>02-24 04:45:40.635  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{601944c com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef,&#13;<br/>02-24 04:45:40.635  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{8a37c95 com.paypal.android.p2pmobile/com.paypal.android.pdsdk.ui.receive.PayDropReceiveActivity$EntryPoint m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.IsoDep,&#13;<br/>02-24 04:45:40.636  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{dcfa1aa com.paypal.android.p2pmobile/com.paypal.android.pdsdk.ui.send.PayDropSendingStatusActivity$EntryPoint m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.IsoDep,&#13;<br/>02-24 04:45:40.636  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{825d19b com.paypal.android.p2pmobile/com.paypal.android.pdsdk.ui.send.enteramount.PayDropEnterAmountActivity$EntryPoint m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.IsoDep,&#13;<br/>02-24 04:45:40.636  2159  2159 I RegisteredComponentCache: generateComponentsList: Removed Components =&gt;&#13;<br/>02-24 04:45:40.636  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{ae94025 com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef,&#13;<br/>02-24 04:45:40.636  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{879c5fa com.paypal.android.p2pmobile/com.paypal.android.pdsdk.ui.receive.PayDropReceiveActivity$EntryPoint m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.IsoDep,&#13;<br/>02-24 04:45:40.636  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{f87a7ab com.paypal.android.p2pmobile/com.paypal.android.pdsdk.ui.send.PayDropSendingStatusActivity$EntryPoint m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.IsoDep,&#13;<br/>02-24 04:45:40.636  2159  2159 I RegisteredComponentCache: ComponentInfo: ResolveInfo{b1aae08 com.paypal.android.p2pmobile/com.paypal.android.pdsdk.ui.send.enteramount.PayDropEnterAmountActivity$EntryPoint m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.IsoDep,&#13;<br/>02-24 04:45:40.636  2192  2192 D CarrierSvcBindHelper: No carrier app for: 1&#13;<br/>02-24 04:45:40.637  1627  4248 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION, user: 0&#13;<br/>02-24 04:45:40.640 12889 18337 I PermissionControllerServiceImpl: Updating user sensitive for uid 10476&#13;<br/>02-24 04:45:40.641  1627  4248 W SignedPackage: Package doesn't have required signing certificate: com.google.android.apps.work.clouddpc&#13;<br/>02-24 04:45:40.646 12889 18337 I PermissionControllerServiceImpl: Updating user sensitive for uid 10476&#13;<br/>02-24 04:45:40.647 21286 21316 I TestRunner: finished: insertPropertiesFromUI_shouldInsertAllWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">37 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByDate_shouldNotReturnOtherUsersProperties</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:40.650 21286 21316 I TestRunner: started: searchUserPropertiesByDate_shouldNotReturnOtherUsersProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.650  2192  2192 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>02-24 04:45:40.654  2282  2359 I othing.launcher: AssetManager2(0xb400006dce924eb8) locale list changing from [] to [fr-FR]&#13;<br/>02-24 04:45:40.663  2282  2359 I othing.launcher: AssetManager2(0xb400006dce8a2738) locale list changing from [] to [en]&#13;<br/>02-24 04:45:40.663  2192  2559 D ImsResolver: maybeAddedImsService, packageName: com.dcac.realestatemanager&#13;<br/>02-24 04:45:40.663  2192  2559 V ImsResolver: searchForImsServices: package=com.dcac.realestatemanager, users=[UserHandle{0}]&#13;<br/>02-24 04:45:40.664  2192  2559 V ImsResolver: searchForImsServices: package=com.dcac.realestatemanager, users=[UserHandle{0}]&#13;<br/>02-24 04:45:40.668  2192  2192 D SatelliteController: packageStateChanged: package:com.dcac.realestatemanager DefaultSmsPackageName:com.google.android.apps.messaging&#13;<br/>02-24 04:45:40.668  2192  2192 V SatelliteController: Neither SMS or SatelliteGateway package&#13;<br/>02-24 04:45:40.672  1627  4248 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER, user: 0&#13;<br/>02-24 04:45:40.672  2282  2359 W HWUI    : Image decoding logging dropped!&#13;<br/>02-24 04:45:40.673  2192  2192 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>02-24 04:45:40.674  2282  2359 I NT-AllAppDataModel: Receive app install, fill status info. size = 1&#13;<br/>02-24 04:45:40.674  2282  2374 I NT-CategoryNetDataSource: batchRequestNetCategory request size = 1}&#13;<br/>02-24 04:45:40.676  2282  2282 D AllAppsStore: setApps: apps.length=150&#13;<br/>02-24 04:45:40.676  2282  2282 D AllAppsStore: notifyUpdate: notifying listeners&#13;<br/>02-24 04:45:40.676  2282  2282 D ActivityAllAppsContainerView: onAppsUpdated; number of apps: 150&#13;<br/>02-24 04:45:40.676  2282  2282 D ActivityAllAppsContainerView: rebindAdapters: force: false&#13;<br/>02-24 04:45:40.676  2282  2282 D ActivityAllAppsContainerView: rebindAdapters: Not needed.&#13;<br/>02-24 04:45:40.676  2282  2282 D StatsLog: LAUNCHER_ALLAPPS_COUNT&#13;<br/>02-24 04:45:40.680  2192  2192 D SatelliteAccessController: Current default SMS app:ComponentInfo{com.google.android.apps.messaging/com.google.android.apps.messaging.shared.receiver.SmsDeliverReceiver}&#13;<br/>02-24 04:45:40.680  2192  2192 D SatelliteController: getSelectedSatelliteSubId: subId=-1&#13;<br/>02-24 04:45:40.680  2192  2192 D SatelliteAccessController: supportedMsgApps:com.google.android.apps.messaging&#13;<br/>02-24 04:45:40.685  2282  2282 I NT-NTLauncherAllAppsContainerView: collectAllAppInfo 150 0&#13;<br/>02-24 04:45:40.686  2282  2282 I NT-AlphabeticalAppsList: Default AllApp onAppsUpdated: canShow: true mApps: 150&#13;<br/>02-24 04:45:40.686  2282  2282 D AlphabeticalAppsList: Clearing FastScrollerSections.&#13;<br/>02-24 04:45:40.686  2282  2282 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false&#13;<br/>02-24 04:45:40.686  2282  2282 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.&#13;<br/>02-24 04:45:40.691 21286 21316 I TestRunner: finished: searchUserPropertiesByDate_shouldNotReturnOtherUsersProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">113 ms</div>
+                                    </em><em class="status">passed</em>getPropertyByUserIdAlphabetic_shouldNotReturnDeletedProperty</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:40.692 21286 21316 I TestRunner: started: getPropertyByUserIdAlphabetic_shouldNotReturnDeletedProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.740 18367 18367 I ContentProtectionServic: CP service destroyed&#13;<br/>02-24 04:45:40.779 21286 21316 I TestRunner: finished: getPropertyByUserIdAlphabetic_shouldNotReturnDeletedProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">84 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByAlphabetic_shouldFilterByType</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:40.787 21286 21316 I TestRunner: started: searchPropertiesByAlphabetic_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.880 21286 21316 I TestRunner: finished: searchPropertiesByAlphabetic_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">85 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByDate_shouldFilterByIsSold</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:40.886 21286 21316 I TestRunner: started: searchUserPropertiesByDate_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.945  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:40.952  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:40.953  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={10306} in 14ms&#13;<br/>02-24 04:45:40.956  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:40.959  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:40.959  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={20306} in 6ms&#13;<br/>02-24 04:45:40.961  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:40.962  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:40.962  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={10145} in 2ms&#13;<br/>02-24 04:45:40.963  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:40.964  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:40.964  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={20145} in 3ms&#13;<br/>02-24 04:45:40.982 21286 21316 I TestRunner: finished: searchUserPropertiesByDate_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">140 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByAlphabetic_shouldFilterByMinSurface</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:40.987 21286 21316 I TestRunner: started: searchPropertiesByAlphabetic_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:40.999  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:41.000  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:41.000  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={10221} in 3ms&#13;<br/>02-24 04:45:41.002  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:41.003  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:41.003  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={20221} in 2ms&#13;<br/>02-24 04:45:41.027   983  1029 I libPerfCtl: xgfGetFPS pid:2282 fps:-1&#13;<br/>02-24 04:45:41.027   983  1029 I libPerfCtl: xgfGetFPS pid:7988 fps:-1&#13;<br/>02-24 04:45:41.117 21286 21316 I TestRunner: finished: searchPropertiesByAlphabetic_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">92 ms</div>
+                                    </em><em class="status">passed</em>getPropertyByUserIdDate_shouldReturnCorrectProperty</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.121 21286 21316 I TestRunner: started: getPropertyByUserIdDate_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:41.224 21286 21316 I TestRunner: finished: getPropertyByUserIdDate_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">92 ms</div>
+                                    </em><em class="status">passed</em>getPropertyById_shouldNotReturnDeleteProperty</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.230 21286 21316 I TestRunner: started: getPropertyById_shouldNotReturnDeleteProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:41.302 21286 21316 I TestRunner: finished: getPropertyById_shouldNotReturnDeleteProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">111 ms</div>
+                                    </em><em class="status">passed</em>clearAllPropertiesDeleted_shouldRemoveOnlyDeletedProperties</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.308 21286 21316 I TestRunner: started: clearAllPropertiesDeleted_shouldRemoveOnlyDeletedProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:41.353  1627  1657 D AES     : AEEIOCTL_GET/SET_SF_STATE IOCTL,cmd= 1074294797, lParam=0.&#13;<br/>02-24 04:45:41.354  1627  1657 D AES     : AEEIOCTL_RT_MON_Kick IOCTL,cmd= 2147774474, lParam=300.&#13;<br/>02-24 04:45:41.425 21286 21316 I TestRunner: finished: clearAllPropertiesDeleted_shouldRemoveOnlyDeletedProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">115 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByDate_shouldFilterByMinSurface</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.429 21286 21316 I TestRunner: started: searchPropertiesByDate_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:41.561 21286 21316 I TestRunner: finished: searchPropertiesByDate_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">115 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByAlphabetic_shouldFilterByMultipleCriteria</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.567 21286 21316 I TestRunner: started: searchUserPropertiesByAlphabetic_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:41.665 21286 21316 I TestRunner: finished: searchUserPropertiesByAlphabetic_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">113 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByDate_shouldFilterByType</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.670 21286 21316 I TestRunner: started: searchPropertiesByDate_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:41.696  1936  1936 D WifiHAL : GetLinkStatsCommand::create&#13;<br/>02-24 04:45:41.696  1936  1936 D WifiHAL : WifiRequest::create vendor command to iface 36, vendor_id=0x1a11, subcmd=0x1200, res=0&#13;<br/>02-24 04:45:41.709  1936  1936 D WifiHAL : GetLinkStatsCommand::handleResponse&#13;<br/>02-24 04:45:41.709  1936  1936 E WifiHAL : handleResponse: data=0xb4000072cf6f0050, len=3680&#13;<br/>02-24 04:45:41.709  1936  1936 I WifiHAL : check_data_sanity: confirmed_size=3680, len=3680&#13;<br/>02-24 04:45:41.709  1936  1936 I WifiHAL : wifi_get_link_stats: result=0&#13;<br/>02-24 04:45:41.711  1627  1854 D WifiStaIfaceHidlImpl: getCachedScanData is not implemented by HIDL&#13;<br/>02-24 04:45:41.728  1936  1936 D WifiHAL : WifiRequest::create vendor command to iface 36, vendor_id=0x1a11, subcmd=0x0002, res=0&#13;<br/>02-24 04:45:41.728  1936  1936 D WifiHAL : In GetFeatureSetCommand::handleResponse for 5&#13;<br/>02-24 04:45:41.728  1936  1936 D WifiHAL : vendor_id = 0x0, subcmd = 0x0&#13;<br/>02-24 04:45:41.728  1936  1936 I WifiHAL : feature_set=0x8489141a&#13;<br/>02-24 04:45:41.779 21286 21316 I TestRunner: finished: searchPropertiesByDate_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">142 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByDate_withoutFilters_shouldReturnAllNotDeletedSortedByDate</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.783 21286 21316 I TestRunner: started: searchPropertiesByDate_withoutFilters_shouldReturnAllNotDeletedSortedByDate(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:41.928 21286 21316 I TestRunner: finished: searchPropertiesByDate_withoutFilters_shouldReturnAllNotDeletedSortedByDate(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">136 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByAlphabetic_withoutFilters_shouldReturnAllNotDeletedSortedByAlphabetic</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:41.933 21286 21316 I TestRunner: started: searchPropertiesByAlphabetic_withoutFilters_shouldReturnAllNotDeletedSortedByAlphabetic(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.027   983  1029 I libPerfCtl: xgfGetFPS pid:7988 fps:-1&#13;<br/>02-24 04:45:42.065 21286 21316 I TestRunner: finished: searchPropertiesByAlphabetic_withoutFilters_shouldReturnAllNotDeletedSortedByAlphabetic(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">90 ms</div>
+                                    </em><em class="status">passed</em>deleteProperty_shouldRemoveProperty</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.070 21286 21316 I TestRunner: started: deleteProperty_shouldRemoveProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.177 21286 21316 I TestRunner: finished: deleteProperty_shouldRemoveProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">140 ms</div>
+                                    </em><em class="status">passed</em>insertAllPropertiesNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.183 21286 21316 I TestRunner: started: insertAllPropertiesNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.324 21286 21316 I TestRunner: finished: insertAllPropertiesNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">117 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByDate_withoutFilters_shouldReturnUserPropertiesSortedByDate</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.329 21286 21316 I TestRunner: started: searchUserPropertiesByDate_withoutFilters_shouldReturnUserPropertiesSortedByDate(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.448 21286 21316 I TestRunner: finished: searchUserPropertiesByDate_withoutFilters_shouldReturnUserPropertiesSortedByDate(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">112 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByAlphabetic_shouldFilterByIsSold</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.454 21286 21316 I TestRunner: started: searchPropertiesByAlphabetic_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.560 21286 21316 I TestRunner: finished: searchPropertiesByAlphabetic_shouldFilterByIsSold(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">66 ms</div>
+                                    </em><em class="status">passed</em>updatePropertyFromUIForceSyncFalse_shouldSetIsSyncedFalse</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.565 21286 21316 I TestRunner: started: updatePropertyFromUIForceSyncFalse_shouldSetIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.638 21286 21316 I TestRunner: finished: updatePropertyFromUIForceSyncFalse_shouldSetIsSyncedFalse(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">112 ms</div>
+                                    </em><em class="status">passed</em>searchPropertiesByDate_shouldFilterByMultipleCriteria</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.642 21286 21316 I TestRunner: started: searchPropertiesByDate_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.743  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:42.745  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:42.745  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={10125} in 3ms&#13;<br/>02-24 04:45:42.746  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14&#13;<br/>02-24 04:45:42.748  1627  1861 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14&#13;<br/>02-24 04:45:42.748  1627  1861 D InetDiagMessage: Destroyed live tcp sockets for uids={20125} in 3ms&#13;<br/>02-24 04:45:42.757 21286 21316 I TestRunner: finished: searchPropertiesByDate_shouldFilterByMultipleCriteria(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">142 ms</div>
+                                    </em><em class="status">passed</em>markPropertyAsSold_shouldUpdateIsSoldSaleDateAndUpdatedAt</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.762 21286 21316 I TestRunner: started: markPropertyAsSold_shouldUpdateIsSoldSaleDateAndUpdatedAt(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.882 21286 21316 I TestRunner: finished: markPropertyAsSold_shouldUpdateIsSoldSaleDateAndUpdatedAt(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">85 ms</div>
+                                    </em><em class="status">passed</em>getPropertyWithPoiS_shouldReturnPropertyWithLinkedPoiS</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.887 21286 21316 I TestRunner: started: getPropertyWithPoiS_shouldReturnPropertyWithLinkedPoiS(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:42.974 21286 21375 I alestatemanager: hiddenapi: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;-&gt;getThreadSession()Landroid/database/sqlite/SQLiteSession; (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/sqlite/db/framework/FrameworkSQLiteDatabase; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:45:42.975 21286 21375 I alestatemanager: hiddenapi: Accessing hidden method Landroid/database/sqlite/SQLiteSession;-&gt;beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/sqlite/db/framework/FrameworkSQLiteDatabase; (domain=app, TargetSdkVersion=35) using reflection: allowed&#13;<br/>02-24 04:45:42.985 21286 21316 I TestRunner: finished: getPropertyWithPoiS_shouldReturnPropertyWithLinkedPoiS(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">87 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByAlphabetic_shouldFilterByMinSurface</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:42.991 21286 21316 I TestRunner: started: searchUserPropertiesByAlphabetic_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.028   983  1029 I libPerfCtl: xgfGetFPS pid:7988 fps:-1&#13;<br/>02-24 04:45:43.080 21286 21316 I TestRunner: finished: searchUserPropertiesByAlphabetic_shouldFilterByMinSurface(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">62 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertiesByAlphabetic_shouldReturnAllPropertiesNotDeleted</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:43.084 21286 21316 I TestRunner: started: getAllPropertiesByAlphabetic_shouldReturnAllPropertiesNotDeleted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.154 21286 21316 I TestRunner: finished: getAllPropertiesByAlphabetic_shouldReturnAllPropertiesNotDeleted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">86 ms</div>
                                     </em><em class="status">passed</em>getPropertyById_shouldReturnCorrectProperty</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:48.069  5321  5346 I TestRunner: started: getPropertyById_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.084  1195  1257 D PackageUpdatedTask: Package updated: mOp=UPDATE packages=[com.dcac.realestatemanager], user=UserHandle{0}&#13;<br/>10-01 16:12:48.086  1192  1192 D CarrierSvcBindHelper: onPackageModified: com.dcac.realestatemanager&#13;<br/>10-01 16:12:48.088  1571  2548 I AiAiEcho: AppIndexer Package:[com.dcac.realestatemanager] UserProfile:[0] Enabled:[true].&#13;<br/>10-01 16:12:48.089  1571  2548 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.dcac.realestatemanager], userId:[0], reason:[package is updated.].&#13;<br/>10-01 16:12:48.090  1192  1366 I SatelliteAppTracker: onPackageModified : com.dcac.realestatemanager&#13;<br/>10-01 16:12:48.099  1192  1192 D CarrierSvcBindHelper: No carrier app for: 0&#13;<br/>10-01 16:12:48.103   751   859 I RoleService: Granting default roles...&#13;<br/>10-01 16:12:48.105  1192  1192 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>10-01 16:12:48.106  1014  1014 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0&#13;<br/>10-01 16:12:48.110   751  1119 W SignedPackage: Package doesn't have required signing certificate: com.google.android.retaildemo&#13;<br/>10-01 16:12:48.110   751  1119 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION&#13;<br/>10-01 16:12:48.113  5321  5346 I TestRunner: finished: getPropertyById_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:43.157 21286 21316 I TestRunner: started: getPropertyById_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.238 21286 21316 I TestRunner: finished: getPropertyById_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">30 ms</div>
+                                        <div class="time">110 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByAlphabetic_shouldNotReturnOtherUsersProperties</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:43.244 21286 21316 I TestRunner: started: searchUserPropertiesByAlphabetic_shouldNotReturnOtherUsersProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.358 21286 21316 I TestRunner: finished: searchUserPropertiesByAlphabetic_shouldNotReturnOtherUsersProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">164 ms</div>
+                                    </em><em class="status">passed</em>getPropertyByUserIdAlphabetic_shouldReturnCorrectProperty</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:43.363 21286 21316 I TestRunner: started: getPropertyByUserIdAlphabetic_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.501 21286 21316 I TestRunner: finished: getPropertyByUserIdAlphabetic_shouldReturnCorrectProperty(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">64 ms</div>
                                     </em><em class="status">passed</em>getAllPropertiesAsCursor_shouldReturnValidCursor</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:48.119  5321  5346 I TestRunner: started: getAllPropertiesAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.121   751   751 W IPCThreadState: Sending oneway calls to frozen process.&#13;<br/>10-01 16:12:48.124  1192  1192 D SatelliteController: packageStateChanged: package:com.dcac.realestatemanager DefaultSmsPackageName:com.google.android.apps.messaging&#13;<br/>10-01 16:12:48.124  1192  1192 V SatelliteController: Neither SMS or SatelliteGateway package&#13;<br/>10-01 16:12:48.128  1195  1257 W HWUI    : Image decoding logging dropped!&#13;<br/>10-01 16:12:48.128  1192  1192 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>10-01 16:12:48.129  1195  1257 D AlphabeticIndexCompat: computeSectionName: cs: Real Estate Manager sectionName: R&#13;<br/>10-01 16:12:48.129  1195  1195 D AllAppsStore: setApps: apps.length=21&#13;<br/>10-01 16:12:48.129  1195  1195 D AllAppsStore: notifyUpdate: notifying listeners&#13;<br/>10-01 16:12:48.129  1195  1195 D ActivityAllAppsContainerView: onAppsUpdated; number of apps: 21&#13;<br/>10-01 16:12:48.130  1195  1195 D ActivityAllAppsContainerView: rebindAdapters: force: false&#13;<br/>10-01 16:12:48.130  1195  1195 D ActivityAllAppsContainerView: rebindAdapters: Not needed.&#13;<br/>10-01 16:12:48.130  1195  1195 D StatsLog: LAUNCHER_ALLAPPS_COUNT&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: Clearing FastScrollerSections.&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: B with appInfoTitle: BlurOmatic&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Gmail&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: R with appInfoTitle: Real Estate Manager&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: T with appInfoTitle: TMoble&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: Y with appInfoTitle: YouTube&#13;<br/>10-01 16:12:48.130  1195  1195 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: Clearing FastScrollerSections.&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: Adding apps with sections. HasPrivateApps: false&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: B with appInfoTitle: BlurOmatic&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: C with appInfoTitle: Calendar&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: D with appInfoTitle: Drive&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: F with appInfoTitle: Files&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: G with appInfoTitle: Gmail&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: M with appInfoTitle: Maps&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: P with appInfoTitle: Phone&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: R with appInfoTitle: Real Estate Manager&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: S with appInfoTitle: Safety&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: T with appInfoTitle: TMoble&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: addAppsWithSections: adding sectionName: Y with appInfoTitle: YouTube&#13;<br/>10-01 16:12:48.131  1195  1195 D AlphabeticalAppsList: Adding FastScrollSection duplicate to scroll to the bottom.&#13;<br/>10-01 16:12:48.131  1192  1192 D SatelliteAccessController: Current default SMS app:ComponentInfo{com.google.android.apps.messaging/com.google.android.apps.messaging.shared.receiver.SmsDeliverReceiver}&#13;<br/>10-01 16:12:48.131  1192  1192 D SatelliteController: getSelectedSatelliteSubId: subId=-1&#13;<br/>10-01 16:12:48.132  1192  1192 D SatelliteAccessController: supportedMsgApps:com.google.android.apps.messaging&#13;<br/>10-01 16:12:48.132  2520  5228 I PermissionControllerServiceImpl: Updating user sensitive for uid 10219&#13;<br/>10-01 16:12:48.145  1195  1195 D b/387844520: getOutlineOffsetX: measured width = 173, mNormalizedIconSize = 159, last updated width = 173&#13;<br/>10-01 16:12:48.152  5321  5346 I TestRunner: finished: getAllPropertiesAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:43.507 21286 21316 I TestRunner: started: getAllPropertiesAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.574 21286 21316 I TestRunner: finished: getAllPropertiesAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">32 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertiesIncludeDeleted_shouldReturnAllProperties</span>
+                                        <div class="time">114 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByDate_shouldFilterByType</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:48.154  5321  5346 I TestRunner: started: getAllPropertiesIncludeDeleted_shouldReturnAllProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.185   751  1119 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET&#13;<br/>10-01 16:12:48.190  5321  5346 I TestRunner: finished: getAllPropertiesIncludeDeleted_shouldReturnAllProperties(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:43.579 21286 21316 I TestRunner: started: searchUserPropertiesByDate_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.699 21286 21316 I TestRunner: finished: searchUserPropertiesByDate_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">29 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertiesByAlphabetic_shouldReturnSorted</span>
+                                        <div class="time">88 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertiesIncludeDeleted_shouldReturnAll</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:48.192  5321  5346 I TestRunner: started: getAllPropertiesByAlphabetic_shouldReturnSorted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.222  5321  5346 I TestRunner: finished: getAllPropertiesByAlphabetic_shouldReturnSorted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:43.704 21286 21316 I TestRunner: started: getAllPropertiesIncludeDeleted_shouldReturnAll(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.795 21286 21316 I TestRunner: finished: getAllPropertiesIncludeDeleted_shouldReturnAll(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">30 ms</div>
+                                        <div class="time">92 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertiesByDate_shouldReturnAllPropertiesNotDeleted</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:43.799 21286 21316 I TestRunner: started: getAllPropertiesByDate_shouldReturnAllPropertiesNotDeleted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:43.896 21286 21316 I TestRunner: finished: getAllPropertiesByDate_shouldReturnAllPropertiesNotDeleted(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">137 ms</div>
+                                    </em><em class="status">passed</em>searchUserPropertiesByAlphabetic_shouldFilterByType</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:45:43.903 21286 21316 I TestRunner: started: searchUserPropertiesByAlphabetic_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:44.028   983  1029 I libPerfCtl: xgfGetFPS pid:7988 fps:-1&#13;<br/>02-24 04:45:44.038 21286 21316 I TestRunner: finished: searchUserPropertiesByAlphabetic_shouldFilterByType(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">142 ms</div>
                                     </em><em class="status">passed</em>markAllPropertiesAsDeleted_shouldHideFromQueries</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:48.224  5321  5346 I TestRunner: started: markAllPropertiesAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.250  5321  5346 I TestRunner: finished: markAllPropertiesAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:44.043 21286 21316 I TestRunner: started: markAllPropertiesAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:44.155  2909  3573 I PhenotypeProcessReaper: Memory state is: 200&#13;<br/>02-24 04:45:44.167 21286 21316 I TestRunner: finished: markAllPropertiesAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">29 ms</div>
-                                    </em><em class="status">passed</em>getPropertyWithPoiS_shouldReturnAssociatedPoiS</span>
+                                        <div class="time">88 ms</div>
+                                    </em><em class="status">passed</em>updateAllPropertiesFromFirebaseForceSyncTrue_shouldUpdateAllAndSetIsSyncedTrue</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">10-01 16:12:48.253  5321  5346 I TestRunner: started: getPropertyWithPoiS_shouldReturnAssociatedPoiS(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>10-01 16:12:48.286  5321  5359 I alestatemanager: hiddenapi: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;-&gt;getThreadSession()Landroid/database/sqlite/SQLiteSession; (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/sqlite/db/framework/FrameworkSQLiteDatabase; (domain=app) using reflection: allowed&#13;<br/>10-01 16:12:48.286  5321  5359 I alestatemanager: hiddenapi: Accessing hidden method Landroid/database/sqlite/SQLiteSession;-&gt;beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/sqlite/db/framework/FrameworkSQLiteDatabase; (domain=app) using reflection: allowed&#13;<br/>10-01 16:12:48.293  5321  5346 I TestRunner: finished: getPropertyWithPoiS_shouldReturnAssociatedPoiS(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">32 ms</div>
-                                    </em><em class="status">passed</em>markPropertyAsDeleted_shouldHideFromQueries</span>
-                                <ul>
-                                    <li class="text">
-                                        <span class="stdout">10-01 16:12:48.296  5321  5346 I TestRunner: started: markPropertyAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:45:44.171 21286 21316 I TestRunner: started: updateAllPropertiesFromFirebaseForceSyncTrue_shouldUpdateAllAndSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/>02-24 04:45:44.271 21286 21316 I TestRunner: finished: updateAllPropertiesFromFirebaseForceSyncTrue_shouldUpdateAllAndSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PropertyDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>

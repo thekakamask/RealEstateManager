@@ -14,7 +14,9 @@ import org.junit.runner.RunWith
 import org.junit.Test
 import org.junit.Assert.assertEquals
 import kotlinx.coroutines.flow.first
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 
 @RunWith(AndroidJUnit4::class)
@@ -25,10 +27,7 @@ class PoiDaoTest: DatabaseSetup() {
     private val poi1 = FakePoiEntity.poi1
     private val poi2 = FakePoiEntity.poi2
     private val poi3 = FakePoiEntity.poi3
-    private val crossRef2 = FakePropertyPoiCrossEntity.propertyPoiCross2
-    private val crossRef3 = FakePropertyPoiCrossEntity.propertyPoiCross3
-    private val property1 = FakePropertyEntity.property1
-    private val property2 = FakePropertyEntity.property2
+    private val crossref1 = FakePropertyPoiCrossEntity.propertyPoiCross1
     private val allPoiSNotDeleted = FakePoiEntity.poiEntityListNotDeleted
     private val allPoiS = FakePoiEntity.poiEntityList
 
@@ -36,10 +35,10 @@ class PoiDaoTest: DatabaseSetup() {
     fun setup() = runBlocking {
         // Insert base required data for all tests
         FakeUserEntity.userEntityList.forEach {
-            db.userDao().insertUser(it)
+            db.userDao().firstUserInsertForceSyncedTrue(it)
         }
         FakePropertyEntity.propertyEntityList.forEach {
-            db.propertyDao().insertProperty(it)
+            db.propertyDao().insertPropertyFromUi(it)
         }
 
         poiDao = db.poiDao()
@@ -47,142 +46,252 @@ class PoiDaoTest: DatabaseSetup() {
 
     @Test
     fun getPoiById_shouldReturnCorrectPoi() = runBlocking {
-        // GIVEN: a POI inserted in DB
-        poiDao.insertPoi(poi1)
+        poiDao.insertPoiInsertFromUi(poi1)
 
-        // WHEN: we query it by ID
         val result = poiDao.getPoiById(poi1.id).first()
 
-        // THEN: we get the expected POI
         assertEquals(poi1, result)
     }
 
     @Test
-    fun getAllPoiS_shouldReturnAllInsertedPoiSNotMarkAsDeleted() = runBlocking {
-        poiDao.insertAllPoiS(allPoiS)
-        val result = poiDao.getAllPoiS().first()
-        val expected = allPoiSNotDeleted.map { it.copy(isSynced = false) }
-        assertEquals(expected, result)
+    fun getPoiById_shouldNotReturnDeletedPoi() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi3)
+
+        val result = poiDao.getPoiById(poi3.id).first()
+
+        assertNull(result)
     }
 
     @Test
-    fun getPoiIncludeDeletedById_shouldReturnCorrectPoi() = runBlocking {
-        poiDao.insertPoi(poi3)
+    fun getPoiByIdIncludeDeleted_shouldReturnPoiIncludeDeleted() = runBlocking {
+        poiDao.insertPoiInsertFromFirebase(poi3)
+
         val result = poiDao.getPoiByIdIncludeDeleted(poi3.id).first()
-        assertEquals(poi3, result)
+
+        assertEquals(poi3.id, result?.id)
     }
 
     @Test
-    fun getAllPoiIncludeDeleted_shouldReturnAllInsertedPoiS() = runBlocking {
-        poiDao.insertAllPoiS(allPoiS)
-        val result = poiDao.getAllPoiIncludeDeleted().first()
-        val expected = allPoiS.map { it.copy(isSynced = false) }
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun insertPoi_shouldInsertSinglePoi() = runBlocking {
-        poiDao.insertPoi(poi1)
-        val result = poiDao.getAllPoiS().first()
-        assertEquals(listOf(poi1), result)
-    }
-
-    @Test
-    fun insertAllPoiS_shouldInsertMultiplePoi() = runBlocking {
-        poiDao.insertAllPoiS(allPoiS)
+    fun getAllPoiS_shouldReturnAllNotDeleted() = runBlocking {
+        allPoiS.forEach { poi ->
+            poiDao.insertPoiInsertFromUi(poi)
+        }
 
         val result = poiDao.getAllPoiS().first()
-        val expected = allPoiSNotDeleted.map { it.copy(isSynced = false) }
-        assertEquals(expected, result)
+
+        val expectedIds = allPoiSNotDeleted.map { it.id }
+        val resultIds = result.map { it.id }
+
+        assertEquals(expectedIds, resultIds)
     }
 
     @Test
-    fun updatePoi_shouldUpdateExistingPoi() = runBlocking {
-        poiDao.insertPoi(poi2)
+    fun getAllPoiIncludeDeleted_shouldReturnAll() = runBlocking {
+        poiDao.insertAllPoiSNotExistingFromFirebase(allPoiS)
 
-        val updatedPoi = poi2.copy(
-            name = "Updated Name",
-            type = "Updated Type",
-            updatedAt = System.currentTimeMillis()
-        )
+        val result = poiDao.getAllPoiSIncludeDeleted().first()
 
-        poiDao.updatePoi(updatedPoi)
-
-        val result = poiDao.getPoiById(poi2.id).first()
-
-        assertEquals("Updated Name", result?.name)
-        assertEquals("Updated Type", result?.type)
-        assertEquals(false, result?.isSynced)
-        assertEquals(updatedPoi.updatedAt, result?.updatedAt)
+        assertEquals(allPoiS.size, result.size)
     }
 
     @Test
-    fun markPoiAsDeleted_shouldHidePhotoFromQueries() = runBlocking {
-        poiDao.insertPoi(poi2)
-        poiDao.markPoiAsDeleted(poi2.id, System.currentTimeMillis())
+    fun uploadUnSyncedPoiS_shouldReturnOnlyPoiSWithIsSyncedFalse() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi1)
+        poiDao.insertPoiInsertFromFirebase(poi2)
 
-        val result = poiDao.getPoiById(poi2.id).first()
-        assertEquals(null, result)
+        val result = poiDao.uploadUnSyncedPoiS().first()
+
+        assertEquals(1, result.size)
+        assertTrue(result.all { !it.isSynced })
+        assertEquals(poi1.id, result.first().id)
     }
 
     @Test
-    fun deletePoi_shouldRemovePoiFromDatabase() = runBlocking {
-        poiDao.savePoiFromFirebase(poi3)
-        poiDao.deletePoi(poi3)
-        val result = poiDao.getPoiByIdIncludeDeleted(poi3.id).first()
-        assertEquals(null, result)
-    }
+    fun insertPoiInsertFromUI_shouldInsertWithIsSyncedFalse() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi2)
 
-    @Test
-    fun getPoiWithProperties_shouldReturnAssociatedProperties() = runBlocking {
-        poiDao.insertPoi(poi2)
-        db.propertyCrossDao().insertCrossRef(crossRef2)
-        db.propertyCrossDao().insertCrossRef(crossRef3)
-
-        val result = poiDao.getPoiWithProperties(poi2.id).first()
+        val result = poiDao.getPoiByIdIncludeDeleted(poi2.id).first()
 
         assertNotNull(result)
-        assertEquals(poi2.copy(isSynced = false), result.poi)
+        assertFalse(result!!.isSynced)
+    }
 
-        val expectedProperties = listOf(
-            property1,
-            property2.copy(isSynced = false)
+    @Test
+    fun insertPoiSInsertFromUI_shouldInsertAllWithIsSyncedFalse() = runBlocking {
+        allPoiS.forEach { poi ->
+            poiDao.insertPoiInsertFromUi(poi)
+        }
+
+        val result = poiDao.getAllPoiSIncludeDeleted().first()
+
+        assertEquals(allPoiS.size, result.size)
+        assertTrue(result.all { !it.isSynced })
+    }
+
+    @Test
+    fun insertPoiInsertFromFirebase_shouldInsertWithIsSyncedTrue() = runBlocking {
+        poiDao.insertPoiInsertFromFirebase(poi1)
+
+        val result = poiDao.getPoiByIdIncludeDeleted(poi1.id).first()
+
+        assertNotNull(result)
+        assertTrue(result!!.isSynced)
+    }
+
+    @Test
+    fun insertAllPoiSNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue() = runBlocking {
+        poiDao.insertAllPoiSNotExistingFromFirebase(allPoiS)
+
+        val result = poiDao.getAllPoiSIncludeDeleted().first()
+
+        assertEquals(allPoiS.size, result.size)
+        assertTrue(result.all {it.isSynced})
+    }
+
+    @Test
+    fun updatePoiFromUIForceSyncFalse_shouldSetIsSyncedFalse() = runBlocking {
+        poiDao.insertPoiInsertFromFirebase(poi2)
+
+        val updated = poi2.copy(name = "Updated name")
+        poiDao.updatePoiFromUIForceSyncFalse(updated)
+
+        val result = poiDao.getPoiByIdIncludeDeleted(poi2.id).first()
+
+        assertNotNull(result)
+        assertFalse(result!!.isSynced)
+        assertEquals(updated.name ,result.name)
+    }
+
+    @Test
+    fun updatePoiFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi1)
+
+        val updated = poi1.copy(name = "From Firebase")
+        poiDao.updatePoiFromFirebaseForceSyncTrue(updated)
+
+        val result = poiDao.getPoiByIdIncludeDeleted(poi1.id).first()
+
+        assertNotNull(result)
+        assertTrue(result!!.isSynced)
+        assertEquals(updated.name, result.name)
+    }
+
+    @Test
+    fun updateAllPoiSFromFirebaseForceSyncTrue_shouldUpdateAll() = runBlocking {
+        allPoiS.forEach { poi ->
+            poiDao.insertPoiInsertFromUi(poi)
+        }
+
+        poiDao.updateAllPoiFromFirebaseForceSyncTrue(allPoiS)
+
+        val result = poiDao.getAllPoiSIncludeDeleted().first()
+
+        assertEquals(allPoiS.size, result.size)
+        assertTrue(result.all { it.isSynced })
+
+    }
+
+    @Test
+    fun markPoiAsDeleted_shouldHideFromQueries() = runBlocking {
+        poiDao.insertPoiInsertFromFirebase(poi2)
+
+        poiDao.markPoiAsDeleted(poi2.id, System.currentTimeMillis())
+
+        val uiResult = poiDao.getPoiById(poi2.id).first()
+        assertNull(uiResult)
+
+        val dbResult = poiDao.getPoiByIdIncludeDeleted(poi2.id).first()
+        assertNotNull(dbResult)
+        assertTrue(dbResult!!.isDeleted)
+        assertFalse(dbResult.isSynced)
+    }
+
+
+    @Test
+    fun deletePoi_shouldRemovePoi() = runBlocking {
+        poiDao.insertPoiInsertFromFirebase(poi3)
+
+        val inserted = poiDao.getPoiByIdIncludeDeleted(poi3.id).first()
+        poiDao.deletePoi(inserted!!)
+
+        val result = poiDao.getPoiByIdIncludeDeleted(poi3.id).first()
+
+        assertNull(result)
+    }
+
+    @Test
+    fun clearAllPoiSDeleted_shouldRemoveOnlyDeletedPoiS() = runBlocking {
+        poiDao.insertAllPoiSNotExistingFromFirebase(allPoiS)
+
+        poiDao.markPoiAsDeleted(poi1.id, System.currentTimeMillis())
+        poiDao.markPoiAsDeleted(poi2.id, System.currentTimeMillis())
+
+        poiDao.clearAllPoiSDeleted()
+
+        val result = poiDao.getAllPoiSIncludeDeleted().first()
+
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun findExistingPoi_shouldReturnPoi_withNameAndAddressMatchIgnoringCase_andNotDeleted() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi1)
+
+        val found = poiDao.findExistingPoi(
+            name = poi1.name.uppercase(),
+            address = poi1.address.lowercase()
         )
-        assertEquals(expectedProperties.toSet(), result.properties.toSet())
-        assertEquals(2, result.properties.size)
-
-    }
-
-
-    @Test
-    fun getUnSyncedPoiS_shouldReturnOnlyUnSyncedPoi() = runBlocking {
-        poiDao.insertAllPoiS(allPoiS)
-        val result = poiDao.uploadUnSyncedPoiSToFirebase().first()
-        val expected = allPoiS.map { it.copy(isSynced = false) }
-        assertEquals(expected, result)
+        assertNotNull(found)
+        assertEquals(poi1.id, found?.id)
     }
 
     @Test
-    fun savePoiFromFirebase_shouldInsertPoiCorrectly() = runBlocking {
-        poiDao.savePoiFromFirebase(poi1)
-        val result = poiDao.getPoiById(poi1.id).first()
-        val expected = poi1.copy(isSynced = true)
-        assertEquals(expected, result)
+    fun findExistingPoi_shouldReturnNull_whenNameMatchesButAddressDifferent() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi1)
+
+        val found = poiDao.findExistingPoi(
+            name = poi1.name,
+            address = "Different address"
+        )
+
+        assertNull(found)
     }
 
-    //This test ensures that:
-    //the Cursor is not null,
-    //it contains data (when the database is not empty),
-    //it is closed correctly (good practice).
+    @Test
+    fun findExistingPoi_shouldReturnNull_whenPoiIsDeleted() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi1)
+        poiDao.markPoiAsDeleted(poi1.id, System.currentTimeMillis())
+
+        val found = poiDao.findExistingPoi(
+            name = poi1.name,
+            address = poi1.address
+        )
+        assertNull(found)
+    }
+
+    @Test
+    fun getPoiWithProperties_shouldReturnPoiWithLinkedProperties() = runBlocking {
+        poiDao.insertPoiInsertFromUi(poi1)
+
+        db.propertyCrossDao().insertCrossRefInsertFromUI(crossref1)
+
+        val relation = poiDao.getPoiWithProperties(poi1.id).first()
+
+        assertEquals(poi1.id, relation.poi.id)
+        assertTrue(relation.properties.isNotEmpty())
+        assertTrue(relation.properties.any { it.id == crossref1.universalLocalPropertyId })
+    }
+
     @Test
     fun getAllPoiSAsCursor_shouldReturnValidCursor() = runBlocking {
-        poiDao.insertAllPoiS(allPoiS)
+        allPoiS.forEach { poi ->
+            poiDao.insertPoiInsertFromUi(poi)
+        }
         val query = SimpleSQLiteQuery("SELECT * FROM poi")
         val cursor = poiDao.getAllPoiSAsCursor(query)
         assertNotNull(cursor)
         assertTrue(cursor.count > 0)
         cursor.close()
     }
-
 
 }

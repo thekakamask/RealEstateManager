@@ -108,8 +108,6 @@ interface PropertyPoiCrossDao {
     fun getCrossRefsByIdsIncludedDeleted(propertyId: String, poiId: String): Flow<PropertyPoiCrossEntity?>
     @Query("SELECT * FROM property_poi_cross_ref WHERE property_id = :propertyId")
     fun getCrossRefsByPropertyIdIncludeDeleted(propertyId: String): Flow<List<PropertyPoiCrossEntity>>
-    @Query("SELECT * FROM property_poi_cross_ref WHERE poi_id = :poiId")
-    fun getCrossRefsByPoiIdIncludeDeleted(poiId: String): Flow<List<PropertyPoiCrossEntity>>
     @Query("SELECT * FROM property_poi_cross_ref")
     fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>>
 

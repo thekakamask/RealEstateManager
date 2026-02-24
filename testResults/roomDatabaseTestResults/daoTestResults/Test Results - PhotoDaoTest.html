@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">775 ms</div>
+                <div class="time" xmlns="">317 ms</div>
                 <h1>
-                    PhotoDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">14 total, </span><span class="passed">14 passed</span></strong>
+                    PhotoDaoTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">22 total, </span><span class="passed">22 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,146 +593,226 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">775 ms</div>
+                                <div class="time">317 ms</div>
                             </em>com.dcac.realestatemanager.daoTest.PhotoDaoTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">176 ms</div>
-                                    </em><em class="status">passed</em>insertPhoto_shouldInsertSinglePhoto</span>
+                                        <div class="time">170 ms</div>
+                                    </em><em class="status">passed</em>updateAllPhotosFromFirebaseForceSyncTrue_shouldUpdateAll</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:35.740 30211 30239 I TestRunner: started: insertPhoto_shouldInsertSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:35.910 30211 30239 I TestRunner: finished: insertPhoto_shouldInsertSinglePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.295 18648 18679 I TestRunner: started: updateAllPhotosFromFirebaseForceSyncTrue_shouldUpdateAll(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.359 18648 18679 I TestRunner: finished: updateAllPhotosFromFirebaseForceSyncTrue_shouldUpdateAll(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">9 ms</div>
-                                    </em><em class="status">passed</em>getPhotosByPropertyIdIncludeDeleted_shouldReturnCorrectPhotos</span>
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>getAllPhotosIncludeDeleted_shouldReturnAll</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:35.922 30211 30239 I TestRunner: started: getPhotosByPropertyIdIncludeDeleted_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:35.976 30211 30239 I TestRunner: finished: getPhotosByPropertyIdIncludeDeleted_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.362 18648 18679 I TestRunner: started: getAllPhotosIncludeDeleted_shouldReturnAll(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.389 18648 18679 I TestRunner: finished: getAllPhotosIncludeDeleted_shouldReturnAll(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">56 ms</div>
-                                    </em><em class="status">passed</em>deletePhoto_shouldRemoveDeletedPhotoFromDatabase</span>
+                                        <div class="time">11 ms</div>
+                                    </em><em class="status">passed</em>getPhotosByPropertyId_shouldNotReturnDeletedPhotos</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:35.981 30211 30239 I TestRunner: started: deletePhoto_shouldRemoveDeletedPhotoFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.030 30211 30239 I TestRunner: finished: deletePhoto_shouldRemoveDeletedPhotoFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.390 18648 18679 I TestRunner: started: getPhotosByPropertyId_shouldNotReturnDeletedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.406 18648 18679 I TestRunner: finished: getPhotosByPropertyId_shouldNotReturnDeletedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">84 ms</div>
-                                    </em><em class="status">passed</em>markPhotosAsDeletedByProperty_shouldHidePhotosFromQueries</span>
+                                        <div class="time">8 ms</div>
+                                    </em><em class="status">passed</em>getPhotoByIdIncludeDeleted_shouldReturnPhotoIncludeDeleted</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.036 30211 30239 I TestRunner: started: markPhotosAsDeletedByProperty_shouldHidePhotosFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.046   714   837 I RoleService: Granting default roles...&#13;<br/>09-18 16:33:36.057  1158  1158 D CarrierSvcBindHelper: onPackageModified: com.dcac.realestatemanager&#13;<br/>09-18 16:33:36.058   989   989 D ControlsListingControllerImpl: ServiceConfig reloaded, count: 0&#13;<br/>09-18 16:33:36.062  1158  1158 D CarrierSvcBindHelper: No carrier app for: 0&#13;<br/>09-18 16:33:36.067  1527  1527 I AiAiEcho: AppFetcherImpl onPackageChanged com.dcac.realestatemanager.&#13;<br/>09-18 16:33:36.067   714  1096 W Role    : Default holder doesn't have required signing certificate: com.google.android.retaildemo:6547c73dee150c103980bfdffe55cc9a011d785dd694a5f99afd8205bcaf1f80&#13;<br/>09-18 16:33:36.068  1226  1299 D PackageUpdatedTask: Package updated: mOp=UPDATE packages=[com.dcac.realestatemanager]&#13;<br/>09-18 16:33:36.070  1527 30141 I AiAiEcho: AppIndexer Package:[com.dcac.realestatemanager] UserProfile:[0] Enabled:[true].&#13;<br/>09-18 16:33:36.071  1527 30141 I AiAiEcho: AppFetcherImplV2 updateApps package:[com.dcac.realestatemanager], userId:[0], reason:[package is updated.].&#13;<br/>09-18 16:33:36.074  1158  1158 E SmsApplication: com.google.android.apps.messaging lost android:read_cell_broadcasts:  (fixing)&#13;<br/>09-18 16:33:36.078   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms.supervision, role: android.app.role.SYSTEM_SUPERVISION&#13;<br/>09-18 16:33:36.079  1158  1158 E CellBroadcastUtils: getDefaultCellBroadcastReceiverPackageName: no package found&#13;<br/>09-18 16:33:36.091   714  1096 W Role    : Default holder doesn't have required signing certificate: com.google.android.apps.work.clouddpc:23962F4B43B9857638EA66F4D419518EAE282491ACDA4B94707BD59003C45E58&#13;<br/>09-18 16:33:36.099 16759 18380 I PermissionControllerServiceImpl: Updating user sensitive for uid 10287&#13;<br/>09-18 16:33:36.108   714   714 W IPCThreadState: Sending oneway calls to frozen process.&#13;<br/>09-18 16:33:36.110  1226  1226 D StatsLog: LAUNCHER_ALLAPPS_COUNT&#13;<br/>09-18 16:33:36.113  1158  1357 D ImsResolver: maybeAddedImsService, packageName: com.dcac.realestatemanager&#13;<br/>09-18 16:33:36.117 30211 30239 I TestRunner: finished: markPhotosAsDeletedByProperty_shouldHidePhotosFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.407 18648 18679 I TestRunner: started: getPhotoByIdIncludeDeleted_shouldReturnPhotoIncludeDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.421 18648 18679 I TestRunner: finished: getPhotoByIdIncludeDeleted_shouldReturnPhotoIncludeDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">61 ms</div>
-                                    </em><em class="status">passed</em>markPhotoAsDeleted_shouldHidePhotoFromQueries</span>
+                                        <div class="time">6 ms</div>
+                                    </em><em class="status">passed</em>getPhotosByPropertyId_shouldReturnCorrectPhotos</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.120 30211 30239 I TestRunner: started: markPhotoAsDeleted_shouldHidePhotoFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.126  1226  1699 D EGL_emulation: app_time_stats: avg=199.69ms min=11.00ms max=4221.98ms count=23&#13;<br/>09-18 16:33:36.165   405 30248 I resolv  : GetAddrInfoHandler::run: {107 786539 107 983147 10143 0}&#13;<br/>09-18 16:33:36.165   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.gms, role: android.app.role.WALLET&#13;<br/>09-18 16:33:36.167   405 30250 I resolv  : res_nmkquery: (QUERY, IN, A)&#13;<br/>09-18 16:33:36.167   405 30249 I resolv  : res_nmkquery: (QUERY, IN, AAAA)&#13;<br/>09-18 16:33:36.178   714  1096 E RoleControllerServiceImpl: Default/fallback role holder package doesn't qualify for the role, package: com.google.android.devicelockcontroller, role: android.app.role.SYSTEM_FINANCED_DEVICE_CONTROLLER&#13;<br/>09-18 16:33:36.187 30211 30239 I TestRunner: finished: markPhotoAsDeleted_shouldHidePhotoFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.423 18648 18679 I TestRunner: started: getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.439 18648 18679 I TestRunner: finished: getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">37 ms</div>
-                                    </em><em class="status">passed</em>insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos</span>
+                                        <div class="time">10 ms</div>
+                                    </em><em class="status">passed</em>updatePhotoFromUIForceSyncFalse_shouldSetIsSyncedFalse</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.192 30211 30239 I TestRunner: started: insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.194  1550 30247 D TrafficStats: tagSocket(115) with statsTag=0x30003300, statsUid=10287&#13;<br/>09-18 16:33:36.243 30211 30239 I TestRunner: finished: insert_and_getPhotosByPropertyId_shouldReturnCorrectPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.440 18648 18679 I TestRunner: started: updatePhotoFromUIForceSyncFalse_shouldSetIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.455 18648 18679 I TestRunner: finished: updatePhotoFromUIForceSyncFalse_shouldSetIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">57 ms</div>
-                                    </em><em class="status">passed</em>deletePhotosByPropertyId_shouldRemoveDeletedPhotosFromDatabase</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>deletePhoto_shouldRemovePhoto</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.247 30211 30239 I TestRunner: started: deletePhotosByPropertyId_shouldRemoveDeletedPhotosFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.272   405 30251 I resolv  : GetAddrInfoHandler::run: {107 786539 107 983147 10143 0}&#13;<br/>09-18 16:33:36.274   405 30253 I resolv  : res_nmkquery: (QUERY, IN, A)&#13;<br/>09-18 16:33:36.274   405 30252 I resolv  : res_nmkquery: (QUERY, IN, AAAA)&#13;<br/>09-18 16:33:36.299   405 30253 I resolv  : res_nsend: used send_dg 77 terrno: 0&#13;<br/>09-18 16:33:36.299   405 30252 I resolv  : res_nsend: used send_dg 101 terrno: 0&#13;<br/>09-18 16:33:36.299   405 30253 I resolv  : doQuery: rcode=0, ancount=2, return value=77&#13;<br/>09-18 16:33:36.299   405 30252 I resolv  : doQuery: rcode=0, ancount=2, return value=101&#13;<br/>09-18 16:33:36.300  1550 30247 D TrafficStats: tagSocket(119) with statsTag=0x30003300, statsUid=10287&#13;<br/>09-18 16:33:36.306 30211 30239 I TestRunner: finished: deletePhotosByPropertyId_shouldRemoveDeletedPhotosFromDatabase(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.456 18648 18679 I TestRunner: started: deletePhoto_shouldRemovePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.474 18648 18679 I TestRunner: finished: deletePhoto_shouldRemovePhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">57 ms</div>
+                                        <div class="time">6 ms</div>
+                                    </em><em class="status">passed</em>getPhotoById_shouldNotReturnDeletedPhoto</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.476 18648 18679 I TestRunner: started: getPhotoById_shouldNotReturnDeletedPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.492 18648 18679 I TestRunner: finished: getPhotoById_shouldNotReturnDeletedPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>markPhotoAsDeleted_shouldHideFromQueries</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.494 18648 18679 I TestRunner: started: markPhotoAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.510 18648 18679 I TestRunner: finished: markPhotoAsDeleted_shouldHideFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>deletePhotosByPropertyId_shouldRemoveAllForProperty</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.511 18648 18679 I TestRunner: started: deletePhotosByPropertyId_shouldRemoveAllForProperty(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.529 18648 18679 I TestRunner: finished: deletePhotosByPropertyId_shouldRemoveAllForProperty(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>getAllPhotos_shouldReturnAllPhotosNotDeleted</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.530 18648 18679 I TestRunner: started: getAllPhotos_shouldReturnAllPhotosNotDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.547 18648 18679 I TestRunner: finished: getAllPhotos_shouldReturnAllPhotosNotDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>updatePhotoFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.549 18648 18679 I TestRunner: started: updatePhotoFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.564 18648 18679 I TestRunner: finished: updatePhotoFromFirebaseForceSyncTrue_shouldSetIsSyncedTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>clearAllPhotosDeleted_shouldRemoveOnlyDeletedPhotos</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.565 18648 18679 I TestRunner: started: clearAllPhotosDeleted_shouldRemoveOnlyDeletedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.581 18648 18679 I TestRunner: finished: clearAllPhotosDeleted_shouldRemoveOnlyDeletedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
                                     </em><em class="status">passed</em>getAllPhotosAsCursor_shouldReturnValidCursor</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.311 30211 30239 I TestRunner: started: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.345 30211 30239 I TestRunner: finished: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.583 18648 18679 I TestRunner: started: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.597 18648 18679 I TestRunner: finished: getAllPhotosAsCursor_shouldReturnValidCursor(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">34 ms</div>
-                                    </em><em class="status">passed</em>savePhotoFromFirebase_shouldSetIsSyncedToTrue</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>insertAllPhotosNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.348 30211 30239 I TestRunner: started: savePhotoFromFirebase_shouldSetIsSyncedToTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.391 30211 30239 I TestRunner: finished: savePhotoFromFirebase_shouldSetIsSyncedToTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.598 18648 18679 I TestRunner: started: insertAllPhotosNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.614 18648 18679 I TestRunner: finished: insertAllPhotosNotExistingFromFirebase_shouldInsertAllWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">35 ms</div>
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>insertPhotosInsertFromUI_shouldInsertAllWithIsSyncedFalse</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.615 18648 18679 I TestRunner: started: insertPhotosInsertFromUI_shouldInsertAllWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.631 18648 18679 I TestRunner: finished: insertPhotosInsertFromUI_shouldInsertAllWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">6 ms</div>
                                     </em><em class="status">passed</em>getPhotoById_shouldReturnCorrectPhoto</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.394 30211 30239 I TestRunner: started: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.429 30211 30239 I TestRunner: finished: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.633 18648 18679 I TestRunner: started: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.647 18648 18679 I TestRunner: finished: getPhotoById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">37 ms</div>
-                                    </em><em class="status">passed</em>getAllPhotos_shouldReturnAllInsertedPhotosNotMarkAsDeleted</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>insertPhotoInsertFromFirebase_shouldInsertWithIsSyncedTrue</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.433 30211 30239 I TestRunner: started: getAllPhotos_shouldReturnAllInsertedPhotosNotMarkAsDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.471 30211 30239 I TestRunner: finished: getAllPhotos_shouldReturnAllInsertedPhotosNotMarkAsDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.649 18648 18679 I TestRunner: started: insertPhotoInsertFromFirebase_shouldInsertWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.663 18648 18679 I TestRunner: finished: insertPhotoInsertFromFirebase_shouldInsertWithIsSyncedTrue(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">60 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPhotos_shouldReturnUnSyncedPhotos</span>
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>uploadUnSyncedPhotos_shouldReturnOnlyPhotosWithIsSyncedFalse</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.475 30211 30239 I TestRunner: started: getUnSyncedPhotos_shouldReturnUnSyncedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.531 30211 30239 I TestRunner: finished: getUnSyncedPhotos_shouldReturnUnSyncedPhotos(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.665 18648 18679 I TestRunner: started: uploadUnSyncedPhotos_shouldReturnOnlyPhotosWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.680 18648 18679 I TestRunner: finished: uploadUnSyncedPhotos_shouldReturnOnlyPhotosWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">35 ms</div>
-                                    </em><em class="status">passed</em>getPhotoIncludeDeletedById_shouldReturnCorrectPhoto</span>
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>markPhotosAsDeletedByProperty_shouldHideAllFromQueries</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.535 30211 30239 I TestRunner: started: getPhotoIncludeDeletedById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.542 15051 15089 I Bugle   : BroadcastReceiverAsyncWorkTracker: Acknowledging broadcast of buoi@cd3b7b3&#13;<br/>09-18 16:33:36.570 30211 30239 I TestRunner: finished: getPhotoIncludeDeletedById_shouldReturnCorrectPhoto(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.682 18648 18679 I TestRunner: started: markPhotosAsDeletedByProperty_shouldHideAllFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.700 18648 18679 I TestRunner: finished: markPhotosAsDeletedByProperty_shouldHideAllFromQueries(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">37 ms</div>
-                                    </em><em class="status">passed</em>updatePhoto_shouldModifyPhotoCorrectly</span>
+                                        <div class="time">32 ms</div>
+                                    </em><em class="status">passed</em>getPhotosByPropertyIdIncludeDeleted_shouldReturnAllPhotosForPropertyIncludingDeleted</span>
                                 <ul>
                                     <li class="text">
-                                        <span class="stdout">09-18 16:33:36.574 30211 30239 I TestRunner: started: updatePhoto_shouldModifyPhotoCorrectly(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>09-18 16:33:36.618 30211 30239 I TestRunner: finished: updatePhoto_shouldModifyPhotoCorrectly(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                        <span class="stdout">02-24 04:41:13.701 18648 18679 I TestRunner: started: getPhotosByPropertyIdIncludeDeleted_shouldReturnAllPhotosForPropertyIncludingDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.718 18648 18679 I TestRunner: finished: getPhotosByPropertyIdIncludeDeleted_shouldReturnAllPhotosForPropertyIncludingDeleted(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>insertPhotoInsertFromUI_shouldInsertWithIsSyncedFalse</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">02-24 04:41:13.719 18648 18679 I TestRunner: started: insertPhotoInsertFromUI_shouldInsertWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/>02-24 04:41:13.734 18648 18679 I TestRunner: finished: insertPhotoInsertFromUI_shouldInsertWithIsSyncedFalse(com.dcac.realestatemanager.daoTest.PhotoDaoTest)&#13;<br/></span>
                                     </li>
                                 </ul>
                             </li>

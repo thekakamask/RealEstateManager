@@ -15,13 +15,8 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - 🔐 Updated Firestore security rules for POIs: adjusted permissions to allow shared POI reuse across users while maintaining controlled creation ownership.
-   - 🔎 Implemented smart POI matching in repository: added normalized Room-level lookup to prevent duplicates and automatically reuse existing POIs during creation.
-   - ✏️ Refactored POI handling in ViewModel (creation & edition): introduced UI-level comparison logic to detect unchanged POIs and recreate cross-references safely when modifications occur.
-   - 🔁 Strengthened Property POI relation integrity: migrated CrossRef DAO insert strategy to OnConflictStrategy.REPLACE to correctly reactivate soft-deleted links and prevent duplicate relation issues.
-   - 🧪 Refactored fake data layer for unit testing: updated all Fake Room entities, Fake Firestore online entities, and Fake models to fully align with the current synchronization contract (soft delete, isSynced, cross-relations) to ensure deterministic repository and sync testing.
-   - 🧩 Rebuilt all Fake DAOs for unit testing: implemented in-memory, Flow-based DAO replicas matching the real Room interfaces, enabling reliable testing of repositories, sync engine, and utility logic without database dependencies.
-   - 📱 Updated fake entities for instrumented DAO tests: aligned Android test fakes with the real Room schema to validate DAO behavior (queries, soft delete, conflict strategies, relations) against the production database configuration.
+   - 🧪 Updated all instrumented DAO tests to fully reflect the current Room schema, soft delete system, and synchronization logic.
+   - 🗺️ Added full StaticMapDao instrumented test coverage to validate queries, soft delete behavior, and sync state management.
 
 
 ## ❌ **NEXT UPDATES**
