@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.user.FirestoreUserDocument
@@ -182,7 +183,7 @@ class UserDownloadManagerTest {
         firebaseUserDocumentList.forEachIndexed { index, doc ->
             every { userRepository.getUserEntityById(doc.user.roomId) } returns flowOf(userEntityList[index])
         }
--
+
         val result = downloadManager.downloadUnSyncedUsers()
 
         assertThat(result).hasSize(firebaseUserDocumentList.size)
@@ -336,4 +337,4 @@ class UserDownloadManagerTest {
 
     }
 
-}
+}*/

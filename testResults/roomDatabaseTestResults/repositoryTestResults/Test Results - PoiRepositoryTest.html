@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">372 ms</div>
+                <div class="time" xmlns="">311 ms</div>
                 <h1>
-                    PoiRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">17 total, </span><span class="passed">17 passed</span></strong>
+                    PoiRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">16 total, </span><span class="passed">16 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,68 +593,48 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">372 ms</div>
+                                <div class="time">311 ms</div>
                             </em>PoiRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">255 ms</div>
-                                    </em><em class="status">passed</em>markPoiAsDeleted_shouldHidePoiFromQueries</span>
+                                        <div class="time">202 ms</div>
+                                    </em><em class="status">passed</em>deletePoi_shouldDeletePoi</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">29 ms</div>
-                                    </em><em class="status">passed</em>getPoiWithProperties_whenUnlinked_returnsEmpty</span>
+                                        <div class="time">12 ms</div>
+                                    </em><em class="status">passed</em>insertPoiInsertFromUI_shouldInsertWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>updatePoiFromUI_shouldUpdatePoiAndForceSyncFalse</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>markPoiAsDeleted_calledTwice_staysDeleted</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>getAllPoiS_returnsAll</span>
+                                    </em><em class="status">passed</em>insertPoiInsertFromUI_shouldReturnExistingPoiIfAlreadyExists</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">5 ms</div>
-                                    </em><em class="status">passed</em>updatePoi_shouldModifyExistingPoi</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>deletePoi_deletesPoi</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPoiS_returnsOnlyUnSynced</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>downloadPoiFromFirebase_updatesExistingPoi</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>updatePoi_onNonExistingPoi_shouldInsertIt</span>
+                                    </em><em class="status">passed</em>getAllPoiS_shouldReturnsAll</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>downloadPoiFromFirebase_savesPoiCorrectly</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">52 ms</div>
-                                    </em><em class="status">passed</em>getPoiWithProperties_returnsLinkedProperties</span>
+                                    </em><em class="status">passed</em>markPoiAsDelete_shouldHidePoiFromQueries</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>insertAllPoiS_insertsNewPoiS</span>
+                                    </em><em class="status">passed</em>uploadUnSyncedPoi_shouldReturnOnlyPoiWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPoiInsertFromFirebase_shouldInsertWithIsSyncedTrue</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
@@ -663,23 +643,38 @@ jQuery.cookie = function(name, value, options) {
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>insertPoi_insertsPoi</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getPoiById_returnsCorrectPoi</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
                                         <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>updatePoiFromFirebase_shouldUpdatePoiAndForceSyncTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>insertPoiSInsertFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getPoiById_shouldReturnsCorrectPoi</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>updateAllPoiSFromFirebase_shouldUpdateAllPoiS</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
                                     </em><em class="status">passed</em>getAllPoiIncludeDeleted_returnsAllIncludingDeleted</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getPoiEntityById_returnsCorrectEntity</span>
+                                        <div class="time">64 ms</div>
+                                    </em><em class="status">passed</em>getPoiWithProperties_shouldReturnPoiWithLinkedProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>clearAllPoiSDeleted_shouldDeleteOnlyDeletedPoiS</span>
                             </li>
                         </ul>
                     </li>
@@ -687,7 +682,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 01/10/2025 17:57</p>
+            <p>Generated by Android Studio on 05/03/2026 20:52</p>
         </div>
     </body>
 </html>

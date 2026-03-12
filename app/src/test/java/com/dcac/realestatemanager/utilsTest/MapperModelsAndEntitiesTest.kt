@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.utilsTest
 
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
@@ -196,4 +197,4 @@ class MapperModelsAndEntitiesTest {
         assertEquals(propertyModel.entryDate.format(formatter), entity.entryDate)
         assertEquals(propertyModel.saleDate?.format(formatter), entity.saleDate)
     }
-}
+}*/

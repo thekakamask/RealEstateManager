@@ -12,6 +12,7 @@ import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePoiModel
+import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakePoiOnlineEntity
 import com.dcac.realestatemanager.model.Poi
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -31,18 +32,18 @@ class PoiRepositoryTest {
     private lateinit var poiRepository: PoiRepository
 
     private val poiEntity1 = FakePoiEntity.poi1
-    private val poiEntity2 = FakePoiEntity.poi2
     private val poiEntity3 = FakePoiEntity.poi3
-    private val allPoiEntities = FakePoiEntity.poiEntityList
-    private val allPoiEntitiesNotDeleted = FakePoiEntity.poiEntityListNotDeleted
-
+    private val poiEntityList = FakePoiEntity.poiEntityList
+    private val poiEntityListNotDeleted = FakePoiEntity.poiEntityListNotDeleted
+    private val propertyEntityList = FakePropertyEntity.propertyEntityList
+    private val poiOnlineEntity1 = FakePoiOnlineEntity.poiOnline1
+    private val poiOnlineEntity2 = FakePoiOnlineEntity.poiOnline2
+    private val poiOnlineEntity3 = FakePoiOnlineEntity.poiOnline3
     private val poiModel1 = FakePoiModel.poi1
     private val poiModel2 = FakePoiModel.poi2
     private val poiModel3 = FakePoiModel.poi3
-    private val allPoiModels = FakePoiModel.poiModelList
-    private val allPoiModelsNotDeleted = FakePoiModel.poiModelListNotDeleted
-    private val propertyEntityList = FakePropertyEntity.propertyEntityList
     private val allCrossRefs = FakePropertyPoiCrossEntity.allCrossRefs
+    private val allPoiModelsNotDeleted = FakePoiModel.poiModelListNotDeleted
 
     @Before
     fun setup() {
@@ -52,13 +53,13 @@ class PoiRepositoryTest {
             seedProperties(propertyEntityList)
 
             // 2) Build links poiId -> propertyIds from the cross table
-            //    Cross = (propertyId, poiId)
+            //    Cross = (propertyId, poiId)-
             val mapByPoi = allCrossRefs
-                .groupBy { it.poiId } // group by poiId
-                .mapValues { (_, list) -> list.map { it.propertyId } } // -> List<propertyId>
+                .groupBy { it.universalLocalPoiId } // group by poiId
+                .mapValues { (_, list) -> list.map { it.universalLocalPropertyId } } // -> List<propertyId>
 
             mapByPoi.forEach { (poiId, propertyIds) ->
-                linkPoiToProperties(poiId, *propertyIds.toLongArray())
+                linkPoiToProperties(poiId, *propertyIds.toTypedArray())
             }
         }
 
@@ -67,344 +68,460 @@ class PoiRepositoryTest {
         userRepository = OfflineUserRepository(fakeUserDao)
 
         // Repository under test
-        poiRepository = OfflinePoiRepository(fakePoiDao, userRepository)
+        poiRepository = OfflinePoiRepository(fakePoiDao)
     }
 
     @Test
-    fun getAllPoiS_returnsAll() = runTest {
-        val result = poiRepository.getAllPoiS().first()
-        assertEquals(allPoiModelsNotDeleted, result)
-    }
+    fun getPoiById_shouldReturnsCorrectPoi() = runTest {
+        val result = poiRepository.getPoiById(poiModel1.universalLocalId).first()
 
-    @Test
-    fun getPoiById_returnsCorrectPoi() = runTest {
-        val result = poiRepository.getPoiById(poiModel1.id).first()
-
-        assertNotNull(result)
         assertEquals(poiModel1, result)
     }
 
     @Test
-    fun insertPoi_insertsPoi() = runTest {
-        val newPoiModel = Poi(
-            id = 999L,
-            name = "Test Market",
-            type = "Supermarché",
-            isDeleted = false,
-            isSynced = false,
-            updatedAt = System.currentTimeMillis()
-        )
+    fun getAllPoiS_shouldReturnsAll() = runTest {
+        val result = poiRepository.getAllPoiS().first()
 
-        // --- Act ---
-        poiRepository.insertPoi(newPoiModel)
-
-        // --- Verify DAO state (Entity level) ---
-        val resultEntity = fakePoiDao.entityMap[newPoiModel.id]
-
-        assertEquals(newPoiModel.id, resultEntity?.id)
-        assertEquals(newPoiModel.name, resultEntity?.name)
-        assertEquals(newPoiModel.type, resultEntity?.type)
-
-        // --- Verify Repository result (Model level) ---
-        val resultInserted = poiRepository.getPoiById(newPoiModel.id).first()
-
-        assertNotNull(resultInserted)
-        assertEquals(newPoiModel.id, resultInserted?.id)
-        assertEquals(newPoiModel.name, resultInserted?.name)
-        assertEquals(newPoiModel.type, resultInserted?.type)
+        assertEquals(allPoiModelsNotDeleted, result)
     }
 
     @Test
-    fun insertAllPoiS_insertsNewPoiS() = runTest {
-        val newPoiS = listOf(
-            Poi(
-                id = 6001L,
-                name = "New School",
-                type = "École",
-                isDeleted = false,
-                isSynced = false,
-                updatedAt = System.currentTimeMillis()
+    fun uploadUnSyncedPoi_shouldReturnOnlyPoiWithIsSyncedFalse() = runTest {
+        val result = poiRepository.uploadUnSyncedPoiSToFirebase().first()
+
+        val expected = poiEntityList
+            .filter { !it.isSynced }
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun insertPoiInsertFromUI_shouldInsertWithIsSyncedFalse() = runTest {
+        val newPoiModel = Poi(
+            universalLocalId = "poi-4",
+            name = "New poi 4",
+            type = "New type",
+            address = "New address",
+            updatedAt = 1800000000000L
+        )
+
+        val before = System.currentTimeMillis()
+
+        poiRepository.insertPoiInsertFromUI(newPoiModel)
+
+        val after = System.currentTimeMillis()
+
+        val resultEntity = fakePoiDao.entityMap[newPoiModel.universalLocalId]
+
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals(newPoiModel.universalLocalId, id)
+            assertEquals(newPoiModel.name, name)
+            assertEquals(newPoiModel.type, type)
+            assertEquals(newPoiModel.address, address)
+            assertFalse(isSynced)
+            assertFalse(isDeleted)
+            assertTrue(updatedAt in before..after)
+        }
+
+        val resultInserted = poiRepository
+            .getPoiById(newPoiModel.universalLocalId)
+            .first()
+
+        assertNotNull(resultInserted)
+    }
+
+    @Test
+    fun insertPoiInsertFromUI_shouldReturnExistingPoiIfAlreadyExists() = runTest {
+        val duplicatePoi = Poi(
+            universalLocalId = "poi-4",
+            name = poiModel1.name,
+            type = poiModel1.type,
+            address = poiModel1.address
+        )
+
+        val sizeBefore = fakePoiDao.entityMap.size
+
+        val result = poiRepository.insertPoiInsertFromUI(duplicatePoi)
+
+        val sizeAfter = fakePoiDao.entityMap.size
+
+        assertEquals(sizeBefore, sizeAfter)
+
+        assertEquals(poiModel1.universalLocalId, result.universalLocalId)
+        assertEquals(poiModel1.name, result.name)
+        assertEquals(poiModel1.address, result.address)
+        assertEquals(poiModel1.isSynced, result.isSynced)
+        assertEquals(poiModel1.isDeleted, result.isDeleted)
+        assertEquals(poiModel1.updatedAt, result.updatedAt)
+    }
+
+    @Test
+    fun insertPoiInsertFromFirebase_shouldInsertWithIsSyncedTrue()= runTest {
+        val firestoreId = "firestore-poi-4"
+        val onlinePoi = PoiOnlineEntity(
+            ownerUid = "firebase_uid_1",
+            universalLocalId = "poi-4",
+            name = "New poi 4",
+            type = "New type",
+            address = "New address",
+            updatedAt = 1900000000000L
+        )
+
+        poiRepository.insertPoiInsertFromFirebase(
+            poi = onlinePoi,
+            firebaseDocumentId = firestoreId
+        )
+
+        val resultEntity = fakePoiDao.entityMap[onlinePoi.universalLocalId]
+
+        assertNotNull(resultEntity)
+        resultEntity!!.apply {
+            assertEquals(onlinePoi.universalLocalId, resultEntity.id)
+            assertEquals(firestoreId, resultEntity.firestoreDocumentId)
+            assertEquals(onlinePoi.name, resultEntity.name)
+            assertEquals(onlinePoi.type, resultEntity.type)
+            assertEquals(onlinePoi.address, resultEntity.address)
+            assertTrue(resultEntity.isSynced)
+            assertEquals(onlinePoi.updatedAt, resultEntity.updatedAt)
+        }
+
+        val resultInserted = poiRepository
+            .getPoiById(onlinePoi.universalLocalId)
+            .first()
+
+        assertNotNull(resultInserted)
+        assertEquals(firestoreId, resultInserted!!.firestoreDocumentId)
+        assertEquals(onlinePoi.universalLocalId, resultInserted.universalLocalId)
+        assertEquals(onlinePoi.name, resultInserted.name)
+        assertEquals(onlinePoi.type, resultInserted.type)
+        assertTrue(resultInserted.isSynced)
+        assertEquals(onlinePoi.updatedAt, resultInserted.updatedAt)
+    }
+
+    @Test
+    fun insertPoiSInsertFromFirebase_shouldInsertAllWithIsSyncedTrue() = runTest {
+        val insertedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-poi-4",
+            "firestore-poi-5",
+            "firestore-poi-6"
+            )
+        val onlinePoiS = listOf(
+            PoiOnlineEntity(
+                ownerUid = "firebase_uid_1",
+                universalLocalId = "poi-4",
+                name = "New poi 4",
+                type = "New type 4",
+                address = "New address 4",
+                updatedAt = insertedTimestamp + 1
             ),
-            Poi(
-                id = 6002L,
-                name = "New Pharmacy",
-                type = "Pharmacie",
-                isDeleted = false,
-                isSynced = false,
-                updatedAt = System.currentTimeMillis()
+            PoiOnlineEntity(
+                ownerUid = "firebase_uid_2",
+                universalLocalId = "poi-5",
+                name = "New poi 5",
+                type = "New type 5",
+                address = "New address 5",
+                updatedAt = insertedTimestamp + 2
             ),
-            Poi(
-                id = 6003L,
-                name = "New Market",
-                type = "Supermarché",
-                isDeleted = false,
-                isSynced = false,
-                updatedAt = System.currentTimeMillis()
+            PoiOnlineEntity(
+                ownerUid = "firebase_uid_1",
+                universalLocalId = "poi-6",
+                name = "New poi 6",
+                type = "New type 6",
+                address = "New address 6",
+                updatedAt = insertedTimestamp + 3
             )
         )
 
-        // --- Act ---
-        poiRepository.insertAllPoiS(newPoiS)
-
-        // --- Verify DAO state (Entity level) ---
-        newPoiS.forEach { expected ->
-            val entity = fakePoiDao.entityMap[expected.id]
-            assertEquals(expected.id, entity?.id)
-            assertEquals(expected.name, entity?.name)
-            assertEquals(expected.type, entity?.type)
+        val pairs = onlinePoiS.mapIndexed { index, poi ->
+            Pair(poi, firestoreIds[index])
         }
 
-        // --- Verify Repository state (Model level) ---
-        val allPois = poiRepository.getAllPoiS().first()
-        newPoiS.forEach { expected ->
-            val actual = allPois.find { it.id == expected.id }
-            assertNotNull(actual)
-            assertEquals(expected.id, actual!!.id)
-            assertEquals(expected.name, actual.name)
-            assertEquals(expected.type, actual.type)
+        poiRepository.insertPoiSInsertFromFirebase(pairs)
+
+        onlinePoiS.forEachIndexed { index, expected ->
+
+            val resultEntity = fakePoiDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+
+            resultEntity!!.apply {
+                assertEquals(expected.universalLocalId, resultEntity.id)
+                assertEquals(firestoreIds[index], resultEntity.firestoreDocumentId)
+                assertEquals(expected.name, resultEntity.name)
+                assertEquals(expected.type, resultEntity.type)
+                assertEquals(expected.address, resultEntity.address)
+                assertTrue(resultEntity.isSynced)
+                assertEquals(expected.updatedAt, resultEntity.updatedAt)
+            }
+        }
+
+
+        val allPoiS = poiRepository.getAllPoiS().first()
+
+        onlinePoiS.forEachIndexed { index, expected ->
+
+            val resultInserted = allPoiS.find {
+                it.universalLocalId == expected.universalLocalId
+            }
+
+            assertNotNull(resultInserted)
+            assertEquals(firestoreIds[index], resultInserted!!.firestoreDocumentId)
+            assertEquals(expected.universalLocalId, resultInserted.universalLocalId)
+            assertEquals(expected.name, resultInserted.name)
+            assertEquals(expected.type, resultInserted.type)
+            assertEquals(expected.address, resultInserted.address)
+            assertTrue(resultInserted.isSynced)
+            assertEquals(expected.updatedAt, resultInserted.updatedAt)
         }
     }
 
     @Test
-    fun updatePoi_shouldModifyExistingPoi() = runTest {
-        // --- Arrange ---
-        val updated = poiModel2.copy(
-            name = "Updated POI Name",
-            type = "Updated Type",
-            updatedAt = System.currentTimeMillis()
+    fun updatePoiFromUI_shouldUpdatePoiAndForceSyncFalse() = runTest {
+        val updatedTimestamp = 1800000000000L
+        val updatedPoi = poiModel1.copy(
+            name = "Updated name",
+            type = "Updated type",
+            updatedAt = updatedTimestamp,
+            isSynced = true
         )
 
-        // --- Act ---
-        poiRepository.updatePoi(updated)
+        poiRepository.updatePoiFromUI(updatedPoi)
 
-        // --- Assert (Repository level) ---
-        val result = poiRepository.getPoiById(poiModel2.id).first()
+        val resultEntity = fakePoiDao.entityMap[updatedPoi.universalLocalId]
 
-        assertNotNull(result)
-        assertEquals(updated.name, result?.name)
-        assertEquals(updated.type, result?.type)
-        assertFalse(result?.isSynced ?: true)
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals("Updated name", resultEntity.name)
+            assertEquals("Updated type", resultEntity.type)
+            assertFalse(resultEntity.isSynced)
+            assertEquals(updatedTimestamp, resultEntity.updatedAt)
+        }
+
+        val resultUpdated = poiRepository
+            .getPoiById(updatedPoi.universalLocalId)
+            .first()
+
+        assertNotNull(resultUpdated)
+
+        resultUpdated!!.apply {
+            assertEquals("Updated name", resultUpdated.name)
+            assertEquals("Updated type", resultUpdated.type)
+            assertFalse(resultUpdated.isSynced)
+            assertEquals(updatedTimestamp, resultUpdated.updatedAt)
+        }
     }
 
     @Test
-    fun updatePoi_onNonExistingPoi_shouldInsertIt() = runTest {
-        // --- Arrange ---
-        val nonExistingPoi = Poi(
-            id = 99999L,
-            name = "Ghost POI",
-            type = "Undefined",
-            isDeleted = false,
-            isSynced = false,
-            updatedAt = System.currentTimeMillis()
+    fun updatePoiFromFirebase_shouldUpdatePoiAndForceSyncTrue() = runTest {
+        val firestoreId = "firestore-poi-1"
+        val updatedTimestamp = 1900000000000L
+
+        val updatedPoiFromFirebase =
+            poiOnlineEntity1.copy(
+                name = "Updated from Firebase",
+                type = "Updated from Firebase",
+                updatedAt = updatedTimestamp
+            )
+
+        poiRepository.updatePoiFromFirebase(
+            poi = updatedPoiFromFirebase,
+            firebaseDocumentId = firestoreId
         )
 
-        // --- Act ---
-        poiRepository.updatePoi(nonExistingPoi)
+        val resultEntity = fakePoiDao.entityMap[updatedPoiFromFirebase.universalLocalId]
 
-        // --- Assert ---
-        val entity = fakePoiDao.entityMap[nonExistingPoi.id]
-        assertNotNull(entity)
-        assertEquals(nonExistingPoi.name, entity?.name)
+        assertNotNull(resultEntity)
 
-        // --- Repository-level
-        val result = poiRepository.getPoiById(nonExistingPoi.id).first()
-        assertNotNull(result)
-        assertEquals(nonExistingPoi.name, result?.name)
+        resultEntity!!.apply {
+            assertEquals("Updated from Firebase", resultEntity.name)
+            assertEquals("Updated from Firebase", resultEntity.type)
+            assertTrue(resultEntity.isSynced)
+            assertEquals(updatedTimestamp, resultEntity.updatedAt)
+        }
+
+        val resultUpdated = poiRepository
+            .getPoiById(poiModel1.universalLocalId)
+            .first()
+
+        assertNotNull(resultUpdated)
+
+        resultUpdated!!.apply {
+            assertEquals("Updated from Firebase", resultUpdated.name)
+            assertEquals("Updated from Firebase", resultUpdated.type)
+            assertTrue(resultUpdated.isSynced)
+            assertEquals(updatedTimestamp, resultUpdated.updatedAt)
+        }
     }
 
+    @Test
+    fun updateAllPoiSFromFirebase_shouldUpdateAllPoiS() = runTest {
+        val updatedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-poi-1",
+            "firestore-poi-2",
+            "firestore-poi-3"
+        )
+        val updatedPoiSFromFirebase = listOf(
+            poiOnlineEntity1.copy(
+                name = "Updated from Firebase 1",
+                type = "Updated from Firebase 1",
+                updatedAt = updatedTimestamp + 1
+            ),
+            poiOnlineEntity2.copy(
+                name = "Updated from Firebase 2",
+                address = "Updated from Firebase 2",
+                updatedAt = updatedTimestamp + 2
+            ),
+            poiOnlineEntity3.copy(
+                name = "Updated from Firebase 3",
+                type = "Updated from Firebase 3",
+                updatedAt = updatedTimestamp + 3
+            )
+        )
 
+        val pairs = updatedPoiSFromFirebase.mapIndexed { index, poi ->
+            poi to firestoreIds[index]
+        }
+
+        poiRepository.updateAllPoiSFromFirebase(pairs)
+
+        updatedPoiSFromFirebase.forEachIndexed { index, expected ->
+            val resultEntity = fakePoiDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+
+            resultEntity!!.apply {
+                assertEquals(expected.universalLocalId, resultEntity.id)
+                assertEquals(firestoreIds[index], resultEntity.firestoreDocumentId)
+                assertEquals(expected.name, resultEntity.name)
+                assertEquals(expected.type, resultEntity.type)
+                assertEquals(expected.address, resultEntity.address)
+                assertTrue(resultEntity.isSynced)
+                assertEquals(expected.updatedAt, resultEntity.updatedAt)
+            }
+        }
+
+        val allPoiS = poiRepository.getAllPoiIncludeDeleted().first()
+
+        updatedPoiSFromFirebase.forEach { expected ->
+            val resultUpdated = allPoiS.find {
+                it.id == expected.universalLocalId
+            }
+
+            assertNotNull(resultUpdated)
+
+            resultUpdated!!.apply {
+                assertEquals(expected.universalLocalId, resultUpdated.id)
+                assertEquals(expected.name, resultUpdated.name)
+                assertEquals(expected.type, resultUpdated.type)
+                assertEquals(expected.address, resultUpdated.address)
+                assertTrue(resultUpdated.isSynced)
+                assertEquals(expected.updatedAt, resultUpdated.updatedAt)
+            }
+        }
+    }
 
     @Test
-    fun markPoiAsDeleted_shouldHidePoiFromQueries() = runTest {
-        // --- Act ---
+    fun markPoiAsDelete_shouldHidePoiFromQueries() = runTest {
         poiRepository.markPoiAsDeleted(poiModel2)
 
-        // --- DAO-level: still present in entityMap but flagged as deleted ---
-        val rawEntity = fakePoiDao.entityMap[poiModel2.id]
+        val rawEntity = fakePoiDao.entityMap[poiModel2.universalLocalId]
         assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
+        rawEntity!!.apply {
+            assertTrue(rawEntity.isDeleted)
+            assertFalse(rawEntity.isSynced)
+        }
 
-        // --- Repository-level: should no longer appear in visible results ---
         val result = poiRepository.getAllPoiS().first()
         assertFalse(result.contains(poiModel2))
     }
 
     @Test
-    fun markPoiAsDeleted_calledTwice_staysDeleted() = runTest {
-        // --- Act ---
-        poiRepository.markPoiAsDeleted(poiModel1)
-        poiRepository.markPoiAsDeleted(poiModel1)
+    fun deletePoi_shouldDeletePoi() =  runTest {
+        val existsBefore = fakePoiDao.entityMap.containsKey(poiEntity3.id)
+        assertTrue(existsBefore)
 
-        // --- DAO-level
-        val rawEntity = fakePoiDao.entityMap[poiModel1.id]
-        assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
-
-        // --- Repository-level
-        val result = poiRepository.getAllPoiS().first()
-        assertFalse(result.any { it.id == poiModel1.id })
-    }
-
-    @Test
-    fun getPoiWithProperties_whenUnlinked_returnsEmpty() = runTest {
-        val poiId = poiEntity2.id
-        fakePoiDao.unlinkAllForPoi(poiId)
-
-        val result = poiRepository.getPoiWithProperties(poiId).first()
-
-        assertEquals(poiId, result.poi.id)
-        assertTrue(result.properties.isEmpty())
-    }
-
-    @Test
-    fun getPoiWithProperties_returnsLinkedProperties() = runTest {
-        val poiId = poiEntity2.id
-
-        // --- Act ---
-        val result = poiRepository.getPoiWithProperties(poiId).first()
-
-        // --- Assert ---
-        assertEquals(poiId, result.poi.id)
-
-        val expectedIds = allCrossRefs
-            .filter { it.poiId == poiId }
-            .map { it.propertyId }
-            .toSet()
-        val actualIds = result.properties.map { it.id }.toSet()
-        assertEquals(expectedIds, actualIds)
-
-        result.properties.forEach { property ->
-            assertNotNull(property.user)
-            val entity = propertyEntityList.first { it.id == property.id }
-            assertEquals(entity.userId, property.user.id)
-        }
-    }
-
-    @Test
-    fun getPoiEntityById_returnsCorrectEntity() = runTest {
-        // --- Arrange ---
-        val expected = poiEntity1
-
-        // --- Act ---
-        val result = poiRepository.getPoiEntityById(expected.id).first()
-
-        // --- Assert ---
-        assertNotNull(result)
-        assertEquals(expected.id, result?.id)
-        assertEquals(expected.name, result?.name)
-        assertEquals(expected.type, result?.type)
-        assertEquals(expected.isDeleted, result?.isDeleted)
-        assertEquals(expected.updatedAt, result?.updatedAt)
-    }
-
-
-    @Test
-    fun deletePoi_deletesPoi() = runTest {
-        // --- Arrange ---
-        val beforeDelete = poiRepository
-            .getPoiByIdIncludeDeleted(poiEntity3.id)
-            .first()
-        assertNotNull(beforeDelete)
-
-        // --- Act ---
         poiRepository.deletePoi(poiEntity3)
 
-        // --- Assert ---
-        val afterDelete = poiRepository
-            .getPoiByIdIncludeDeleted(poiEntity3.id)
-            .first()
-        assertNull(afterDelete)
+        val resultEntity = fakePoiDao.entityMap.containsKey(poiEntity3.id)
+        assertFalse(resultEntity)
+
+        val resultDeleted = poiRepository.getPoiByIdIncludeDeleted(poiEntity3.id).first()
+        assertNull(resultDeleted)
     }
 
     @Test
-    fun getUnSyncedPoiS_returnsOnlyUnSynced() = runTest {
-        // --- Arrange ---
-        val expected = allPoiEntities.filter { !it.isSynced }
-        val synced = allPoiEntities.filter { it.isSynced }
+    fun clearAllPoiSDeleted_shouldDeleteOnlyDeletedPoiS() = runTest {
+        poiRepository.markPoiAsDeleted(poiModel1)
 
-        // --- Act ---
-        val result = poiRepository.uploadUnSyncedPoiSToFirebase().first()
+        assertTrue(fakePoiDao.entityMap[poiModel1.universalLocalId]!!.isDeleted)
+        assertTrue(fakePoiDao.entityMap[poiModel3.universalLocalId]!!.isDeleted)
+        assertFalse(fakePoiDao.entityMap[poiModel2.universalLocalId]!!.isDeleted)
 
-        // --- Assert ---
-        assertTrue(result.none { synced.contains(it) })
-        assertEquals(expected.size, result.size)
-        assertTrue(result.containsAll(expected))
+        poiRepository.clearAllPoiSDeleted()
+
+        assertFalse(fakePoiDao.entityMap.containsKey(poiModel1.universalLocalId))
+        assertFalse(fakePoiDao.entityMap.containsKey(poiModel3.universalLocalId))
+        assertTrue(fakePoiDao.entityMap.containsKey(poiModel2.universalLocalId))
+
+        val allPoiS = poiRepository.getAllPoiIncludeDeleted().first()
+
+        assertFalse(allPoiS.any { it.id == poiModel1.universalLocalId })
+        assertFalse(allPoiS.any { it.id == poiModel3.universalLocalId })
+        assertTrue(allPoiS.any { it.id == poiModel2.universalLocalId })
     }
 
     @Test
-    fun downloadPoiFromFirebase_savesPoiCorrectly() = runTest {
-        // --- Arrange ---
-        val firebasePoi = PoiOnlineEntity(
-            roomId = 888L,
-            name = "Synced from Firestore",
-            type = "Transport",
-            updatedAt = 1700000009999L
-        )
+    fun getPoiByIdIncludeDeleted_returnsDeletedPoi() = runTest {
+        val result = poiRepository.getPoiByIdIncludeDeleted(poiEntity3.id).first()
 
-        // --- Act ---
-        poiRepository.downloadPoiFromFirebase(firebasePoi)
-
-        // --- Assert ---
-        val result = poiRepository.getPoiById(firebasePoi.roomId).first()
         assertNotNull(result)
-        assertEquals(firebasePoi.roomId, result?.id)
-        assertEquals(firebasePoi.name, result?.name)
-        assertEquals(firebasePoi.type, result?.type)
-        assertTrue(result?.isSynced == true)
-    }
 
-    @Test
-    fun downloadPoiFromFirebase_updatesExistingPoi() = runTest {
-        // --- Arrange ---
-        val original = poiEntity1
-        val firebasePoi = PoiOnlineEntity(
-            roomId = original.id,
-            name = "Updated from Firebase",
-            type = "Updated Type",
-            updatedAt = original.updatedAt + 1000
-        )
-
-        // --- Act ---
-        poiRepository.downloadPoiFromFirebase(firebasePoi)
-
-        // --- Assert ---
-        val entity = fakePoiDao.entityMap[original.id]
-        assertNotNull(entity)
-        assertEquals(firebasePoi.name, entity?.name)
-        assertEquals(firebasePoi.type, entity?.type)
-        assertTrue(entity?.isSynced == true)
-
-        // --- Repository-level
-        val result = poiRepository.getPoiById(original.id).first()
-        assertNotNull(result)
-        assertEquals(firebasePoi.name, result?.name)
-        assertEquals(firebasePoi.type, result?.type)
-        assertTrue(result?.isSynced == true)
+        result!!.apply {
+            assertEquals(poiEntity3.id, result.id)
+            assertTrue(result.isDeleted)
+        }
     }
 
     @Test
     fun getAllPoiIncludeDeleted_returnsAllIncludingDeleted() = runTest {
         val result = poiRepository.getAllPoiIncludeDeleted().first()
 
-        // all 3 POIs are in FakePoiEntity.poiEntityList (poi3 isDeleted = true)
-        assertEquals(allPoiEntities.size, result.size)
+        assertEquals(poiEntityList.size, result.size)
         assertTrue(result.any { it.isDeleted })
     }
 
     @Test
-    fun getPoiByIdIncludeDeleted_returnsDeletedPoi() = runTest {
-        // --- Arrange ---
-        val deletedPoi = poiEntity3
-        assertTrue(deletedPoi.isDeleted)
+    fun getPoiWithProperties_shouldReturnPoiWithLinkedProperties() = runTest {
+        val result = poiRepository
+            .getPoiWithProperties(poiEntity1.id)
+            .first()
 
-        // --- Act ---
-        val result = poiRepository.getPoiByIdIncludeDeleted(deletedPoi.id).first()
+        assertEquals(poiEntity1.id, result.poi.universalLocalId)
+        assertEquals(poiEntity1.name, result.poi.name)
 
-        // --- Assert ---
-        assertNotNull(result)
-        assertEquals(deletedPoi.id, result?.id)
-        assertTrue(result?.isDeleted == true)
+        val expectedPropertyIds = allCrossRefs
+            .filter {
+                it.universalLocalPoiId == poiEntity1.id && !it.isDeleted
+            }
+            .map { it.universalLocalPropertyId }
+            .toSet()
+
+        val resultPropertyIds = result.properties
+            .map { it.universalLocalId }
+            .toSet()
+
+        assertEquals(expectedPropertyIds, resultPropertyIds)
     }
+
+
+
+
+
 
 
 

@@ -61,7 +61,7 @@ class OfflinePropertyPoiCrossRepository(
         dao.updateAllCrossRefsFromUIForceSyncFalse(crossRefs.map { it.toEntity() })
     }
     override suspend fun updateCrossRefFromFirebase(crossRef: PropertyPoiCrossOnlineEntity, firebaseDocumentId: String) {
-       dao.updateCrossRefFromUIForceSyncFalse(crossRef.toEntity(firestoreId = firebaseDocumentId))
+       dao.updateCrossRefFromFirebaseForceSyncTrue(crossRef.toEntity(firestoreId = firebaseDocumentId))
     }
     override suspend fun updateAllCrossRefFromFirebase(crossRefs: List<Pair<PropertyPoiCrossOnlineEntity, String>>) {
         val entities = crossRefs.map { (crossRef, firebaseDocumentId) ->

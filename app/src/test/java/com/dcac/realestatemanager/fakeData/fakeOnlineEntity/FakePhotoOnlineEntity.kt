@@ -2,6 +2,7 @@ package com.dcac.realestatemanager.fakeData.fakeOnlineEntity
 
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.FirestorePhotoDocument
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineEntity
+
 object FakePhotoOnlineEntity {
 
     private const val DEFAULT_TIMESTAMP = 1700000000000L

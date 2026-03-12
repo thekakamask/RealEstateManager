@@ -33,5 +33,5 @@ object FakeStaticMapModel {
     )
 
     val staticMapList = listOf(staticMap1, staticMap2, staticMap3)
-    val staticMapListNotDeleted = listOf(staticMap1, staticMap2)
+    val staticMapListNotDeleted = staticMapList.filter { !it.isDeleted }
 }

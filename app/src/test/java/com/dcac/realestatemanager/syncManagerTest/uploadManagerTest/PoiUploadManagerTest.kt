@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.uploadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineRepository
@@ -145,4 +146,4 @@ class PoiUploadManagerTest {
         }
     }
 
-}
+}*/

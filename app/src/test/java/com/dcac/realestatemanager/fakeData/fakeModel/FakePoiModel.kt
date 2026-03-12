@@ -45,6 +45,6 @@ object FakePoiModel {
         poi1, poi2, poi3
     )
 
-    val poiModelListNotDeleted = listOf(poi1, poi2)
+    val poiModelListNotDeleted = poiModelList.filter { !it.isDeleted }
 
 }

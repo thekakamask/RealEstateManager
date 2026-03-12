@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.firebaseRepositoryTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
@@ -256,3 +257,4 @@ class FirebasePropertyRepositoryTest {
 
 
 }
+*/

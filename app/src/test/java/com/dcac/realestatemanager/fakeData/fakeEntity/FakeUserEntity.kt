@@ -37,5 +37,5 @@ object FakeUserEntity {
     )
 
     val userEntityList = listOf(user1, user2, user3)
-    val userEntityListNotDeleted = listOf(user1, user2)
+    val userEntityListNotDeleted = userEntityList.filter { !it.isDeleted }
 }

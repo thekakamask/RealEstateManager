@@ -6,6 +6,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePhotoDao
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePhotoModel
+import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakePhotoOnlineEntity
 import com.dcac.realestatemanager.model.Photo
 import org.junit.Before
 import org.junit.Test
@@ -19,353 +20,551 @@ import org.junit.Assert.assertTrue
 
 class PhotoRepositoryTest {
 
-    // Fake DAO simulating Room database
     private lateinit var fakePhotoDao : FakePhotoDao
-    // Repository under test
     private lateinit var photoRepository : PhotoRepository
 
     private val photoEntity1 = FakePhotoEntity.photo1
-    private val photoEntity2 = FakePhotoEntity.photo2
     private val photoEntity3 = FakePhotoEntity.photo3
     private val allPhotosEntity = FakePhotoEntity.photoEntityList
     private val allPhotosEntityNotDeleted = FakePhotoEntity.photoEntityListNotDeleted
-
+    private val photoOnlineEntity1 = FakePhotoOnlineEntity.photoOnline1
+    private val photoOnlineEntity2 = FakePhotoOnlineEntity.photoOnline2
+    private val photoOnlineEntity3 = FakePhotoOnlineEntity.photoOnline3
     private val photoModel1 = FakePhotoModel.photo1
     private val photoModel2 = FakePhotoModel.photo2
     private val photoModel3 = FakePhotoModel.photo3
-    private val allPhotosModel = FakePhotoModel.photoModelList
     private val allPhotosModelNotDeleted = FakePhotoModel.photoModelListNotDeleted
 
     @Before
     fun setup() {
-        // Initialize fake DAO and repository before each test
         fakePhotoDao = FakePhotoDao()
         photoRepository = OfflinePhotoRepository(fakePhotoDao)
     }
 
     @Test
-    fun getPhotoById_returnsCorrectPhoto() = runTest {
-        val result = photoRepository.getPhotoById(photoModel1.id).first()
-        // Verify that result matches expected
+    fun getPhotoById_shouldReturnsCorrectPhoto() = runTest {
+        val result = photoRepository.getPhotoById(photoModel1.universalLocalId).first()
+
         assertEquals(photoModel1, result)
     }
 
     @Test
-    fun getPhotosByPropertyId_returnsCorrectPhotos() = runTest {
-        val result = photoRepository.getPhotosByPropertyId(photoModel2.propertyId).first()
+    fun getPhotosByPropertyId_shouldReturnsCorrectPhotos() = runTest {
+        val result = photoRepository.getPhotosByPropertyId(photoModel2.universalLocalPropertyId).first()
 
         val expected = allPhotosModelNotDeleted
-            .filter { it.propertyId == photoModel2.propertyId }
+            .filter { it.universalLocalPropertyId == photoModel2.universalLocalPropertyId }
         assertEquals(expected, result)
     }
 
     @Test
-    fun getAllPhotos_returnsAllPhotos() = runTest {
-        // Fetch all photos via repository
+    fun getAllPhotos_shouldReturnsAllPhotos() = runTest {
         val result = photoRepository.getAllPhotos().first()
-        // Expected full list of fake photos
-        val expected = allPhotosModelNotDeleted
-        // Verify full dataset matches
+
+        assertEquals(allPhotosModelNotDeleted, result)
+    }
+
+    @Test
+    fun uploadUnSyncedPhotos_shouldReturnOnlyPhotosWithIsSyncedFalse() = runTest {
+        val result = photoRepository.uploadUnSyncedPhotosToFirebase().first()
+
+        val expected = allPhotosEntity
+            .filter { !it.isSynced }
+
         assertEquals(expected, result)
     }
 
-
     @Test
-    fun insertPhoto_insertsPhoto() = runTest {
-        // --- Arrange ---
+    fun insertPhotoInsertFromUI_shouldInsertWithIsSyncedFalse() = runTest {
         val newPhotoModel = Photo(
-            id = 9999L,
-            propertyId = photoModel1.propertyId,
-            uri = "content://photo/new",
-            description = "New Photo",
+            universalLocalId = "photo-4",
+            universalLocalPropertyId = photoModel1.universalLocalPropertyId,
+            uri = "file://photo_4.jpg",
+            description = "New Photo 4",
             isDeleted = false,
             isSynced = false,
+            updatedAt = 1800000000000L
         )
-        // --- Act ---
-        photoRepository.insertPhoto(newPhotoModel)
+        photoRepository.insertPhotoInsertFromUI(newPhotoModel)
 
-        // --- Verify DAO state (Entity level) ---
-        val resultEntity = fakePhotoDao.entityMap[newPhotoModel.id]
+        val resultEntity = fakePhotoDao.entityMap[newPhotoModel.universalLocalId]
 
-        assertEquals(newPhotoModel.id, resultEntity?.id)
-        assertEquals(newPhotoModel.propertyId, resultEntity?.propertyId)
-        assertEquals(newPhotoModel.uri, resultEntity?.uri)
-
-        // --- Verify Repository result (Model level) ---
-        val resultInserted = photoRepository.getPhotoById(newPhotoModel.id).first()
-
-        assertNotNull(resultInserted)
-        assertEquals(newPhotoModel.id, resultInserted?.id)
-        assertEquals(newPhotoModel.uri, resultInserted?.uri)
-    }
-
-    @Test
-    fun updatePhoto_onNonExistingPhoto_shouldInsertIt() = runTest {
-        // --- Arrange ---
-        val nonExistingPhoto = Photo(
-            id = 7777L,
-            propertyId = photoModel1.propertyId,
-            uri = "file://new_photo.jpg",
-            description = "Inserted via update",
-            isDeleted = false,
-            isSynced = false,
-            updatedAt = System.currentTimeMillis()
-        )
-
-        // --- Act ---
-        photoRepository.updatePhoto(nonExistingPhoto)
-
-        // --- Assert ---
-        val resultEntity = fakePhotoDao.entityMap[nonExistingPhoto.id]
         assertNotNull(resultEntity)
-        assertEquals(nonExistingPhoto.id, resultEntity?.id)
 
-        val resultModel = photoRepository.getPhotoById(nonExistingPhoto.id).first()
-        assertNotNull(resultModel)
-        assertEquals(nonExistingPhoto.uri, resultModel?.uri)
-        assertEquals(nonExistingPhoto.description, resultModel?.description)
+        resultEntity!!.apply {
+            assertEquals(newPhotoModel.universalLocalId, id)
+            assertEquals(newPhotoModel.universalLocalPropertyId, universalLocalPropertyId)
+            assertEquals(newPhotoModel.uri, uri)
+            assertEquals(newPhotoModel.description, description)
+            assertFalse(isSynced)
+            assertFalse(isDeleted)
+            assertEquals(newPhotoModel.updatedAt, updatedAt)
+        }
+
+        val resultInserted = photoRepository
+            .getPhotoById(newPhotoModel.universalLocalId)
+            .first()
+
+        assertEquals(newPhotoModel, resultInserted)
     }
 
     @Test
-    fun insertPhotos_insertsNewPhotos() = runTest {
-        // --- Arrange
+    fun insertPhotosInsertFromUI_shouldInsertAllWithIsSyncedFalse() = runTest {
+        val insertedTimestamp = 1800000000000L
         val newPhotos = listOf(
             Photo(
-                id = 5001L,
-                propertyId = photoModel1.propertyId,
-                uri = "content://photo/new/1",
-                description = "Nouvelle photo 1",
+                universalLocalId = "photo-4",
+                universalLocalPropertyId = photoModel1.universalLocalPropertyId,
+                uri = "file://photo_4.jpg",
+                description = "New photo 4",
                 isDeleted = false,
                 isSynced = false,
-                updatedAt = System.currentTimeMillis()
+                updatedAt = insertedTimestamp + 1
             ),
             Photo(
-                id = 5002L,
-                propertyId = photoModel2.propertyId,
-                uri = "content://photo/new/2",
-                description = "Nouvelle photo 2",
+                universalLocalId = "photo-5",
+                universalLocalPropertyId = photoModel2.universalLocalPropertyId,
+                uri = "file://photo_5.jpg",
+                description = "New photo 5",
                 isDeleted = false,
                 isSynced = false,
-                updatedAt = System.currentTimeMillis()
+                updatedAt = insertedTimestamp + 2
             ),
             Photo(
-                id = 5003L,
-                propertyId = photoModel3.propertyId,
-                uri = "content://photo/new/3",
-                description = "Nouvelle photo 3",
+                universalLocalId = "photo-6",
+                universalLocalPropertyId = photoModel3.universalLocalPropertyId,
+                uri = "file://photo_6.jpg",
+                description = "New photo 6",
                 isDeleted = false,
                 isSynced = false,
-                updatedAt = System.currentTimeMillis()
+                updatedAt = insertedTimestamp + 3
             )
         )
 
-        // --- Act ---
-        photoRepository.insertPhotos(newPhotos)
+        photoRepository.insertPhotosInsertFromUI(newPhotos)
 
-        // --- Verify DAO state ---
         newPhotos.forEach { expected ->
-            val entity = fakePhotoDao.entityMap[expected.id]
+            val entity = fakePhotoDao.entityMap[expected.universalLocalId]
             assertNotNull(entity)
-            assertEquals(expected.id, entity?.id)
-            assertEquals(expected.propertyId, entity?.propertyId)
-            assertEquals(expected.uri, entity?.uri)
+            entity!!.apply {
+                assertEquals(expected.universalLocalId, id)
+                assertEquals(expected.universalLocalPropertyId, universalLocalPropertyId)
+                assertEquals(expected.uri, uri)
+                assertEquals(expected.description, description)
+                assertFalse(isSynced)
+                assertFalse(isDeleted)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
         }
 
-        // --- Verify Repository state ---
-        val allPhotos = photoRepository.getAllPhotos().first()
         newPhotos.forEach { expected ->
-            val actual = allPhotos.find { it.id == expected.id }
-            assertNotNull(actual)
-            assertEquals(expected.id, actual!!.id)
-            assertEquals(expected.propertyId, actual.propertyId)
-            assertEquals(expected.uri, actual.uri)
-            assertEquals(expected.description, actual.description)
+            val result = photoRepository
+                .getPhotoById(expected.universalLocalId)
+                .first()
+
+            assertEquals(expected, result)
         }
     }
 
     @Test
-    fun updatePhoto_shouldModifyExistingPhoto() = runTest {
-        val updated = photoModel2.copy(
-            uri = "file://updated_uri.jpg",
-            description = "Updated description",
-            updatedAt = System.currentTimeMillis()
+    fun insertPhotoInsertFromFirebase_shouldInsertWithIsSyncedTrue() = runTest {
+        val firestoreId = "firestore-photo-4"
+        val localUri= "file://photo_4.jpg"
+
+        val onlinePhoto = PhotoOnlineEntity(
+            ownerUid = "firebase_uid_1",
+            universalLocalId = "photo-4",
+            universalLocalPropertyId = photoModel1.universalLocalPropertyId,
+            description = "Photo from firebase",
+            storageUrl = "https://firebase.storage/photo_4.jpg",
+            isDeleted = false,
+            updatedAt = 1900000000000L
         )
 
-        photoRepository.updatePhoto(updated)
+        photoRepository.insertPhotoInsertFromFirebase(
+            photo = onlinePhoto,
+            firestoreId = firestoreId,
+            localUri = localUri
+        )
 
-        val result = photoRepository.getPhotoById(photoModel2.id).first()
+        val resultEntity = fakePhotoDao.entityMap[onlinePhoto.universalLocalId]
 
-        assertNotNull(result)
-        assertEquals(updated.uri, result?.uri)
-        assertEquals(updated.description, result?.description)
-        assertFalse(result?.isSynced ?: true)
+        assertNotNull(resultEntity)
+        resultEntity!!.apply {
+            assertEquals(onlinePhoto.universalLocalId, resultEntity.id)
+            assertEquals(firestoreId, resultEntity.firestoreDocumentId)
+            assertEquals(localUri, resultEntity.uri)
+            assertTrue(resultEntity.isSynced)
+            assertEquals(onlinePhoto.updatedAt, resultEntity.updatedAt)
+        }
+
+        val resultInserted = photoRepository
+            .getPhotoById(onlinePhoto.universalLocalId)
+            .first()
+
+        assertNotNull(resultInserted)
+        resultInserted!!.apply{
+            assertEquals(firestoreId, resultInserted.firestoreDocumentId)
+            assertEquals(onlinePhoto.universalLocalId, resultInserted.universalLocalId)
+            assertEquals(onlinePhoto.description, resultInserted.description)
+            assertTrue(resultInserted.isSynced)
+            assertEquals(onlinePhoto.updatedAt, resultInserted.updatedAt)
+        }
+    }
+
+    @Test
+    fun insertPhotosInsertFromFirebase_shouldInsertAllWithIsSyncedTrue() = runTest {
+        val insertedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-photo-4",
+            "firestore-photo-5",
+            "firestore-photo-6"
+        )
+        val localUris = listOf(
+            "file://photo_4.jpg",
+            "file://photo_5.jpg",
+            "file://photo_6.jpg"
+        )
+
+        val onlinePhotos = listOf(
+            PhotoOnlineEntity(
+                ownerUid = "firebase_uid_1",
+                universalLocalId = "photo-4",
+                universalLocalPropertyId = photoModel1.universalLocalPropertyId,
+                description = "Photo from firebase",
+                storageUrl = "https://firebase.storage/photo4.jpg",
+                isDeleted = false,
+                updatedAt = insertedTimestamp + 1
+            ),
+            PhotoOnlineEntity(
+                ownerUid = "firebase_uid_2",
+                universalLocalId = "photo-5",
+                universalLocalPropertyId = photoModel2.universalLocalPropertyId,
+                description = "Photo from firebase",
+                storageUrl = "https://firebase.storage/photo5.jpg",
+                isDeleted = false,
+                updatedAt = insertedTimestamp + 2
+            ),
+            PhotoOnlineEntity(
+                ownerUid = "firebase_uid_3",
+                universalLocalId = "photo-6",
+                universalLocalPropertyId = photoModel3.universalLocalPropertyId,
+                description = "Photo from firebase",
+                storageUrl = "https://firebase.storage/photo6.jpg",
+                isDeleted = false ,
+                updatedAt = insertedTimestamp + 3
+            )
+        )
+
+        val triples = onlinePhotos.mapIndexed { index, photo ->
+            Triple(photo, firestoreIds[index], localUris[index])
+        }
+
+        photoRepository.insertPhotosInsertFromFirebase(triples)
+
+        onlinePhotos.forEachIndexed { index, expected ->
+
+            val resultEntity = fakePhotoDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+            resultEntity!!.apply{
+                assertEquals(expected.universalLocalId, resultEntity.id)
+                assertEquals(firestoreIds[index], resultEntity.firestoreDocumentId)
+                assertEquals(localUris[index], resultEntity.uri)
+                assertEquals(expected.description, resultEntity.description)
+                assertTrue(resultEntity.isSynced)
+                assertEquals(expected.updatedAt, resultEntity.updatedAt)
+            }
+        }
+
+        val allPhotos = photoRepository.getAllPhotos().first()
+
+        onlinePhotos.forEachIndexed { index, expected ->
+
+            val resultInserted = allPhotos.find {
+                it.universalLocalId == expected.universalLocalId
+            }
+
+            assertNotNull(resultInserted)
+
+            resultInserted!!.apply {
+                assertEquals(firestoreIds[index], resultInserted.firestoreDocumentId)
+                assertEquals(expected.universalLocalId, resultInserted.universalLocalId)
+                assertEquals(localUris[index], resultInserted.uri)
+                assertEquals(expected.description, resultInserted.description)
+                assertTrue(resultInserted.isSynced)
+                assertEquals(expected.updatedAt, resultInserted.updatedAt)
+            }
+        }
+    }
+
+    @Test
+    fun updatePhotoFromUI_shouldUpdatePhotoAndForceSyncFalse() = runTest {
+        val updatedTimeStamp = 1800000000000L
+        val updatedPhoto = photoModel1.copy(
+            description = "Updated description",
+            updatedAt = updatedTimeStamp,
+            isSynced = true
+        )
+
+        photoRepository.updatePhotoFromUI(updatedPhoto)
+
+        val resultEntity = fakePhotoDao.entityMap[updatedPhoto.universalLocalId]
+
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals("Updated description", resultEntity.description)
+            assertFalse(resultEntity.isSynced)
+            assertEquals(updatedTimeStamp, updatedAt)
+        }
+
+        val resultUpdated = photoRepository
+            .getPhotoById(updatedPhoto.universalLocalId)
+            .first()
+
+        assertNotNull(resultUpdated)
+
+        resultUpdated!!.apply {
+            assertEquals("Updated description", resultUpdated.description)
+            assertFalse(resultUpdated.isSynced)
+            assertEquals(updatedTimeStamp, resultUpdated.updatedAt)
+        }
+    }
+
+    @Test
+    fun updatePhotoFromFirebase_shouldUpdatePhotoAndForceSyncTrue() = runTest {
+        val firestoreId = "firestore-photo-1"
+        val updatedTimestamp = 1900000000000L
+        val updatedOnlinePhoto = photoOnlineEntity1.copy(
+                description = "Updated from Firebase",
+                updatedAt = updatedTimestamp
+        )
+
+        photoRepository.updatePhotoFromFirebase(
+            photo = updatedOnlinePhoto,
+            firestoreId = firestoreId
+        )
+
+        val resultEntity = fakePhotoDao.entityMap[updatedOnlinePhoto.universalLocalId]
+
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals("Updated from Firebase", resultEntity.description)
+            assertEquals(firestoreId, resultEntity.firestoreDocumentId)
+            assertTrue(resultEntity.isSynced)
+            assertEquals(updatedTimestamp, resultEntity.updatedAt)
+        }
+
+        val resultUpdated = photoRepository
+            .getPhotoById(updatedOnlinePhoto.universalLocalId)
+            .first()
+
+        assertNotNull(resultUpdated)
+
+        resultUpdated!!.apply {
+            assertEquals("Updated from Firebase", resultUpdated.description)
+            assertEquals(firestoreId, resultUpdated.firestoreDocumentId)
+            assertTrue(resultUpdated.isSynced)
+            assertEquals(updatedTimestamp, resultUpdated.updatedAt)
+        }
+    }
+
+    @Test
+    fun updateAllPhotosFromFirebase_shouldUpdateAllPhotos() = runTest {
+        val updatedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-photo-1",
+            "firestore-photo-2",
+            "firestore-photo-3"
+        )
+        val updatedPhotosFromFirebase = listOf(
+            photoOnlineEntity1.copy(
+                description = "Updated from Firebase 1",
+                updatedAt = updatedTimestamp + 1
+            ),
+            photoOnlineEntity2.copy(
+                description = "Updated from Firebase 2",
+                updatedAt = updatedTimestamp + 2
+            ),
+            photoOnlineEntity3.copy(
+                description = "Updated from Firebase 3",
+                updatedAt = updatedTimestamp + 3
+            )
+        )
+
+        val pairs = updatedPhotosFromFirebase.mapIndexed { index, photo ->
+            photo to firestoreIds[index]
+        }
+
+        photoRepository.updateAllPhotosFromFirebase(pairs)
+
+        updatedPhotosFromFirebase.forEachIndexed { index, expected ->
+
+            val resultEntity = fakePhotoDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+
+            resultEntity!!.apply {
+                assertEquals(expected.description, resultEntity.description)
+                assertEquals(firestoreIds[index], resultEntity.firestoreDocumentId)
+                assertEquals(expected.updatedAt, resultEntity.updatedAt)
+                assertTrue(resultEntity.isSynced)
+            }
+        }
+        val allPhotos = photoRepository.getAllPhotosIncludeDeleted().first()
+
+        updatedPhotosFromFirebase.forEachIndexed { index, expected ->
+            val resultUpdated = allPhotos.find {
+                it.id == expected.universalLocalId
+            }
+            assertNotNull(resultUpdated)
+            resultUpdated!!.apply {
+                assertEquals(firestoreIds[index], resultUpdated.firestoreDocumentId)
+                assertEquals(expected.description, resultUpdated.description)
+                assertEquals(expected.updatedAt, resultUpdated.updatedAt)
+                assertTrue(resultUpdated.isSynced)
+            }
+        }
     }
 
     @Test
     fun markPhotoAsDelete_shouldHidePhotoFromQueries() = runTest {
-        photoRepository.markPhotoAsDelete(photoModel2)
+        photoRepository.markPhotoAsDeleted(photoModel2)
 
-        // Still in entityMap (not hard deleted)
-        val rawEntity = fakePhotoDao.entityMap[photoModel2.id]
+        val rawEntity = fakePhotoDao.entityMap[photoModel2.universalLocalId]
         assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
+        rawEntity!!.apply {
+            assertTrue(rawEntity.isDeleted)
+            assertFalse(rawEntity.isSynced)
+        }
 
-        // Should not appear in getAllPhotos anymore
-        val result = photoRepository.getAllPhotos().first()
-        assertFalse(result.contains(photoModel2))
-    }
-
-    @Test
-    fun markPhotoAsDelete_calledTwice_shouldRemainDeleted() = runTest {
-        // --- Act ---
-        photoRepository.markPhotoAsDelete(photoModel2)
-        photoRepository.markPhotoAsDelete(photoModel2)
-
-        // --- DAO-level ---
-        val rawEntity = fakePhotoDao.entityMap[photoModel2.id]
-        assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
-
-        // --- Repository-level ---
         val result = photoRepository.getAllPhotos().first()
         assertFalse(result.contains(photoModel2))
     }
 
     @Test
     fun markPhotosAsDeletedByProperty_shouldHidePhotoFromQueries() = runTest {
-        val beforeDeletion = photoRepository.getPhotosByPropertyId(photoModel2.propertyId).first()
-        assertTrue(beforeDeletion.isNotEmpty())
+        photoRepository.markPhotosAsDeletedByProperty(photoModel2.universalLocalPropertyId)
 
-        // --- Act ---
-        photoRepository.markPhotosAsDeletedByProperty(photoModel2.propertyId)
+        val rawEntities = fakePhotoDao.entityMap.values.filter {
+            it.universalLocalPropertyId == photoModel2.universalLocalPropertyId
+        }
 
-        // --- Assert ---
+        assertNotNull(rawEntities)
 
-        val remaining = fakePhotoDao.entityMap.values.filter { it.propertyId == photoModel2.propertyId }
-        assertTrue(remaining.isNotEmpty())
-        assertTrue(remaining.all { it.isDeleted })
+        rawEntities.apply {
+            assertTrue(rawEntities.isNotEmpty())
+            assertTrue(rawEntities.all { it.isDeleted })
+            assertTrue(rawEntities.all { !it.isSynced })
+        }
 
-        val result = photoRepository.getPhotosByPropertyId(photoModel2.propertyId).first()
+
+        val result = photoRepository
+            .getPhotosByPropertyId(photoModel2.universalLocalPropertyId)
+            .first()
+
         assertTrue(result.isEmpty())
     }
 
     @Test
-    fun getPhotoEntityById_returnsCorrectEntity() = runTest {
-        // --- Arrange ---
-        val expected = photoEntity1
-
-        // --- Act ---
-        val result = photoRepository.getPhotoEntityById(expected.id).first()
-
-        // --- Assert ---
-        assertNotNull(result)
-        assertEquals(expected.id, result?.id)
-        assertEquals(expected.uri, result?.uri)
-        assertEquals(expected.propertyId, result?.propertyId)
-        assertEquals(expected.description, result?.description)
-        assertEquals(expected.isDeleted, result?.isDeleted)
-        assertEquals(expected.updatedAt, result?.updatedAt)
-    }
-
-    @Test
-    fun deletePhotosByPropertyId_deletesPhotos() = runTest {
-        // --- Arrange ---
-        val beforeDelete = photoRepository
-            .getPhotosByPropertyIdIncludeDeleted(photoEntity3.propertyId)
-            .first()
+    fun deletePhotosByPropertyId_shouldDeletePhotos() = runTest {
+        val beforeDelete = fakePhotoDao.entityMap.values
+            .filter { it.universalLocalPropertyId == photoEntity3.universalLocalPropertyId }
         assertTrue(beforeDelete.isNotEmpty())
 
-        // --- Act ---
-        photoRepository.deletePhotosByPropertyId(photoEntity3.propertyId)
+        photoRepository.deletePhotosByPropertyId(photoEntity3.universalLocalPropertyId)
 
-        // --- Assert ---
-        val afterDelete = photoRepository
-            .getPhotosByPropertyIdIncludeDeleted(photoEntity3.propertyId)
+        val resultEntity = fakePhotoDao.entityMap.values
+            .filter { it.universalLocalPropertyId == photoEntity3.universalLocalPropertyId }
+
+        assertTrue(resultEntity.isEmpty())
+
+        val resultDeleted = photoRepository
+            .getPhotosByPropertyIdIncludeDeleted(photoEntity3.universalLocalPropertyId)
             .first()
-        assertTrue(afterDelete.isEmpty())
+
+        assertTrue(resultDeleted.isEmpty())
     }
 
     @Test
-    fun deletePhoto_deletesPhoto() = runTest {
-        // --- Arrange ---
-        val beforeDelete = photoRepository
-            .getPhotoByIdIncludeDeleted(photoEntity3.id)
-            .first()
-        assertNotNull(beforeDelete)
+    fun deletePhoto_shouldDeletePhoto() = runTest {
+        val beforeDelete = fakePhotoDao.entityMap.containsKey(photoEntity3.id)
+        assertTrue(beforeDelete)
 
-        // --- Act ---
         photoRepository.deletePhoto(photoEntity3)
 
-        // --- Assert ---
-        val afterDelete = photoRepository
-            .getPhotoByIdIncludeDeleted(photoEntity3.id)
+        val resultEntity = fakePhotoDao.entityMap.containsKey(photoEntity3.id)
+        assertFalse(resultEntity)
+
+        val resultDeleted = photoRepository
+            .getPhotoByIdIncludeDeleted(photoEntity3.id).first()
+        assertNull(resultDeleted)
+    }
+
+    @Test
+    fun clearAllPhotosDeleted_shouldDeleteOnlyDeletedPhotos() = runTest {
+        photoRepository.markPhotoAsDeleted(photoModel1)
+
+        assertTrue(fakePhotoDao.entityMap[photoModel1.universalLocalId]!!.isDeleted)
+        assertTrue(fakePhotoDao.entityMap[photoModel3.universalLocalId]!!.isDeleted)
+        assertFalse(fakePhotoDao.entityMap[photoModel2.universalLocalId]!!.isDeleted)
+
+        photoRepository.clearAllPhotosDeleted()
+
+        assertFalse(fakePhotoDao.entityMap.containsKey(photoModel1.universalLocalId))
+        assertFalse(fakePhotoDao.entityMap.containsKey(photoModel3.universalLocalId))
+        assertTrue(fakePhotoDao.entityMap.containsKey(photoModel2.universalLocalId))
+
+        val allPhotos = photoRepository.getAllPhotosIncludeDeleted().first()
+
+        assertFalse(allPhotos.any { it.id == photoModel1.universalLocalId })
+        assertFalse(allPhotos.any { it.id == photoModel3.universalLocalId })
+        assertTrue(allPhotos.any { it.id == photoModel2.universalLocalId })
+    }
+
+    @Test
+    fun getPhotoByIdIncludeDeleted_shouldReturnDeletedPhoto() = runTest {
+        photoRepository.markPhotoAsDeleted(photoModel1)
+
+        val result = photoRepository
+            .getPhotoByIdIncludeDeleted(photoModel1.universalLocalId)
             .first()
-        assertNull(afterDelete)
-    }
 
-    @Test
-    fun getUnSyncedPhotoEntities_returnsOnlyUnSynced() = runTest {
-        // --- Arrange ---
-        val expected = allPhotosEntity.filter { !it.isSynced }
-        val synced = allPhotosEntity.filter { it.isSynced }
-
-        // --- Act ---
-        val result = photoRepository.uploadUnSyncedPhotosToFirebase().first()
-
-        // --- Assert ---
-        assertTrue(result.none { synced.contains(it) })
-        assertEquals(expected.size, result.size)
-        assertTrue(result.containsAll(expected))
-    }
-
-    @Test
-    fun downloadPhotoFromFirebase_savesPhotoCorrectly() = runTest {
-        // --- Arrange ---
-        val firebasePhoto = PhotoOnlineEntity(
-            roomId = 999L,
-            propertyId = photoEntity1.propertyId,
-            storageUrl = "https://firebase/photo.jpg",
-            description = "Synced from Firebase",
-            updatedAt = 1700000009999L
-        )
-        val localUri = "file://local/photo.jpg"
-
-        // --- Act ---
-        photoRepository.downloadPhotoFromFirebase(firebasePhoto, localUri)
-
-        // --- Assert ---
-        val result = photoRepository.getPhotoById(firebasePhoto.roomId).first()
         assertNotNull(result)
-        assertEquals(firebasePhoto.roomId, result?.id)
-        assertEquals(localUri, result?.uri)
-        assertEquals(firebasePhoto.description, result?.description)
-        assertEquals(true, result?.isSynced)
+        result!!.apply {
+            assertEquals(photoModel1.universalLocalId, result.id)
+            assertTrue(result.isDeleted)
+        }
     }
 
     @Test
-    fun downloadPhotoFromFirebase_shouldUpdateExistingPhoto() = runTest {
-        // --- Arrange: photo déjà présente ---
-        val existingId = photoEntity1.id
-        val firebasePhoto = PhotoOnlineEntity(
-            roomId = existingId,
-            propertyId = photoEntity1.propertyId,
-            storageUrl = "https://firebase/updated.jpg",
-            description = "Updated from Firebase",
-            updatedAt = 1800000000000L
-        )
-        val localUri = "file://local/updated_photo.jpg"
+    fun getPhotosByPropertyIdIncludeDeleted_shouldReturnDeletedPhotos() = runTest {
+        val propertyId = photoModel1.universalLocalPropertyId
+        photoRepository.markPhotoAsDeleted(photoModel1)
 
-        // --- Act ---
-        photoRepository.downloadPhotoFromFirebase(firebasePhoto, localUri)
+        val result = photoRepository
+            .getPhotosByPropertyIdIncludeDeleted(propertyId)
+            .first()
 
-        // --- Assert ---
-        val result = photoRepository.getPhotoById(existingId).first()
-        assertNotNull(result)
-        assertEquals(existingId, result?.id)
-        assertEquals(localUri, result?.uri) // le localUri doit remplacer l'ancien
-        assertEquals(firebasePhoto.description, result?.description)
-        assertTrue(result?.isSynced == true)
-        assertEquals(firebasePhoto.updatedAt, result?.updatedAt)
+        assertTrue(result.any { it.id == photoModel1.universalLocalId })
+        val deletedPhoto = result.find { it.id == photoModel1.universalLocalId }
+        assertTrue(deletedPhoto!!.isDeleted)
     }
 
+    @Test
+    fun getAllPhotosIncludeDeleted_shouldReturnAllPhotosEvenDeleted() = runTest {
+
+        photoRepository.markPhotoAsDeleted(photoModel2)
+
+        val totalBefore = fakePhotoDao.entityMap.size
+
+        val result = photoRepository
+            .getAllPhotosIncludeDeleted()
+            .first()
+
+        assertEquals(totalBefore, result.size)
+        assertTrue(result.any { it.id == photoModel2.universalLocalId && it.isDeleted })
+    }
 }

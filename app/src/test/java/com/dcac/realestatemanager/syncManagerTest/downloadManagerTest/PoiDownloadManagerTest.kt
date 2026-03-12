@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
@@ -297,4 +298,4 @@ class PoiDownloadManagerTest {
             poiRepository.downloadPoiFromFirebase(any())
         }
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.uploadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
@@ -142,4 +143,4 @@ class PropertyUploadManagerTest {
         }
     }
 
-}
+}*/

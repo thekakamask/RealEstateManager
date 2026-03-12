@@ -1,7 +1,5 @@
 package com.dcac.realestatemanager.fakeData.fakeModel
 
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyEntity
 import com.dcac.realestatemanager.model.PropertyPoiCross
 
 object FakePropertyPoiCrossModel {
@@ -49,12 +47,10 @@ object FakePropertyPoiCrossModel {
         updatedAt = DEFAULT_TIMESTAMP + 6
     )
 
-    val allCrossRefsNotDeleted = listOf(
-        cross1, cross2, cross3, cross4
-    )
-
     val allCrossRefs = listOf(
         cross1, cross2, cross3, cross4, cross5,
         cross6
     )
+
+    val allCrossRefsNotDeleted = allCrossRefs.filter { !it.isDeleted }
 }

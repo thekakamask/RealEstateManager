@@ -7,6 +7,7 @@ import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakeUserDao
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel
+import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakeUserOnlineEntity
 import com.dcac.realestatemanager.model.User
 import junit.framework.TestCase
 import kotlinx.coroutines.test.runTest
@@ -27,10 +28,14 @@ class UserRepositoryTest {
     private val userEntity1 = FakeUserEntity.user1
     private val userEntity2 = FakeUserEntity.user2
     private val userEntity3 = FakeUserEntity.user3
+    private val allUserEntityNotDeleted = FakeUserEntity.userEntityListNotDeleted
     private val allUsersEntity = FakeUserEntity.userEntityList
-
+    private val userOnlineEntity1 = FakeUserOnlineEntity.userOnline1
+    private val userOnlineEntity2 = FakeUserOnlineEntity.userOnline2
+    private val userOnlineEntity3 = FakeUserOnlineEntity.userOnline3
     private val userModel1 = FakeUserModel.user1
     private val userModel2 = FakeUserModel.user2
+    private val userModel3 = FakeUserModel.user3
     private val allUsersModelNotDeleted = FakeUserModel.userModelListNotDeleted
 
     @Before
@@ -41,369 +46,395 @@ class UserRepositoryTest {
 
     @Test
     fun getUserById_returnsCorrectUser() = runTest {
-        val result = userRepository.getUserById(userEntity1.id).first()
-        assertNotNull(result)
-        assertEquals(userModel1, result)
-        assertEquals(userModel1.id, result?.id)
-        assertEquals(userModel1.email, result?.email)
-        assertEquals(userModel1.agentName, result?.agentName)
-        assertEquals(userModel1.firebaseUid, result?.firebaseUid)
-        assertEquals(userModel1.updatedAt, result?.updatedAt)
-    }
+        val result = userRepository.getUserById(userModel1.universalLocalId).first()
 
-    @Test
-    fun getUserByFirebaseUid_returnsCorrectUser() = runTest {
-        val result = userRepository.getUserByFirebaseUid(userEntity1.firebaseUid).first()
-        assertNotNull(result)
         assertEquals(userModel1, result)
-        assertEquals(userModel1.id, result?.id)
-        assertEquals(userModel1.email, result?.email)
-        assertEquals(userModel1.agentName, result?.agentName)
-        assertEquals(userModel1.firebaseUid, result?.firebaseUid)
-        assertEquals(userModel1.updatedAt, result?.updatedAt)
     }
 
     @Test
     fun getUserByEmail_returnsCorrectUser() = runTest {
-        val result = userRepository.getUserByEmail(userEntity2.email).first()
-        assertNotNull(result)
+        val result = userRepository.getUserByEmail(userModel2.email).first()
+
         assertEquals(userModel2, result)
-        assertEquals(userModel2.id, result?.id)
-        assertEquals(userModel2.email, result?.email)
-        assertEquals(userModel2.agentName, result?.agentName)
-        assertEquals(userModel2.firebaseUid, result?.firebaseUid)
-        assertEquals(userModel2.updatedAt, result?.updatedAt)
     }
 
     @Test
-    fun getAllUsers_returnsAllUsers() = runTest {
+    fun getUserByFirebaseUid_returnsCorrectUser() = runTest {
+        val result = userRepository.getUserByFirebaseUid(userModel1.firebaseUid).first()
+
+        assertEquals(userModel1, result)
+    }
+
+    @Test
+    fun getAllUsers_shouldReturnsAllUsers() = runTest {
         val result = userRepository.getAllUsers().first()
+
         assertEquals(allUsersModelNotDeleted.size, result.size)
-        assertTrue(result.containsAll(allUsersModelNotDeleted))
     }
 
     @Test
-    fun firstInsertUser_shouldInsertUserAndReturnGeneratedId() = runTest {
-        val newUser = User(
-            id = 0L,
-            email = "unique@domain.com",
-            agentName = "New Agent",
-            firebaseUid = "unique_firebase_uid",
-            updatedAt = System.currentTimeMillis()
+    fun uploadUnSyncedUsers_shouldReturnOnlyUsersWithIsSyncedFalse() = runTest {
+        val result = userRepository.uploadUnSyncedUsersToFirebase().first()
+
+        val expected = allUsersEntity
+            .filter { !it.isSynced }
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun firstInsertUser_shouldInsertWithIsSyncedTrue() = runTest {
+        val newUserModel = User(
+            universalLocalId = "user-4",
+            email = "adresse@hotmail.fr",
+            agentName = "New agent",
+            firebaseUid = "firebase_uid_4",
+            updatedAt = 1900000000000L
         )
 
-        val generatedId = userRepository.firstInsertUser(newUser)
+        userRepository.firstUserInsert(newUserModel)
 
-        assertTrue(generatedId > 0)
+        val resultEntity = fakeUserDao.entityMap[newUserModel.universalLocalId]
 
-        val inserted = userRepository.getUserById(generatedId).first()
+        assertNotNull(resultEntity)
 
-        assertNotNull(inserted)
-        assertEquals("unique@domain.com", inserted?.email)
-    }
+        resultEntity!!.apply {
+            assertEquals(newUserModel.universalLocalId, id)
+            assertEquals(newUserModel.email, email)
+            assertEquals(newUserModel.agentName, agentName)
+            assertEquals(newUserModel.firebaseUid, firebaseUid)
+            assertTrue(isSynced)
+            assertFalse(isDeleted)
+            assertEquals(newUserModel.updatedAt, updatedAt)
+        }
 
-    @Test
-    fun firstInsertUser_shouldIgnoreDuplicateAndReturnMinusOne() = runTest {
-        val duplicate = FakeUserModel.user1.copy(id = 0L) // same email as existing
-
-        val result = userRepository.firstInsertUser(duplicate)
-
-        assertEquals(-1L, result)
-    }
-
-    @Test
-    fun insertUser_insertsUserCorrectly() = runTest {
-        val newUser = User(
-            id = 99L,
-            email = "test@insert.com",
-            agentName = "New Agent",
-            firebaseUid = "new_firebase_uid",
-            updatedAt = System.currentTimeMillis()
-        )
-
-        userRepository.insertUser(newUser)
-
-        val insertedEntity = fakeUserDao.entityMap[newUser.id]
-
-        assertNotNull(insertedEntity)
-        assertEquals(newUser.id, insertedEntity?.id)
-        assertEquals(newUser.email, insertedEntity?.email)
-        assertEquals(newUser.agentName, insertedEntity?.agentName)
-        assertEquals(newUser.firebaseUid, insertedEntity?.firebaseUid)
-        assertEquals(newUser.isSynced, insertedEntity?.isSynced)
-        assertEquals(newUser.isDeleted, insertedEntity?.isDeleted)
-        assertEquals(newUser.updatedAt, insertedEntity?.updatedAt)
-
-        val resultInserted = userRepository.getUserById(newUser.id).first()
+        val resultInserted = userRepository
+            .getUserById(newUserModel.universalLocalId)
+            .first()
 
         assertNotNull(resultInserted)
-        assertEquals(newUser.id, resultInserted?.id)
-        assertEquals(newUser.email, resultInserted?.email)
-        assertEquals(newUser.agentName, resultInserted?.agentName)
-        assertEquals(newUser.firebaseUid, resultInserted?.firebaseUid)
-        assertEquals(newUser.isSynced, resultInserted?.isSynced)
-        assertEquals(newUser.isDeleted, resultInserted?.isDeleted)
-
+        resultInserted!!.apply{
+            assertEquals(newUserModel.firebaseUid, resultInserted.firebaseUid)
+            assertEquals(newUserModel.universalLocalId, resultInserted.universalLocalId)
+            assertEquals(newUserModel.agentName, resultInserted.agentName)
+            assertEquals(newUserModel.email, resultInserted.email)
+            assertTrue(resultInserted.isSynced)
+            assertEquals(newUserModel.updatedAt, resultInserted.updatedAt)
+        }
     }
 
     @Test
-    fun insertAllUsers_insertsAllUsersCorrectly() = runTest {
-        val newUsers = listOf(
-            User(
-                id = 10L,
-                email = "test1@insert.com",
-                agentName = "New Agent 1",
-                firebaseUid = "new_firebase_uid_1",
-                isDeleted = false,
-                isSynced = false,
-                updatedAt = System.currentTimeMillis()
+    fun insertUserInsertFromFirebase_shouldInsertWithIsSyncTrue() = runTest {
+        val firestoreId = "firestore-user-4"
+        val onlineUser = UserOnlineEntity(
+            universalLocalId = "user-4",
+            email = "adresse@hotmail.fr",
+            agentName = "New agent",
+            updatedAt = 1900000000000L
+        )
+
+        userRepository.insertUserInsertFromFirebase(
+            onlineUser, firestoreId
+        )
+
+        val resultEntity = fakeUserDao.entityMap[onlineUser.universalLocalId]
+
+        assertNotNull(resultEntity)
+        resultEntity!!.apply {
+            assertEquals(onlineUser.universalLocalId, id)
+            assertEquals(onlineUser.email, email)
+            assertEquals(onlineUser.agentName, agentName)
+            assertEquals(firestoreId, firebaseUid)
+        }
+
+        val resultInserted = userRepository
+            .getUserById(onlineUser.universalLocalId)
+            .first()
+
+        assertNotNull(resultInserted)
+        resultInserted!!.apply {
+            assertEquals(onlineUser.universalLocalId, universalLocalId)
+            assertEquals(onlineUser.email, email)
+            assertEquals(onlineUser.agentName, agentName)
+            assertEquals(firestoreId, firebaseUid)
+            assertTrue(isSynced)
+            assertEquals(onlineUser.updatedAt, updatedAt)
+        }
+    }
+
+    @Test
+    fun insertUsersInsertFromFirebase_shouldInsertAllWithIsSyncedTrue() = runTest {
+        val insertedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-user-4",
+            "firestore-user-5",
+            "firestore-user-6"
+        )
+
+        val onlineUsers = listOf(
+            UserOnlineEntity(
+                universalLocalId = "user-4",
+                email = "adresse@hotmail.fr",
+                agentName = "New agent",
+                updatedAt = insertedTimestamp + 1
             ),
-            User(
-                id = 11L,
-                email = "test2@insert.com",
-                agentName = "New Agent 2",
-                firebaseUid = "new_firebase_uid_2",
-                isDeleted = false,
-                isSynced = false,
-                updatedAt = System.currentTimeMillis()
+            UserOnlineEntity(
+                universalLocalId = "user-5",
+                email = "adresse2@hotmail.fr",
+                agentName = "New agent 2",
+                updatedAt = insertedTimestamp + 2
             ),
-            User(
-                id = 12L,
-                email = "test3@insert.com",
-                agentName = "New Agent 3",
-                firebaseUid = "new_firebase_uid_3",
-                isDeleted = false,
-                isSynced = false,
-                updatedAt = System.currentTimeMillis()
+            UserOnlineEntity(
+                universalLocalId = "user-6",
+                email = "adresse3@hotmail.fr",
+                agentName = "New agent 3",
+                updatedAt = insertedTimestamp + 3
             )
         )
-        userRepository.insertAllUsers(newUsers)
 
-        newUsers.forEach { expected ->
-            val entity = fakeUserDao.entityMap[expected.id]
-            assertNotNull(entity)
-            assertEquals(expected.id, entity?.id)
-            assertEquals(expected.email, entity?.email)
-            assertEquals(expected.agentName, entity?.agentName)
+        val pairs = onlineUsers.mapIndexed { index, user ->
+            user to firestoreIds[index]
+        }
+
+        userRepository.insertAllUsersInsertFromFirebase(pairs)
+
+        onlineUsers.forEachIndexed { index, expected ->
+
+            val resultEntity = fakeUserDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+            resultEntity!!.apply {
+                assertEquals(expected.universalLocalId, id)
+                assertEquals(expected.email, email)
+                assertEquals(expected.agentName, agentName)
+                assertEquals(firestoreIds[index], firebaseUid)
+                assertTrue(isSynced)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
         }
 
         val allUsers = userRepository.getAllUsers().first()
-        newUsers.forEach { expected ->
-            val actual = allUsers.find { it.id == expected.id }
-            assertNotNull(actual)
-            assertEquals(expected.id, actual!!.id)
-            assertEquals(expected.email, actual.email)
-            assertEquals(expected.agentName, actual.agentName)
+
+        onlineUsers.forEachIndexed { index, expected ->
+            val resultInserted = allUsers.find {
+                it.universalLocalId == expected.universalLocalId
+            }
+
+            assertNotNull(resultInserted)
+
+            resultInserted!!.apply {
+                assertEquals(firestoreIds[index], firebaseUid)
+                assertEquals(expected.universalLocalId, universalLocalId)
+                assertEquals(expected.email, email)
+                assertEquals(expected.agentName, agentName)
+                assertTrue(isSynced)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
         }
     }
 
     @Test
-    fun updateUser_shouldModifyExistingUser() = runTest {
-        val updated = userModel2.copy(
-            email = "updated@example.com",
-            agentName = "Updated Agent",
-            updatedAt = System.currentTimeMillis()
+    fun updateUserFromUI_shouldUpdateUserAndForceSyncFalse() = runTest {
+        val updatedTimestamp = 1800000000000L
+        val updateUser = userModel1.copy (
+            agentName = "Updated agent",
+            updatedAt = updatedTimestamp
         )
-        userRepository.updateUser(updated)
-        val result = userRepository.getUserById(userModel2.id).first()
-        assertNotNull(result)
-        assertEquals(updated.email, result?.email)
-        assertEquals(updated.agentName, result?.agentName)
-        assertFalse(result?.isSynced ?: true)
+        userRepository.updateUser(updateUser)
+
+        val resultEntity = fakeUserDao.entityMap[updateUser.universalLocalId]
+
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals("Updated agent", resultEntity.agentName)
+            assertFalse(resultEntity.isSynced)
+            assertEquals(updatedTimestamp, updatedAt)
+        }
+
+        val resultUpdated = userRepository
+            .getUserById(updateUser.universalLocalId)
+            .first()
+
+        assertNotNull(resultUpdated)
+
+        resultUpdated!!.apply {
+            assertEquals("Updated agent", resultUpdated.agentName)
+            assertFalse(resultUpdated.isSynced)
+            assertEquals(updatedTimestamp, resultUpdated.updatedAt)
+        }
+
     }
 
     @Test
-    fun updateUser_onNonExistingUser_shouldInsertIt() = runTest {
-        val nonExistingUser = User(
-            id = 99999L,
-            email = "ghost@noemail.com",
-            agentName = "Ghost Agent",
-            firebaseUid = "ghost_firebase_uid",
-            updatedAt = System.currentTimeMillis()
+    fun updateUserFromFirebase_shouldUpdateUserAndForceSyncTrue() = runTest {
+        val firestoreId = "firestore-user-1"
+        val updatedTimestamp = 1900000000000L
+        val updatedOnlineUser = userOnlineEntity1.copy(
+            agentName = "Updated from Firebase",
+            updatedAt = updatedTimestamp
         )
 
-        userRepository.updateUser(nonExistingUser)
+        userRepository.updateUserFromFirebase(
+            user = updatedOnlineUser,
+            firebaseUid = firestoreId
+        )
 
-        val entity = fakeUserDao.entityMap[nonExistingUser.id]
-        assertNotNull(entity)
-        assertEquals(nonExistingUser.email, entity?.email)
 
-        val result = userRepository.getUserById(nonExistingUser.id).first()
-        assertNotNull(result)
-        assertEquals(nonExistingUser.email, result?.email)
     }
 
     @Test
-    fun markUserAsDeleted_marksUserAsDeleted() = runTest {
+    fun updateAllUsersFromFirebase_shouldUpdateAllUsers() = runTest {
+        val updatedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-user-1",
+            "firestore-user-2",
+            "firestore-user-3"
+        )
+        val updatedUsersFromFirebase = listOf(
+            userOnlineEntity1.copy(
+                agentName = "Updated from Firebase 1",
+                updatedAt = updatedTimestamp + 1
+            ),
+            userOnlineEntity2.copy(
+                agentName = "Updated from Firebase 2",
+                updatedAt = updatedTimestamp + 2
+            ),
+            userOnlineEntity3.copy(
+                agentName = "Updated from Firebase 3",
+                updatedAt = updatedTimestamp + 3
+            )
+        )
+        val pairs = updatedUsersFromFirebase.mapIndexed { index, user ->
+            user to firestoreIds[index]
+        }
+
+        userRepository.updateAllUsersFromFirebase(pairs)
+
+        updatedUsersFromFirebase.forEachIndexed { index, expected ->
+
+            val resultEntity = fakeUserDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+
+            resultEntity!!.apply {
+                assertEquals(expected.agentName, resultEntity.agentName)
+                assertEquals(firestoreIds[index], resultEntity.firebaseUid)
+                assertEquals(expected.updatedAt, resultEntity.updatedAt)
+                assertTrue(resultEntity.isSynced)
+            }
+        }
+
+        val allUsers = userRepository.getAllUsers().first()
+
+        updatedUsersFromFirebase.forEachIndexed { index, expected ->
+            val resultUpdated = allUsers.find{
+                it.universalLocalId == expected.universalLocalId
+            }
+
+            assertNotNull(resultUpdated)
+            resultUpdated!!.apply {
+                assertEquals(firestoreIds[index], firebaseUid)
+                assertEquals(expected.agentName, agentName)
+                assertTrue(isSynced)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
+        }
+    }
+
+    @Test
+    fun markUserAsDelete_shouldHideUserFromQueries() = runTest {
         userRepository.markUserAsDeleted(userModel2)
 
-        val rawEntity = fakeUserDao.entityMap[userModel2.id]
+        val rawEntity = fakeUserDao.entityMap[userModel2.universalLocalId]
         assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
-
-        val result = userRepository.getAllUsers().first()
-        TestCase.assertFalse(result.any { it.id == userModel2.id })
-    }
-
-    @Test
-    fun markUserAsDeleted_calledTwice_staysDeleted() = runTest {
-        userRepository.markUserAsDeleted(userModel1)
-        userRepository.markUserAsDeleted(userModel1)
-
-        val rawEntity = fakeUserDao.entityMap[userModel1.id]
-        assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
-
-        val result = userRepository.getAllUsers().first()
-        assertFalse(result.any { it.id == userModel1.id })
-    }
-
-    @Test
-    fun markAllUsersAsDeleted_marksAllUsersAsDeleted() = runTest {
-        userRepository.markAllUsersAsDeleted()
-
-        fakeUserDao.entityMap.values.forEach {
-            assertTrue(it.isDeleted)
+        rawEntity!!.apply {
+            assertTrue(isDeleted)
+            assertFalse(isSynced)
         }
 
         val result = userRepository.getAllUsers().first()
+        assertFalse(result.contains(userModel2))
+    }
+
+    @Test
+    fun markAllUsersAsDelete_shouldHideUsersFromQueries() = runTest {
+        userRepository.markAllUsersAsDeleted()
+
+        val rawEntities = fakeUserDao.entityMap.values
+
+        assertNotNull(rawEntities)
+
+        rawEntities.apply{
+            assertTrue(rawEntities.isNotEmpty())
+            assertTrue(rawEntities.all {it.isDeleted})
+            assertTrue(rawEntities.all {!it.isSynced})
+        }
+
+        val result = userRepository
+            .getAllUsers()
+            .first()
+
         assertTrue(result.isEmpty())
     }
 
     @Test
-    fun emailExists_returnsTrueForExistingEmail() = runTest {
-        val exists = userRepository.emailExists(userModel1.email).first()
-        assertTrue(exists)
-    }
-
-    @Test
-    fun emailExists_returnsFalseForNonExistingEmail() = runTest {
-        val exists = userRepository.emailExists("ghost@noemail.com").first()
-        assertFalse(exists)
-    }
-
-    @Test
-    fun getUserEntityById_returnsCorrectUserEntity() = runTest {
-        val expected = userEntity1
-
-        val result = userRepository.getUserEntityById(expected.id).first()
-
-        assertNotNull(result)
-        assertEquals(expected.id, result?.id)
-        assertEquals(expected.email, result?.email)
-        assertEquals(expected.agentName, result?.agentName)
-        assertEquals(expected.firebaseUid, result?.firebaseUid)
-        assertEquals(expected.isSynced, result?.isSynced)
-        assertEquals(expected.isDeleted, result?.isDeleted)
-        assertEquals(expected.updatedAt, result?.updatedAt)
-    }
-
-    @Test
-    fun deleteUser_deletesUserCorrectly() = runTest {
-        val beforeDelete = userRepository
-            .getUserByIdIncludeDeleted(userEntity3.id)
-            .first()
-        assertNotNull(beforeDelete)
+    fun deleteUser_shouldDeleteUser() = runTest {
+        val existsBefore = fakeUserDao.entityMap.containsKey(userEntity3.id)
+        assertTrue(existsBefore)
 
         userRepository.deleteUser(userEntity3)
 
-        val afterDelete = userRepository
+        val resultEntity = fakeUserDao.entityMap.containsKey(userEntity3.id)
+        assertFalse(resultEntity)
+
+        val resultDeleted = userRepository
             .getUserByIdIncludeDeleted(userEntity3.id)
             .first()
-        assertNull(afterDelete)
+
+        assertNull(resultDeleted)
     }
 
     @Test
-    fun clearAllUsersDeleted_clearsAllDeletedUsers() = runTest {
-        val deletedUser = userEntity3
-        assertTrue(deletedUser.isDeleted)
+    fun clearAllUsersDeleted_shouldDeleteOnlyDeletedUsers() = runTest {
+        userRepository.markUserAsDeleted(userModel1)
 
-        val beforeClear = userRepository.getUserByIdIncludeDeleted(deletedUser.id).first()
-        assertNotNull(beforeClear)
+        assertTrue(fakeUserDao.entityMap[userModel1.universalLocalId]!!.isDeleted)
+        assertTrue(fakeUserDao.entityMap[userModel3.universalLocalId]!!.isDeleted)
+        assertFalse(fakeUserDao.entityMap[userModel2.universalLocalId]!!.isDeleted)
 
         userRepository.clearAllUsersDeleted()
 
-        val afterClear = userRepository.getUserByIdIncludeDeleted(deletedUser.id).first()
-        assertNull(afterClear)
+        assertFalse(fakeUserDao.entityMap.containsKey(userModel1.universalLocalId))
+        assertFalse(fakeUserDao.entityMap.containsKey(userModel3.universalLocalId))
+        assertTrue(fakeUserDao.entityMap.containsKey(userModel2.universalLocalId))
 
-        val stillPresent = userRepository.getUserEntityById(userEntity1.id).first()
-        assertNotNull(stillPresent)
+        val allProperties = userRepository.getAllUsersIncludeDeleted().first()
+
+        assertFalse(allProperties.any { it.id == userModel1.universalLocalId })
+        assertFalse(allProperties.any { it.id == userModel3.universalLocalId })
+        assertTrue(allProperties.any { it.id == userModel2.universalLocalId })
     }
 
     @Test
-    fun uploadUnSyncedUsers_returnsUnSyncedUsers() = runTest {
-        val expected = allUsersEntity.filter { !it.isSynced }
-        val synced = allUsersEntity.filter { it.isSynced }
-
-        val result = userRepository.uploadUnSyncedUsers().first()
-
-        assertTrue(result.none { synced.contains(it) })
-        assertEquals(expected.size, result.size)
-        assertTrue(result.containsAll(expected))
-    }
-
-    @Test
-    fun downloadUserFromFirebase_storesUserCorrectly() = runTest {
-        val firebaseUser = UserOnlineEntity(
-            email = "cloud@firebase.com",
-            agentName = "Cloud Agent",
-            updatedAt = System.currentTimeMillis()
-        )
-
-        val firebaseUid = "firebase_new_999" // Firestore document ID
-        userRepository.downloadUserFromFirebase(firebaseUser, firebaseUid)
-
-        val result = userRepository.getUserByFirebaseUid(firebaseUid).first()
+    fun getUserByIdIncludeDeleted_returnsDeletedUser() = runTest {
+        val result = userRepository
+            .getUserByIdIncludeDeleted(userEntity3.id)
+            .first()
 
         assertNotNull(result)
-        assertEquals(firebaseUser.agentName, result?.agentName)
-        assertEquals(firebaseUser.email, result?.email)
-        assertTrue(result?.isSynced == true)
+
+        result!!.apply {
+            assertEquals(userEntity3.id, result.id)
+            assertTrue(result.isDeleted)
+        }
     }
 
     @Test
-    fun downloadUserFromFirebase_updatesExisting() = runTest {
-        val original = userEntity1
-        val firebaseUser = UserOnlineEntity(
-            email = "updated@firebase.com",
-            agentName = "Update Agent",
-            updatedAt = System.currentTimeMillis()
-        )
-
-        val firebaseUid = original.firebaseUid
-
-        userRepository.downloadUserFromFirebase(firebaseUser, firebaseUid)
-
-        val entity = fakeUserDao.entityMap[original.id]
-        assertNotNull(entity)
-        assertEquals(firebaseUser.email, entity?.email)
-        assertEquals(firebaseUser.agentName, entity?.agentName)
-        assertTrue(entity?.isSynced == true)
-
-        val result = userRepository.getUserByFirebaseUid(firebaseUid).first()
-        assertNotNull(result)
-        assertEquals(firebaseUser.email, result?.email)
-        assertEquals(firebaseUser.agentName, result?.agentName)
-        assertTrue(result?.isSynced == true)
-    }
-
-    @Test
-    fun getUserByIdIncludeDeleted_returnsUserDeleted() = runTest {
-        val deletedUser = userEntity3
-        assertTrue(deletedUser.isDeleted)
-
-        val result = userRepository.getUserByIdIncludeDeleted(deletedUser.id).first()
-
-        assertNotNull(result)
-        assertEquals(deletedUser.id, result?.id)
-        assertTrue(result?.isDeleted == true)
-    }
-
-    @Test
-    fun getAllUsersIncludeDeleted_returnsAllIncludeDeleted() = runTest {
+    fun getAllUsersByIdIncludeDeleted_returnsAllIncludingDeleted() = runTest {
         val result = userRepository.getAllUsersIncludeDeleted().first()
+
         assertEquals(allUsersEntity.size, result.size)
         assertTrue(result.any { it.isDeleted })
     }
-
 }

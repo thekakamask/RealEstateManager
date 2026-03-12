@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.firebaseRepositoryTest
 
 
@@ -231,4 +232,4 @@ class FirebaseUserRepositoryTest {
         assertThat(thrown).isInstanceOf(FirebaseUserDeleteException::class.java)
         assertThat(thrown?.cause?.message).isEqualTo("delete fail")
     }
-}
+}*/

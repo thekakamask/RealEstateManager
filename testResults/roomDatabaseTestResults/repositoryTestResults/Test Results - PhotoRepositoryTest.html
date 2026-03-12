@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">348 ms</div>
+                <div class="time" xmlns="">226 ms</div>
                 <h1>
-                    PhotoRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">16 total, </span><span class="passed">16 passed</span></strong>
+                    PhotoRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">19 total, </span><span class="passed">19 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,88 +593,103 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">348 ms</div>
+                                <div class="time">226 ms</div>
                             </em>PhotoRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">301 ms</div>
+                                        <div class="time">178 ms</div>
+                                    </em><em class="status">passed</em>getPhotosByPropertyId_shouldReturnsCorrectPhotos</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">7 ms</div>
                                     </em><em class="status">passed</em>markPhotoAsDelete_shouldHidePhotoFromQueries</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>insertPhoto_insertsPhoto</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getAllPhotos_returnsAllPhotos</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>downloadPhotoFromFirebase_savesPhotoCorrectly</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>deletePhoto_deletesPhoto</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>deletePhotosByPropertyId_deletesPhotos</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>updatePhoto_onNonExistingPhoto_shouldInsertIt</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>markPhotoAsDelete_calledTwice_shouldRemainDeleted</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getPhotoById_returnsCorrectPhoto</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>getPhotosByPropertyId_returnsCorrectPhotos</span>
+                                        <div class="time">8 ms</div>
+                                    </em><em class="status">passed</em>deletePhoto_shouldDeletePhoto</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>updatePhoto_shouldModifyExistingPhoto</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>downloadPhotoFromFirebase_shouldUpdateExistingPhoto</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>insertPhotos_insertsNewPhotos</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>getPhotoEntityById_returnsCorrectEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>markPhotosAsDeletedByProperty_shouldHidePhotoFromQueries</span>
+                                    </em><em class="status">passed</em>getAllPhotos_shouldReturnsAllPhotos</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPhotoEntities_returnsOnlyUnSynced</span>
+                                    </em><em class="status">passed</em>updatePhotoFromFirebase_shouldUpdatePhotoAndForceSyncTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>deletePhotosByPropertyId_shouldDeletePhotos</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>updatePhotoFromUI_shouldUpdatePhotoAndForceSyncFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPhotosInsertFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>getAllPhotosIncludeDeleted_shouldReturnAllPhotosEvenDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>updateAllPhotosFromFirebase_shouldUpdateAllPhotos</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPhotosInsertFromUI_shouldInsertAllWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getPhotoByIdIncludeDeleted_shouldReturnDeletedPhoto</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPhotoInsertFromFirebase_shouldInsertWithIsSyncedTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>clearAllPhotosDeleted_shouldDeleteOnlyDeletedPhotos</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>uploadUnSyncedPhotos_shouldReturnOnlyPhotosWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPhotoInsertFromUI_shouldInsertWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>markPhotosAsDeletedByProperty_shouldHidePhotoFromQueries</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>getPhotoById_shouldReturnsCorrectPhoto</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getPhotosByPropertyIdIncludeDeleted_shouldReturnDeletedPhotos</span>
                             </li>
                         </ul>
                     </li>
@@ -682,7 +697,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 01/10/2025 17:57</p>
+            <p>Generated by Android Studio on 05/03/2026 20:45</p>
         </div>
     </body>
 </html>

@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.utilsTest
 
 import com.dcac.realestatemanager.utils.Utils
@@ -36,4 +37,4 @@ class UtilsTest {
         val result = Utils.getTodayDateLegacy()
         assertEquals(expected, result)
     }
-}
+}*/

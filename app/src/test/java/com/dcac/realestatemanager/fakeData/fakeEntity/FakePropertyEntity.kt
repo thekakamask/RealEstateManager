@@ -9,7 +9,7 @@ object FakePropertyEntity {
     val property1 = PropertyEntity(
         id = "property-1",
         firestoreDocumentId = "firestore-property-1",
-        universalLocalUserId = FakeUserEntity.user1.id,
+        universalLocalUserId = "user-1",
         title = "Loft République",
         type = "Loft",
         price = 300_000,
@@ -30,7 +30,7 @@ object FakePropertyEntity {
     val property2 = PropertyEntity(
         id = "property-2",
         firestoreDocumentId = "firestore-property-2",
-        universalLocalUserId = FakeUserEntity.user2.id,
+        universalLocalUserId = "user-2",
         title = "Villa Montmartre",
         type = "House",
         price = 550_000,
@@ -51,7 +51,7 @@ object FakePropertyEntity {
     val property3 = PropertyEntity(
         id = "property-3",
         firestoreDocumentId = "firestore-property-3",
-        universalLocalUserId = FakeUserEntity.user3.id,
+        universalLocalUserId = "user-3",
         title = "Studio Latin Quarter",
         type = "Studio",
         price = 180_000,
@@ -71,5 +71,5 @@ object FakePropertyEntity {
 
     val propertyEntityList = listOf(property1, property2, property3)
 
-    val propertyEntityListNotDeleted = listOf(property1, property2)
+    val propertyEntityListNotDeleted = propertyEntityList.filter { !it.isDeleted }
 }

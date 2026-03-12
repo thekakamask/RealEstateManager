@@ -9,7 +9,7 @@ object FakePhotoEntity {
     val photo1 = PhotoEntity(
         id = "photo-1",
         firestoreDocumentId = "firestore-photo-1",
-        universalLocalPropertyId = FakePropertyEntity.property1.id,
+        universalLocalPropertyId = "property-1",
         uri = "file://photo_1.jpg",
         description = "Living room of Loft République",
         isSynced = false,
@@ -20,7 +20,7 @@ object FakePhotoEntity {
     val photo2 = PhotoEntity(
         id = "photo-2",
         firestoreDocumentId = "firestore-photo-2",
-        universalLocalPropertyId = FakePropertyEntity.property2.id,
+        universalLocalPropertyId = "property-2",
         uri = "file://photo_2.jpg",
         description = "Kitchen of Loft République",
         isSynced = true,
@@ -31,7 +31,7 @@ object FakePhotoEntity {
     val photo3 = PhotoEntity(
         id = "photo-3",
         firestoreDocumentId = "firestore-photo-3",
-        universalLocalPropertyId = FakePropertyEntity.property3.id,
+        universalLocalPropertyId = "property-3",
         uri = "file://photo_3.jpg",
         description = "Garden view of Villa Montmartre",
         isSynced = false,
@@ -43,7 +43,5 @@ object FakePhotoEntity {
         photo1, photo2, photo3
     )
 
-    val photoEntityListNotDeleted = listOf(
-        photo1, photo2
-    )
+    val photoEntityListNotDeleted = photoEntityList.filter { !it.isDeleted }
 }

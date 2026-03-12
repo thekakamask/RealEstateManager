@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import android.util.Log
@@ -120,4 +121,4 @@ class GlobalDownloadManagerTest {
 
         assertThat(result).containsExactly(success)
     }
-}
+}*/

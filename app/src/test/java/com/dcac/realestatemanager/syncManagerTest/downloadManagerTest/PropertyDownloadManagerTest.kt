@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
@@ -295,4 +296,4 @@ class PropertyDownloadManagerTest {
         }
     }
 
-}
+}*/

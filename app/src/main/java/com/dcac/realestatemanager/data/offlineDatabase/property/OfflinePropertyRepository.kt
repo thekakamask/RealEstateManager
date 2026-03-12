@@ -5,6 +5,7 @@ import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineE
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.model.Property
 import com.dcac.realestatemanager.model.PropertyWithPoiS
@@ -15,6 +16,7 @@ import com.dcac.realestatemanager.utils.toFullModel
 import kotlinx.coroutines.flow.Flow
 import com.dcac.realestatemanager.utils.toModel
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 class OfflinePropertyRepository(
@@ -22,7 +24,8 @@ class OfflinePropertyRepository(
     private val userRepository: UserRepository,
     private val poiRepository: PoiRepository,
     private val photoRepository: PhotoRepository,
-    private val propertyPoiCrossRepository: PropertyPoiCrossRepository
+    private val propertyPoiCrossRepository: PropertyPoiCrossRepository,
+    private val staticMapRepository: StaticMapRepository
 ): PropertyRepository {
 
     //TODO PROBLEM WHEN RELOADING THE UI (IF A PROPERTY IS MODIFIED)
@@ -38,12 +41,17 @@ class OfflinePropertyRepository(
 
         return combine(propertiesFlow, usersFlow, photosFlow, crossRefsFlow, poiSFlow) {
                 properties, users, photos, crossRefs, poiS ->
+
             properties.mapNotNull { property ->
+
+                val staticMap = staticMapRepository
+                    .getStaticMapByPropertyId(property.id).firstOrNull()
                 property.toFullModel(
                     allUsers = users,
                     photos = photos,
                     crossRefs = crossRefs,
-                    allPoiS = poiS
+                    allPoiS = poiS,
+                    staticMap = staticMap
                 )
             }
         }
@@ -127,8 +135,7 @@ class OfflinePropertyRepository(
 
     // INSERTIONS
     override suspend fun insertPropertyFromUI(property: Property) {
-        Log.d("INSERT", "insertPropertyFromUI called for ID=${property.universalLocalId}")
-        propertyDao.insertPropertyFromUi(property.toEntity())
+       propertyDao.insertPropertyFromUi(property.toEntity())
     }
     override suspend fun insertPropertiesFromUI(properties: List<Property>) {
         propertyDao.insertPropertiesFromUi(properties.map { it.toEntity() })

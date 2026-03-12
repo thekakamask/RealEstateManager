@@ -78,5 +78,5 @@ object FakePropertyModel {
     )
 
     val propertyModelList = listOf(property1, property2, property3)
-    val propertyModelListNotDeleted = listOf(property1, property2)
+    val propertyModelListNotDeleted = propertyModelList.filter { !it.isDeleted }
 }

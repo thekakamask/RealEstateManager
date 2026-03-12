@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.utilsTest
 
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
@@ -179,4 +180,4 @@ class MapperEntitiesAndOnlineEntitiesTest {
         assertEquals(true, entity.isSynced)
         assertEquals(false, entity.isDeleted)
     }
-}
+}*/

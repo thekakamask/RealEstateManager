@@ -34,7 +34,8 @@ import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyDao
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossDao
 import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDao
-import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDataSource
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapLocalDataSource
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRemoteDataSource
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserDao
 import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.data.sync.globalManager.DownloadInterfaceManager
@@ -95,7 +96,6 @@ interface AppContainer {
     val propertyPoiCrossRepository: PropertyPoiCrossRepository
     val userRepository: UserRepository
     val staticMapRepository: StaticMapRepository
-    val staticMapDataSource: StaticMapDataSource
     val googleMapRepository: GoogleMapRepository
     val authRepository: AuthRepository
     val userOnlineRepository: UserOnlineRepository
@@ -129,7 +129,6 @@ class AppDataContainer(
     override val propertyPoiCrossRepository: PropertyPoiCrossRepository,
     override val userRepository: UserRepository,
     override val staticMapRepository: StaticMapRepository,
-    override val staticMapDataSource: StaticMapDataSource,
     override val googleMapRepository: GoogleMapRepository,
     override val authRepository: AuthRepository,
     override val userOnlineRepository: UserOnlineRepository,
@@ -172,7 +171,6 @@ object AppModule {
         propertyPoiCrossRepository: PropertyPoiCrossRepository,
         userRepository: UserRepository,
         staticMapRepository: StaticMapRepository,
-        staticMapDataSource: StaticMapDataSource,
         googleMapRepository: GoogleMapRepository,
         authRepository: AuthRepository,
         userOnlineRepository: UserOnlineRepository,
@@ -205,7 +203,6 @@ object AppModule {
             propertyPoiCrossRepository,
             userRepository,
             staticMapRepository,
-            staticMapDataSource,
             googleMapRepository,
             authRepository,
             userOnlineRepository,
@@ -289,14 +286,16 @@ object AppModule {
         userRepository: UserRepository,
         poiRepository: PoiRepository,
         photoRepository: PhotoRepository,
-        propertyPoiCrossRepository: PropertyPoiCrossRepository
+        propertyPoiCrossRepository: PropertyPoiCrossRepository,
+        staticMapRepository: StaticMapRepository
     ): PropertyRepository =
         OfflinePropertyRepository(
             propertyDao,
             userRepository,
             poiRepository,
             photoRepository,
-            propertyPoiCrossRepository
+            propertyPoiCrossRepository,
+            staticMapRepository
         )
 
     @Provides
@@ -325,10 +324,28 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOfflineStaticMapRepository(
-        api: StaticMapApiService,
+    fun provideStaticMapRemoteDataSource(
+        api: StaticMapApiService
+    ): StaticMapRemoteDataSource {
+        return StaticMapRemoteDataSource(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStaticMapLocalDataSource(
         staticMapDao: StaticMapDao
-    ): OfflineStaticMapRepository = OfflineStaticMapRepository(api, staticMapDao)
+    ): StaticMapLocalDataSource {
+        return StaticMapLocalDataSource(staticMapDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOfflineStaticMapRepository(
+        remote: StaticMapRemoteDataSource,
+        local: StaticMapLocalDataSource
+    ): OfflineStaticMapRepository {
+        return OfflineStaticMapRepository(remote, local)
+    }
 
     @Provides
     @Singleton
@@ -342,8 +359,6 @@ object AppModule {
             propertyRepository = propertyRepository,
             poiRepository = poiRepository
         )
-
-    // --- Repositories Online ---
 
 
     @Provides
@@ -381,8 +396,6 @@ object AppModule {
     fun provideStaticMapOnlineRepository(firestore: FirebaseFirestore, storage: FirebaseStorage): StaticMapOnlineRepository =
         FirebaseStaticMapOnlineRepository(firestore, storage)
 
-
-    // --- Upload Managers ---
 
     @Provides
     @Singleton
@@ -437,9 +450,6 @@ object AppModule {
         propertyUploadManager: PropertyUploadInterfaceManager,
         staticMapUploadManager: StaticMapUploadInterfaceManager
     ): UploadInterfaceManager = UploadManager(userUploadManager, photoUploadManager, poiUploadManager, crossSyncManager, propertyUploadManager, staticMapUploadManager)
-
-
-    // --- Dow- nload Managers ---
 
     @Provides
     @Singleton
@@ -518,10 +528,4 @@ abstract class StaticMapBindingModule {
     abstract fun bindStaticMapRepository(
         impl: OfflineStaticMapRepository
     ): StaticMapRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindStaticMapDataSource(
-        impl: OfflineStaticMapRepository
-    ): StaticMapDataSource
 }

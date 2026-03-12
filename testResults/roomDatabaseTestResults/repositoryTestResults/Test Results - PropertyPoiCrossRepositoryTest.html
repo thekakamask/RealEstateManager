@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">386 ms</div>
+                <div class="time" xmlns="">272 ms</div>
                 <h1>
-                    PropertyPoiCrossRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">21 total, </span><span class="passed">21 passed</span></strong>
+                    PropertyPoiCrossRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">26 total, </span><span class="passed">26 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,78 +593,83 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">386 ms</div>
+                                <div class="time">272 ms</div>
                             </em>PropertyPoiCrossRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">325 ms</div>
-                                    </em><em class="status">passed</em>deleteCrossRef_removesCorrectCrossRef</span>
+                                        <div class="time">182 ms</div>
+                                    </em><em class="status">passed</em>markCrossRefAsDelete_shouldHideCrossRefFromQueries</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>downloadCrossRefFromFirebase_savesCorrectly</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>updateCrossRef_onNonExistingCrossRef_shouldInsertIt</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">7 ms</div>
+                                        <div class="time">9 ms</div>
                                     </em><em class="status">passed</em>getPropertyIdsForPoi_returnsCorrectPropertyIds</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">5 ms</div>
-                                    </em><em class="status">passed</em>getCrossRefsForProperty_returnsCorrectSubset</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getCrossEntityByIds_returnsCorrectEntity</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>markCrossRefsAsDeleteForProperty_shouldHideCrossRefsFromQueries</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>markAllCrossRefsAsDeleted_flagsAllAsDeleted</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getUnSyncedPropertiesPoiSCross_returnsOnlyUnsynced</span>
+                                    </em><em class="status">passed</em>getCrossRefsByPropertyIdIncludeDeleted_shouldReturnDeletedCrossRefs</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>getCrossByIds_shouldReturnNull_whenCrossRefIsDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">21 ms</div>
+                                    </em><em class="status">passed</em>updateCrossRefFromFirebase_shouldUpdateCrossRefAndForceSyncTrue</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">----- BEFORE UPDATE -----&#13;<br/>{(property-3, poi-1)=PropertyPoiCrossEntity(universalLocalPropertyId=property-3, universalLocalPoiId=poi-1, firestoreDocumentId=firestore-cross-5, isSynced=false, isDeleted=true, updatedAt=1700000000005), (property-1, poi-1)=PropertyPoiCrossEntity(universalLocalPropertyId=property-1, universalLocalPoiId=poi-1, firestoreDocumentId=firestore-cross-1, isSynced=false, isDeleted=false, updatedAt=1700000000001), (property-2, poi-2)=PropertyPoiCrossEntity(universalLocalPropertyId=property-2, universalLocalPoiId=poi-2, firestoreDocumentId=firestore-cross-3, isSynced=true, isDeleted=false, updatedAt=1700000000003), (property-3, poi-3)=PropertyPoiCrossEntity(universalLocalPropertyId=property-3, universalLocalPoiId=poi-3, firestoreDocumentId=firestore-cross-6, isSynced=false, isDeleted=true, updatedAt=1700000000006), (property-1, poi-2)=PropertyPoiCrossEntity(universalLocalPropertyId=property-1, universalLocalPoiId=poi-2, firestoreDocumentId=firestore-cross-2, isSynced=false, isDeleted=false, updatedAt=1700000000002), (property-2, poi-3)=PropertyPoiCrossEntity(universalLocalPropertyId=property-2, universalLocalPoiId=poi-3, firestoreDocumentId=firestore-cross-4, isSynced=true, isDeleted=false, updatedAt=1700000000004)}&#13;<br/>----- AFTER UPDATE -----&#13;<br/>{(property-3, poi-1)=PropertyPoiCrossEntity(universalLocalPropertyId=property-3, universalLocalPoiId=poi-1, firestoreDocumentId=firestore-cross-5, isSynced=false, isDeleted=true, updatedAt=1700000000005), (property-1, poi-1)=PropertyPoiCrossEntity(universalLocalPropertyId=property-1, universalLocalPoiId=poi-1, firestoreDocumentId=firestore-cross-1, isSynced=true, isDeleted=false, updatedAt=1900000000000), (property-2, poi-2)=PropertyPoiCrossEntity(universalLocalPropertyId=property-2, universalLocalPoiId=poi-2, firestoreDocumentId=firestore-cross-3, isSynced=true, isDeleted=false, updatedAt=1700000000003), (property-3, poi-3)=PropertyPoiCrossEntity(universalLocalPropertyId=property-3, universalLocalPoiId=poi-3, firestoreDocumentId=firestore-cross-6, isSynced=false, isDeleted=true, updatedAt=1700000000006), (property-1, poi-2)=PropertyPoiCrossEntity(universalLocalPropertyId=property-1, universalLocalPoiId=poi-2, firestoreDocumentId=firestore-cross-2, isSynced=false, isDeleted=false, updatedAt=1700000000002), (property-2, poi-3)=PropertyPoiCrossEntity(universalLocalPropertyId=property-2, universalLocalPoiId=poi-3, firestoreDocumentId=firestore-cross-4, isSynced=true, isDeleted=false, updatedAt=1700000000004)}&#13;<br/>----- ENTITY READ DIRECTLY FROM MAP -----&#13;<br/>PropertyPoiCrossEntity(universalLocalPropertyId=property-1, universalLocalPoiId=poi-1, firestoreDocumentId=firestore-cross-1, isSynced=true, isDeleted=false, updatedAt=1900000000000)&#13;<br/>----- ENTITY READ FROM REPOSITORY -----&#13;<br/>PropertyPoiCross(universalLocalPropertyId=property-1, universalLocalPoiId=poi-1, firestoreDocumentId=firestore-cross-1, isSynced=true, isDeleted=false, updatedAt=1900000000000)&#13;<br/></span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>insertCrossRefInsertFromFirebase_shouldInsertWithIsSyncedTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">8 ms</div>
                                     </em><em class="status">passed</em>getPoiIdsForProperty_returnsCorrectPoiIds</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">5 ms</div>
+                                        <div class="time">2 ms</div>
                                     </em><em class="status">passed</em>getAllCrossRefs_returnsAllCrossRefsNotDeleted</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>markCrossRefAsDeletedForProperty_flagsAsDeleted</span>
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>markCrossRefsAsDeleteForPoi_shouldHideCrossRefsFromQueries</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>getCrossRefsByIdsIncludeDeleted_shouldReturnDeletedCrossRef</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>uploadUnSyncedCrossRefs_shouldReturnOnlyCrossRefsWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>updateCrossRefFromUI_shouldUpdateCrossRefAndForceSyncFalse</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>insertCrossRef_insertsNewCross</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>updateCrossRef_modifiesExistingCrossRef</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>deleteCrossRefsForPoi_removesCorrectCrossRefs</span>
+                                    </em><em class="status">passed</em>deleteCrossRef_shouldDeleteCrossRef</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
@@ -674,32 +679,57 @@ jQuery.cookie = function(name, value, options) {
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>deleteCrossRefsForProperty_removesCorrectCrossRefs</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>downloadPhotoFromFirebase_shouldUpdateExistingCrossRef</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>markCrossRefAsDeletedForPoi_flagsAsDeleted</span>
+                                    </em><em class="status">passed</em>insertCrossRefInsertFromUI_shouldInsertWithIsSyncedFalse</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>insertAllCrossRefs_insertsMultiple</span>
+                                    </em><em class="status">passed</em>insertCrossRefInsertFromUI_shouldInsertAllWithIsSyncedFalse</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>clearAllDeleted_removesOnlyDeletedOnes</span>
+                                    </em><em class="status">passed</em>markAllCrossRefsAsDeleted_shouldHideAllCrossRefsFromQueries</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>markCrossRefAsDeleted_flagsAsDeleted</span>
+                                    </em><em class="status">passed</em>updateCrossRefsFromFirebase_shouldUpdateAllCrossRefsAndForceSyncTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>deleteCrossRefsByProperty_shouldDeleteCrossRefs</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getCrossRefsForProperty_returnsCorrectCrossRefs</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>deleteCrossRefsByPoi_shouldDeleteCrossRefs</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getAllCrossRefsIncludeDeleted_shouldReturnAllCrossRefsEvenDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertCrossRefsInsertFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>updateAllCrossRefsFromUI_shouldUpdateAllCrossRefsAndForceSyncFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>clearAllDeleted_shouldDeleteAllDeleted</span>
                             </li>
                         </ul>
                     </li>
@@ -707,7 +737,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 01/10/2025 17:55</p>
+            <p>Generated by Android Studio on 05/03/2026 21:38</p>
         </div>
     </body>
 </html>

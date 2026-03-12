@@ -6,24 +6,30 @@ import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.OfflinePoiRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.offlineDatabase.property.OfflinePropertyRepository
-import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyEntity
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.OfflinePropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.OfflineStaticMapRepository
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapLocalDataSource
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRemoteDataSource
+import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.OfflineUserRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePhotoDao
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePoiDao
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePropertyDao
 import com.dcac.realestatemanager.fakeData.fakeDao.FakePropertyPoiCrossDao
+import com.dcac.realestatemanager.fakeData.fakeDao.FakeStaticMapDao
 import com.dcac.realestatemanager.fakeData.fakeDao.FakeUserDao
+import com.dcac.realestatemanager.fakeData.fakeApiService.FakeStaticMapApiService
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyEntity
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
-import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
 import com.dcac.realestatemanager.fakeData.fakeModel.FakePropertyModel
-import com.dcac.realestatemanager.fakeData.fakeModel.FakeUserModel
+import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakePropertyOnlineEntity
 import com.dcac.realestatemanager.model.Property
+import com.dcac.realestatemanager.ui.filter.PropertyFilters
+import com.dcac.realestatemanager.ui.filter.PropertySortOrder
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import junit.framework.TestCase.assertEquals
@@ -31,6 +37,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.threeten.bp.LocalDate
@@ -38,25 +45,32 @@ import org.threeten.bp.LocalDate
 class PropertyRepositoryTest {
 
     private lateinit var fakePropertyDao: FakePropertyDao
+    private lateinit var fakeStaticMapDao: FakeStaticMapDao
     private lateinit var fakeUserDao: FakeUserDao
     private lateinit var userRepository: UserRepository
     private lateinit var propertyRepository: PropertyRepository
     private lateinit var poiRepository: PoiRepository
     private lateinit var photoRepository: PhotoRepository
     private lateinit var crossRepository: PropertyPoiCrossRepository
+    private lateinit var fakeStaticMapApiService: FakeStaticMapApiService
+    private lateinit var staticMapRemoteDataSource: StaticMapRemoteDataSource
+    private lateinit var staticMapLocalDataSource: StaticMapLocalDataSource
+    private lateinit var staticMapRepository: StaticMapRepository
 
     private val property1 = FakePropertyEntity.property1
     private val property2 = FakePropertyEntity.property2
     private val property3 = FakePropertyEntity.property3
     private val allPropertyEntities = FakePropertyEntity.propertyEntityList
     private val allPropertyEntitiesNotDeleted = FakePropertyEntity.propertyEntityListNotDeleted
-
     private val propertyModel1 = FakePropertyModel.property1
     private val propertyModel2 = FakePropertyModel.property2
     private val propertyModel3 = FakePropertyModel.property3
     private val allPropertyModels = FakePropertyModel.propertyModelList
-    private val allPropertyModelsNotDeleted = FakePropertyModel.propertyModelListNotDeleted
-
+    private val allPropertiesModelsNotDeleted = FakePropertyModel.propertyModelListNotDeleted
+    private val onlineProperty1 = FakePropertyOnlineEntity.propertyOnline1
+    private val onlineProperty2 = FakePropertyOnlineEntity.propertyOnline2
+    private val onlineProperty3 = FakePropertyOnlineEntity.propertyOnline3
+    private val allOnlineProperties = FakePropertyOnlineEntity.propertyOnlineEntityList
     private val poiEntityList = FakePoiEntity.poiEntityList
     private val allCrossRefs = FakePropertyPoiCrossEntity.allCrossRefs
 
@@ -66,137 +80,212 @@ class PropertyRepositoryTest {
             seedPois(poiEntityList)
 
             val mapByPoi = allCrossRefs
-                .groupBy { it.propertyId }
-                .mapValues { (_, list) -> list.map { it.poiId } }
+                .groupBy { it.universalLocalPropertyId }
+                .mapValues { (_, list) -> list.map { it.universalLocalPoiId } }
 
             mapByPoi.forEach { (propertyId, poiIds) ->
-                linkPropertyToPois(propertyId, *poiIds.toLongArray())
+                linkPropertyToPois(propertyId, *poiIds.toTypedArray())
             }
         }
 
         fakeUserDao = FakeUserDao()
         userRepository = OfflineUserRepository(fakeUserDao)
-        poiRepository = OfflinePoiRepository(FakePoiDao(), userRepository)
         photoRepository = OfflinePhotoRepository(FakePhotoDao())
         crossRepository = OfflinePropertyPoiCrossRepository(FakePropertyPoiCrossDao())
+        poiRepository = OfflinePoiRepository(FakePoiDao())
+        fakeStaticMapDao = FakeStaticMapDao()
+        fakeStaticMapApiService = FakeStaticMapApiService()
+        staticMapLocalDataSource = StaticMapLocalDataSource(fakeStaticMapDao)
+        staticMapRemoteDataSource = StaticMapRemoteDataSource(fakeStaticMapApiService)
+        staticMapRepository = OfflineStaticMapRepository(staticMapRemoteDataSource, staticMapLocalDataSource)
 
         propertyRepository = OfflinePropertyRepository(
             fakePropertyDao,
             userRepository,
             poiRepository,
             photoRepository,
-            crossRepository)
+            crossRepository,
+            staticMapRepository)
     }
 
     @Test
-    fun getAllPropertiesByDate_returnsAllSortedByDate() = runTest {
-        // --- Act ---
-        val result = propertyRepository.getAllPropertiesByDate().first()
+    fun getAllPropertiesByDate_shouldReturnsAllSortedByDate() = runTest {
 
-        // --- Arrange ---
-        val expected = allPropertyModelsNotDeleted.sortedBy { it.entryDate }
+        val result = propertyRepository
+            .getAllPropertiesByDate()
+            .first()
 
-        // --- Assert ---
-        assertEquals(expected, result)
+        val sanitizedResult = result
+            .map {
+                it.copy(
+                    staticMap = null,
+                    photos = emptyList(),
+                    poiS = emptyList()
+                )
+            }
+            .sortedBy { it.entryDate }
+
+        val sanitizedExpected = allPropertiesModelsNotDeleted
+            .sortedBy { it.entryDate }
+            .map {
+                it.copy(
+                    staticMap = null,
+                    photos = emptyList(),
+                    poiS = emptyList()
+                )
+            }
+
+        assertEquals(sanitizedExpected, sanitizedResult)
     }
 
     @Test
-    fun getAllPropertiesByAlphabetic_returnsAllSortedAlphabetically() = runTest {
+    fun getAllPropertiesByAlphabetic_shouldReturnsAllSortedAlphabetically() = runTest {
         val result = propertyRepository.getAllPropertiesByAlphabetic().first()
 
-        val expected = allPropertyModelsNotDeleted.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+        assertEquals(
+            allPropertiesModelsNotDeleted.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title }),
+            result
+        )
+    }
+
+    @Test
+    fun getPropertyById_shouldReturnsCorrectProperty() = runTest {
+        val result = propertyRepository
+            .getPropertyById(propertyModel1.universalLocalId)
+            .first()
+
+        val sanitizedResult = result?.copy(
+            staticMap = null,
+            photos = emptyList(),
+            poiS = emptyList()
+        )
+
+        val sanitizedExpected = propertyModel1.copy(
+            staticMap = null,
+            photos = emptyList(),
+            poiS = emptyList()
+        )
+
+        assertEquals(sanitizedExpected, sanitizedResult)
+    }
+
+    @Test
+    fun getPropertiesByUserIdAlphabetic_shouldReturnsCorrectProperties() = runTest {
+        val result = propertyRepository
+            .getPropertiesByUserIdAlphabetic(propertyModel2.universalLocalUserId)
+            .first()
+
+        val expected = allPropertiesModelsNotDeleted
+            .filter { it.universalLocalUserId == propertyModel2.universalLocalUserId }
+            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+
+        val sanitizedResult = result.map {
+            it.copy(
+                staticMap = null,
+                photos = emptyList(),
+                poiS = emptyList()
+            )
+        }
+
+        val sanitizedExpected = expected.map {
+            it.copy(
+                staticMap = null,
+                photos = emptyList(),
+                poiS = emptyList()
+            )
+        }
+
+        assertEquals(sanitizedExpected, sanitizedResult)
+    }
+
+    @Test
+    fun getFullPropertiesByUserIdAlphabetic_shouldReturnsCorrectProperties() = runTest {
+
+        val result = propertyRepository
+            .getFullPropertiesByUserIdAlphabetic(propertyModel2.universalLocalUserId)
+            .first()
+
+        val expected = allPropertiesModelsNotDeleted
+            .filter { it.universalLocalUserId == propertyModel2.universalLocalUserId }
+            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+
+        assertEquals(expected, result)
+
+        result.forEach { property ->
+            assertNotNull(property.poiS)
+            assertNotNull(property.photos)
+        }
+    }
+
+    @Test
+    fun getPropertiesByUserIdDate_shouldReturnsCorrectProperties() = runTest {
+        val result = propertyRepository
+            .getPropertiesByUserIdDate(propertyModel2.universalLocalUserId)
+            .first()
+
+        val expected = allPropertiesModelsNotDeleted
+            .filter {it.universalLocalUserId == propertyModel2.universalLocalUserId }
+            .sortedBy { it.entryDate }
+
+        val sanitizedResult = result.map {
+            it.copy(
+                staticMap = null,
+                photos = emptyList(),
+                poiS = emptyList()
+            )
+        }
+
+        val sanitizedExpected = expected.map {
+            it.copy(
+                staticMap = null,
+                photos = emptyList(),
+                poiS = emptyList()
+            )
+        }
+
+        assertEquals(sanitizedExpected, sanitizedResult)
+    }
+
+    @Test
+    fun getFullPropertiesByUserIdDate_shouldReturnsCorrectProperties() = runTest {
+
+        val result = propertyRepository
+            .getFullPropertiesByUserIdDate(propertyModel2.universalLocalUserId)
+            .first()
+
+        val expected = allPropertiesModelsNotDeleted
+            .filter { it.universalLocalUserId == propertyModel2.universalLocalUserId }
+            .sortedBy { it.entryDate }
+
+        assertEquals(expected, result)
+
+        result.forEach { property ->
+            assertNotNull(property.poiS)
+            assertNotNull(property.photos)
+        }
+    }
+
+    @Test
+    fun searchProperties_dateSort_withoutFilters_returnsAllSortedByDate() = runTest {
+
+        val result = propertyRepository.searchProperties(
+            minSurface = null,
+            maxSurface = null,
+            minPrice = null,
+            maxPrice = null,
+            type = null,
+            isSold = null,
+            sortOrder = PropertySortOrder.DATE
+        ).first()
+
+        val expected = allPropertiesModelsNotDeleted
+            .sortedByDescending  { it.entryDate }
 
         assertEquals(expected, result)
     }
 
     @Test
-    fun getPropertyById_returnsCorrectProperty() = runTest {
-        val result = propertyRepository.getPropertyById(property1.id).first()
-
-        assertNotNull(result)
-        assertEquals(propertyModel1.id, result?.id)
-        assertEquals(propertyModel1.user.id, result?.user?.id)
-        assertEquals(propertyModel1.photos, result?.photos)
-        assertEquals(propertyModel1.poiS.toSet(), result?.poiS?.toSet())
-    }
-
-    @Test
-    fun getPropertyById_whenUnknownId_returnsNull() = runTest {
-        val result = propertyRepository.getPropertyById(99999L).first()
-        assertNull(result)
-    }
-
-    @Test
-    fun getPropertiesByUserId_returnsCorrectProperties() = runTest {
-        val userId = property1.userId
-        val expectedProperties = allPropertyModelsNotDeleted.filter { it.user.id == userId }
-
-        val result = propertyRepository.getPropertiesByUserId(userId).first()
-
-        assertEquals(expectedProperties.size, result.size)
-        expectedProperties.forEach { expected ->
-            val actual = result.find { it.id == expected.id }
-            assertNotNull(actual)
-            assertEquals(expected.user.id, actual?.user?.id)
-        }
-    }
-
-    @Test
-    fun searchProperties_withMinSurfaceAndMaxPrice_returnsMatchingProperties() = runTest {
-        // --- Arrange ---
-        val minSurface = 60
-        val maxPrice = 500000
-
-        val expected = allPropertyModelsNotDeleted.filter {
-            it.surface >= minSurface && it.price <= maxPrice
-        }
-
-        // --- Act ---
-        val result = propertyRepository.searchProperties(
-            minSurface = minSurface,
-            maxSurface = null,
-            minPrice = null,
-            maxPrice = maxPrice,
-            type = null,
-            isSold = null
-        ).first()
-
-        // --- Assert ---
-        assertEquals(expected.size, result.size)
-        expected.forEach { expectedProperty ->
-            val actual = result.find { it.id == expectedProperty.id }
-            assertNotNull(actual)
-            assertEquals(expectedProperty.surface, actual?.surface)
-            assertEquals(expectedProperty.price, actual?.price)
-        }
-    }
-
-    @Test
-    fun searchProperties_withTypeFilter_returnsCorrectType() = runTest {
-        // --- Arrange ---
-        val type = "Appartement"
-        val expected = allPropertyModelsNotDeleted.filter { it.type == type }
-
-        // --- Act ---
-        val result = propertyRepository.searchProperties(
-            minSurface = null,
-            maxSurface = null,
-            minPrice = null,
-            maxPrice = null,
-            type = type,
-            isSold = null
-        ).first()
-
-        // --- Assert ---
-        assertEquals(expected.size, result.size)
-        result.forEach {
-            assertEquals(type, it.type)
-        }
-    }
-
-    @Test
-    fun searchProperties_withIsSoldTrue_returnsOnlySoldProperties() = runTest {
-        val expected = allPropertyModelsNotDeleted.filter { it.isSold }
+    fun searchProperties_alphabeticSort_withoutFilters_returnsAllSortedAlphabetically() = runTest {
 
         val result = propertyRepository.searchProperties(
             minSurface = null,
@@ -204,371 +293,828 @@ class PropertyRepositoryTest {
             minPrice = null,
             maxPrice = null,
             type = null,
-            isSold = true
+            isSold = null,
+            sortOrder = PropertySortOrder.ALPHABETIC
         ).first()
 
-        assertTrue(result.all { it.isSold })
-        assertEquals(expected.map { it.id }.toSet(), result.map { it.id }.toSet())
+        val expected = allPropertiesModelsNotDeleted
+            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+
+        assertEquals(expected, result)
     }
 
-
     @Test
-    fun insertProperty_shouldInsertNewPropertyInDao() = runTest {
-        // --- Arrange ---
-        val newPropertyModel = Property(
-            id = 888L,
-            title = "Test Duplex",
-            type = "Apartment",
-            price = 420_000,
-            surface = 75,
-            rooms = 4,
-            description = "Spacious duplex for testing insert.",
-            address = "88 Rue de Test, 75000 Paris",
+    fun searchProperties_withFilters_returnsCorrectFilteredList() = runTest {
+
+        val result = propertyRepository.searchProperties(
+            minSurface = null,
+            maxSurface = 150,
+            minPrice = 200_000,
+            maxPrice = null,
+            type = null,
             isSold = false,
-            entryDate = LocalDate.parse("2025-09-01"),
-            saleDate = null,
-            user = FakeUserModel.user1,
-            staticMapPath = null,
-            photos = emptyList(), // not handled by insert
-            poiS = emptyList(),   // not handled by insert
-            isSynced = false,
-            isDeleted = false,
-            updatedAt = System.currentTimeMillis()
-        )
+            sortOrder = PropertySortOrder.DATE
+        ).first()
 
-        // --- Act ---
-        val insertedId = propertyRepository.insertProperty(newPropertyModel)
+        val expected = allPropertiesModelsNotDeleted
+            .filter {
+                it.surface <= 150 &&
+                        it.price >= 200_000 &&
+                        !it.isSold
+            }
+            .sortedBy { it.entryDate }
 
-        // --- Assert ---
-        val insertedEntity = fakePropertyDao.entityMap[insertedId]
-        assertNotNull(insertedEntity)
-        assertEquals(newPropertyModel.title, insertedEntity?.title)
-        assertEquals(newPropertyModel.type, insertedEntity?.type)
-        assertEquals(newPropertyModel.price, insertedEntity?.price)
-        assertEquals(newPropertyModel.surface, insertedEntity?.surface)
-        assertEquals(newPropertyModel.rooms, insertedEntity?.rooms)
-        assertEquals(newPropertyModel.description, insertedEntity?.description)
-        assertEquals(newPropertyModel.address, insertedEntity?.address)
-        assertEquals(newPropertyModel.isSold, insertedEntity?.isSold)
-        assertEquals(newPropertyModel.entryDate.toString(), insertedEntity?.entryDate)
-        assertEquals(newPropertyModel.saleDate?.toString(), insertedEntity?.saleDate)
-        assertEquals(newPropertyModel.user.id, insertedEntity?.userId)
-        assertEquals(newPropertyModel.staticMapPath, insertedEntity?.staticMapPath)
-        assertEquals(newPropertyModel.isSynced, insertedEntity?.isSynced)
-        assertEquals(newPropertyModel.isDeleted, insertedEntity?.isDeleted)
-        assertEquals(newPropertyModel.updatedAt, insertedEntity?.updatedAt)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun updateProperty_shouldModifyExistingProperty() = runTest {
-        // --- Arrange ---
-        val existing = FakePropertyModel.property1
+    fun searchProperties_filterByType_returnsCorrectProperties() = runTest {
 
-        val updated = existing.copy(
-            title = "Updated Title",
-            surface = existing.surface + 20,
-            price = existing.price + 100_000,
-            updatedAt = System.currentTimeMillis()
-        )
+        val result = propertyRepository.searchProperties(
+            minSurface = null,
+            maxSurface = null,
+            minPrice = null,
+            maxPrice = null,
+            type = "House",
+            isSold = null,
+            sortOrder = PropertySortOrder.DATE
+        ).first()
 
-        // --- Act ---
-        propertyRepository.updateProperty(updated)
+        val expected = allPropertiesModelsNotDeleted
+            .filter { it.type == "House" }
+            .sortedBy { it.entryDate }
 
-        // --- Assert ---
-        val entity = fakePropertyDao.entityMap[updated.id]
-        assertNotNull(entity)
-        assertEquals(updated.title, entity?.title)
-        assertEquals(updated.surface, entity?.surface)
-        assertEquals(updated.price, entity?.price)
-        assertEquals(updated.updatedAt, entity?.updatedAt)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun updateProperty_onNonExistingProperty_shouldInsertIt() = runTest {
-        // --- Arrange ---
-        val ghostProperty = Property(
-            id = 99999L,
-            title = "Ghost Property",
-            type = "Cave",
-            price = 999_000,
-            surface = 60,
-            rooms = 2,
-            description = "A mysterious cave property.",
-            address = "99 Rue Souterraine, Paris",
+    fun searchProperties_dateAndAlphabetic_shouldReturnDifferentOrder() = runTest {
+
+        val dateSorted = propertyRepository.searchProperties(
+            null, null, null, null, null, null,
+            PropertySortOrder.DATE
+        ).first()
+
+        val alphaSorted = propertyRepository.searchProperties(
+            null, null, null, null, null, null,
+            PropertySortOrder.ALPHABETIC
+        ).first()
+
+        assertNotEquals(dateSorted, alphaSorted)
+    }
+
+    @Test
+    fun searchUserProperties_withoutFilters_returnsAllUserPropertiesSortedByDate() = runTest {
+
+        val filters = PropertyFilters(
+            minSurface = null,
+            maxSurface = null,
+            minPrice = null,
+            maxPrice = null,
+            selectedType = null,
+            isSold = null,
+            sortOrder = PropertySortOrder.DATE
+        )
+
+        val result = propertyRepository
+            .searchUserProperties("user-2", filters)
+            .first()
+
+        val expected = allPropertiesModelsNotDeleted
+            .filter { it.universalLocalUserId == "user-2" }
+            .sortedBy { it.entryDate }
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun searchUserProperties_alphabeticSort_returnsSortedUserProperties() = runTest {
+
+        val filters = PropertyFilters(
+            minSurface = null,
+            maxSurface = null,
+            minPrice = null,
+            maxPrice = null,
+            selectedType = null,
+            isSold = null,
+            sortOrder = PropertySortOrder.ALPHABETIC
+        )
+
+        val result = propertyRepository
+            .searchUserProperties("user-2", filters)
+            .first()
+
+        val expected = allPropertiesModelsNotDeleted
+            .filter { it.universalLocalUserId == "user-2" }
+            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.title })
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun searchUserProperties_withFilters_returnsCorrectFilteredUserProperties() = runTest {
+
+        val filters = PropertyFilters(
+            minSurface = null,
+            maxSurface = 250,
+            minPrice = 300_000,
+            maxPrice = null,
+            selectedType = "House",
             isSold = false,
-            entryDate = LocalDate.parse("2025-10-01"),
-            saleDate = null,
-            user = FakeUserModel.user2,
-            staticMapPath = null,
-            isSynced = false,
-            isDeleted = false,
-            photos = emptyList(),
-            poiS = emptyList(),
-            updatedAt = System.currentTimeMillis()
+            sortOrder = PropertySortOrder.DATE
         )
 
-        // --- Act ---
-        propertyRepository.updateProperty(ghostProperty)
+        val result = propertyRepository
+            .searchUserProperties("user-2", filters)
+            .first()
 
-        // --- Assert ---
-        val inserted = fakePropertyDao.entityMap[ghostProperty.id]
-        assertNotNull(inserted)
-        assertEquals(ghostProperty.title, inserted?.title)
+        val expected = allPropertiesModelsNotDeleted
+            .filter {
+                it.universalLocalUserId == "user-2" &&
+                        it.surface <= 250 &&
+                        it.price >= 300_000 &&
+                        it.type == "House" &&
+                        !it.isSold
+            }
+            .sortedBy { it.entryDate }
 
-        val result = propertyRepository.getPropertyById(ghostProperty.id).first()
-        assertNotNull(result)
-        assertEquals(ghostProperty.title, result?.title)
+        assertEquals(expected, result)
     }
 
     @Test
-    fun markPropertyAsDeleted_shouldHidePropertyFromQueries() = runTest {
+    fun searchUserProperties_noMatch_returnsEmptyList() = runTest {
 
-        // --- Act ---
-        propertyRepository.markPropertyAsDeleted(propertyModel2)
+        val filters = PropertyFilters(
+            minSurface = 1000,
+            maxSurface = null,
+            minPrice = null,
+            maxPrice = null,
+            selectedType = null,
+            isSold = null,
+            sortOrder = PropertySortOrder.DATE
+        )
 
-        // --- DAO-level: still present but flagged as deleted ---
-        val rawEntity = fakePropertyDao.entityMap[propertyModel2.id]
-        assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
+        val result = propertyRepository
+            .searchUserProperties("user-2", filters)
+            .first()
 
-        // --- Repository-level: should no longer appear in visible results ---
-        val result = propertyRepository.getAllPropertiesByDate().first()
-        assertFalse(result.any { it.id == propertyModel2.id })
-    }
-
-    @Test
-    fun markPropertyAsDeleted_calledTwice_staysDeleted() = runTest {
-        // --- Arrange ---
-        val property = FakePropertyModel.property2
-
-        // --- Act ---
-        propertyRepository.markPropertyAsDeleted(property)
-        propertyRepository.markPropertyAsDeleted(property)
-
-        // --- DAO-level
-        val rawEntity = fakePropertyDao.entityMap[property.id]
-        assertNotNull(rawEntity)
-        assertTrue(rawEntity!!.isDeleted)
-
-        // --- Repository-level
-        val result = propertyRepository.getAllPropertiesByDate().first()
-        assertFalse(result.any { it.id == property.id })
-    }
-
-    @Test
-    fun markAllPropertyAsDeleted_shouldHideAllProperties() = runTest {
-        // --- Act ---
-        propertyRepository.markAllPropertyAsDeleted()
-
-        // --- DAO-level: every property flagged as deleted ---
-        fakePropertyDao.entityMap.values.forEach {
-            assertTrue(it.isDeleted)
-        }
-
-        // --- Repository-level: should return empty visible list ---
-        val result = propertyRepository.getAllPropertiesByDate().first()
         assertTrue(result.isEmpty())
     }
 
     @Test
-    fun getPropertyWithPoiS_whenUnlinked_returnsEmpty() = runTest {
-        val propertyId = property1.id
-        fakePropertyDao.unlinkAllForProperty(propertyId)
+    fun markPropertyAsSold_shouldUpdatePropertyCorrectly() = runTest {
 
-        val result = propertyRepository.getPropertyWithPoiS(propertyId).first()
-
-        assertNotNull(result)
-        assertEquals(propertyId, result!!.property.id)
-        assertTrue(result.poiS.isEmpty())
-    }
-
-    @Test
-    fun getPropertyWithPoiS_returnsLinkedPoiS() = runTest {
         val propertyId = property2.id
+        val saleDate = "2025-09-01"
+        val updatedAt = 1800000000000L
 
-        val result = propertyRepository.getPropertyWithPoiS(propertyId).first()
+        propertyRepository.markPropertyAsSold(propertyId, saleDate, updatedAt)
+
+        val entity = fakePropertyDao.entityMap[propertyId]
+
+        assertNotNull(entity)
+        assertTrue(entity!!.isSold)
+        assertEquals(saleDate, entity.saleDate)
+        assertEquals(updatedAt, entity.updatedAt)
+
+        val result = propertyRepository
+            .getPropertyById(propertyId)
+            .first()
 
         assertNotNull(result)
-        assertEquals(propertyId, result!!.property.id)
-
-        val expectedPoiIds = allCrossRefs
-            .filter { it.propertyId == propertyId && !it.isDeleted }
-            .map { it.poiId }
-            .toSet()
-
-        val actualPoiIds = result.poiS.map { it.id }.toSet()
-
-        assertEquals(expectedPoiIds, actualPoiIds)
+        assertTrue(result!!.isSold)
+        assertEquals(LocalDate.parse(saleDate), result.saleDate)
     }
 
     @Test
-    fun getPropertyEntityById_returnsCorrectEntity() = runTest {
-        // --- Arrange ---
-        val expected = property1
+    fun markPropertyAsSold_withInvalidId_shouldDoNothing() = runTest {
+        val invalidId = "unknown-id"
 
-        // --- Act ---
-        val result = propertyRepository.getPropertyEntityById(expected.id).first()
+        propertyRepository.markPropertyAsSold(
+            invalidId,
+            "2025-09-01",
+            1800000000000L
+        )
 
-        // --- Assert ---
-        assertNotNull(result)
-        assertEquals(expected.id, result?.id)
-        assertEquals(expected.title, result?.title)
-        assertEquals(expected.type, result?.type)
-        assertEquals(expected.isDeleted, result?.isDeleted)
-        assertEquals(expected.updatedAt, result?.updatedAt)
-    }
-
-    @Test
-    fun deleteProperty_deletesEntity() = runTest {
-        // --- Arrange ---
-        val beforeDelete = propertyRepository
-            .getPropertyByIdIncludeDeleted(property3.id)
+        val result = propertyRepository
+            .getPropertyById(invalidId)
             .first()
-        assertNotNull(beforeDelete)
 
-        // --- Act ---
-        propertyRepository.deleteProperty(property3)
-
-        // --- Assert ---
-        val afterDelete = propertyRepository
-            .getPropertyByIdIncludeDeleted(property3.id)
-            .first()
-        assertNull(afterDelete)
+        assertNull(result)
     }
 
     @Test
-    fun clearAllDeleted_removesOnlyDeleted() = runTest {
-        // --- Arrange ---
-        val deletedProperty = property3
-        assertTrue(deletedProperty.isDeleted)
-
-        // --- Confirm it's present before clearing
-        val beforeClear = propertyRepository.getPropertyByIdIncludeDeleted(deletedProperty.id).first()
-        assertNotNull(beforeClear)
-
-        // --- Act ---
-        propertyRepository.clearAllDeleted()
-
-        // --- Assert ---
-        val afterClear = propertyRepository.getPropertyByIdIncludeDeleted(deletedProperty.id).first()
-        assertNull(afterClear)
-
-        // Ensure other (not deleted) properties are still there
-        val stillPresent = propertyRepository.getPropertyEntityById(property1.id).first()
-        assertNotNull(stillPresent)
-    }
-
-    @Test
-    fun uploadUnSyncedPropertiesToFirebase_returnsOnlyUnSynced() = runTest {
-        // --- Arrange ---
-        val expected = allPropertyEntities.filter { !it.isSynced }
-        val synced = allPropertyEntities.filter { it.isSynced }
-
-        // --- Act ---
+    fun uploadUnSyncedProperties_shouldReturnOnlyPropertiesWithIsSyncedFalse() = runTest {
         val result = propertyRepository.uploadUnSyncedPropertiesToFirebase().first()
 
-        // --- Assert ---
-        assertTrue(result.none { synced.contains(it) })
-        assertEquals(expected.size, result.size)
-        assertTrue(result.containsAll(expected))
+        val expected = allPropertyEntities
+            .filter { !it.isSynced }
+
+        assertEquals(expected, result)
     }
 
     @Test
-    fun downloadPropertyFromFirebase_savesNewPropertyCorrectly() = runTest {
-        // --- Arrange ---
-        val firebaseProperty = PropertyOnlineEntity(
-            roomId = 888L,
-            title = "Firebase Loft",
-            type = "Loft",
-            price = 450_000,
-            surface = 70,
+    fun insertPropertyInsertFromUi_shouldInsertWithIsSyncedFalse() = runTest {
+        val newPropertyModel = Property(
+            universalLocalId = "property-4",
+            universalLocalUserId = propertyModel1.universalLocalUserId,
+            title = "New Property",
+            type = "House",
+            price = 500_000,
+            surface = 150,
             rooms = 3,
-            description = "Synced property from cloud",
-            address = "123 Cloud St",
+            description = "New property from UI",
+            address = "123 New St",
             isSold = false,
-            entryDate = "2025-09-20",
+            entryDate = LocalDate.parse("2025-10-01"),
             saleDate = null,
-            userId = property1.userId,
-            staticMapPath = null,
-            updatedAt = System.currentTimeMillis()
+            staticMap = null,
+            photos = emptyList(),
+            poiS = emptyList(),
+            isSynced = false,
+            isDeleted = false,
+            updatedAt = 1800000000000L
         )
 
-        // --- Act ---
-        propertyRepository.downloadPropertyFromFirebase(firebaseProperty)
+        propertyRepository.insertPropertyFromUI(newPropertyModel)
 
-        // --- Assert ---
-        val result = propertyRepository.getPropertyEntityById(firebaseProperty.roomId).first()
+        val resultEntity = fakePropertyDao.entityMap[newPropertyModel.universalLocalId]
 
-        assertNotNull(result)
-        assertEquals(firebaseProperty.roomId, result?.id)
-        assertEquals(firebaseProperty.title, result?.title)
-        assertEquals(firebaseProperty.type, result?.type)
-        assertTrue(result?.isSynced == true)
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals(newPropertyModel.universalLocalId, id)
+            assertEquals(newPropertyModel.universalLocalUserId, universalLocalUserId)
+            assertEquals(newPropertyModel.title, title)
+            assertEquals(newPropertyModel.type, type)
+            assertEquals(newPropertyModel.price, price)
+            assertEquals(newPropertyModel.surface, surface)
+            assertEquals(newPropertyModel.rooms, rooms)
+            assertEquals(newPropertyModel.description, description)
+            assertEquals(newPropertyModel.address, address)
+            assertEquals(newPropertyModel.entryDate.toString(), entryDate)
+            assertEquals(newPropertyModel.saleDate?.toString(), saleDate)
+            assertFalse(isSynced)
+            assertFalse(isDeleted)
+            assertEquals(newPropertyModel.updatedAt, updatedAt)
+        }
+
+        val resultInserted = propertyRepository
+            .getPropertyById(newPropertyModel.universalLocalId)
+            .first()
+
+        assertEquals(newPropertyModel, resultInserted)
     }
 
     @Test
-    fun downloadPropertyFromFirebase_updatesExisting() = runTest {
-        // --- Arrange ---
-        val original = property1
-        val firebaseProperty = PropertyOnlineEntity(
-            roomId = original.id,
-            title = "Updated from Firebase",
-            type = "Updated Type",
-            price = original.price + 50_000,
-            surface = original.surface,
-            rooms = original.rooms,
-            description = "Updated via sync",
-            address = original.address,
-            isSold = true,
-            entryDate = original.entryDate,
-            saleDate = "2025-09-29",
-            userId = original.userId,
-            staticMapPath = original.staticMapPath,
-            updatedAt = original.updatedAt + 10_000
+    fun insertPropertiesInsertFromUi_shouldInsertAllWithIsSyncedFalse() = runTest {
+        val insertedTimestamp = 1800000000000L
+        val newProperties = listOf(
+            Property(
+                universalLocalId = "property-4",
+                universalLocalUserId = propertyModel1.universalLocalUserId,
+                title = "New Property 4",
+                type = "House",
+                price = 500_000,
+                surface = 150,
+                rooms = 4,
+                description = "Inserted from UI 4",
+                address = "4 New Street",
+                isSold = false,
+                entryDate = LocalDate.parse("2025-10-01"),
+                saleDate = null,
+                staticMap = null,
+                photos = emptyList(),
+                poiS = emptyList(),
+                isSynced = false,
+                isDeleted = false,
+                updatedAt = insertedTimestamp + 1
+            ),
+            Property(
+                universalLocalId = "property-5",
+                universalLocalUserId = propertyModel1.universalLocalUserId,
+                title = "New Property 5",
+                type = "Apartment",
+                price = 350_000,
+                surface = 90,
+                rooms = 3,
+                description = "Inserted from UI 5",
+                address = "5 New Street",
+                isSold = false,
+                entryDate = LocalDate.parse("2025-10-02"),
+                saleDate = null,
+                staticMap = null,
+                photos = emptyList(),
+                poiS = emptyList(),
+                isSynced = false,
+                isDeleted = false,
+                updatedAt = insertedTimestamp + 2
+            ),
+            Property(
+                universalLocalId = "property-6",
+                universalLocalUserId = propertyModel1.universalLocalUserId,
+                title = "New Property 6",
+                type = "Studio",
+                price = 200_000,
+                surface = 45,
+                rooms = 1,
+                description = "Inserted from UI 6",
+                address = "6 New Street",
+                isSold = false,
+                entryDate = LocalDate.parse("2025-10-03"),
+                saleDate = null,
+                staticMap = null,
+                photos = emptyList(),
+                poiS = emptyList(),
+                isSynced = false,
+                isDeleted = false,
+                updatedAt = insertedTimestamp + 3
+            )
         )
 
-        // --- Act ---
-        propertyRepository.downloadPropertyFromFirebase(firebaseProperty)
+        propertyRepository.insertPropertiesFromUI(newProperties)
 
-        // --- Assert (DAO level) ---
-        val entity = fakePropertyDao.entityMap[original.id]
-        assertNotNull(entity)
-        assertEquals(firebaseProperty.title, entity?.title)
-        assertEquals(firebaseProperty.type, entity?.type)
-        assertTrue(entity?.isSynced == true)
 
-        // --- Assert (Repository level) ---
-        val result = propertyRepository.getPropertyEntityById(original.id).first()
-        assertNotNull(result)
-        assertEquals(firebaseProperty.title, result?.title)
-        assertEquals(firebaseProperty.type, result?.type)
-        assertTrue(result?.isSynced == true)
+        newProperties.forEach { expected ->
+            val entity = fakePropertyDao.entityMap[expected.universalLocalId]
+            assertNotNull(entity)
+            entity!!.apply {
+                assertEquals(expected.universalLocalId, id)
+                assertEquals(expected.title, title)
+                assertEquals(expected.price, price)
+                assertEquals(expected.surface, surface)
+                assertFalse(isSynced)
+                assertFalse(isDeleted)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
+        }
+
+        newProperties.forEach { expected ->
+            val result = propertyRepository
+                .getPropertyById(expected.universalLocalId)
+                .first()
+
+            assertEquals(expected, result)
+        }
+    }
+
+    @Test
+    fun insertPropertyInsertFromFirebase_shouldInsertWithIsSyncedTrue() = runTest {
+        val firestoreId = "firestore-property-4"
+        val onlineProperty = PropertyOnlineEntity(
+            ownerUid = "firebase_uid_1",
+            universalLocalId = "property-4",
+            universalLocalUserId = "user-1",
+            title = "Firebase Property",
+            type = "House",
+            price = 600_000,
+            surface = 180,
+            rooms = 5,
+            description = "Inserted from Firebase",
+            address = "4 Firebase Street",
+            latitude = 48.860,
+            longitude = 2.350,
+            isSold = false,
+            entryDate = "2025-11-01",
+            saleDate = null,
+            updatedAt = 1900000000000L
+        )
+
+        propertyRepository.insertPropertyInsertFromFirebase(
+            onlineProperty,
+            firestoreId
+        )
+
+        val resultEntity = fakePropertyDao.entityMap[onlineProperty.universalLocalId]
+
+        assertNotNull(resultEntity)
+        resultEntity!!.apply {
+            assertEquals(onlineProperty.universalLocalId, id)
+            assertEquals(firestoreId, firestoreDocumentId)
+            assertEquals(onlineProperty.title, title)
+            assertEquals(onlineProperty.price, price)
+            assertEquals(onlineProperty.surface, surface)
+            assertEquals(onlineProperty.description, description)
+            assertEquals(onlineProperty.address, address)
+            assertTrue(isSynced)
+            assertEquals(onlineProperty.updatedAt, updatedAt)
+        }
+
+        val resultInserted = propertyRepository
+            .getPropertyById(onlineProperty.universalLocalId)
+            .first()
+
+        assertNotNull(resultInserted)
+        assertEquals(firestoreId, resultInserted!!.firestoreDocumentId)
+        assertEquals(onlineProperty.universalLocalId, resultInserted.universalLocalId)
+        assertEquals(onlineProperty.title, resultInserted.title)
+        assertTrue(resultInserted.isSynced)
+        assertEquals(onlineProperty.updatedAt, resultInserted.updatedAt)
+    }
+
+    @Test
+    fun insertPropertiesInsertFromFirebase_shouldInsertAllWithIsSyncedTrue() = runTest {
+        val insertedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-property-4",
+            "firestore-property-5",
+            "firestore-property-6"
+        )
+        val onlineProperties = listOf(
+            PropertyOnlineEntity(
+                ownerUid = "firebase_uid_1",
+                universalLocalId = "property-4",
+                universalLocalUserId = "user-1",
+                title = "Firebase Property 4",
+                type = "House",
+                price = 600_000,
+                surface = 180,
+                rooms = 5,
+                description = "Inserted from Firebase 4",
+                address = "4 Firebase Street",
+                latitude = 48.860,
+                longitude = 2.350,
+                isSold = false,
+                entryDate = "2025-11-01",
+                saleDate = null,
+                updatedAt = insertedTimestamp + 1
+            ),
+            PropertyOnlineEntity(
+                ownerUid = "firebase_uid_2",
+                universalLocalId = "property-5",
+                universalLocalUserId = "user-2",
+                title = "Firebase Property 5",
+                type = "Apartment",
+                price = 350_000,
+                surface = 90,
+                rooms = 3,
+                description = "Inserted from Firebase 5",
+                address = "5 Firebase Street",
+                latitude = 48.861,
+                longitude = 2.351,
+                isSold = false,
+                entryDate = "2025-11-02",
+                saleDate = null,
+                updatedAt = insertedTimestamp + 2
+            ),
+            PropertyOnlineEntity(
+                ownerUid = "firebase_uid_3",
+                universalLocalId = "property-6",
+                universalLocalUserId = "user-3",
+                title = "Firebase Property 6",
+                type = "Studio",
+                price = 200_000,
+                surface = 45,
+                rooms = 1,
+                description = "Inserted from Firebase 6",
+                address = "6 Firebase Street",
+                latitude = 48.862,
+                longitude = 2.352,
+                isSold = false,
+                entryDate = "2025-11-03",
+                saleDate = null,
+                updatedAt = insertedTimestamp + 3
+            )
+        )
+
+        val pairs = onlineProperties.mapIndexed { index, property ->
+            Pair(property, firestoreIds[index])
+        }
+
+        propertyRepository.insertPropertiesInsertFromFirebase(pairs)
+
+        onlineProperties.forEachIndexed { index, expected ->
+
+            val resultEntity = fakePropertyDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+
+            resultEntity!!.apply {
+                assertEquals(expected.universalLocalId, id)
+                assertEquals(firestoreIds[index], firestoreDocumentId)
+                assertEquals(expected.title, title)
+                assertEquals(expected.price, price)
+                assertEquals(expected.surface, surface)
+                assertTrue(isSynced)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
+
+        }
+
+        onlineProperties.forEachIndexed { index, expected ->
+
+            val resultInserted = propertyRepository
+                .getPropertyById(expected.universalLocalId)
+                .first()
+
+            assertNotNull(resultInserted)
+
+            resultInserted!!.apply {
+                assertEquals(expected.universalLocalId, universalLocalId)
+                assertEquals(firestoreIds[index], firestoreDocumentId)
+                assertEquals(expected.title, title)
+                assertEquals(expected.price, price)
+                assertEquals(expected.surface, surface)
+                assertTrue(isSynced)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
+        }
+    }
+
+    @Test
+    fun updatePropertyFromUI_shouldUpdatePropertyAndForceSyncFalse() = runTest {
+        val updatedTimestamp = 1800000000000L
+        val updatedProperty = propertyModel1.copy(
+            title = "Updated title UI",
+            price = 999_999,
+            surface = 250,
+            updatedAt = updatedTimestamp,
+            isSynced = true
+        )
+
+        propertyRepository.updatePropertyFromUI(updatedProperty)
+
+        val resultEntity = fakePropertyDao.entityMap[updatedProperty.universalLocalId]
+
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals("Updated title UI", title)
+            assertEquals(999_999, price)
+            assertEquals(250, surface)
+            assertEquals(updatedTimestamp, updatedAt)
+            assertFalse(isSynced)
+        }
+
+        val resultUpdated = propertyRepository
+            .getPropertyById(updatedProperty.universalLocalId)
+            .first()
+
+        assertNotNull(resultUpdated)
+
+        resultUpdated!!.apply {
+            assertEquals("Updated title UI", title)
+            assertEquals(999_999, price)
+            assertEquals(250, surface)
+            assertFalse(isSynced)
+            assertEquals(updatedTimestamp, updatedAt)
+        }
+    }
+
+    @Test
+    fun updatePropertyFromFirebase_shouldUpdatePropertyAndForceSyncTrue() = runTest {
+        val firestoreId = "firestore-property-1"
+        val updatedTimestamp = 1900000000000L
+        val updatedOnlineProperty = onlineProperty1.copy(
+            universalLocalId = propertyModel1.universalLocalId,
+            universalLocalUserId = propertyModel1.universalLocalUserId,
+            title = "Updated from firebase",
+            price = 888_888,
+            surface = 300,
+            isSold = false,
+            saleDate = "2025-12-01",
+            updatedAt = updatedTimestamp
+        )
+
+        propertyRepository.updatePropertyFromFirebase(
+            updatedOnlineProperty,
+            firestoreId
+        )
+
+        val resultEntity = fakePropertyDao.entityMap[propertyModel1.universalLocalId]
+
+        assertNotNull(resultEntity)
+
+        resultEntity!!.apply {
+            assertEquals("Updated from firebase", title)
+            assertEquals(888_888, price)
+            assertEquals(300, surface)
+            assertEquals(false, isSold)
+            assertEquals("2025-12-01", saleDate)
+            assertEquals(firestoreId, firestoreDocumentId)
+            assertTrue(isSynced)
+            assertEquals(updatedTimestamp, updatedAt)
+        }
+
+        val resultUpdated = propertyRepository
+            .getPropertyById(propertyModel1.universalLocalId)
+            .first()
+
+        assertNotNull(resultUpdated)
+
+        resultUpdated!!.apply {
+            assertEquals("Updated from firebase", title)
+            assertEquals(888_888, price)
+            assertEquals(300, surface)
+            assertEquals(false, isSold)
+            assertEquals(
+                LocalDate.parse("2025-12-01"),
+                saleDate
+            )
+            assertEquals(firestoreId, firestoreDocumentId)
+            assertTrue(isSynced)
+            assertEquals(updatedTimestamp, updatedAt)
+        }
+    }
+
+    @Test
+    fun updateAllPropertiesFromFirebase_shouldUpdateAllAndForceSyncTrue() = runTest {
+        val updatedTimestamp = 1900000000000L
+        val firestoreIds = listOf(
+            "firestore-property-1",
+            "firestore-property-2",
+            "firestore-property-3",
+        )
+        val updatedOnlineProperties = listOf(
+            onlineProperty1.copy(
+                title = "Updated from firebase 1",
+                price = 777_000,
+                updatedAt = updatedTimestamp + 1
+            ),
+            onlineProperty2.copy(
+                title = "Updated from firebase 2",
+                isSold = true,
+                saleDate = "2025-12-15",
+                updatedAt = updatedTimestamp + 2
+
+            ),
+            onlineProperty3.copy(
+                title = "Updated from firebase 3",
+                surface = 200,
+                updatedAt = updatedTimestamp + 3
+            )
+        )
+
+        val pairs = updatedOnlineProperties.mapIndexed { index, property ->
+            property to firestoreIds[index]
+        }
+
+        propertyRepository.updateAllPropertiesFromFirebase(pairs)
+
+        updatedOnlineProperties.forEachIndexed { index, expected ->
+            val resultEntity = fakePropertyDao.entityMap[expected.universalLocalId]
+
+            assertNotNull(resultEntity)
+
+            resultEntity!!.apply {
+                assertEquals(expected.price, price)
+                assertEquals(expected.isSold, isSold)
+                assertEquals(expected.saleDate, saleDate)
+                assertEquals(expected.title, title)
+                assertEquals(expected.surface, surface)
+                assertEquals(firestoreIds[index], firestoreDocumentId)
+                assertTrue(isSynced)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
+        }
+
+        updatedOnlineProperties.forEachIndexed { index, expected ->
+
+            val resultUpdated = propertyRepository
+                .getPropertyByIdIncludeDeleted(expected.universalLocalId)
+                .first()
+
+            assertNotNull(resultUpdated)
+
+
+
+            resultUpdated!!.apply {
+                assertEquals(expected.price, price)
+                assertEquals(expected.isSold, isSold)
+                assertEquals(
+                    expected.saleDate,
+                    saleDate
+                )
+                assertEquals(expected.title, title)
+                assertEquals(expected.surface, surface)
+                assertEquals(firestoreIds[index], firestoreDocumentId)
+                assertTrue(isSynced)
+                assertEquals(expected.updatedAt, updatedAt)
+            }
+        }
+    }
+
+    @Test
+    fun markPropertyAsDeleted_shouldHidePropertyFromQueries() = runTest {
+        propertyRepository.markPropertyAsDeleted(propertyModel2)
+
+        val rawEntity = fakePropertyDao.entityMap[propertyModel2.universalLocalId]
+
+        assertNotNull(rawEntity)
+
+        rawEntity!!.apply {
+            assertTrue(rawEntity.isDeleted)
+            assertFalse(rawEntity.isSynced)
+        }
+
+        val result = propertyRepository.getPropertyById(propertyModel2.universalLocalId)
+            .first()
+
+        assertNull(result)
+
+    }
+
+    @Test
+    fun markAllPropertiesAsDeleted_shouldHideAllProperties() = runTest {
+        propertyRepository.markAllPropertiesAsDeleted()
+
+        val rawEntities = fakePropertyDao.entityMap.values
+
+        assertNotNull(rawEntities)
+
+        rawEntities.apply {
+            assertTrue(rawEntities.isNotEmpty())
+            assertTrue(rawEntities.all { it.isDeleted })
+            assertTrue(rawEntities.all { !it.isSynced })
+        }
+
+        val result = propertyRepository
+            .getAllPropertiesByDate()
+            .first()
+
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun deleteProperty_shouldDeleteProperty() = runTest {
+        val existsBefore = fakePropertyDao.entityMap.containsKey(property3.id)
+        assertTrue(existsBefore)
+
+        propertyRepository.deleteProperty(property3)
+
+        val resultEntity = fakePropertyDao.entityMap.containsKey(property3.id)
+        assertFalse(resultEntity)
+
+        val resultDeleted = propertyRepository.getPropertyByIdIncludeDeleted(property3.id).first()
+        assertNull(resultDeleted)
+    }
+
+    @Test
+    fun clearAllPropertiesDeleted_shouldDeleteOnlyDeletedProperties() = runTest {
+        propertyRepository.markPropertyAsDeleted(propertyModel1)
+
+        assertTrue(fakePropertyDao.entityMap[propertyModel1.universalLocalId]!!.isDeleted)
+        assertTrue(fakePropertyDao.entityMap[propertyModel3.universalLocalId]!!.isDeleted)
+        assertFalse(fakePropertyDao.entityMap[propertyModel2.universalLocalId]!!.isDeleted)
+
+        propertyRepository.clearAllDeleted()
+
+        assertFalse(fakePropertyDao.entityMap.containsKey(propertyModel1.universalLocalId))
+        assertFalse(fakePropertyDao.entityMap.containsKey(propertyModel3.universalLocalId))
+        assertTrue(fakePropertyDao.entityMap.containsKey(propertyModel2.universalLocalId))
+
+        val allProperties = propertyRepository.getAllPropertyIncludeDeleted().first()
+
+        assertFalse(allProperties.any { it.id == propertyModel1.universalLocalId })
+        assertFalse(allProperties.any { it.id == propertyModel3.universalLocalId })
+        assertTrue(allProperties.any { it.id == propertyModel2.universalLocalId })
     }
 
     @Test
     fun getPropertyByIdIncludeDeleted_returnsDeletedProperty() = runTest {
-        // --- Arrange ---
-        val deletedProperty = property3
-        assertTrue(deletedProperty.isDeleted)
+        val result = propertyRepository.getPropertyByIdIncludeDeleted(property3.id).first()
 
-        // --- Act ---
-        val result = propertyRepository.getPropertyByIdIncludeDeleted(deletedProperty.id).first()
-
-        // --- Assert ---
         assertNotNull(result)
-        assertEquals(deletedProperty.id, result?.id)
-        assertTrue(result?.isDeleted == true)
+
+        result!!.apply {
+            assertEquals(property3.id, result.id)
+            assertTrue(result.isDeleted)
+        }
     }
 
     @Test
-    fun getAllPropertyIncludeDeleted_returnsAllIncludingDeleted() = runTest {
-        // --- Act ---
+    fun getAllPropertiesIncludeDeleted_returnsAllIncludingDeleted() = runTest {
         val result = propertyRepository.getAllPropertyIncludeDeleted().first()
 
-        // --- Assert ---
         assertEquals(allPropertyEntities.size, result.size)
         assertTrue(result.any { it.isDeleted })
     }
+
+    @Test
+    fun getPropertyWithPoiS_shouldReturnPropertyWithLinkedPoiS() = runTest {
+        val result = propertyRepository
+            .getPropertyWithPoiS(property1.id)
+            .first()
+
+        assertEquals(property1.id, result.property.universalLocalId)
+        assertEquals(property1.title, result.property.title)
+
+        val expectedPoiIds = allCrossRefs
+            .filter {
+                it.universalLocalPropertyId == property1.id && !it.isDeleted
+            }
+            .map { it.universalLocalPoiId }
+            .toSet()
+
+        val resultPoiSIds = result.poiS
+            .map { it.universalLocalId }
+            .toSet()
+
+        assertEquals(expectedPoiIds, resultPoiSIds)
+    }
+
+
+
 
 
 }

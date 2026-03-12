@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.uploadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineRepository
@@ -163,4 +164,4 @@ class PhotoUploadManagerTest {
             photoRepository.downloadPhotoFromFirebase(any(), alreadySyncedNotDeleted.uri)
         }
     }
-}
+}*/

@@ -2,7 +2,7 @@
 <html xmlns:str="http://exslt.org/strings" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Test Results &mdash; UserRepositoryTest</title>
+        <title>Test Results &mdash; StaticMapRepositoryTest</title>
         <style type="text/css">
           html {
             height: 100%
@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">222 ms</div>
+                <div class="time" xmlns="">278 ms</div>
                 <h1>
-                    UserRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">17 total, </span><span class="passed">17 passed</span></strong>
+                    StaticMapRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">18 total, </span><span class="passed">18 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,93 +593,98 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">222 ms</div>
-                            </em>UserRepositoryTest</span>
+                                <div class="time">278 ms</div>
+                            </em>StaticMapRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">165 ms</div>
-                                    </em><em class="status">passed</em>getAllUsersByIdIncludeDeleted_returnsAllIncludingDeleted</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">13 ms</div>
-                                    </em><em class="status">passed</em>insertUsersInsertFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">8 ms</div>
-                                    </em><em class="status">passed</em>insertUserInsertFromFirebase_shouldInsertWithIsSyncTrue</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>updateAllUsersFromFirebase_shouldUpdateAllUsers</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>getUserByEmail_returnsCorrectUser</span>
+                                        <div class="time">189 ms</div>
+                                    </em><em class="status">passed</em>updateStaticMapFromFirebase_shouldUpdateStaticMapForceSyncTrue</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>firstInsertUser_shouldInsertWithIsSyncedTrue</span>
+                                    </em><em class="status">passed</em>getStaticMapByIdIncludeDeleted_shouldReturnDeletedStaticMap</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>markStaticMapAsDelete_shouldHideStaticMapFromQueries</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">53 ms</div>
+                                    </em><em class="status">passed</em>getStaticMapImage_whenApiFails_shouldReturnNull</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>updateUserFromFirebase_shouldUpdateUserAndForceSyncTrue</span>
+                                    </em><em class="status">passed</em>insertStaticMapInsertFromUI_shouldInsertWithIsSyncedFalse</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>markAllUsersAsDelete_shouldHideUsersFromQueries</span>
+                                    </em><em class="status">passed</em>clearAllStaticMapsDeleted_shouldDeleteOnlyDeletedStaticMaps</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>deleteStaticMap_shouldDeleteStaticMap</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>getUserByFirebaseUid_returnsCorrectUser</span>
+                                    </em><em class="status">passed</em>getStaticMapById_shouldReturnsCorrectStaticMap</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>deleteUser_shouldDeleteUser</span>
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getStaticMapByPropertyId_shouldReturnsCorrectStaticMap</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>getStaticMapImage_whenApiSuccess_shouldReturnByteArray</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getAllStaticMaps_shouldReturnsAllStaticMaps</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedUsers_shouldReturnOnlyUsersWithIsSyncedFalse</span>
+                                    </em><em class="status">passed</em>uploadUnSyncedStaticMaps_shouldReturnOnlyStaticMapsWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getStaticMapByPropertyIdIncludeDeleted_shouldReturnDeletedStaticMap</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getUserById_returnsCorrectUser</span>
+                                    </em><em class="status">passed</em>insertStaticMapInsertFromFirebase_shouldInsertWithIsSyncedTrue</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>updateUserFromUI_shouldUpdateUserAndForceSyncFalse</span>
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>deleteStaticMapByPropertyId_shouldDeleteStaticMap</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>markUserAsDelete_shouldHideUserFromQueries</span>
+                                    </em><em class="status">passed</em>getAllStaticMapsIncludeDeleted_shouldReturnAllStaticMapEvenDeleted</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>getAllUsers_shouldReturnsAllUsers</span>
+                                    </em><em class="status">passed</em>updateStaticMapFromUI_shouldUpdateStaticMapAndForceSyncFalse</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>clearAllUsersDeleted_shouldDeleteOnlyDeletedUsers</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>getUserByIdIncludeDeleted_returnsDeletedUser</span>
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>markStaticMapAsDeletedByProperty_shouldHideStaticMapFromQueries</span>
                             </li>
                         </ul>
                     </li>
@@ -687,7 +692,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 12/03/2026 16:48</p>
+            <p>Generated by Android Studio on 12/03/2026 16:38</p>
         </div>
     </body>
 </html>

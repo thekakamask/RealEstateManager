@@ -38,5 +38,5 @@ object FakePhotoModel {
     val photoModelList = listOf(
         photo1, photo2, photo3
     )
-    val photoModelListNotDeleted = listOf(photo1, photo2)
+    val photoModelListNotDeleted = photoModelList.filter { !it.isDeleted }
 }

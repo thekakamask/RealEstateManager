@@ -2,7 +2,7 @@
 <html xmlns:str="http://exslt.org/strings" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Test Results &mdash; UserRepositoryTest</title>
+        <title>Test Results &mdash; StaticMapRemoteDataSourceTest</title>
         <style type="text/css">
           html {
             height: 100%
@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">222 ms</div>
+                <div class="time" xmlns="">52 ms</div>
                 <h1>
-                    UserRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">17 total, </span><span class="passed">17 passed</span></strong>
+                    StaticMapRemoteDataSourceTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">1 total, </span><span class="passed">1 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,93 +593,18 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">222 ms</div>
-                            </em>UserRepositoryTest</span>
+                                <div class="time">52 ms</div>
+                            </em>com.dcac.realestatemanager.StaticMapRemoteDataSourceTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">165 ms</div>
-                                    </em><em class="status">passed</em>getAllUsersByIdIncludeDeleted_returnsAllIncludingDeleted</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">13 ms</div>
-                                    </em><em class="status">passed</em>insertUsersInsertFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">8 ms</div>
-                                    </em><em class="status">passed</em>insertUserInsertFromFirebase_shouldInsertWithIsSyncTrue</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>updateAllUsersFromFirebase_shouldUpdateAllUsers</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>getUserByEmail_returnsCorrectUser</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>firstInsertUser_shouldInsertWithIsSyncedTrue</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>updateUserFromFirebase_shouldUpdateUserAndForceSyncTrue</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>markAllUsersAsDelete_shouldHideUsersFromQueries</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>getUserByFirebaseUid_returnsCorrectUser</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">6 ms</div>
-                                    </em><em class="status">passed</em>deleteUser_shouldDeleteUser</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedUsers_shouldReturnOnlyUsersWithIsSyncedFalse</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getUserById_returnsCorrectUser</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>updateUserFromUI_shouldUpdateUserAndForceSyncFalse</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>markUserAsDelete_shouldHideUserFromQueries</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>getAllUsers_shouldReturnsAllUsers</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>clearAllUsersDeleted_shouldDeleteOnlyDeletedUsers</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>getUserByIdIncludeDeleted_returnsDeletedUser</span>
+                                        <div class="time">52 ms</div>
+                                    </em><em class="status">passed</em>saveStaticMapToLocal_shouldSaveFileAndReturnPath</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">03-05 20:15:41.369 28597 28636 I TestRunner: started: saveStaticMapToLocal_shouldSaveFileAndReturnPath(com.dcac.realestatemanager.StaticMapRemoteDataSourceTest)&#13;<br/>03-05 20:15:41.372 24932 24932 D BoundBrokerSvc: onRebind: Intent { act=com.google.android.gms.common.telemetry.service.START dat=chimera-action:/... xflg=0x4 cmp=com.google.android.gms/.chimera.PersistentApiService }&#13;<br/>03-05 20:15:41.378 28597 28636 I TestRunner: finished: saveStaticMapToLocal_shouldSaveFileAndReturnPath(com.dcac.realestatemanager.StaticMapRemoteDataSourceTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </li>
@@ -687,7 +612,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 12/03/2026 16:48</p>
+            <p>Generated by Android Studio on </p>
         </div>
     </body>
 </html>

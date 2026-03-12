@@ -77,7 +77,6 @@ fun PropertyEntity.toFullModel(
 fun Property.toEntity(): PropertyEntity {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    Log.d("MAPPER", "Mapping Property to Entity: id=$universalLocalId, lat=$latitude, lng=$longitude")
     return PropertyEntity(
         id = universalLocalId,
         firestoreDocumentId = firestoreDocumentId,
@@ -181,6 +180,7 @@ fun User.toEntity(): UserEntity {
 fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
     universalLocalPropertyId = universalLocalPropertyId,
     universalLocalPoiId = universalLocalPoiId,
+    firestoreDocumentId = firestoreDocumentId,
     isSynced = isSynced,
     isDeleted = isDeleted,
     updatedAt = updatedAt
@@ -189,6 +189,7 @@ fun PropertyPoiCrossEntity.toModel(): PropertyPoiCross = PropertyPoiCross(
 fun PropertyPoiCross.toEntity(): PropertyPoiCrossEntity = PropertyPoiCrossEntity(
     universalLocalPropertyId = universalLocalPropertyId,
     universalLocalPoiId = universalLocalPoiId,
+    firestoreDocumentId = firestoreDocumentId,
     isSynced = isSynced,
     isDeleted = isDeleted,
     updatedAt = updatedAt

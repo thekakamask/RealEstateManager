@@ -29,7 +29,6 @@ import org.threeten.bp.LocalDate
 import javax.inject.Inject
 import android.content.Context
 import com.dcac.realestatemanager.R
-import com.dcac.realestatemanager.data.offlineDatabase.staticMap.StaticMapDataSource
 import com.dcac.realestatemanager.data.sync.SyncScheduler
 import com.dcac.realestatemanager.model.StaticMap
 import com.dcac.realestatemanager.ui.propertyDetailsPage.EditSection
@@ -47,7 +46,6 @@ class PropertyCreationViewModel @Inject constructor(
     private val crossRefRepository: PropertyPoiCrossRepository,
     private val authRepository: AuthRepository,
     private val staticMapRepository: StaticMapRepository,
-    private val staticMapDataSource: StaticMapDataSource,
     private val userRepository: UserRepository,
     private val syncScheduler: SyncScheduler
 ) : ViewModel(), IPropertyCreationViewModel {
@@ -284,7 +282,7 @@ class PropertyCreationViewModel @Inject constructor(
                 )
             )
 
-            val bytes = staticMapDataSource.getStaticMapImage(config)
+            val bytes = staticMapRepository.getStaticMapImage(config)
 
             if (bytes == null) {
                 updateState(isLoadingMap = false)
@@ -293,7 +291,7 @@ class PropertyCreationViewModel @Inject constructor(
 
             val fileName = "static_map_${UUID.randomUUID()}.png"
 
-            val localPath = staticMapDataSource.saveStaticMapToLocal(context, fileName, bytes)
+            val localPath = staticMapRepository.saveStaticMapToLocal(context, fileName, bytes)
             Log.d("STATIC_MAP_SAVE", "localPath=$localPath")
 
             val tempStaticMap = StaticMap(
@@ -648,11 +646,11 @@ class PropertyCreationViewModel @Inject constructor(
                             )
                         )
 
-                        val imageBytes = staticMapDataSource.getStaticMapImage(config)
+                        val imageBytes = staticMapRepository.getStaticMapImage(config)
 
                         if (imageBytes != null) {
                             val fileName = "static_map_${UUID.randomUUID()}.png"
-                            val localPath = staticMapDataSource.saveStaticMapToLocal(context, fileName, imageBytes)
+                            val localPath = staticMapRepository.saveStaticMapToLocal(context, fileName, imageBytes)
 
                             val staticMap = localPath?.let {
                                 StaticMap(

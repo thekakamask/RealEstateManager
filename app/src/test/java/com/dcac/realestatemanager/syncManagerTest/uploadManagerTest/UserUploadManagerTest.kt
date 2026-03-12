@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.uploadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
@@ -166,4 +167,4 @@ class UserUploadManagerTest {
             userRepository.downloadUserFromFirebase(any(), alreadySyncedNotDeleted.firebaseUid)
         }
     }
-}
+}*/

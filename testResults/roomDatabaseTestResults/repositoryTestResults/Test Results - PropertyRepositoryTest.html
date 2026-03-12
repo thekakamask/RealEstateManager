@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">513 ms</div>
+                <div class="time" xmlns="">417 ms</div>
                 <h1>
-                    PropertyRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">24 total, </span><span class="passed">24 passed</span></strong>
+                    PropertyRepositoryTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">33 total, </span><span class="passed">33 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,123 +593,168 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">513 ms</div>
+                                <div class="time">417 ms</div>
                             </em>PropertyRepositoryTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">415 ms</div>
-                                    </em><em class="status">passed</em>markAllPropertyAsDeleted_shouldHideAllProperties</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">11 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertiesByAlphabetic_returnsAllSortedAlphabetically</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>deleteProperty_deletesEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">9 ms</div>
-                                    </em><em class="status">passed</em>getPropertyWithPoiS_returnsLinkedPoiS</span>
+                                        <div class="time">253 ms</div>
+                                    </em><em class="status">passed</em>updatePropertyFromFirebase_shouldUpdatePropertyAndForceSyncTrue</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>updateProperty_shouldModifyExistingProperty</span>
+                                    </em><em class="status">passed</em>uploadUnSyncedProperties_shouldReturnOnlyPropertiesWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">32 ms</div>
+                                    </em><em class="status">passed</em>searchProperties_filterByType_returnsCorrectProperties</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">5 ms</div>
-                                    </em><em class="status">passed</em>searchProperties_withTypeFilter_returnsCorrectType</span>
+                                    </em><em class="status">passed</em>insertPropertiesInsertFromUi_shouldInsertAllWithIsSyncedFalse</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>markPropertyAsDeleted_calledTwice_staysDeleted</span>
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>markPropertyAsSold_shouldUpdatePropertyCorrectly</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>downloadPropertyFromFirebase_savesNewPropertyCorrectly</span>
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>getPropertiesByUserIdDate_shouldReturnsCorrectProperties</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">10 ms</div>
-                                    </em><em class="status">passed</em>getPropertyById_returnsCorrectProperty</span>
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>searchProperties_alphabeticSort_withoutFilters_returnsAllSortedAlphabetically</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>searchProperties_withIsSoldTrue_returnsOnlySoldProperties</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>insertProperty_shouldInsertNewPropertyInDao</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertiesByDate_returnsAllSortedByDate</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedPropertiesToFirebase_returnsOnlyUnSynced</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>getPropertyEntityById_returnsCorrectEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>clearAllDeleted_removesOnlyDeleted</span>
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>searchProperties_dateAndAlphabetic_shouldReturnDifferentOrder</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">8 ms</div>
-                                    </em><em class="status">passed</em>getPropertiesByUserId_returnsCorrectProperties</span>
+                                    </em><em class="status">passed</em>getAllPropertiesByDate_shouldReturnsAllSortedByDate</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>getAllPropertyIncludeDeleted_returnsAllIncludingDeleted</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">5 ms</div>
-                                    </em><em class="status">passed</em>getPropertyById_whenUnknownId_returnsNull</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>getPropertyWithPoiS_whenUnlinked_returnsEmpty</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>updateProperty_onNonExistingProperty_shouldInsertIt</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">3 ms</div>
-                                    </em><em class="status">passed</em>searchProperties_withMinSurfaceAndMaxPrice_returnsMatchingProperties</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">4 ms</div>
-                                    </em><em class="status">passed</em>markPropertyAsDeleted_shouldHidePropertyFromQueries</span>
+                                        <div class="time">8 ms</div>
+                                    </em><em class="status">passed</em>getFullPropertiesByUserIdAlphabetic_shouldReturnsCorrectProperties</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
                                         <div class="time">2 ms</div>
-                                    </em><em class="status">passed</em>downloadPropertyFromFirebase_updatesExisting</span>
+                                    </em><em class="status">passed</em>markPropertyAsSold_withInvalidId_shouldDoNothing</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">8 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertiesByAlphabetic_shouldReturnsAllSortedAlphabetically</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>searchProperties_dateSort_withoutFilters_returnsAllSortedByDate</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">7 ms</div>
+                                    </em><em class="status">passed</em>searchUserProperties_withFilters_returnsCorrectFilteredUserProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>markAllPropertiesAsDeleted_shouldHideAllProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>updateAllPropertiesFromFirebase_shouldUpdateAllAndForceSyncTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>searchUserProperties_noMatch_returnsEmptyList</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>clearAllPropertiesDeleted_shouldDeleteOnlyDeletedProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>getPropertyById_shouldReturnsCorrectProperty</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>getAllPropertiesIncludeDeleted_returnsAllIncludingDeleted</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">1 ms</div>
+                                    </em><em class="status">passed</em>deleteProperty_shouldDeleteProperty</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>searchUserProperties_alphabeticSort_returnsSortedUserProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">3 ms</div>
+                                    </em><em class="status">passed</em>searchUserProperties_withoutFilters_returnsAllUserPropertiesSortedByDate</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPropertyInsertFromUi_shouldInsertWithIsSyncedFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>getFullPropertiesByUserIdDate_shouldReturnsCorrectProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>insertPropertyInsertFromFirebase_shouldInsertWithIsSyncedTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">6 ms</div>
+                                    </em><em class="status">passed</em>getPropertyWithPoiS_shouldReturnPropertyWithLinkedPoiS</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>updatePropertyFromUI_shouldUpdatePropertyAndForceSyncFalse</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">6 ms</div>
+                                    </em><em class="status">passed</em>searchProperties_withFilters_returnsCorrectFilteredList</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>getPropertiesByUserIdAlphabetic_shouldReturnsCorrectProperties</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">5 ms</div>
+                                    </em><em class="status">passed</em>insertPropertiesInsertFromFirebase_shouldInsertAllWithIsSyncedTrue</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">2 ms</div>
+                                    </em><em class="status">passed</em>markPropertyAsDeleted_shouldHidePropertyFromQueries</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
@@ -722,7 +767,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 01/10/2025 19:03</p>
+            <p>Generated by Android Studio on 05/03/2026 23:20</p>
         </div>
     </body>
 </html>

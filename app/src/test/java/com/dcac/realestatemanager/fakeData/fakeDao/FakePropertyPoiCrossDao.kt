@@ -169,12 +169,6 @@ class FakePropertyPoiCrossDao : PropertyPoiCrossDao,
             list.filter { it.universalLocalPropertyId == propertyId }
         }
 
-    override fun getCrossRefsByPoiIdIncludeDeleted(poiId: String)
-            : Flow<List<PropertyPoiCrossEntity>> =
-        entityFlow.map { list ->
-            list.filter { it.universalLocalPoiId == poiId }
-        }
-
     override fun getAllCrossRefsIncludeDeleted(): Flow<List<PropertyPoiCrossEntity>> =
         entityFlow
 

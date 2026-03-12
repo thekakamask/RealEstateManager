@@ -76,6 +76,7 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
+            isReturnDefaultValues = true
         }
     }
 
@@ -155,6 +156,7 @@ dependencies {
     testImplementation(libs.truth)
     // Android instrumentation testing libraries
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.kotlinx.coroutines.test)
     // For mocking Firebase Storage await() extensions + tasks

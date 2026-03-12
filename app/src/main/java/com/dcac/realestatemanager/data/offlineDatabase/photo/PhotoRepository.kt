@@ -20,7 +20,7 @@ interface PhotoRepository {
     suspend fun insertPhotosInsertFromUI(photos: List<Photo>)
     //INSERTIONS FROM FIREBASE
     suspend fun insertPhotoInsertFromFirebase(photo: PhotoOnlineEntity,firestoreId: String, localUri: String)
-    suspend fun insertPhotosInsertFromFirebase(photos: List<Triple<PhotoOnlineEntity,String, String>>)
+    suspend fun insertPhotosInsertFromFirebase(photos: List<Triple<PhotoOnlineEntity, String, String>>)
 
     //UPDATE
     suspend fun updatePhotoFromUI(photo: Photo)

@@ -33,6 +33,6 @@ object FakeUserModel {
     )
 
     val userModelList = listOf(user1, user2, user3)
-    val userModelListNotDeleted = listOf(user1,user2)
+    val userModelListNotDeleted = userModelList.filter { !it.isDeleted }
 
 }

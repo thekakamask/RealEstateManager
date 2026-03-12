@@ -1635,5 +1635,34 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Validated synchronization flows including UI insert (force unsynced), Firebase insert (force synced), update transitions, and soft delete handling.
 
 
+### 🔹 **Update #50**
+
+  - 🧱 **Static Map data layer refactored with Remote/Local separation**
+    - Reorganized the StaticMap data layer to introduce a clear separation between network access and local database operations.
+    - Implemented StaticMapRemoteDataSource to encapsulate Google Static Maps API calls and local file persistence logic.
+    - Implemented StaticMapLocalDataSource to isolate Room DAO interactions and synchronization-related operations.
+    - Updated OfflineStaticMapRepository to orchestrate both data sources while exposing a unified StaticMapRepository interface to the application layer.
+
+  - 🔧 **Dependency Injection configuration aligned with new Static Map architecture**
+    - Updated the Hilt dependency graph to support the new RemoteDataSource / LocalDataSource repository structure.
+    - Introduced dedicated providers for StaticMapRemoteDataSource and StaticMapLocalDataSource within the application DI module.
+    - Adjusted repository provisioning to ensure proper dependency resolution across ViewModels, synchronization managers, and background workers.
+
+  - 🧩 **PropertyRepository full model aggregation extended with StaticMap support**
+    - Updated PropertyRepository aggregation logic to include StaticMap data when building full Property domain models.
+    - Extended the combinePropertiesWithDetails() flow to integrate StaticMapRepository alongside photos, POIs, cross references, and users.
+    - Ensured that each Property model now exposes its associated StaticMap when available, enabling consistent data representation across the UI and map features.
+
+  - 🧪 **StaticMapRepository unit tests implemented**
+    - Added a full unit test suite for StaticMapRepository covering image retrieval, local persistence, synchronization logic, and deletion behavior.
+    - Introduced Fake DAO and Fake API service implementations to isolate repository behavior during testing.
+    - Verified correct handling of success and failure scenarios when interacting with the Static Maps API.
+
+  - 🔄 **Room repository test coverage improved**
+    - Updated and completed unit tests for existing Room repositories to align with the latest architecture changes.
+    - Ensured repository behaviors remain consistent after introducing StaticMap integration into PropertyRepository aggregation flows.
+    - Strengthened validation of repository interactions with Fake DAO implementations to guarantee data integrity and expected query results.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

@@ -50,7 +50,5 @@ object FakePoiEntity {
         poi1, poi2, poi3
     )
 
-    val poiEntityListNotDeleted = listOf(
-        poi1, poi2
-    )
+    val poiEntityListNotDeleted = poiEntityList.filter { !it.isDeleted }
 }

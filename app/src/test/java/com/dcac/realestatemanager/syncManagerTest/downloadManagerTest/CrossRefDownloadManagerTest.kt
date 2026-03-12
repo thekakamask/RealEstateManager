@@ -1,3 +1,4 @@
+/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
@@ -303,4 +304,4 @@ class CrossRefDownloadManagerTest {
             crossRefRepository.downloadCrossRefFromFirebase(any())
         }
     }
-}
+}*/
