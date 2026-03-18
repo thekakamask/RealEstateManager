@@ -1664,5 +1664,16 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Strengthened validation of repository interactions with Fake DAO implementations to guarantee data integrity and expected query results.
 
 
+### 🔹 **Update #51**
+
+  - ☁️ **Firebase repositories unit tests implemented**
+    - Added unit tests for Firebase-based repositories including User, Property, Photo, POI, PropertyPoiCrossRef, and StaticMap.
+    - Covered Firestore read/write operations using coroutine-based testing with runTest and await() handling.
+    - Implemented MockK-based mocking strategy for FirebaseFirestore, CollectionReference, Query, and DocumentReference to simulate real Firestore behavior.
+    - Validated repository logic for success, failure, and edge cases such as duplicate detection (e.g., email uniqueness) and partial data scenarios.
+    - Ensured consistent exception handling across repositories by testing custom exceptions (e.g., FirebaseUserUploadException, FirebaseUserDownloadException).
+    - Improved test reliability by isolating Firestore interactions and avoiding external dependencies.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

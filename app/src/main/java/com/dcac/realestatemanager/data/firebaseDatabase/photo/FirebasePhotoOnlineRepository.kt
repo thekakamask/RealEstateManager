@@ -26,6 +26,12 @@ class FirebasePhotoOnlineRepository(
             }
 
             val uri = photo.storageUrl.toUri()
+            if (uri.scheme == null) {
+                throw FirebasePhotoUploadException(
+                    "Invalid URI format",
+                    IllegalArgumentException("Invalid URI")
+                )
+            }
             val storageRef = storage.reference.child("photos/${firebasePhotoId}.jpg")
 
             storageRef.putFile(uri).await()
@@ -63,7 +69,7 @@ class FirebasePhotoOnlineRepository(
     override suspend fun getPhotosByPropertyId(firebasePropertyId: String): List<PhotoOnlineEntity> {
         return try {
             firestore.collection(PHOTOS)
-                .whereEqualTo("propertyId", firebasePropertyId)
+                .whereEqualTo("universalLocalPropertyId", firebasePropertyId)
                 .get()
                 .await()
                 .documents.mapNotNull { it.toObject(PhotoOnlineEntity::class.java) }
@@ -121,7 +127,8 @@ class FirebasePhotoOnlineRepository(
     }*/
 
     override suspend fun downloadImageLocally(storageUrl: String): String {
-        val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl)
+        //val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(storageUrl)
+        val storageRef = storage.getReferenceFromUrl(storageUrl)
         val localFile = withContext(Dispatchers.IO) {
             File.createTempFile("photo_", ".jpg")
         }

@@ -15,11 +15,7 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - 🧱 Refactored StaticMap architecture with a clean repository + Remote/Local DataSource separation.
-   - 🔧 Updated dependency injection configuration to support the new StaticMap data layer structure.
-   - 🧩 Extended PropertyRepository full model aggregation to include StaticMap data alongside photos, POIs, and users.
-   - 🧪 Added unit tests for StaticMapRepository covering local persistence, API interactions, and synchronization scenarios.
-   - 🔄 Updated and completed unit test coverage across existing Room repositories to ensure consistent behavior and data integrity.
+   - ☁️ Added unit tests for Firebase repositories covering user, property, photo, POI, and related entities with full coroutine and Firestore mocking.
 
 
 ## ❌ **NEXT UPDATES**

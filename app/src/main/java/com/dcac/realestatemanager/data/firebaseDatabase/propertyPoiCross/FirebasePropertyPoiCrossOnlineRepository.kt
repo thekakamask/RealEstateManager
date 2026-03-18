@@ -25,7 +25,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
     override suspend fun getCrossRefsByPropertyId(firebasePropertyId: String): List<PropertyPoiCrossOnlineEntity> {
         return try {
             firestore.collection(PROPERTY_POI_CROSS)
-                .whereEqualTo("propertyId", firebasePropertyId)
+                .whereEqualTo("universalLocalPropertyId", firebasePropertyId)
                 .get()
                 .await()
                 .documents.mapNotNull {
@@ -39,7 +39,7 @@ class FirebasePropertyPoiCrossOnlineRepository(
     override suspend fun getCrossRefsByPoiId(firebasePoiId: String): List<PropertyPoiCrossOnlineEntity> {
         return try {
             firestore.collection(PROPERTY_POI_CROSS)
-                .whereEqualTo("poiId", firebasePoiId)
+                .whereEqualTo("universalLocalPoiId", firebasePoiId)
                 .get()
                 .await()
                 .documents.mapNotNull {

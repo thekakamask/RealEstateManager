@@ -56,6 +56,9 @@ object FakePhotoOnlineEntity {
         photoOnline1, photoOnline2, photoOnline3
     )
 
+    val photoOnlineEntityListNotDeleted = photoOnlineEntityList
+        .filter { !it.isDeleted }
+
     val firestorePhotoDocumentList = listOf(
         firestorePhotoDocument1,
         firestorePhotoDocument2,

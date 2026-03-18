@@ -1,14 +1,14 @@
-/*
 package com.dcac.realestatemanager.firebaseRepositoryTest
 
 
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserDeleteException
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.USERS
 import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserDownloadException
 import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserUploadException
+import com.dcac.realestatemanager.data.firebaseDatabase.user.FirestoreUserDocument
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
 import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakeUserOnlineEntity
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.firestore.CollectionReference
@@ -31,18 +31,19 @@ import org.junit.runners.JUnit4
 class FirebaseUserRepositoryTest {
 
 
-    // --- Mocked Firebase objects ---
     private val firestore = mockk<FirebaseFirestore>()
     private val collection = mockk<CollectionReference>()
     private val document = mockk<DocumentReference>()
-    private val query = mockk<Query>() // For uniqueness checks
 
     private lateinit var repo: UserOnlineRepository
 
-    // --- Fake Data ---
+    private val userEntity1 = FakeUserEntity.user1
+    private val userEntity2 = FakeUserEntity.user2
     private val userOnlineEntity1 = FakeUserOnlineEntity.userOnline1
-    private val firebaseUserDocument1 = FakeUserOnlineEntity.firestoreUserDocument1
-    private val firebaseUserDocumentList = FakeUserOnlineEntity.firestoreUserDocumentList
+    private val userOnlineEntity2 = FakeUserOnlineEntity.userOnline2
+    private val userOnlineEntityList = FakeUserOnlineEntity.userOnlineEntityList
+
+
 
     @Before
     fun setup() {
@@ -50,11 +51,10 @@ class FirebaseUserRepositoryTest {
         repo = FirebaseUserOnlineRepository(firestore)
 
         mockkStatic("kotlinx.coroutines.tasks.TasksKt")
+
         mockkStatic(android.util.Log::class)
         every { android.util.Log.d(any(), any()) } returns 0
 
-        // Common setup for most tests
-        every { firestore.collection(FirestoreCollections.USERS) } returns collection
     }
 
     @After
@@ -64,172 +64,196 @@ class FirebaseUserRepositoryTest {
 
     @Test
     fun uploadUser_success_writesToFirestore_returnsEntity() = runTest {
-        // Arrange: New user with unique email and roomId
-        val userId = firebaseUserDocument1.id
-        val userToUpload = firebaseUserDocument1.user
-        val emptySnapshot = mockk<QuerySnapshot> { every { documents } returns emptyList() }
+        val userId = userEntity1.id
 
-        // Mock uniqueness checks to return nothing
-        every { collection.whereEqualTo(any<String>(), any()) } returns query
-        coEvery { query.get().await() } returns emptySnapshot
+        val query = mockk<Query>()
+        val querySnapshot = mockk<QuerySnapshot>()
 
-        // Mock the document write operation
+        every { firestore.collection(USERS) } returns collection
+
+        every { collection.whereEqualTo("email", userOnlineEntity1.email) } returns query
+        coEvery { query.get().await() } returns querySnapshot
+        every { querySnapshot.documents } returns emptyList()
+
         every { collection.document(userId) } returns document
-        coEvery { document.set(userToUpload).await() } returns mockk()
+        coEvery { document.set(userOnlineEntity1).await() } returns null
 
-        // Act
-        val result = repo.uploadUser(userToUpload, userId)
+        val result = repo.uploadUser(userOnlineEntity1, userId)
 
-        // Assert
-        assertThat(result).isEqualTo(userToUpload)
-        coVerify { document.set(userToUpload).await() }
+        assertThat(result).isEqualTo(userOnlineEntity1)
+
+        coVerify {
+            document.set(userOnlineEntity1).await()
+        }
     }
 
     @Test
-    fun uploadUser_failure_throwsFirebaseUserUploadException_whenEmailExists() = runTest {
-        // Arrange: New user but their email already exists under a different ID
-        val newUserUpload = userOnlineEntity1
-        val newUserId = "new_user_id"
-        val existingDocSnapshot = mockk<DocumentSnapshot> { every { id } returns "existing_user_id_123" }
-        val querySnapshotWithEmail = mockk<QuerySnapshot> { every { documents } returns listOf(existingDocSnapshot) }
+    fun uploadUser_failure_throwsFirebaseUserUploadException() = runTest {
+        val userId = userEntity2.id
 
-        // Mock the email check to find an existing user
-        every { collection.whereEqualTo("email", newUserUpload.email) } returns query
-        coEvery { query.get().await() } returns querySnapshotWithEmail
+        val query = mockk<Query>()
+        val querySnapshot = mockk<QuerySnapshot>()
 
-        // Act
+        every { firestore.collection(USERS) } returns collection
+
+        every { collection.whereEqualTo("email", userOnlineEntity2.email) } returns query
+        coEvery { query.get().await() } returns querySnapshot
+        every { querySnapshot.documents } returns emptyList()
+
+        every { collection.document(userId) } returns document
+        coEvery { document.set(userOnlineEntity2).await() } throws RuntimeException("upload fail")
+
         val thrown = runCatching {
-            repo.uploadUser(newUserUpload, newUserId)
+            repo.uploadUser(userOnlineEntity2, userId)
         }.exceptionOrNull()
 
-        // Assert
         assertThat(thrown).isInstanceOf(FirebaseUserUploadException::class.java)
-        assertThat(thrown?.message).contains("Email already in use")
+        assertThat(thrown!!.cause!!.message).isEqualTo("upload fail")
     }
 
     @Test
-    fun getUser_success_returnsFirestoreUserDocument() = runTest {
-        // Arrange
-        val userId = firebaseUserDocument1.id
+    fun getUser_success_returnsEntity() = runTest {
+        val userId = userOnlineEntity1.universalLocalId
         val snapshot = mockk<DocumentSnapshot>()
+
+        every { firestore.collection(USERS) } returns collection
         every { collection.document(userId) } returns document
         coEvery { document.get().await() } returns snapshot
-        every { snapshot.toObject(UserOnlineEntity::class.java) } returns firebaseUserDocument1.user
         every { snapshot.id } returns userId
+        every { snapshot.toObject(UserOnlineEntity::class.java) } returns userOnlineEntity1
 
-        // Act
         val result = repo.getUser(userId)
 
-        // Assert
-        assertThat(result).isNotNull()
-        assertThat(result).isEqualTo(firebaseUserDocument1)
+        assertThat(result).isEqualTo(
+            FirestoreUserDocument(
+                firebaseId = userId,
+                user = userOnlineEntity1
+            )
+        )
     }
 
     @Test
     fun getUser_noEntityFound_returnsNull() = runTest {
-        // Arrange
         val userId = "404"
         val snapshot = mockk<DocumentSnapshot>()
+        every { firestore.collection(USERS) } returns collection
         every { collection.document(userId) } returns document
         coEvery { document.get().await() } returns snapshot
         every { snapshot.toObject(UserOnlineEntity::class.java) } returns null
 
-        // Act
         val result = repo.getUser(userId)
 
-        // Assert
         assertThat(result).isNull()
     }
 
     @Test
     fun getUser_failure_throwsFirebaseUserDownloadException() = runTest {
-        // Arrange
-        val userId = "any_id"
+        val userId = userOnlineEntity2.universalLocalId
+        every { firestore.collection(USERS) } returns collection
         every { collection.document(userId) } returns document
         coEvery { document.get().await() } throws RuntimeException("get fail")
 
-        // Act
         val thrown = runCatching { repo.getUser(userId) }.exceptionOrNull()
 
-        // Assert
         assertThat(thrown).isInstanceOf(FirebaseUserDownloadException::class.java)
-        assertThat(thrown?.cause?.message).isEqualTo("get fail")
+        assertThat(thrown!!.cause!!.message).isEqualTo("get fail")
     }
 
     @Test
-    fun getAllUser_success_returnsListOfFirestoreUserDocument() = runTest {
-        // Arrange
+    fun getAllUsers_success_returnList()= runTest {
         val snapshot = mockk<QuerySnapshot>()
-        val docs = firebaseUserDocumentList.map { firestoreDoc ->
+
+        val docs = userOnlineEntityList.map { entity ->
             mockk<DocumentSnapshot>().apply {
-                every { id } returns firestoreDoc.id
-                every { toObject(UserOnlineEntity::class.java) } returns firestoreDoc.user
+                every { toObject(UserOnlineEntity::class.java) } returns entity
+                every { id } returns entity.universalLocalId
             }
         }
+
+        every { firestore.collection(USERS) } returns collection
         coEvery { collection.get().await() } returns snapshot
         every { snapshot.documents } returns docs
 
-        // Act
         val result = repo.getAllUsers()
 
-        // Assert
-        assertThat(result).hasSize(firebaseUserDocumentList.size)
-        assertThat(result).containsExactlyElementsIn(firebaseUserDocumentList)
+        assertThat(result).hasSize(userOnlineEntityList.size)
+
+        result.forEachIndexed { index, actual ->
+            val expected = userOnlineEntityList[index]
+
+            assertThat(actual.firebaseId).isEqualTo(expected.universalLocalId)
+            assertThat(actual.user).isEqualTo(expected)
+        }
     }
 
     @Test
-    fun getAllUser_noResults_returnsEmptyList() = runTest {
-        // Arrange
+    fun getAllUsers_noResults_returnsEmptyList() = runTest {
         val snapshot = mockk<QuerySnapshot>()
+        every { firestore.collection(USERS)} returns collection
         coEvery { collection.get().await() } returns snapshot
         every { snapshot.documents } returns emptyList()
 
-        // Act
         val result = repo.getAllUsers()
 
-        // Assert
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun getAllUser_failure_throwsFirebaseUserDownloadException() = runTest {
-        // Arrange
+    fun getAllUsers_failure_throwsFirebaseUserDownloadException() = runTest {
+        every { firestore.collection(USERS) } returns collection
         coEvery { collection.get().await() } throws RuntimeException("download fail")
 
-        // Act
         val thrown = runCatching { repo.getAllUsers() }.exceptionOrNull()
 
-        // Assert
         assertThat(thrown).isInstanceOf(FirebaseUserDownloadException::class.java)
-        assertThat(thrown?.cause?.message).isEqualTo("download fail")
+        assertThat(thrown!!.cause!!.message).isEqualTo("download fail")
     }
 
     @Test
-    fun deleteUser_success_deletesDocument() = runTest {
-        // Arrange
-        val userId = firebaseUserDocument1.id
+    fun markUserAsDeleted_success_updatesDocument() = runTest {
+
+        val userId = userOnlineEntity1.universalLocalId
+        val updatedAt = 123L
+
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
+
+        every { firestore.collection(USERS) } returns collection
         every { collection.document(userId) } returns document
-        coEvery { document.delete().await() } returns mockk() // .await() on delete returns Void
+        every { document.update(any<Map<String, Any>>()) } returns task
 
-        // Act
-        repo.deleteUser(userId)
+        coEvery { task.await() } returns mockk()
 
-        // Assert
-        coVerify { document.delete().await() }
+        repo.markUserAsDeleted(userId, updatedAt)
+
+        verify {
+            document.update(
+                match {
+                    it["isDeleted"] == true &&
+                            it["updatedAt"] == updatedAt
+                }
+            )
+        }
     }
 
     @Test
-    fun deleteUser_failure_throwsFirebaseUserDeleteException() = runTest {
-        // Arrange
-        val userId = firebaseUserDocument1.id
+    fun markUserAsDeleted_firestoreFailure_throwsException() = runTest {
+
+        val userId = userOnlineEntity1.universalLocalId
+        val updatedAt = 123L
+
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
+
+        every { firestore.collection(USERS) } returns collection
         every { collection.document(userId) } returns document
-        coEvery { document.delete().await() } throws RuntimeException("delete fail")
+        every { document.update(any<Map<String, Any>>()) } returns task
 
-        // Act
-        val thrown = runCatching { repo.deleteUser(userId) }.exceptionOrNull()
+        coEvery { task.await() } throws RuntimeException("update failed")
 
-        // Assert
-        assertThat(thrown).isInstanceOf(FirebaseUserDeleteException::class.java)
-        assertThat(thrown?.cause?.message).isEqualTo("delete fail")
+        val thrown = runCatching {
+            repo.markUserAsDeleted(userId, updatedAt)
+        }.exceptionOrNull()
+
+        assertThat(thrown).isInstanceOf(RuntimeException::class.java)
+        assertThat(thrown!!.message).contains("update failed")
     }
-}*/
+}

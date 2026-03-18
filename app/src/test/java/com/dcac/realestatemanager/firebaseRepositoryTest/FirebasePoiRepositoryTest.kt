@@ -1,8 +1,6 @@
-/*
 package com.dcac.realestatemanager.firebaseRepositoryTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.poi.FirebasePoiDeleteException
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.FirebasePoiDownloadException
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.FirebasePoiOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.FirebasePoiUploadException
@@ -38,9 +36,8 @@ class FirebasePoiRepositoryTest {
 
     private val poiEntity1 = FakePoiEntity.poi1
     private val poiEntity2 = FakePoiEntity.poi2
-    private val poiEntity3 = FakePoiEntity.poi3
-    private val poiOnlineEntity1 = FakePoiOnlineEntity.poiEntity1
-    private val poiOnlineEntity2 = FakePoiOnlineEntity.poiEntity2
+    private val poiOnlineEntity1 = FakePoiOnlineEntity.poiOnline1
+    private val poiOnlineEntity2 = FakePoiOnlineEntity.poiOnline2
     private val poiOnlineEntityList = FakePoiOnlineEntity.poiOnlineEntityList
 
     @Before
@@ -66,28 +63,23 @@ class FirebasePoiRepositoryTest {
         unmockkAll()
     }
 
-    // ----------------------------------------------------------------------
-    // ✅ SUCCESS CASE: uploadPoi should save entity in Firestore and return synced POI
-    // ----------------------------------------------------------------------
     @Test
     fun uploadPoi_success_writesToFirestore_returnsEntity() = runTest {
-        val poiId = poiEntity1.id.toString()
+        val poiId = poiEntity1.id
         every { firestore.collection(FirestoreCollections.POIS) } returns collection
         every { collection.document(poiId) } returns document
-        coEvery { document.set(poiOnlineEntity1).await() } returns null
+        every { document.set(any<Map<String, Any>>()) } returns mockk()
+        coEvery { document.set(any<Map<String, Any>>()).await() } returns null
 
         val result = repo.uploadPoi(poiOnlineEntity1, poiId)
 
         assertThat(result).isEqualTo(poiOnlineEntity1)
-        coVerify { document.set(poiOnlineEntity1).await() }
+        verify { document.set(any<Map<String, Any>>()) }
     }
 
-    // ----------------------------------------------------------------------
-    // ❌ FAILURE CASE: uploadPoi should throw FirebasePoiUploadException if Firestore fails
-    // ----------------------------------------------------------------------
     @Test
     fun uploadPoi_failure_throwsFirebasePoiUploadException() = runTest {
-        val poiId = poiEntity2.id.toString()
+        val poiId = poiEntity2.id
         every { firestore.collection(FirestoreCollections.POIS) } returns collection
         every { collection.document(poiId) } returns document
         coEvery { document.set(any()).await() } throws RuntimeException("upload fail")
@@ -102,7 +94,7 @@ class FirebasePoiRepositoryTest {
 
     @Test
     fun getPoi_success_returnsEntity() = runTest {
-        val poiId = poiOnlineEntity1.roomId.toString()
+        val poiId = poiOnlineEntity1.universalLocalId
         val snapshot = mockk<DocumentSnapshot>()
         every { firestore.collection(FirestoreCollections.POIS) } returns collection
         every { collection.document(poiId) } returns document
@@ -130,7 +122,7 @@ class FirebasePoiRepositoryTest {
 
     @Test
     fun getPoi_failure_throwsFirebasePoiDownloadException() = runTest {
-        val poiId = poiOnlineEntity2.roomId.toString()
+        val poiId = poiOnlineEntity2.universalLocalId
         every { firestore.collection(FirestoreCollections.POIS) } returns collection
         every { collection.document(poiId) } returns document
         coEvery { document.get().await() } throws RuntimeException("get fail")
@@ -147,6 +139,7 @@ class FirebasePoiRepositoryTest {
         val docs = poiOnlineEntityList.map { entity ->
             mockk<DocumentSnapshot>().apply {
                 every { toObject(PoiOnlineEntity::class.java) } returns entity
+                every { id } returns entity.universalLocalId
             }
         }
 
@@ -157,7 +150,12 @@ class FirebasePoiRepositoryTest {
         val result = repo.getAllPoiS()
 
         assertThat(result).hasSize(poiOnlineEntityList.size)
-        assertThat(result).containsExactlyElementsIn(poiOnlineEntityList)
+
+        result.forEachIndexed { index, actual ->
+            val expected = poiOnlineEntityList[index]
+
+            assertThat(actual.poi).isEqualTo(expected)
+        }
     }
 
     @Test
@@ -184,29 +182,51 @@ class FirebasePoiRepositoryTest {
     }
 
     @Test
-    fun deletePoi_success_deletesDocument() = runTest {
-        val poiId = poiEntity3.id.toString()
+    fun markPoiAsDeleted_success_updatesDocument() = runTest {
+
+        val poiId = poiOnlineEntity1.universalLocalId
+        val updatedAt = 123L
+
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
+
         every { firestore.collection(FirestoreCollections.POIS) } returns collection
         every { collection.document(poiId) } returns document
-        coEvery { document.delete().await() } returns null
+        every { document.update(any<Map<String, Any>>()) } returns task
 
-        repo.deletePoi(poiId)
+        coEvery { task.await() } returns mockk()
 
-        coVerify { document.delete().await() }
+        repo.markPoiAsDeleted(poiId, updatedAt)
+
+        verify {
+            document.update(
+                match {
+                    it["isDeleted"] == true &&
+                            it["updatedAt"] == updatedAt
+                }
+            )
+        }
     }
 
     @Test
-    fun deletePoi_failure_throwsFirebasePoiDeleteException() = runTest {
-        val poiId = poiEntity1.id.toString()
+    fun markPoiAsDeleted_firestoreFailure_throwsException() = runTest {
+
+        val poiId = poiOnlineEntity1.universalLocalId
+        val updatedAt = 123L
+
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
+
         every { firestore.collection(FirestoreCollections.POIS) } returns collection
         every { collection.document(poiId) } returns document
-        coEvery { document.delete().await() } throws RuntimeException("delete fail")
+        every { document.update(any<Map<String, Any>>()) } returns task
 
-        val thrown = runCatching { repo.deletePoi(poiId) }.exceptionOrNull()
+        coEvery { task.await() } throws RuntimeException("update fail")
 
-        assertThat(thrown).isInstanceOf(FirebasePoiDeleteException::class.java)
-        assertThat(thrown!!.cause!!.message).isEqualTo("delete fail")
+        val thrown = runCatching {
+            repo.markPoiAsDeleted(poiId, updatedAt)
+        }.exceptionOrNull()
+
+        assertThat(thrown).isInstanceOf(RuntimeException::class.java)
+        assertThat(thrown!!.message).contains("update fail")
     }
 
 }
-*/

@@ -1,8 +1,6 @@
-/*
 package com.dcac.realestatemanager.firebaseRepositoryTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.property.FirebasePropertyDeleteException
 import com.dcac.realestatemanager.data.firebaseDatabase.property.FirebasePropertyDownloadException
 import com.dcac.realestatemanager.data.firebaseDatabase.property.FirebasePropertyOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.property.FirebasePropertyUploadException
@@ -39,9 +37,8 @@ class FirebasePropertyRepositoryTest {
 
     private val propertyEntity1 = FakePropertyEntity.property1
     private val propertyEntity2 = FakePropertyEntity.property2
-    private val propertyEntity3 = FakePropertyEntity.property3
-    private val propertyOnlineEntity1 = FakePropertyOnlineEntity.propertyEntity1
-    private val propertyOnlineEntity2 = FakePropertyOnlineEntity.propertyEntity2
+    private val propertyOnlineEntity1 = FakePropertyOnlineEntity.propertyOnline1
+    private val propertyOnlineEntity2 = FakePropertyOnlineEntity.propertyOnline2
     private val propertyOnlineEntityList = FakePropertyOnlineEntity.propertyOnlineEntityList
 
 
@@ -69,7 +66,7 @@ class FirebasePropertyRepositoryTest {
 
     @Test
     fun uploadProperty_success_writesToFirestore_returnsEntity() = runTest {
-        val propertyId = propertyEntity1.id.toString()
+        val propertyId = propertyEntity1.id
 
         every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
         every { collection.document(propertyId) } returns document
@@ -83,13 +80,13 @@ class FirebasePropertyRepositoryTest {
 
     @Test
     fun uploadProperty_failure_throwsFirebasePropertyUploadException() = runTest {
-        val propertyId = propertyEntity2.id.toString()
+        val propertyId = propertyEntity2.id
         every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
         every { collection.document(propertyId) } returns document
         coEvery { document.set(any()).await() } throws RuntimeException("upload fail")
 
         val thrown = runCatching {
-            repo.uploadProperty(propertyOnlineEntity1, propertyId)
+            repo.uploadProperty(propertyOnlineEntity2, propertyId)
         }.exceptionOrNull()
 
         assertThat(thrown).isInstanceOf(FirebasePropertyUploadException::class.java)
@@ -98,7 +95,7 @@ class FirebasePropertyRepositoryTest {
 
     @Test
     fun getProperty_success_returnsEntity() = runTest {
-        val propertyId = propertyOnlineEntity1.roomId.toString()
+        val propertyId = propertyOnlineEntity1.universalLocalId
         val snapshot = mockk<DocumentSnapshot>()
         every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
         every { collection.document(propertyId) } returns document
@@ -126,7 +123,7 @@ class FirebasePropertyRepositoryTest {
 
     @Test
     fun getProperty_failure_throwsFirebasePropertyDownloadException() = runTest {
-        val propertyId = propertyOnlineEntity2.roomId.toString()
+        val propertyId = propertyOnlineEntity2.universalLocalId
         every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
         every { collection.document(propertyId) } returns document
         coEvery { document.get().await() } throws RuntimeException("get fail")
@@ -139,10 +136,13 @@ class FirebasePropertyRepositoryTest {
 
     @Test
     fun getAllProperties_success_returnsList() = runTest {
+
         val snapshot = mockk<QuerySnapshot>()
+
         val docs = propertyOnlineEntityList.map { entity ->
             mockk<DocumentSnapshot>().apply {
                 every { toObject(PropertyOnlineEntity::class.java) } returns entity
+                every { id } returns entity.universalLocalId
             }
         }
 
@@ -153,8 +153,13 @@ class FirebasePropertyRepositoryTest {
         val result = repo.getAllProperties()
 
         assertThat(result).hasSize(propertyOnlineEntityList.size)
-        assertThat(result).containsExactlyElementsIn(propertyOnlineEntityList)
 
+        result.forEachIndexed { index, actual ->
+            val expected = propertyOnlineEntityList[index]
+
+            assertThat(actual.firebaseId).isEqualTo(expected.universalLocalId)
+            assertThat(actual.property).isEqualTo(expected)
+        }
     }
 
     @Test
@@ -180,81 +185,53 @@ class FirebasePropertyRepositoryTest {
         assertThat(thrown!!.cause!!.message).isEqualTo("download fail")
     }
 
+
     @Test
-    fun deleteProperty_success_deletesDocument() = runTest {
-        val propertyId = propertyEntity3.id.toString()
+    fun markPropertyAsDeleted_success_updatesDocument() = runTest {
+
+        val propertyId = propertyOnlineEntity1.universalLocalId
+        val updatedAt = 123L
+
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
+
         every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
         every { collection.document(propertyId) } returns document
-        coEvery { document.delete().await() } returns null
+        every { document.update(any<Map<String, Any>>()) } returns task
 
-        repo.deleteProperty(propertyId)
+        coEvery { task.await() } returns mockk()
 
-        coVerify { document.delete().await() }
+        repo.markPropertyAsDeleted(propertyId, updatedAt)
+
+        verify {
+            document.update(
+                match {
+                    it["isDeleted"] == true &&
+                            it["updatedAt"] == updatedAt
+                }
+            )
+        }
     }
 
     @Test
-    fun deleteProperty_failure_throwsFirebasePropertyDeleteException() = runTest {
-        val propertyId = propertyEntity1.id.toString()
+    fun markPropertyAsDeleted_firestoreFailure_throwsException() = runTest {
+
+        val propertyId = propertyOnlineEntity1.universalLocalId
+        val updatedAt = 123L
+
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
+
         every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
         every { collection.document(propertyId) } returns document
-        coEvery { document.delete().await() } throws RuntimeException("delete fail")
+        every { document.update(any<Map<String, Any>>()) } returns task
 
-        val thrown = runCatching { repo.deleteProperty(propertyId) }.exceptionOrNull()
+        coEvery { task.await() } throws RuntimeException("update failed")
 
-        assertThat(thrown).isInstanceOf(FirebasePropertyDeleteException::class.java)
-        assertThat(thrown!!.cause!!.message).isEqualTo("delete fail")
+        val thrown = runCatching {
+            repo.markPropertyAsDeleted(propertyId, updatedAt)
+        }.exceptionOrNull()
+
+        assertThat(thrown).isInstanceOf(RuntimeException::class.java)
+        assertThat(thrown!!.message).contains("update failed")
     }
-
-    @Test
-    fun deleteAllPropertiesForUser_success_deletesAllDocuments() = runTest {
-        val userId = propertyEntity3.userId
-        val snapshot = mockk<QuerySnapshot>()
-        val doc1 = mockk<DocumentSnapshot>()
-        val ref1 = mockk<DocumentReference>()
-
-        every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
-        every { collection.whereEqualTo("userId", userId) } returns mockk()
-        coEvery { collection.whereEqualTo("userId", userId).get().await() } returns snapshot
-        every { snapshot.documents } returns listOf(doc1)
-
-        every { doc1.reference } returns ref1
-
-        coEvery { ref1.delete().await() } returns null
-
-        repo.deleteAllPropertiesForUser(userId)
-
-        coVerify { ref1.delete().await() }
-    }
-
-    @Test
-    fun deleteAllPropertiesForUser_noResults_returnsNormally() = runTest {
-        val userId = propertyEntity2.userId
-        val snapshot = mockk<QuerySnapshot>()
-
-        every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
-        every { collection.whereEqualTo("userId", userId) } returns mockk()
-        coEvery { collection.whereEqualTo("userId", userId).get().await() } returns snapshot
-        every { snapshot.documents } returns emptyList()
-
-        repo.deleteAllPropertiesForUser(userId)
-
-        coVerify(exactly = 0) { document.delete().await() }
-    }
-
-    @Test
-    fun deleteAllPropertiesForUser_failure_throwsFirebasePropertyDeleteException() = runTest {
-        val userId = propertyEntity1.userId
-
-        every { firestore.collection(FirestoreCollections.PROPERTIES) } returns collection
-        every { collection.whereEqualTo("userId", userId) } returns mockk()
-        coEvery { collection.whereEqualTo("userId", userId).get().await() } throws RuntimeException("Firestore failed")
-
-        val thrown = runCatching { repo.deleteAllPropertiesForUser(userId) }.exceptionOrNull()
-
-        assertThat(thrown).isInstanceOf(FirebasePropertyDeleteException::class.java)
-        assertThat(thrown!!.cause?.message).isEqualTo("Firestore failed")
-    }
-
 
 }
-*/

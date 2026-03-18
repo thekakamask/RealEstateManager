@@ -1,8 +1,6 @@
-/*
 package com.dcac.realestatemanager.firebaseRepositoryTest
 
-import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections
-import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.FirebasePropertyPoiCrossDeleteException
+import com.dcac.realestatemanager.data.firebaseDatabase.FirestoreCollections.PROPERTY_POI_CROSS
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.FirebasePropertyPoiCrossDownloadException
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.FirebasePropertyPoiCrossOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.FirebasePropertyPoiCrossUploadException
@@ -34,16 +32,9 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
     private val crossRefEntity1 = FakePropertyPoiCrossEntity.propertyPoiCross1
     private val crossRefEntity2 = FakePropertyPoiCrossEntity.propertyPoiCross2
-    private val crossRefEntity3 = FakePropertyPoiCrossEntity.propertyPoiCross3
-    private val crossRefEntity4 = FakePropertyPoiCrossEntity.propertyPoiCross4
-    private val crossRefEntity5 = FakePropertyPoiCrossEntity.propertyPoiCross5
-    private val crossRefEntity6 = FakePropertyPoiCrossEntity.propertyPoiCross6
-
-    private val crossRefOnlineEntity1 = FakePropertyPoiCrossOnlineEntity.cross1
-    private val crossRefOnlineEntity2 = FakePropertyPoiCrossOnlineEntity.cross2
-    private val crossRefOnlineEntity3 = FakePropertyPoiCrossOnlineEntity.cross3
-    private val crossRefOnlineEntity4 = FakePropertyPoiCrossOnlineEntity.cross4
-
+    private val crossRefOnlineEntity1 = FakePropertyPoiCrossOnlineEntity.crossOnline1
+    private val crossRefOnlineEntity2 = FakePropertyPoiCrossOnlineEntity.crossOnline2
+    private val crossRefOnlineEntity3 = FakePropertyPoiCrossOnlineEntity.crossOnline3
     private val crossRefOnlineEntityList = FakePropertyPoiCrossOnlineEntity.propertyPoiCrossOnlineEntityList
 
 
@@ -66,9 +57,9 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
     @Test
     fun uploadCrossRef_success_uploadsEntityToFirestore_returnSyncCrossRef() = runTest {
-        val crossRefId = "${crossRefEntity1.propertyId}-${crossRefEntity1.poiId}"
+        val crossRefId = "${crossRefEntity1.universalLocalPropertyId}-${crossRefEntity1.universalLocalPoiId}"
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
         every { collection.document(crossRefId) } returns document
         coEvery { document.set(crossRefOnlineEntity1).await() } returns null
 
@@ -80,9 +71,9 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
     @Test
     fun uploadCrossRef_failure_throwsFirebasePropertyPoiCrossUploadException() = runTest {
-        val crossRefId = "${crossRefEntity2.propertyId}-${crossRefEntity2.poiId}"
+        val crossRefId = "${crossRefEntity2.universalLocalPropertyId}-${crossRefEntity2.universalLocalPoiId}"
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
         every { collection.document(crossRefId) } returns document
         coEvery { document.set(any()).await() } throws RuntimeException("upload fail")
 
@@ -96,47 +87,38 @@ class FirebasePropertyPoiCrossRepositoryTest {
     }
 
     @Test
-    fun getCrossRefByPropertyId_success_returnsCrossRef() = runTest {
-        val propertyId = crossRefOnlineEntity1.propertyId
+    fun getCrossRefsByPropertyId_success_returnsCrossRefs() = runTest {
 
-        val expectedEntities = crossRefOnlineEntityList
-                .filter { it.propertyId == propertyId }
+        val propertyId = crossRefOnlineEntity1.universalLocalPropertyId
+
+        val expected = crossRefOnlineEntityList
+            .filter { it.universalLocalPropertyId == propertyId }
 
         val snapshot = mockk<QuerySnapshot>()
 
-        val docs = expectedEntities.map { entity ->
-            mockk<DocumentSnapshot>(). apply {
+        val docs = expected.map { entity ->
+            mockk<DocumentSnapshot>().apply {
                 every { toObject(PropertyPoiCrossOnlineEntity::class.java) } returns entity
-                every { id } returns entity.roomId.toString()
             }
         }
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("propertyId", propertyId) } returns query
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.whereEqualTo("universalLocalPropertyId", propertyId) } returns query
         coEvery { query.get().await() } returns snapshot
         every { snapshot.documents } returns docs
 
         val result = repo.getCrossRefsByPropertyId(propertyId)
 
-        assertThat(result).hasSize(expectedEntities.size)
-
-        result.forEachIndexed { index, actual ->
-            val expected = expectedEntities[index]
-
-            assertThat(actual.propertyId).isEqualTo(propertyId)
-            assertThat(actual.poiId).isEqualTo(expected.poiId)
-            assertThat(actual.updatedAt).isEqualTo(expected.updatedAt)
-            assertThat(actual.roomId).isEqualTo(expected.roomId)
-        }
+        assertThat(result).hasSize(expected.size)
     }
 
     @Test
     fun getCrossRefByPropertyId_noResults_returnsEmptyList() = runTest {
-        val propertyId = 42L
+        val propertyId = "42L"
         val snapshot = mockk<QuerySnapshot>()
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("propertyId", propertyId) } returns query
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.whereEqualTo("universalLocalPropertyId", propertyId) } returns query
         coEvery { query.get().await() } returns snapshot
         every { snapshot.documents } returns emptyList()
 
@@ -146,10 +128,10 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
     @Test
     fun getCrossRefByPropertyId_firestoreFailure_throwsFirebasePropertyPoiCrossDownloadException() = runTest {
-        val propertyId = crossRefOnlineEntity2.propertyId
+        val propertyId = crossRefOnlineEntity2.universalLocalPropertyId
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("propertyId", propertyId) } returns query
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.whereEqualTo("universalLocalPropertyId", propertyId) } returns query
         coEvery { query.get().await() } throws RuntimeException("Firestore failed")
 
         val thrown = runCatching { repo.getCrossRefsByPropertyId(propertyId) }.exceptionOrNull()
@@ -160,47 +142,38 @@ class FirebasePropertyPoiCrossRepositoryTest {
     }
 
     @Test
-    fun getCrossRefByPoiId_success_returnsCrossRef() = runTest {
-        val poiId = crossRefOnlineEntity3.poiId
+    fun getCrossRefsByPoiId_success_returnsCrossRefs() = runTest {
 
-        val expectedEntities = crossRefOnlineEntityList
-            .filter { it.poiId == poiId }
+        val poiId = crossRefOnlineEntity1.universalLocalPoiId
+
+        val expected = crossRefOnlineEntityList
+            .filter { it.universalLocalPoiId == poiId }
 
         val snapshot = mockk<QuerySnapshot>()
 
-        val docs = expectedEntities.map { entity ->
-            mockk<DocumentSnapshot>(). apply {
+        val docs = expected.map { entity ->
+            mockk<DocumentSnapshot>().apply {
                 every { toObject(PropertyPoiCrossOnlineEntity::class.java) } returns entity
-                every { id } returns entity.roomId.toString()
             }
         }
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("poiId", poiId) } returns query
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.whereEqualTo("universalLocalPoiId", poiId) } returns query
         coEvery { query.get().await() } returns snapshot
         every { snapshot.documents } returns docs
 
         val result = repo.getCrossRefsByPoiId(poiId)
 
-        assertThat(result).hasSize(expectedEntities.size)
-
-        result.forEachIndexed { index, actual ->
-            val expected = expectedEntities[index]
-
-            assertThat(actual.propertyId).isEqualTo(expected.propertyId)
-            assertThat(actual.poiId).isEqualTo(poiId)
-            assertThat(actual.updatedAt).isEqualTo(expected.updatedAt)
-            assertThat(actual.roomId).isEqualTo(expected.roomId)
-        }
+        assertThat(result).hasSize(expected.size)
     }
 
     @Test
     fun getCrossRefByPoiId_noResults_returnsEmptyList() = runTest {
-        val poiId = 42L
+        val poiId = "42L"
         val snapshot = mockk<QuerySnapshot>()
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("poiId", poiId) } returns query
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.whereEqualTo("universalLocalPoiId", poiId) } returns query
         coEvery { query.get().await() } returns snapshot
         every { snapshot.documents } returns emptyList()
 
@@ -213,10 +186,10 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
     @Test
     fun getCrossRefByPoiId_firestoreFailure_throwsFirebasePropertyPoiCrossDownloadException() = runTest {
-        val poiId = crossRefOnlineEntity4.poiId
+        val poiId = crossRefOnlineEntity3.universalLocalPoiId
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("poiId", poiId) } returns query
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.whereEqualTo("universalLocalPoiId", poiId) } returns query
         coEvery { query.get().await() } throws RuntimeException("Firestore failed")
 
         val thrown = runCatching { repo.getCrossRefsByPoiId(poiId) }.exceptionOrNull()
@@ -227,16 +200,18 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
     @Test
     fun getAllCrossRefs_success_returnsAllCrossRefs() = runTest {
+
         val snapshot = mockk<QuerySnapshot>()
 
         val docs = crossRefOnlineEntityList.map { entity ->
             mockk<DocumentSnapshot>().apply {
                 every { toObject(PropertyPoiCrossOnlineEntity::class.java) } returns entity
-                every { id } returns entity.roomId.toString()
+                every { id } returns
+                        "${entity.universalLocalPropertyId}-${entity.universalLocalPoiId}"
             }
         }
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
         coEvery { collection.get().await() } returns snapshot
         every { snapshot.documents } returns docs
 
@@ -244,22 +219,17 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
         assertThat(result).hasSize(crossRefOnlineEntityList.size)
 
-
         result.forEachIndexed { index, actual ->
             val expected = crossRefOnlineEntityList[index]
-            assertThat(actual.propertyId).isEqualTo(expected.propertyId)
-            assertThat(actual.poiId).isEqualTo(expected.poiId)
-            assertThat(actual.updatedAt).isEqualTo(expected.updatedAt)
-            assertThat(actual.roomId).isEqualTo(expected.roomId)
 
+            assertThat(actual.cross).isEqualTo(expected)
         }
-
     }
 
     @Test
     fun getAllCrossRefs_noResults_returnsEmptyList() = runTest {
         val snapshot = mockk<QuerySnapshot>()
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
         coEvery { collection.get().await() } returns snapshot
         every { snapshot.documents } returns emptyList()
 
@@ -271,129 +241,67 @@ class FirebasePropertyPoiCrossRepositoryTest {
 
     @Test
     fun getAllCrossRefs_firestoreFailure_throwsFirebasePropertyPoiCrossDownloadException() = runTest {
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
         coEvery { collection.get().await() } throws RuntimeException("Firestore failed")
 
         val thrown = runCatching { repo.getAllCrossRefs() }.exceptionOrNull()
 
         assertThat(thrown).isInstanceOf(FirebasePropertyPoiCrossDownloadException::class.java)
         assertThat(thrown!!.cause?.message).isEqualTo("Firestore failed")
-
     }
 
     @Test
-    fun deleteCrossRef_success_callsFirestoreDelete() = runTest {
-        val crossRefId = "${crossRefEntity5.propertyId}-${crossRefEntity5.poiId}"
+    fun markCrossRefAsDeleted_success_updatesDocument() = runTest {
 
+        val propertyId = crossRefOnlineEntity1.universalLocalPropertyId
+        val poiId = crossRefOnlineEntity1.universalLocalPoiId
+        val updatedAt = 123L
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.document(crossRefId) } returns document
-        coEvery { document.delete().await() } returns null
+        val docId = "$propertyId-$poiId"
 
-        repo.deleteCrossRef(crossRefEntity5.propertyId, crossRefEntity5.poiId)
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
 
-        coVerify(exactly = 1) { document.delete().await() }
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.document(docId) } returns document
+        every { document.update(any<Map<String, Any>>()) } returns task
+
+        coEvery { task.await() } returns mockk()
+
+        repo.markCrossRefAsDeleted(poiId, propertyId, updatedAt)
+
+        verify {
+            document.update(
+                match {
+                    it["isDeleted"] == true &&
+                            it["updatedAt"] == updatedAt
+                }
+            )
+        }
     }
 
     @Test
-    fun deleteCrossRef_firestoreFailure_throwsException()= runTest {
-        val crossRefId = "${crossRefEntity6.propertyId}-${crossRefEntity6.poiId}"
+    fun markCrossRefAsDeleted_firestoreFailure_throwsException() = runTest {
 
+        val propertyId = crossRefOnlineEntity1.universalLocalPropertyId
+        val poiId = crossRefOnlineEntity1.universalLocalPoiId
+        val updatedAt = 123L
 
+        val docId = "$propertyId-$poiId"
 
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.document(crossRefId) } returns document
-        coEvery { document.delete().await() } throws RuntimeException("Firestore failed")
+        val task = mockk<com.google.android.gms.tasks.Task<Void>>()
 
-        val thrown = runCatching { repo.deleteCrossRef(crossRefEntity6.propertyId, crossRefEntity6.poiId) }.exceptionOrNull()
+        every { firestore.collection(PROPERTY_POI_CROSS) } returns collection
+        every { collection.document(docId) } returns document
+        every { document.update(any<Map<String, Any>>()) } returns task
 
-        assertThat(thrown).isInstanceOf(FirebasePropertyPoiCrossDeleteException::class.java)
-        assertThat(thrown!!.cause?.message).isEqualTo("Firestore failed")
+        coEvery { task.await() } throws RuntimeException("update failed")
 
+        val thrown = runCatching {
+            repo.markCrossRefAsDeleted(poiId, propertyId, updatedAt)
+        }.exceptionOrNull()
+
+        assertThat(thrown).isInstanceOf(RuntimeException::class.java)
+        assertThat(thrown!!.message).contains("update failed")
     }
 
-    @Test
-    fun deleteAllCrossRefForProperty_success_deleteAllDocs()= runTest{
-        val propertyId = crossRefEntity6.propertyId
-        val snapshot = mockk<QuerySnapshot>()
-        val doc1 = mockk<DocumentSnapshot>()
-        val doc2 = mockk<DocumentSnapshot>()
-        val ref1 = mockk<DocumentReference>()
-        val ref2 = mockk<DocumentReference>()
-
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("propertyId", propertyId) } returns query
-        coEvery { query.get().await() } returns snapshot
-
-        every { snapshot.documents } returns listOf(doc1, doc2)
-
-
-        every { doc1.reference } returns ref1
-        every { doc2.reference } returns ref2
-
-        coEvery { ref1.delete().await() } returns null
-        coEvery { ref2.delete().await() } returns null
-
-        repo.deleteAllCrossRefsForProperty(propertyId)
-
-        coVerify { ref1.delete().await() }
-        coVerify { ref2.delete().await() }
-    }
-
-    @Test
-    fun deleteAllCrossRefForProperty_firestoreFailure_throwsException()= runTest{
-        val propertyId = crossRefEntity3.propertyId
-
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("propertyId", propertyId) } returns query
-        coEvery { query.get().await() } throws RuntimeException("Firestore failed")
-
-        val thrown = runCatching { repo.deleteAllCrossRefsForProperty(propertyId) }.exceptionOrNull()
-
-        assertThat(thrown).isInstanceOf(FirebasePropertyPoiCrossDeleteException::class.java)
-        assertThat(thrown!!.cause?.message).isEqualTo("Firestore failed")
-    }
-
-    @Test
-    fun deleteAllCrossRefForPoi_success_deleteAllDocs()= runTest{
-        val poiId = crossRefEntity5.poiId
-        val snapshot = mockk<QuerySnapshot>()
-        val doc1 = mockk<DocumentSnapshot>()
-        val doc2 = mockk<DocumentSnapshot>()
-        val ref1 = mockk<DocumentReference>()
-        val ref2 = mockk<DocumentReference>()
-
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("poiId", poiId) } returns query
-        coEvery { query.get().await() } returns snapshot
-        every { snapshot.documents } returns listOf(doc1, doc2)
-
-        every { doc1.reference } returns ref1
-        every { doc2.reference } returns ref2
-
-        coEvery { ref1.delete().await() } returns null
-        coEvery { ref2.delete().await() } returns null
-
-        repo.deleteAllCrossRefsForPoi(poiId)
-
-        coVerify { ref1.delete().await() }
-        coVerify { ref2.delete().await() }
-
-    }
-
-    @Test
-    fun deleteAllCrossRefForPoi_firestoreFailure_throwsException()= runTest{
-        val poiId = crossRefEntity4.propertyId
-
-        every { firestore.collection(FirestoreCollections.PROPERTY_POI_CROSS) } returns collection
-        every { collection.whereEqualTo("poiId", poiId) } returns query
-        coEvery { query.get().await() } throws RuntimeException("Firestore failed")
-
-        val thrown = runCatching { repo.deleteAllCrossRefsForPoi(poiId) }.exceptionOrNull()
-
-        assertThat(thrown).isInstanceOf(FirebasePropertyPoiCrossDeleteException::class.java)
-        assertThat(thrown!!.cause?.message).isEqualTo("Firestore failed")
-
-    }
 }
-*/
