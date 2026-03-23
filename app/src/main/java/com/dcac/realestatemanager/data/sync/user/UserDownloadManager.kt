@@ -17,56 +17,67 @@ class UserDownloadManager(
             val onlineUsers = userOnlineRepository.getAllUsers()
 
             for (doc in onlineUsers) {
+
                 val online = doc.user
                 val localId = online.universalLocalId
 
-                val local =
-                    userRepository.getUserByIdIncludeDeleted(localId).first()
+                try {
+                    val local =
+                        userRepository.getUserByIdIncludeDeleted(localId).first()
 
-                if (online.isDeleted) {
-                    if (local != null) {
-                        userRepository.deleteUser(local)
-                        results.add(
-                            SyncStatus.Success(
-                                "User $localId deleted locally (remote deleted)"
+                    if (online.isDeleted) {
+                        if (local != null) {
+                            userRepository.deleteUser(local)
+                            results.add(
+                                SyncStatus.Success(
+                                    "User $localId deleted locally (remote deleted)"
+                                )
                             )
+                        }
+                        continue
+                    }
+
+                    if (local?.isDeleted == true) {
+                        results.add(
+                            SyncStatus.Success("User $localId locally deleted → skip download")
+                        )
+                        continue
+                    }
+
+                    val shouldDownload =
+                        local == null || online.updatedAt > local.updatedAt
+
+                    if (!shouldDownload) {
+                        results.add(
+                            SyncStatus.Success("User $localId already up-to-date")
+                        )
+                        continue
+                    }
+
+                    if (local == null) {
+                        userRepository.insertUserInsertFromFirebase(
+                            user = online,
+                            firebaseUid = doc.firebaseId
+                        )
+                        results.add(
+                            SyncStatus.Success("User $localId inserted")
+                        )
+                    } else {
+                        userRepository.updateUserFromFirebase(
+                            user = online,
+                            firebaseUid = doc.firebaseId
+                        )
+                        results.add(
+                            SyncStatus.Success("User $localId updated")
                         )
                     }
-                    continue
-                }
 
-                if (local?.isDeleted == true) {
+                } catch (e: Exception) {
                     results.add(
-                        SyncStatus.Success("User $localId locally deleted → skip download")
-                    )
-                    continue
-                }
-
-                val shouldDownload =
-                    local == null || online.updatedAt > local.updatedAt
-
-                if (!shouldDownload) {
-                    results.add(
-                        SyncStatus.Success("User $localId already up-to-date")
-                    )
-                    continue
-                }
-
-                if (local == null) {
-                    userRepository.insertUserInsertFromFirebase(
-                        user = online,
-                        firebaseUid = doc.firebaseId
-                    )
-                    results.add(
-                        SyncStatus.Success("User $localId inserted")
-                    )
-                } else {
-                    userRepository.updateUserFromFirebase(
-                        user = online,
-                        firebaseUid = doc.firebaseId
-                    )
-                    results.add(
-                        SyncStatus.Success("User $localId updated")
+                        SyncStatus.Failure(
+                            label = "User $localId",
+                            error = e
+                        )
                     )
                 }
             }

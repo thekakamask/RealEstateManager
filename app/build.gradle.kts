@@ -165,8 +165,15 @@ dependencies {
 
 }
 
-// 🔧 Display println() into unitary tests
 tasks.withType<Test> {
+
+    //ByteBuddy fix
+    jvmArgs(
+        "-Dnet.bytebuddy.experimental=true",
+        "-XX:+EnableDynamicAgentLoading"
+    )
+
+    //Display println() into unit tests
     testLogging {
         showStandardStreams = true
         events("passed", "failed", "skipped", "standardOut", "standardError")

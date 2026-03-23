@@ -21,80 +21,92 @@ class PropertyPoiCrossDownloadManager(
             val onlineCrossRefs = propertyPoiCrossOnlineRepository.getAllCrossRefs()
 
             for (doc in onlineCrossRefs) {
+
                 val online = doc.cross
                 val propertyId = online.universalLocalPropertyId
                 val poiId = online.universalLocalPoiId
                 val firestoreId = doc.firebaseId
 
-                val local = propertyPoiCrossRepository
-                    .getCrossRefsByIdsIncludedDeleted(propertyId, poiId)
-                    .first()
+                try {
 
-                if (online.isDeleted) {
-                    if (local != null) {
-                        propertyPoiCrossRepository.deleteCrossRef(local)
+                    val local = propertyPoiCrossRepository
+                        .getCrossRefsByIdsIncludedDeleted(propertyId, poiId)
+                        .first()
+
+                    if (online.isDeleted) {
+                        if (local != null) {
+                            propertyPoiCrossRepository.deleteCrossRef(local)
+                            results.add(
+                                SyncStatus.Success(
+                                    "CrossRef $firestoreId deleted locally (remote deleted)"
+                                )
+                            )
+                        }
+                        continue
+                    }
+
+                    if (local?.isDeleted == true) {
                         results.add(
                             SyncStatus.Success(
-                                "CrossRef $firestoreId deleted locally (remote deleted)"
+                                "CrossRef ($propertyId-$poiId) locally deleted → skip download"
                             )
                         )
+                        continue
                     }
-                    continue
-                }
 
-                if (local?.isDeleted == true) {
-                    results.add(
-                        SyncStatus.Success(
-                            "CrossRef ($propertyId-$poiId) locally deleted → skip download"
+                    val propertyDeleted =
+                        propertyRepository
+                            .getPropertyByIdIncludeDeleted(propertyId)
+                            .first()
+                            ?.isDeleted == true
+
+                    val poiDeleted =
+                        poiRepository
+                            .getPoiByIdIncludeDeleted(poiId)
+                            .first()
+                            ?.isDeleted == true
+
+                    if (propertyDeleted || poiDeleted) {
+                        results.add(
+                            SyncStatus.Success("CrossRef ($propertyId-$poiId) skipped (parent deleted)")
                         )
-                    )
-                    continue
-                }
+                        continue
+                    }
 
-                val propertyDeleted =
-                    propertyRepository
-                        .getPropertyByIdIncludeDeleted(propertyId)
-                        .first()
-                        ?.isDeleted == true
+                    val shouldDownload =
+                        local == null || online.updatedAt > local.updatedAt
 
-                val poiDeleted =
-                    poiRepository
-                        .getPoiByIdIncludeDeleted(poiId)
-                        .first()
-                        ?.isDeleted == true
+                    if (!shouldDownload) {
+                        results.add(
+                            SyncStatus.Success("CrossRef $firestoreId already up-to-date")
+                        )
+                        continue
+                    }
 
-                if (propertyDeleted || poiDeleted) {
+                    if (local == null) {
+                        propertyPoiCrossRepository.insertCrossRefInsertFromFirebase(
+                            crossRef = online,
+                            firebaseDocumentId = firestoreId
+                        )
+                        results.add(
+                            SyncStatus.Success("CrossRef $firestoreId inserted")
+                        )
+                    } else {
+                        propertyPoiCrossRepository.updateCrossRefFromFirebase(
+                            crossRef = online,
+                            firebaseDocumentId = firestoreId
+                        )
+                        results.add(
+                            SyncStatus.Success("CrossRef $firestoreId updated")
+                        )
+                    }
+
+                } catch (e: Exception) {
                     results.add(
-                        SyncStatus.Success("CrossRef ($propertyId-$poiId) skipped (parent deleted)")
-                    )
-                    continue
-                }
-
-                val shouldDownload =
-                    local == null || online.updatedAt > local.updatedAt
-
-                if (!shouldDownload) {
-                    results.add(
-                        SyncStatus.Success("CrossRef $firestoreId already up-to-date")
-                    )
-                    continue
-                }
-
-                if (local == null) {
-                    propertyPoiCrossRepository.insertCrossRefInsertFromFirebase(
-                        crossRef = online,
-                        firebaseDocumentId = firestoreId
-                    )
-                    results.add(
-                        SyncStatus.Success("CrossRef $firestoreId inserted")
-                    )
-                } else {
-                    propertyPoiCrossRepository.updateCrossRefFromFirebase(
-                        crossRef = online,
-                        firebaseDocumentId = firestoreId
-                    )
-                    results.add(
-                        SyncStatus.Success("CrossRef $firestoreId updated")
+                        SyncStatus.Failure(
+                            label = "CrossRef ($propertyId-$poiId)",
+                            error = e
+                        )
                     )
                 }
             }

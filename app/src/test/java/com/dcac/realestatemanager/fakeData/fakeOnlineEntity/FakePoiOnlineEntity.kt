@@ -61,6 +61,9 @@ object FakePoiOnlineEntity {
         poiOnline1, poiOnline2, poiOnline3
     )
 
+    val poiOnlineEntityListNotDeleted = poiOnlineEntityList
+        .filter { !it.isDeleted }
+
     val firestorePoiDocumentList = listOf(
         firestorePoiDocument1,
         firestorePoiDocument2,

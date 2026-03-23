@@ -33,8 +33,8 @@ class PropertyPoiCrossUploadManager(
             try {
                 if (crossRef.isDeleted) {
                     propertyPoiCrossOnlineRepository.markCrossRefAsDeleted(
-                        firebasePropertyId = propertyId,
                         firebasePoiId = poiId,
+                        firebasePropertyId = propertyId,
                         updatedAt = crossRef.updatedAt
                     )
 

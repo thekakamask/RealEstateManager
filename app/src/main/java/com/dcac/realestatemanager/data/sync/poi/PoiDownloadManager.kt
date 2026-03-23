@@ -17,48 +17,60 @@ class PoiDownloadManager(
             val onlinePoiS = poiOnlineRepository.getAllPoiS()
 
             for (doc in onlinePoiS) {
+
                 val poiOnline = doc.poi
                 val localId = poiOnline.universalLocalId
-                val localPoiS =
-                    poiRepository.getPoiByIdIncludeDeleted(localId).first()
 
-                if (poiOnline.isDeleted) {
-                    if (localPoiS != null) {
-                        poiRepository.deletePoi(localPoiS)
-                        results.add(
-                            SyncStatus.Success("Poi $localId deleted locally (remote deleted)")
-                        )
+                try {
+                    val localPoiS =
+                        poiRepository.getPoiByIdIncludeDeleted(localId).first()
+
+                    if (poiOnline.isDeleted) {
+                        if (localPoiS != null) {
+                            poiRepository.deletePoi(localPoiS)
+                            results.add(
+                                SyncStatus.Success("Poi $localId deleted locally (remote deleted)")
+                            )
+                        }
+                        continue
                     }
-                    continue
-                }
 
-                if (localPoiS?.isDeleted == true) {
+                    if (localPoiS?.isDeleted == true) {
+                        results.add(
+                            SyncStatus.Success("PoiS $localId locally deleted → skip download")
+                        )
+                        continue
+                    }
+
+                    val shouldDownload =
+                        localPoiS == null || poiOnline.updatedAt > localPoiS.updatedAt
+
+                    if (!shouldDownload) {
+                        results.add(SyncStatus.Success("Poi $localId already up-to-date"))
+                        continue
+                    }
+
+                    if (localPoiS == null) {
+                        poiRepository.insertPoiInsertFromFirebase(
+                            poi = poiOnline,
+                            firebaseDocumentId = doc.firebaseId
+                        )
+                        results.add(SyncStatus.Success("Poi $localId inserted"))
+                    } else {
+                        poiRepository.updatePoiFromFirebase(
+                            poi = poiOnline,
+                            firebaseDocumentId = doc.firebaseId
+                        )
+                        results.add(SyncStatus.Success("Poi $localId updated"))
+                    }
+
+                } catch (e: Exception) {
                     results.add(
-                        SyncStatus.Success("PoiS $localId locally deleted → skip download")
+                        SyncStatus.Failure(
+                            label = "Poi $localId",
+                            error = e
+                        )
                     )
-                    continue
-                }
-
-                val shouldDownload =
-                    localPoiS == null || poiOnline.updatedAt > localPoiS.updatedAt
-
-                if (!shouldDownload) {
-                    results.add(SyncStatus.Success("Poi $localId already up-to-date"))
-                    continue
-                }
-
-                if (localPoiS == null) {
-                    poiRepository.insertPoiInsertFromFirebase(
-                        poi = poiOnline,
-                        firebaseDocumentId = doc.firebaseId
-                    )
-                    results.add(SyncStatus.Success("Poi $localId inserted"))
-                } else {
-                    poiRepository.updatePoiFromFirebase(
-                        poi = poiOnline,
-                        firebaseDocumentId = doc.firebaseId
-                    )
-                    results.add(SyncStatus.Success("Poi $localId updated"))
                 }
             }
 

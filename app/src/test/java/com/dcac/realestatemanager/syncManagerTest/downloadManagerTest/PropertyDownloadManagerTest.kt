@@ -1,4 +1,3 @@
-/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
@@ -33,16 +32,19 @@ class PropertyDownloadManagerTest {
     private val propertyEntity2 = FakePropertyEntity.property2
     private val propertyEntity3 = FakePropertyEntity.property3
     private val propertyEntityList = FakePropertyEntity.propertyEntityList
+    private val propertyEntityListNotDeleted = FakePropertyEntity.propertyEntityListNotDeleted
+    private val propertyOnlineEntity1 = FakePropertyOnlineEntity.propertyOnline1
+    private val propertyOnlineEntity2 = FakePropertyOnlineEntity.propertyOnline2
+    private val propertyOnlineEntity3 = FakePropertyOnlineEntity.propertyOnline3
+    private val propertyOnlineEntityListNotDeleted = FakePropertyOnlineEntity.propertyOnlineEntityListNotDeleted
+    private val firestorePropertyDocument1 = FakePropertyOnlineEntity.firestorePropertyDocument1
+    private val firestorePropertyDocument2 = FakePropertyOnlineEntity.firestorePropertyDocument2
+    private val firestorePropertyDocument3 = FakePropertyOnlineEntity.firestorePropertyDocument3
 
-    private val propertyOnlineEntity1 = FakePropertyOnlineEntity.propertyEntity1
-    private val propertyOnlineEntity2 = FakePropertyOnlineEntity.propertyEntity2
-    private val propertyOnlineEntity3 = FakePropertyOnlineEntity.propertyEntity3
-    private val propertyOnlineEntityList = FakePropertyOnlineEntity.propertyOnlineEntityList
 
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = true)
-
         downloadManager = PropertyDownloadManager(propertyRepository, propertyOnlineRepository)
     }
 
@@ -52,248 +54,424 @@ class PropertyDownloadManagerTest {
     }
 
     @Test
-    fun downloadUnSyncedProperty_localPropertyNull_downloadsAndInsertsProperty() = runTest {
+    fun downloadUnSyncedProperty_localPropertyNull_downloadsAndInsertsPropertyExceptDeleted() = runTest {
+        val propertyId = propertyOnlineEntity1.universalLocalId
 
-        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(propertyOnlineEntity1)
-
-        every { propertyRepository.getPropertyEntityById(propertyOnlineEntity1.roomId) } returns flowOf(null)
+        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(firestorePropertyDocument1)
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyId)
+        } returns flowOf(null)
 
         val result = downloadManager.downloadUnSyncedProperties()
 
         assertThat(result).hasSize(1)
 
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success!!.userEmail).isEqualTo("Property ${propertyOnlineEntity1.roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("Property $propertyId inserted")
+
+        val insertedProperties = mutableListOf<PropertyOnlineEntity>()
 
         coVerify(exactly = 1) {
-            propertyRepository.downloadPropertyFromFirebase(propertyOnlineEntity1)
+            propertyRepository.insertPropertyInsertFromFirebase(
+                capture(insertedProperties),
+                firestorePropertyDocument1.firebaseId
+            )
+        }
+
+        assertThat(insertedProperties.first().universalLocalId).isEqualTo(propertyId)
+
+        coVerify(exactly = 0 ) {
+            propertyRepository.updatePropertyFromFirebase(any(), any())
         }
     }
 
     @Test
     fun downloadUnSyncedProperties_allPropertiesMissingLocally_downloadsAndInsertsAll() = runTest {
+        val firestoreDocs = listOf(
+            firestorePropertyDocument1,
+            firestorePropertyDocument2,
+            firestorePropertyDocument3
+        )
 
-        coEvery { propertyOnlineRepository.getAllProperties() } returns propertyOnlineEntityList
+        coEvery { propertyOnlineRepository.getAllProperties() } returns firestoreDocs
 
-        propertyOnlineEntityList.forEach {
-            every { propertyRepository.getPropertyEntityById(it.roomId) } returns flowOf(null)
+        firestoreDocs.forEach { doc ->
+            every {
+                propertyRepository.getPropertyByIdIncludeDeleted(doc.property.universalLocalId)
+            } returns flowOf(null)
         }
 
         val result = downloadManager.downloadUnSyncedProperties()
 
-        assertThat(result).hasSize(propertyOnlineEntityList.size)
+        assertThat(result).hasSize(2)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success.userEmail).isEqualTo("Property ${propertyOnlineEntityList[index].roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly(
+            "Property ${propertyEntity1.id} inserted",
+            "Property ${propertyEntity2.id} inserted"
+        )
+
+        val insertedProperties = mutableListOf<PropertyOnlineEntity>()
+
+        coVerify(exactly = 2) {
+            propertyRepository.insertPropertyInsertFromFirebase(
+                capture(insertedProperties),
+                any()
+            )
         }
 
-        propertyOnlineEntityList.forEach {
-            coVerify { propertyRepository.downloadPropertyFromFirebase(it) }
-        }
+        val insertedIds = insertedProperties.map { it.universalLocalId }
+
+        assertThat(insertedIds)
+            .containsExactly(propertyEntity1.id, propertyEntity2.id)
 
     }
 
     @Test
     fun downloadUnSyncedProperties_localPropertyOutdated_downloadsAndUpdatesProperty() = runTest {
-        val outdatedLocal = propertyEntity1.copy(updatedAt = 1700000000000)
-        val updatedOnline = propertyOnlineEntity1.copy(updatedAt = 1700000002000)
+        val outdatedLocalProperty = propertyEntity1.copy(updatedAt = 1700000000000)
+        val updatedOnlineProperty = propertyOnlineEntity1.copy(updatedAt = 1700000002000)
+        val propertyId = updatedOnlineProperty.universalLocalId
 
-        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(updatedOnline)
-        every { propertyRepository.getPropertyEntityById(updatedOnline.roomId) } returns flowOf(outdatedLocal)
+        val firestoreDoc = firestorePropertyDocument1.copy(
+            property = updatedOnlineProperty
+        )
+
+        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(firestoreDoc)
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyId)
+        } returns flowOf(outdatedLocalProperty)
 
         val result = downloadManager.downloadUnSyncedProperties()
 
         assertThat(result).hasSize(1)
 
-        val success = result[0] as SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success.userEmail).isEqualTo("Property ${updatedOnline.roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("Property $propertyId updated")
+
+        val updatedProperties = mutableListOf<PropertyOnlineEntity>()
 
         coVerify(exactly = 1) {
-            propertyRepository.downloadPropertyFromFirebase(updatedOnline)
+            propertyRepository.updatePropertyFromFirebase(
+                capture(updatedProperties),
+                firestoreDoc.firebaseId
+            )
+        }
+
+        assertThat(updatedProperties.first().universalLocalId).isEqualTo(propertyId)
+
+        coVerify(exactly = 0) {
+            propertyRepository.insertPropertyInsertFromFirebase(any(), any())
         }
     }
 
     @Test
     fun downloadUnSyncedProperties_allPropertiesOutdatedLocally_downloadsAndUpdatesAll() = runTest {
-
-        val outdatedLocalsProperties = propertyEntityList.mapIndexed { index, property ->
+        val outdatedLocalProperties = propertyEntityListNotDeleted.mapIndexed { index, property ->
             property.copy(updatedAt = 1700000000000 + index)
         }
-
-        val newerOnlineProperties = propertyOnlineEntityList.mapIndexed { index, property ->
+        val newerOnlineProperties = propertyOnlineEntityListNotDeleted.mapIndexed { index, property ->
             property.copy(updatedAt = 1700000000000 + index + 5)
         }
+        val baseDocs = listOf(
+            firestorePropertyDocument1,
+            firestorePropertyDocument2
+        )
+        val firestoreDocs = baseDocs.mapIndexed { index, doc ->
+            doc.copy(property = newerOnlineProperties[index])
+        }
 
-        coEvery { propertyOnlineRepository.getAllProperties() } returns newerOnlineProperties
+        coEvery { propertyOnlineRepository.getAllProperties() } returns firestoreDocs
 
-        newerOnlineProperties.forEachIndexed { index, propertyOnline ->
-            every { propertyRepository.getPropertyEntityById(propertyOnline.roomId) } returns flowOf(outdatedLocalsProperties[index])
+        firestoreDocs.forEachIndexed { index, doc ->
+            every {
+                propertyRepository.getPropertyByIdIncludeDeleted(doc.property.universalLocalId)
+            } returns flowOf(outdatedLocalProperties[index])
         }
 
         val result = downloadManager.downloadUnSyncedProperties()
 
-        assertThat(result).hasSize(newerOnlineProperties.size)
+        assertThat(result).hasSize(firestoreDocs.size)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success.userEmail).isEqualTo("Property ${newerOnlineProperties[index].roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        val expectedMessages = firestoreDocs.map {
+            "Property ${it.property.universalLocalId} updated"
         }
 
-        newerOnlineProperties.forEach {
-            coVerify { propertyRepository.downloadPropertyFromFirebase(it) }
+        assertThat(messages).containsExactlyElementsIn(expectedMessages)
+
+        val updatedProperties = mutableListOf<PropertyOnlineEntity>()
+
+        coVerify(exactly = firestoreDocs.size) {
+            propertyRepository.updatePropertyFromFirebase(
+                capture(updatedProperties),
+                any()
+            )
+        }
+
+        assertThat(updatedProperties.map { it.universalLocalId })
+            .containsExactlyElementsIn(
+                firestoreDocs.map { it.property.universalLocalId }
+            )
+
+        coVerify(exactly = 0) {
+            propertyRepository.insertPropertyInsertFromFirebase(any(), any())
         }
     }
 
     @Test
     fun downloadUnSyncedProperties_propertyAlreadyUpToDate_returnsSuccessWithoutSaving() = runTest {
-        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(propertyOnlineEntity1)
+        val propertyId = propertyOnlineEntity1.universalLocalId
+        val firestoreDoc = firestorePropertyDocument1
 
-        every { propertyRepository.getPropertyEntityById(propertyOnlineEntity1.roomId) } returns flowOf(propertyEntity1)
+        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(firestoreDoc)
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyId)
+        } returns flowOf(propertyEntity1)
 
         val result = downloadManager.downloadUnSyncedProperties()
 
         assertThat(result).hasSize(1)
-        val success = result[0] as SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success.userEmail).isEqualTo("Property ${propertyOnlineEntity1.roomId} already up-to-date")
+
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("Property $propertyId already up-to-date")
 
         coVerify(exactly = 0) {
-            propertyRepository.downloadPropertyFromFirebase(any())
+            propertyRepository.insertPropertyInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.updatePropertyFromFirebase(any(), any())
+        }
+        coVerify(exactly = 1) {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyId)
         }
     }
 
     @Test
     fun downloadUnSyncedProperties_allPropertiesAlreadyUpToDate_returnsSuccessWithoutSaving() = runTest {
-        coEvery { propertyOnlineRepository.getAllProperties() } returns propertyOnlineEntityList
+        val firestoreDocs = listOf(
+            firestorePropertyDocument1,
+            firestorePropertyDocument2
+        )
 
-        propertyOnlineEntityList.forEachIndexed { index, onlineProperty ->
-            every { propertyRepository.getPropertyEntityById(onlineProperty.roomId) } returns flowOf(propertyEntityList[index])
+        coEvery { propertyOnlineRepository.getAllProperties() } returns firestoreDocs
+
+        firestoreDocs.forEachIndexed { index, doc ->
+            every {
+                propertyRepository.getPropertyByIdIncludeDeleted(doc.property.universalLocalId)
+            } returns flowOf(propertyEntityList[index])
         }
 
         val result = downloadManager.downloadUnSyncedProperties()
 
-        assertThat(result).hasSize(propertyOnlineEntityList.size)
+        assertThat(result).hasSize(firestoreDocs.size)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success.userEmail).isEqualTo("Property ${propertyOnlineEntityList[index].roomId} already up-to-date")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        val expectedMessages = firestoreDocs.map {
+            "Property ${it.property.universalLocalId} already up-to-date"
         }
 
+        assertThat(messages).containsExactlyElementsIn(expectedMessages)
+
         coVerify(exactly = 0) {
-            propertyRepository.downloadPropertyFromFirebase(any())
+            propertyRepository.insertPropertyInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.updatePropertyFromFirebase(any(), any())
+        }
+
+        firestoreDocs.forEach { doc ->
+            coVerify(exactly = 1) {
+                propertyRepository.getPropertyByIdIncludeDeleted(doc.property.universalLocalId)
+            }
         }
     }
 
     @Test
     fun downloadUnSyncedProperties_mixedCases_returnsCorrectStatuses() = runTest {
-        val propertyOnlineEntity4 = PropertyOnlineEntity(
-            title = "error appart",
-            type = "error type",
-            price = 1000000,
-            surface = 100,
-            rooms = 1,
-            description = "error description",
-            address = "error address",
-            entryDate = "2025-10-25",
-            userId = 3L,
-            updatedAt = 1700000008000,
-            roomId = 4L
-
-        )
-
         val propertyInsert = propertyOnlineEntity1
         val propertyUpdate = propertyOnlineEntity2.copy(updatedAt = 1700000006000)
-        val propertySkip = propertyOnlineEntity3
-        val propertyError = propertyOnlineEntity4.copy(updatedAt = 1700000008000)
+        val propertySkip = propertyOnlineEntity3.copy(isDeleted = false)
+        val propertyError = propertyOnlineEntity3.copy(
+            universalLocalId = "error_id",
+            updatedAt = 1700000008000
+        )
+        val propertyDelete = propertyOnlineEntity3
 
-        val outdatedLocal = propertyEntity2.copy(updatedAt = 1700000001000)
-        val upToDateLocal = propertyEntity3
+        val outdatedLocalProperty = propertyEntity2.copy(updatedAt = 1700000001000)
+        val upToDateLocalProperty = propertyEntity3.copy(isDeleted = false)
+        val localPropertyToDelete = propertyEntity3.copy(isDeleted = false)
 
-        val onlineProperties = listOf(propertyInsert, propertyUpdate, propertySkip, propertyError)
+        val firestoreDocs = listOf(
+            firestorePropertyDocument1.copy(property = propertyInsert),
+            firestorePropertyDocument2.copy(property = propertyUpdate),
+            firestorePropertyDocument3.copy(property = propertySkip),
+            firestorePropertyDocument3.copy(property = propertyError),
+            firestorePropertyDocument3.copy(property = propertyDelete)
+        )
 
-        coEvery { propertyOnlineRepository.getAllProperties() } returns onlineProperties
-
-        every { propertyRepository.getPropertyEntityById(propertyInsert.roomId) } returns flowOf(null)
-        every { propertyRepository.getPropertyEntityById(propertyUpdate.roomId) } returns flowOf(outdatedLocal)
-        every { propertyRepository.getPropertyEntityById(propertySkip.roomId) } returns flowOf(upToDateLocal)
-        every { propertyRepository.getPropertyEntityById(propertyError.roomId) } throws RuntimeException("DB crash")
+        coEvery { propertyOnlineRepository.getAllProperties() } returns firestoreDocs
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyInsert.universalLocalId)
+        } returns flowOf(null)
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyUpdate.universalLocalId)
+        } returns flowOf(outdatedLocalProperty)
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertySkip.universalLocalId)
+        } returns flowOf(upToDateLocalProperty)
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyError.universalLocalId)
+        } throws RuntimeException("DB fail")
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyDelete.universalLocalId)
+        } returns flowOf(localPropertyToDelete)
 
         val result = downloadManager.downloadUnSyncedProperties()
 
-        assertThat(result).hasSize(4)
+        assertThat(result).hasSize(5)
 
-        val statusInsert = result[0] as? SyncStatus.Success
-        assertThat(statusInsert).isNotNull()
-        assertThat(statusInsert!!.userEmail).isEqualTo("Property ${propertyInsert.roomId} downloaded")
+        val successes = result.filterIsInstance<SyncStatus.Success>()
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
 
-        // Check update
-        val statusUpdate = result[1] as? SyncStatus.Success
-        assertThat(statusUpdate).isNotNull()
-        assertThat(statusUpdate!!.userEmail).isEqualTo("Property ${propertyUpdate.roomId} downloaded")
+        val successMessages = successes.map { it.message }
 
-        // Check skip
-        val statusSkip = result[2] as? SyncStatus.Success
-        assertThat(statusSkip).isNotNull()
-        assertThat(statusSkip!!.userEmail).isEqualTo("Property ${propertySkip.roomId} already up-to-date")
+        assertThat(successMessages).containsExactly(
+            "Property ${propertyInsert.universalLocalId} inserted",
+            "Property ${propertyUpdate.universalLocalId} updated",
+            "Property ${propertySkip.universalLocalId} already up-to-date",
+            "Property ${propertyDelete.universalLocalId} deleted locally (remote deleted)"
+        )
 
-        // Check error
-        val statusError = result[3] as? SyncStatus.Failure
-        assertThat(statusError).isNotNull()
-        assertThat(statusError!!.label).isEqualTo("Property ${propertyError.roomId} failed to sync")
-        assertThat(statusError.error).hasMessageThat().isEqualTo("DB crash")
+        assertThat(failures).hasSize(1)
 
-        coVerify(exactly = 1) { propertyRepository.downloadPropertyFromFirebase(propertyInsert) }
-        coVerify(exactly = 1) { propertyRepository.downloadPropertyFromFirebase(propertyUpdate) }
-        coVerify(exactly = 0) { propertyRepository.downloadPropertyFromFirebase(propertySkip) }
-        coVerify(exactly = 0) { propertyRepository.downloadPropertyFromFirebase(propertyError) }
+        val failure = failures.first()
+        assertThat(failure.label).isEqualTo("Property ${propertyError.universalLocalId}")
+        assertThat(failure.error).hasMessageThat().isEqualTo("DB fail")
+
+        val insertedProperties = mutableListOf<PropertyOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            propertyRepository.insertPropertyInsertFromFirebase(
+                capture(insertedProperties),
+                any()
+            )
+        }
+
+        assertThat(insertedProperties.first().universalLocalId)
+            .isEqualTo(propertyInsert.universalLocalId)
+
+        val updatedProperties = mutableListOf<PropertyOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            propertyRepository.updatePropertyFromFirebase(
+                capture(updatedProperties),
+                any()
+            )
+        }
+
+        assertThat(updatedProperties.first().universalLocalId)
+            .isEqualTo(propertyUpdate.universalLocalId)
+
+        coVerify(exactly = 0) {
+            propertyRepository.updatePropertyFromFirebase(propertySkip, any())
+        }
+        coVerify(exactly = 1) {
+            propertyRepository.deleteProperty(localPropertyToDelete)
+        }
     }
 
     @Test
     fun downloadUnSyncedProperty_individualFailure_returnsPartialSuccessWithFailure() =  runTest {
+        val propertyId = propertyOnlineEntity1.universalLocalId
+        val firestoreDoc = firestorePropertyDocument1
 
-        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(propertyOnlineEntity1)
-
-        every { propertyRepository.getPropertyEntityById(propertyOnlineEntity1.roomId) } throws RuntimeException("DB crash")
+        coEvery { propertyOnlineRepository.getAllProperties() } returns listOf(firestoreDoc)
+        every {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyId)
+        } throws RuntimeException("DB crash")
 
         val result = downloadManager.downloadUnSyncedProperties()
 
         assertThat(result).hasSize(1)
 
-        val failure = result[0] as SyncStatus.Failure
-        assertThat(failure.label).isEqualTo("Property ${propertyOnlineEntity1.roomId} failed to sync")
-        assertThat(failure.error.message).isEqualTo("DB crash")
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
+
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
+        assertThat(failure.label).isEqualTo("Property $propertyId")
+        assertThat(failure.error).hasMessageThat().isEqualTo("DB crash")
+
+        coVerify(exactly = 0) {
+            propertyRepository.insertPropertyInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.updatePropertyFromFirebase(any(), any())
+        }
+        coVerify(exactly = 1) {
+            propertyRepository.getPropertyByIdIncludeDeleted(propertyId)
+        }
     }
 
     @Test
     fun downloadUnSyncedProperty_globalFailure_returnsFailureStatus() = runTest {
-        coEvery { propertyOnlineRepository.getAllProperties() } throws RuntimeException("Firestore down")
+        coEvery { propertyOnlineRepository.getAllProperties() } throws RuntimeException("Firebase is down")
 
         val result = downloadManager.downloadUnSyncedProperties()
+
         assertThat(result).hasSize(1)
 
-        val failure = result[0] as SyncStatus.Failure
-        assertThat(failure).isNotNull()
-        assertThat(failure.label).isEqualTo("Global PROPERTY download failed")
-        assertThat(failure.error.message).isEqualTo("Firestore down")
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
+
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
+        assertThat(failure.label).isEqualTo("Global property download failed")
+        assertThat(failure.error).hasMessageThat().isEqualTo("Firebase is down")
+
+        coVerify(exactly = 1) {
+            propertyOnlineRepository.getAllProperties()
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.getPropertyByIdIncludeDeleted(any())
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.insertPropertyInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.updatePropertyFromFirebase(any(), any())
+        }
     }
 
     @Test
-    fun downloadUnSyncedProperties_noPropertiesOnline_reutrnsEmptyList() = runTest {
+    fun downloadUnSyncedProperties_noPropertiesOnline_returnsEmptyList() = runTest {
         coEvery { propertyOnlineRepository.getAllProperties() } returns emptyList()
 
         val result = downloadManager.downloadUnSyncedProperties()
 
         assertThat(result).isEmpty()
 
+        coVerify(exactly = 1) {
+            propertyOnlineRepository.getAllProperties()
+        }
         coVerify(exactly = 0) {
-            propertyRepository.downloadPropertyFromFirebase(any())
+            propertyRepository.getPropertyByIdIncludeDeleted(any())
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.insertPropertyInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            propertyRepository.updatePropertyFromFirebase(any(), any())
         }
     }
 
-}*/
+}

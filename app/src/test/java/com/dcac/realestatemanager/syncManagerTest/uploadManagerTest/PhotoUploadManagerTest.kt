@@ -1,6 +1,6 @@
-/*
 package com.dcac.realestatemanager.syncManagerTest.uploadManagerTest
 
+import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.photo.PhotoOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
@@ -9,10 +9,13 @@ import com.dcac.realestatemanager.data.sync.photo.PhotoUploadManager
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePhotoEntity
 import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakePhotoOnlineEntity
 import com.google.common.truth.Truth.assertThat
+import com.google.firebase.auth.FirebaseAuth
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -22,22 +25,29 @@ import org.junit.Test
 
 class PhotoUploadManagerTest {
 
-    // --- Mocks ---
     private val photoRepository = mockk<PhotoRepository>(relaxed = true)
     private val photoOnlineRepository = mockk<PhotoOnlineRepository>(relaxed = true)
 
     private lateinit var uploadManager: PhotoUploadInterfaceManager
 
-    // --- Fake data ---
     private val photoEntity1 = FakePhotoEntity.photo1
     private val photoEntity2 = FakePhotoEntity.photo2
     private val photoEntity3 = FakePhotoEntity.photo3
-
-    private val photoOnline1 = FakePhotoOnlineEntity.photoEntity1
+    private val photoOnlineEntity1 = FakePhotoOnlineEntity.photoOnline1
 
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = true)
+
+        mockkStatic(FirebaseAuth::class)
+
+        val mockAuth = mockk<FirebaseAuth>()
+        val mockUser = mockk<com.google.firebase.auth.FirebaseUser>()
+
+        every { FirebaseAuth.getInstance() } returns mockAuth
+        every { mockAuth.currentUser } returns mockUser
+        every { mockUser.uid } returns "user-123"
+
         uploadManager = PhotoUploadManager(photoRepository, photoOnlineRepository)
     }
 
@@ -48,120 +58,217 @@ class PhotoUploadManagerTest {
 
     @Test
     fun uploadUnSyncedPhotos_photoNotDeleted_uploadsAndUpdatesRoom() = runTest {
-        // Arrange
-        coEvery { photoRepository.uploadUnSyncedPhotosToFirebase() } returns flowOf(listOf(photoEntity1))
-        coEvery { photoOnlineRepository.uploadPhoto(any(), any()) } returns photoOnline1
+        every {
+            photoRepository.uploadUnSyncedPhotosToFirebase()
+        } returns flowOf(listOf(photoEntity1))
 
-        // Act
+        coEvery {
+            photoOnlineRepository.uploadPhoto(any(), any())
+        } returns photoOnlineEntity1
+
         val result = uploadManager.syncUnSyncedPhotos()
 
-        // Assert
         assertThat(result).hasSize(1)
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success!!.userEmail).isEqualTo("Photo ${photoEntity1.id} uploaded")
 
-        coVerify {
-            photoOnlineRepository.uploadPhoto(any(), photoEntity1.id.toString())
-            photoRepository.downloadPhotoFromFirebase(photoOnline1, photoEntity1.uri)
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages)
+            .containsExactly("Photo ${photoEntity1.id} uploaded to Firebase")
+
+        coVerify(exactly = 1) {
+            photoOnlineRepository.uploadPhoto(
+                any(),
+                photoEntity1.firestoreDocumentId!!
+            )
+        }
+
+        val updatedPhotos = mutableListOf<PhotoOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            photoRepository.updatePhotoFromFirebase(
+                capture(updatedPhotos),
+                photoEntity1.firestoreDocumentId!!
+            )
+        }
+
+        assertThat(updatedPhotos.first().universalLocalId)
+            .isEqualTo(photoEntity1.id)
+
+        coVerify(exactly = 0) {
+            photoRepository.deletePhoto(any())
         }
     }
 
     @Test
     fun uploadUnSyncedPhotos_photoMarkedDeleted_deletesFromFirebaseAndRoom() = runTest {
-        // Arrange
-        val deletedPhoto = photoEntity3
-        coEvery { photoRepository.uploadUnSyncedPhotosToFirebase() } returns flowOf(listOf(deletedPhoto))
+        every {
+            photoRepository.uploadUnSyncedPhotosToFirebase()
+        } returns flowOf(listOf(photoEntity3))
 
-        // Act
+        coEvery {
+            photoOnlineRepository.markPhotoAsDeleted(any(), any())
+        } returns Unit
+
         val result = uploadManager.syncUnSyncedPhotos()
 
-        // Assert
         assertThat(result).hasSize(1)
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success!!.userEmail).isEqualTo("Photo ${deletedPhoto.id} deleted")
 
-        coVerify {
-            photoOnlineRepository.deletePhoto(deletedPhoto.id.toString())
-            photoRepository.deletePhoto(deletedPhoto)
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages)
+            .containsExactly(
+                "Photo ${photoEntity3.id} marked deleted online & removed locally"
+            )
+
+        coVerify(exactly = 1) {
+            photoOnlineRepository.markPhotoAsDeleted(
+                photoEntity3.firestoreDocumentId!!,
+                photoEntity3.updatedAt
+            )
+        }
+
+        coVerify(exactly = 1) {
+            photoRepository.deletePhoto(photoEntity3)
+        }
+        coVerify(exactly = 0) {
+            photoOnlineRepository.uploadPhoto(any(), any())
+        }
+        coVerify(exactly = 0) {
+            photoRepository.updatePhotoFromFirebase(any(), any())
         }
     }
 
     @Test
-    fun uploadUnSyncedPhotos_globalFailure_returnsFailureStatus() = runTest {
-        // Arrange
-        coEvery { photoRepository.uploadUnSyncedPhotosToFirebase() } throws RuntimeException("Room is down")
+    fun uploadUnSyncedPhotos_globalFailure_throwsException() = runTest {
+        every {
+            photoRepository.uploadUnSyncedPhotosToFirebase()
+        } throws RuntimeException("DB crash")
 
-        // Act
-        val result = uploadManager.syncUnSyncedPhotos()
+        try {
+            uploadManager.syncUnSyncedPhotos()
+            throw AssertionError("Exception expected but not thrown")
+        } catch (e: RuntimeException) {
+            assertThat(e.message).isEqualTo("DB crash")
+        }
 
-        // Assert
-        assertThat(result).hasSize(1)
-        val failure = result[0] as? SyncStatus.Failure
-        assertThat(failure!!.label).isEqualTo("Global upload sync failed")
-        assertThat(failure.error.message).isEqualTo("Room is down")
+        coVerify(exactly = 1) {
+            photoRepository.uploadUnSyncedPhotosToFirebase()
+        }
+        coVerify(exactly = 0) {
+            photoOnlineRepository.uploadPhoto(any(), any())
+        }
+        coVerify(exactly = 0) {
+            photoOnlineRepository.markPhotoAsDeleted(any(), any())
+        }
+
+        coVerify(exactly = 0) {
+            photoRepository.updatePhotoFromFirebase(any(), any())
+        }
+
+        coVerify(exactly = 0) {
+            photoRepository.deletePhoto(any())
+        }
     }
 
     @Test
     fun uploadUnSyncedPhotos_noPhotosToUpload_returnsEmptyList() = runTest {
-        // Arrange
-        coEvery { photoRepository.uploadUnSyncedPhotosToFirebase() } returns flowOf(emptyList())
+        every {
+            photoRepository.uploadUnSyncedPhotosToFirebase()
+        } returns flowOf(emptyList())
 
-        // Act
         val result = uploadManager.syncUnSyncedPhotos()
 
-        // Assert
         assertThat(result).isEmpty()
+
+        coVerify(exactly = 1) {
+            photoRepository.uploadUnSyncedPhotosToFirebase()
+        }
 
         coVerify(exactly = 0) {
             photoOnlineRepository.uploadPhoto(any(), any())
-            photoRepository.downloadPhotoFromFirebase(any(), any())
-            photoOnlineRepository.deletePhoto(any())
+        }
+
+        coVerify(exactly = 0) {
+            photoOnlineRepository.markPhotoAsDeleted(any(), any())
+        }
+
+        coVerify(exactly = 0) {
+            photoRepository.updatePhotoFromFirebase(any(), any())
+        }
+
+        coVerify(exactly = 0) {
             photoRepository.deletePhoto(any())
         }
     }
 
     @Test
     fun uploadUnSyncedPhotos_mixedCases_returnsCorrectStatuses() = runTest {
-        // Arrange
-        val notSyncedNotDeleted = photoEntity1
-        val alreadySyncedNotDeleted = photoEntity2
-        val notSyncedDeleted = photoEntity3
+        val photoInsert = photoEntity1
+        val photoDelete = photoEntity3
+        val photoError = photoEntity2
 
-        // Only return unsynced photos: photo1 (upload), photo3 (delete)
-        coEvery {
+        every {
             photoRepository.uploadUnSyncedPhotosToFirebase()
-        } returns flowOf(listOf(notSyncedNotDeleted, notSyncedDeleted))
-
-        // Mock upload
+        } returns flowOf(listOf(photoInsert, photoDelete, photoError))
         coEvery {
-            photoOnlineRepository.uploadPhoto(any(), notSyncedNotDeleted.id.toString())
-        } returns photoOnline1
+            photoOnlineRepository.uploadPhoto(any(), any())
+        } returns photoOnlineEntity1
+        coEvery {
+            photoOnlineRepository.markPhotoAsDeleted(any(), any())
+        } returns Unit
+        coEvery {
+            photoOnlineRepository.uploadPhoto(
+                match { it.universalLocalId == photoError.id },
+                any()
+            )
+        } throws RuntimeException("Upload failed")
 
-        // Act
         val result = uploadManager.syncUnSyncedPhotos()
 
-        // Assert: we should have 2 results
-        assertThat(result).hasSize(2)
+        assertThat(result).hasSize(3)
 
-        // Check both statuses, regardless of order
-        val uploaded = result.find { it is SyncStatus.Success && it.userEmail == "Photo ${notSyncedNotDeleted.id} uploaded" }
-        val deleted = result.find { it is SyncStatus.Success && it.userEmail == "Photo ${notSyncedDeleted.id} deleted" }
+        val successes = result.filterIsInstance<SyncStatus.Success>()
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
 
-        assertThat(uploaded).isNotNull()
-        assertThat(deleted).isNotNull()
+        val successMessages = successes.map { it.message }
 
-        // Verify Firebase/Room interactions
-        coVerify { photoOnlineRepository.deletePhoto(notSyncedDeleted.id.toString()) }
-        coVerify { photoRepository.deletePhoto(notSyncedDeleted) }
-        coVerify { photoOnlineRepository.uploadPhoto(any(), notSyncedNotDeleted.id.toString()) }
-        coVerify { photoRepository.downloadPhotoFromFirebase(photoOnline1, notSyncedNotDeleted.uri) }
+        assertThat(successMessages).containsExactly(
+            "Photo ${photoInsert.id} uploaded to Firebase",
+            "Photo ${photoDelete.id} marked deleted online & removed locally"
+        )
 
-        // Ensure nothing happened to already-synced photo
-        coVerify(exactly = 0) {
-            photoOnlineRepository.uploadPhoto(any(), alreadySyncedNotDeleted.id.toString())
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
+        assertThat(failure.label).isEqualTo("Photo ${photoError.id}")
+        assertThat(failure.error).hasMessageThat().isEqualTo("Upload failed")
+
+        coVerify(exactly = 2) {
+            photoOnlineRepository.uploadPhoto(any(), any())
         }
-        coVerify(exactly = 0) {
-            photoRepository.downloadPhotoFromFirebase(any(), alreadySyncedNotDeleted.uri)
+
+        val updatedPhotos = mutableListOf<PhotoOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            photoRepository.updatePhotoFromFirebase(
+                capture(updatedPhotos),
+                any()
+            )
+        }
+
+        assertThat(updatedPhotos.first().universalLocalId)
+            .isEqualTo(photoInsert.id)
+
+        coVerify(exactly = 1) {
+            photoOnlineRepository.markPhotoAsDeleted(
+                photoDelete.firestoreDocumentId!!,
+                photoDelete.updatedAt
+            )
+        }
+
+        coVerify(exactly = 1) {
+            photoRepository.deletePhoto(photoDelete)
         }
     }
-}*/
+}

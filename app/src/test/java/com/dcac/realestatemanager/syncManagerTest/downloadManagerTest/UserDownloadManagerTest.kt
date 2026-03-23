@@ -1,7 +1,5 @@
-/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
-import com.dcac.realestatemanager.data.firebaseDatabase.user.FirestoreUserDocument
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
@@ -11,7 +9,6 @@ import com.dcac.realestatemanager.data.sync.user.UserDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserDownloadManager
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakeUserEntity
 import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakeUserOnlineEntity
-import com.dcac.realestatemanager.model.User
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -35,14 +32,14 @@ class UserDownloadManagerTest {
     private val userEntity2 = FakeUserEntity.user2
     private val userEntity3 = FakeUserEntity.user3
     private val userEntityList = FakeUserEntity.userEntityList
-
+    private val userEntityListNotDeleted = FakeUserEntity.userEntityListNotDeleted
     private val userOnlineEntity1 = FakeUserOnlineEntity.userOnline1
     private val userOnlineEntity2 = FakeUserOnlineEntity.userOnline2
     private val userOnlineEntity3 = FakeUserOnlineEntity.userOnline3
-    private val userOnlineEntityList = FakeUserOnlineEntity.userOnlineEntityList
-
-    private val firebaseUserDocument1 = FakeUserOnlineEntity.firestoreUserDocument1
-    private val firebaseUserDocumentList = FakeUserOnlineEntity.firestoreUserDocumentList
+    private val userOnlineEntityListNotDeleted = FakeUserOnlineEntity.userOnlineEntityListNotDeleted
+    private val firestoreUserDocument1 = FakeUserOnlineEntity.firestoreUserDocument1
+    private val firestoreUserDocument2 = FakeUserOnlineEntity.firestoreUserDocument2
+    private val firestoreUserDocument3 = FakeUserOnlineEntity.firestoreUserDocument3
 
     @Before
     fun setup() {
@@ -57,284 +54,433 @@ class UserDownloadManagerTest {
 
     @Test
     fun downloadUnSyncedUser_localUserNull_downloadsAndInsertsUser() = runTest {
-        coEvery {userOnlineRepository.getAllUsers() } returns listOf(firebaseUserDocument1)
-        every { userRepository.getUserByFirebaseUid(firebaseUserDocument1.id) } returns flowOf(null)
+        val userId = userOnlineEntity1.universalLocalId
+
+        coEvery { userOnlineRepository.getAllUsers() } returns listOf(firestoreUserDocument1)
+        every {
+            userRepository.getUserByIdIncludeDeleted(userId)
+        } returns flowOf(null)
 
         val result = downloadManager.downloadUnSyncedUsers()
 
         assertThat(result).hasSize(1)
 
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success!!.userEmail).isEqualTo("User ${firebaseUserDocument1.id} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("User $userId inserted")
+
+        val insertedUsers = mutableListOf<UserOnlineEntity>()
 
         coVerify(exactly = 1) {
-            userRepository.downloadUserFromFirebase(userOnlineEntity1,firebaseUserDocument1.id )
+            userRepository.insertUserInsertFromFirebase(
+                capture(insertedUsers),
+                firestoreUserDocument1.firebaseId
+            )
         }
 
+        assertThat(insertedUsers.first().universalLocalId).isEqualTo(userId)
+
+        coVerify(exactly = 0 ) {
+            userRepository.updateUserFromFirebase(any(), any())
+        }
     }
 
     @Test
     fun downloadUnSyncedUsers_allUsersMissingLocally_downloadsAndInsertsAll() = runTest {
-        coEvery { userOnlineRepository.getAllUsers() } returns firebaseUserDocumentList
+        val firestoreDocs = listOf(
+            firestoreUserDocument1,
+            firestoreUserDocument2,
+            firestoreUserDocument3
+        )
 
-        userOnlineEntityList.forEach{
-            every { userRepository.getUserByFirebaseUid(firebaseUserDocument1.id) } returns flowOf(null)
+        coEvery { userOnlineRepository.getAllUsers() } returns firestoreDocs
+
+        firestoreDocs.forEach { doc ->
+            every {
+                userRepository.getUserByIdIncludeDeleted(doc.user.universalLocalId)
+            } returns flowOf(null)
         }
 
         val result = downloadManager.downloadUnSyncedUsers()
 
-        assertThat(result).hasSize(userOnlineEntityList.size)
+        assertThat(result).hasSize(3)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as? SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success!!.userEmail).isEqualTo("User ${firebaseUserDocument1.id} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly(
+            "User ${userEntity1.id} inserted",
+            "User ${userEntity2.id} inserted",
+            "User ${userEntity3.id} inserted"
+        )
+
+        val insertedUsers = mutableListOf<UserOnlineEntity>()
+
+        coVerify(exactly = 3) {
+            userRepository.insertUserInsertFromFirebase(
+                capture(insertedUsers),
+                any()
+            )
         }
 
-        firebaseUserDocumentList.forEach {
-            coVerify { userRepository.downloadUserFromFirebase(it.user, it.id) }
-        }
+        val insertedIds = insertedUsers.map { it.universalLocalId }
+
+        assertThat(insertedIds)
+            .containsExactly(userEntity1.id, userEntity2.id, userEntity3.id)
     }
 
     @Test
     fun downloadUnSyncedUsers_localUserOutdated_downloadsAndUpdatesUser() = runTest {
+        val outdatedLocalUser = userEntity1.copy(updatedAt = 1700000000000)
+        val updatedOnlineUser = userOnlineEntity1.copy(updatedAt = 1700000002000)
+        val userId = updatedOnlineUser.universalLocalId
 
-        val outdatedLocal = userEntity1.copy(updatedAt = 1700000000000)
-
-        val outdatedLocalModel = User(
-            id = outdatedLocal.id,
-            email = outdatedLocal.email,
-            agentName = outdatedLocal.agentName,
-            firebaseUid = outdatedLocal.firebaseUid,
-            isSynced = outdatedLocal.isSynced,
-            isDeleted = outdatedLocal.isDeleted,
-            updatedAt = outdatedLocal.updatedAt
+        val firestoreDoc = firestoreUserDocument1.copy(
+            user = updatedOnlineUser
         )
 
-        val firestoreDocUpdateOnline = firebaseUserDocument1.copy(user = firebaseUserDocument1.user.copy(updatedAt = 1700000002000))
+        coEvery { userOnlineRepository.getAllUsers() } returns listOf(firestoreDoc)
+        every {
+            userRepository.getUserByIdIncludeDeleted(userId)
+        } returns flowOf(outdatedLocalUser)
 
-
-        coEvery { userOnlineRepository.getAllUsers() } returns listOf(firestoreDocUpdateOnline)
-        every { userRepository.getUserByFirebaseUid(firestoreDocUpdateOnline.id) } returns flowOf(outdatedLocalModel)
         val result = downloadManager.downloadUnSyncedUsers()
 
         assertThat(result).hasSize(1)
 
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success!!.userEmail).isEqualTo("User ${firebaseUserDocument1.id} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("User $userId updated")
+
+        val updatedUsers = mutableListOf<UserOnlineEntity>()
 
         coVerify(exactly = 1) {
-            userRepository.downloadUserFromFirebase(firestoreDocUpdateOnline.user, firestoreDocUpdateOnline.id)
+            userRepository.updateUserFromFirebase(
+                capture(updatedUsers),
+                firestoreDoc.firebaseId
+            )
+        }
+
+        assertThat(updatedUsers.first().universalLocalId).isEqualTo(userId)
+
+        coVerify(exactly = 0) {
+            userRepository.insertUserInsertFromFirebase(any(), any())
         }
     }
 
     @Test
     fun downloadUnSyncedUsers_allUsersOutdatedLocally_downloadsAndUpdatesAll() = runTest {
-        val outdatedLocalsUsers = userEntityList.mapIndexed { index, userEntity ->
-            User(
-                id = userEntity.id,
-                email = userEntity.email,
-                agentName = userEntity.agentName,
-                firebaseUid = userEntity.firebaseUid,
-                isSynced = userEntity.isSynced,
-                isDeleted = userEntity.isDeleted,
-                updatedAt = 1700000000000 + index
-            )
+        val outdatedLocalUsers = userEntityListNotDeleted.mapIndexed { index, user ->
+            user.copy(updatedAt = 1700000000000 + index)
         }
-
-        val newerOnlineUsers = userOnlineEntityList.mapIndexed { index, user ->
+        val newerOnlineUsers = userOnlineEntityListNotDeleted.mapIndexed { index, user ->
             user.copy(updatedAt = 1700000000000 + index + 5)
         }
-
-        val newerFirestoreDocs = newerOnlineUsers.mapIndexed { index, user ->
-            FirestoreUserDocument(
-                id = "firebase_uid_${index + 1}",
-                user = user
-            )
+        val baseDocs = listOf(
+            firestoreUserDocument1,
+            firestoreUserDocument2
+        )
+        val firestoreDocs = baseDocs.mapIndexed { index, doc ->
+            doc.copy(user = newerOnlineUsers[index])
         }
 
-        coEvery { userOnlineRepository.getAllUsers() } returns newerFirestoreDocs
+        coEvery { userOnlineRepository.getAllUsers() } returns firestoreDocs
 
-        newerFirestoreDocs.forEachIndexed { index, doc ->
-            every { userRepository.getUserByFirebaseUid(doc.id) } returns flowOf(outdatedLocalsUsers[index])
+        firestoreDocs.forEachIndexed { index, doc ->
+            every {
+                userRepository.getUserByIdIncludeDeleted(doc.user.universalLocalId)
+            } returns flowOf(outdatedLocalUsers[index])
         }
 
         val result = downloadManager.downloadUnSyncedUsers()
 
-        assertThat(result).hasSize(newerFirestoreDocs.size)
+        assertThat(result).hasSize(firestoreDocs.size)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as? SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success!!.userEmail).isEqualTo("User ${newerFirestoreDocs[index].id} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        val expectedMessages = firestoreDocs.map {
+            "User ${it.user.universalLocalId} updated"
         }
 
-        newerFirestoreDocs.forEach {
-            coVerify { userRepository.downloadUserFromFirebase(it.user, it.id) }
+        assertThat(messages).containsExactlyElementsIn(expectedMessages)
+
+        val updatedUsers = mutableListOf<UserOnlineEntity>()
+
+        coVerify(exactly = firestoreDocs.size) {
+            userRepository.updateUserFromFirebase(
+                capture(updatedUsers),
+                any()
+            )
+        }
+
+        assertThat(updatedUsers.map { it.universalLocalId })
+            .containsExactlyElementsIn(
+                firestoreDocs.map { it.user.universalLocalId }
+            )
+
+        coVerify(exactly = 0) {
+            userRepository.insertUserInsertFromFirebase(any(), any())
         }
     }
 
     @Test
     fun downloadUnSyncedUsers_userAlreadyUpToDate_returnsSuccessWithoutSaving() = runTest {
-        coEvery { userOnlineRepository.getAllUsers() } returns firebaseUserDocumentList
+        val userId = userOnlineEntity1.universalLocalId
+        val firestoreDoc = firestoreUserDocument1
 
-        firebaseUserDocumentList.forEachIndexed { index, doc ->
-            every { userRepository.getUserEntityById(doc.user.roomId) } returns flowOf(userEntityList[index])
-        }
+        coEvery { userOnlineRepository.getAllUsers() } returns listOf(firestoreDoc)
+        every {
+            userRepository.getUserByIdIncludeDeleted(userId)
+            } returns flowOf(userEntity1)
 
         val result = downloadManager.downloadUnSyncedUsers()
 
-        assertThat(result).hasSize(firebaseUserDocumentList.size)
+        assertThat(result).hasSize(1)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as? SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success!!.userEmail).isEqualTo("User ${firebaseUserDocumentList[index].user.roomId} already up-to-date")
-        }
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("User $userId already up-to-date")
 
         coVerify(exactly = 0) {
-            userRepository.downloadUserFromFirebase(any(), any())
+            userRepository.insertUserInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            userRepository.updateUserFromFirebase(any(), any())
+        }
+        coVerify(exactly = 1) {
+            userRepository.getUserByIdIncludeDeleted(userId)
         }
     }
 
     @Test
     fun downloadUnSyncedUsers_allUsersAlreadyUpToDate_returnsSuccessWithoutSaving() = runTest {
+        val firestoreDocs = listOf(
+            firestoreUserDocument1,
+            firestoreUserDocument2
+        )
 
-        coEvery { userOnlineRepository.getAllUsers() } returns firebaseUserDocumentList
+        coEvery { userOnlineRepository.getAllUsers() } returns firestoreDocs
 
-        userOnlineEntityList.forEachIndexed { index, onlineUser ->
-            every { userRepository.getUserEntityById(onlineUser.roomId) } returns flowOf(userEntityList[index])
+        firestoreDocs.forEachIndexed { index, doc ->
+            every {
+                userRepository.getUserByIdIncludeDeleted(doc.user.universalLocalId)
+            } returns flowOf(userEntityList[index])
         }
 
         val result = downloadManager.downloadUnSyncedUsers()
 
-        assertThat(result).hasSize(userOnlineEntityList.size)
+        assertThat(result).hasSize(firestoreDocs.size)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as? SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success!!.userEmail).isEqualTo("User ${userOnlineEntityList[index].roomId} already up-to-date")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        val expectedMessages = firestoreDocs.map {
+            "User ${it.user.universalLocalId} already up-to-date"
         }
 
+        assertThat(messages).containsExactlyElementsIn(expectedMessages)
+
         coVerify(exactly = 0) {
-            userRepository.downloadUserFromFirebase(any(), any())
+            userRepository.insertUserInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            userRepository.updateUserFromFirebase(any(), any())
+        }
+
+        firestoreDocs.forEach { doc ->
+            coVerify(exactly = 1) {
+                userRepository.getUserByIdIncludeDeleted(doc.user.universalLocalId)
+            }
         }
     }
 
     @Test
     fun downloadUnSyncedUsers_mixedCases_returnsCorrectStatuses() = runTest {
-        val userOnlineEntity4 = UserOnlineEntity(
-            email = "agent4@example.com",
-            agentName = "Mounette Valco",
-            updatedAt = 1700000008000,
-            roomId = 4L
-        )
-
-        // Cas de test : insert, update, skip, error
         val userInsert = userOnlineEntity1
         val userUpdate = userOnlineEntity2.copy(updatedAt = 1700000006000)
-        val userSkip = userOnlineEntity3
-        val userError = userOnlineEntity4.copy(updatedAt = 1700000008000)
-
-        val outdatedLocal = userEntity2.copy(updatedAt = 1700000001000)
-        val upToDateLocal = userEntity3
-
-        val firestoreDocs = listOf(
-            FirestoreUserDocument(
-                id = "firebase_uid_1", user = userInsert
-            ),
-            FirestoreUserDocument(
-                id = "firebase_uid_2", user = userUpdate
-            ),
-            FirestoreUserDocument(
-                id = "firebase_uid_3", user = userSkip
-            ),
-            FirestoreUserDocument(
-                id = "firebase_uid_4", user = userError
-            )
+        val userSkip = userOnlineEntity3.copy(universalLocalId = "skip_id")
+        val userError = userOnlineEntity3.copy(
+            universalLocalId = "error_id",
+            updatedAt = 1700000008000
+        )
+        val userDelete = userOnlineEntity3.copy(
+            universalLocalId = "delete_id",
+            isDeleted = true
         )
 
+        val outdatedLocalUser = userEntity2.copy(updatedAt = 1700000001000)
+        val upToDateLocalUser = userEntity3.copy(
+            id = "skip_id",
+            isDeleted = false
+        )
+        val localUserToDelete = userEntity3.copy(
+            id = "delete_id",
+            isDeleted = false
+        )
+
+        val firestoreDocs = listOf(
+            firestoreUserDocument1.copy(user = userInsert),
+            firestoreUserDocument2.copy(user = userUpdate),
+            firestoreUserDocument3.copy(user = userSkip),
+            firestoreUserDocument3.copy(user = userError),
+            firestoreUserDocument3.copy(user = userDelete)
+        )
 
         coEvery { userOnlineRepository.getAllUsers() } returns firestoreDocs
-
-        every { userRepository.getUserEntityById(userInsert.roomId) } returns flowOf(null)
-        every { userRepository.getUserEntityById(userUpdate.roomId) } returns flowOf(outdatedLocal)
-        every { userRepository.getUserEntityById(userSkip.roomId) } returns flowOf(upToDateLocal)
-        every { userRepository.getUserEntityById(userError.roomId) } throws RuntimeException("DB crash")
+        every {
+            userRepository.getUserByIdIncludeDeleted(userInsert.universalLocalId)
+        } returns flowOf(null)
+        every {
+            userRepository.getUserByIdIncludeDeleted(userUpdate.universalLocalId)
+        } returns flowOf(outdatedLocalUser)
+        every {
+            userRepository.getUserByIdIncludeDeleted(userSkip.universalLocalId)
+        } returns flowOf(upToDateLocalUser)
+        every {
+            userRepository.getUserByIdIncludeDeleted(userError.universalLocalId)
+        } throws RuntimeException("DB fail")
+        every {
+            userRepository.getUserByIdIncludeDeleted(userDelete.universalLocalId)
+        } returns flowOf(localUserToDelete)
 
         val result = downloadManager.downloadUnSyncedUsers()
 
-        assertThat(result).hasSize(4)
+        assertThat(result).hasSize(5)
 
-        val statusInsert = result[0] as? SyncStatus.Success
-        assertThat(statusInsert).isNotNull()
-        assertThat(statusInsert!!.userEmail).isEqualTo("User ${userInsert.roomId} downloaded")
+        val successes = result.filterIsInstance<SyncStatus.Success>()
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
 
-        val statusUpdate = result[1] as? SyncStatus.Success
-        assertThat(statusUpdate).isNotNull()
-        assertThat(statusUpdate!!.userEmail).isEqualTo("User ${userUpdate.roomId} downloaded")
+        val successMessages = successes.map { it.message }
 
-        val statusSkip = result[2] as? SyncStatus.Success
-        assertThat(statusSkip).isNotNull()
-        assertThat(statusSkip!!.userEmail).isEqualTo("User ${userSkip.roomId} already up-to-date")
+        assertThat(successMessages).containsExactly(
+            "User ${userInsert.universalLocalId} inserted",
+            "User ${userUpdate.universalLocalId} updated",
+            "User ${userSkip.universalLocalId} already up-to-date",
+            "User ${userDelete.universalLocalId} deleted locally (remote deleted)"
+        )
 
-        val statusError = result[3] as? SyncStatus.Failure
-        assertThat(statusError).isNotNull()
-        assertThat(statusError!!.label).isEqualTo("User ${userError.roomId} failed to sync")
-        assertThat(statusError.error).hasMessageThat().isEqualTo("DB crash")
+        assertThat(failures).hasSize(1)
 
-        coVerify(exactly = 1) { userRepository.downloadUserFromFirebase(userInsert, "firebase_uid_1") }
-        coVerify(exactly = 1) { userRepository.downloadUserFromFirebase(userUpdate, "firebase_uid_2") }
-        coVerify(exactly = 0) { userRepository.downloadUserFromFirebase(userSkip, any()) }
-        coVerify(exactly = 0) { userRepository.downloadUserFromFirebase(userError, any()) }
+        val failure = failures.first()
+        assertThat(failure.label).isEqualTo("User ${userError.universalLocalId}")
+        assertThat(failure.error).hasMessageThat().isEqualTo("DB fail")
+
+        val insertedUsers = mutableListOf<UserOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            userRepository.insertUserInsertFromFirebase(
+                capture(insertedUsers),
+                any()
+            )
+        }
+
+        assertThat(insertedUsers.first().universalLocalId)
+            .isEqualTo(userInsert.universalLocalId)
+
+        val updatedUsers = mutableListOf<UserOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            userRepository.updateUserFromFirebase(
+                capture(updatedUsers),
+                any()
+            )
+        }
+
+        assertThat(updatedUsers.first().universalLocalId)
+            .isEqualTo(userUpdate.universalLocalId)
+
+        coVerify(exactly = 0) {
+            userRepository.updateUserFromFirebase(userSkip, any())
+        }
+        coVerify(exactly = 1) {
+            userRepository.deleteUser(localUserToDelete)
+        }
     }
 
     @Test
     fun downloadUnSyncedUsers_individualFailure_returnsPartialSuccessWithFailure() = runTest {
+        val userId = userOnlineEntity1.universalLocalId
+        val firestoreDoc = firestoreUserDocument1
 
-        coEvery { userOnlineRepository.getAllUsers() } returns listOf(firebaseUserDocument1)
-        every { userRepository.getUserEntityById(userOnlineEntity1.roomId) } throws RuntimeException("DB crash")
+        coEvery { userOnlineRepository.getAllUsers() } returns listOf(firestoreDoc)
+        every {
+            userRepository.getUserByIdIncludeDeleted(userId)
+            } throws RuntimeException("DB crash")
 
         val result = downloadManager.downloadUnSyncedUsers()
 
         assertThat(result).hasSize(1)
 
-        val failure = result[0] as SyncStatus.Failure
-        assertThat(failure.label).isEqualTo("User ${userOnlineEntity1.roomId} failed to sync")
-        assertThat(failure.error.message).isEqualTo("DB crash")
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
+
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
+        assertThat(failure.label).isEqualTo("User $userId")
+        assertThat(failure.error).hasMessageThat().isEqualTo("DB crash")
+
+        coVerify(exactly = 0) {
+            userRepository.insertUserInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            userRepository.updateUserFromFirebase(any(), any())
+            }
+        coVerify(exactly = 1) {
+            userRepository.getUserByIdIncludeDeleted(userId)
+        }
+
     }
 
     @Test
     fun downloadUnSyncedUsers_globalFailure_returnsFailureStatus() = runTest {
-
-        coEvery { userOnlineRepository.getAllUsers() } throws RuntimeException("Firestore down")
+        coEvery { userOnlineRepository.getAllUsers() } throws RuntimeException("Firebase is down")
 
         val result = downloadManager.downloadUnSyncedUsers()
 
         assertThat(result).hasSize(1)
 
-        val failure = result[0] as SyncStatus.Failure
-        assertThat(failure).isNotNull()
-        assertThat(failure.label).isEqualTo("Global user download failed")
-        assertThat(failure.error.message).isEqualTo("Firestore down")
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
 
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
+        assertThat(failure.label).isEqualTo("Global user download failed")
+        assertThat(failure.error).hasMessageThat().isEqualTo("Firebase is down")
+
+        coVerify(exactly = 1) {
+            userOnlineRepository.getAllUsers()
+        }
+        coVerify(exactly = 0) {
+            userRepository.getUserByIdIncludeDeleted(any())
+            }
+        coVerify(exactly = 0) {
+            userRepository.insertUserInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            userRepository.updateUserFromFirebase(any(), any())
+        }
     }
 
     @Test
     fun downloadUnSyncedUsers_noUsersOnline_returnsEmptyList() = runTest {
-
         coEvery { userOnlineRepository.getAllUsers() } returns emptyList()
 
         val result = downloadManager.downloadUnSyncedUsers()
 
         assertThat(result).isEmpty()
 
-        coVerify(exactly = 0) {
-            userRepository.downloadUserFromFirebase(any(), any())
+        coVerify(exactly = 1) {
+            userOnlineRepository.getAllUsers()
         }
-
+        coVerify(exactly = 0) {
+            userRepository.getUserByIdIncludeDeleted(any())
+            }
+        coVerify(exactly = 0) {
+            userRepository.insertUserInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            userRepository.updateUserFromFirebase(any(), any())
+        }
     }
 
-}*/
+}

@@ -1,4 +1,3 @@
-/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import android.util.Log
@@ -8,6 +7,7 @@ import com.dcac.realestatemanager.data.sync.photo.PhotoDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.poi.PoiDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.property.PropertyDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossDownloadInterfaceManager
+import com.dcac.realestatemanager.data.sync.staticMap.StaticMapDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.user.UserDownloadInterfaceManager
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -29,6 +29,7 @@ class GlobalDownloadManagerTest {
     private val poiManager = mockk<PoiDownloadInterfaceManager>()
     private val crossManager = mockk<PropertyPoiCrossDownloadInterfaceManager>()
     private val propertyManager = mockk<PropertyDownloadInterfaceManager>()
+    private val staticMapManager = mockk<StaticMapDownloadInterfaceManager>()
 
     @Before
     fun setUp() {
@@ -42,7 +43,8 @@ class GlobalDownloadManagerTest {
             photoDownloadManager = photoManager,
             poiDownloadManager = poiManager,
             propertyPoiCrossDownloadManager = crossManager,
-            propertyDownloadManager = propertyManager
+            propertyDownloadManager = propertyManager,
+            staticMapDownloadManager = staticMapManager
         )
     }
 
@@ -58,7 +60,8 @@ class GlobalDownloadManagerTest {
             SyncStatus.Success("Photo 1 downloaded"),
             SyncStatus.Success("Poi 1 downloaded"),
             SyncStatus.Success("CrossRef (1,1) downloaded"),
-            SyncStatus.Success("Property 1 downloaded")
+            SyncStatus.Success("Property 1 downloaded"),
+            SyncStatus.Success("StaticMap 1 downloaded")
         )
 
         coEvery { userManager.downloadUnSyncedUsers() } returns listOf(expectedStatuses[0])
@@ -66,6 +69,7 @@ class GlobalDownloadManagerTest {
         coEvery { poiManager.downloadUnSyncedPoiS() } returns listOf(expectedStatuses[2])
         coEvery { crossManager.downloadUnSyncedPropertyPoiCross() } returns listOf(expectedStatuses[3])
         coEvery { propertyManager.downloadUnSyncedProperties() } returns listOf(expectedStatuses[4])
+        coEvery { staticMapManager.downloadUnSyncedStaticMaps() } returns listOf(expectedStatuses[5])
 
         val result = downloadManager.downloadAll()
 
@@ -82,6 +86,7 @@ class GlobalDownloadManagerTest {
         coEvery { poiManager.downloadUnSyncedPoiS() } returns emptyList()
         coEvery { crossManager.downloadUnSyncedPropertyPoiCross() } returns emptyList()
         coEvery { propertyManager.downloadUnSyncedProperties() } returns emptyList()
+        coEvery { staticMapManager.downloadUnSyncedStaticMaps() } returns emptyList()
 
         val result = downloadManager.downloadAll()
 
@@ -95,16 +100,18 @@ class GlobalDownloadManagerTest {
         val failure3 = SyncStatus.Failure("POI download failed", Exception("err3"))
         val failure4 = SyncStatus.Failure("CrossRef download failed", Exception("err4"))
         val failure5 = SyncStatus.Failure("Property download failed", Exception("err5"))
+        val failure6 = SyncStatus.Failure("StaticMap download failed", Exception("err6"))
 
         coEvery { userManager.downloadUnSyncedUsers() } returns listOf(failure1)
         coEvery { photoManager.downloadUnSyncedPhotos() } returns listOf(failure2)
         coEvery { poiManager.downloadUnSyncedPoiS() } returns listOf(failure3)
         coEvery { crossManager.downloadUnSyncedPropertyPoiCross() } returns listOf(failure4)
         coEvery { propertyManager.downloadUnSyncedProperties() } returns listOf(failure5)
+        coEvery { staticMapManager.downloadUnSyncedStaticMaps() } returns listOf(failure6)
 
         val result = downloadManager.downloadAll()
 
-        assertThat(result).containsExactly(failure1, failure2, failure3, failure4, failure5)
+        assertThat(result).containsExactly(failure1, failure2, failure3, failure4, failure5, failure6)
     }
 
     @Test
@@ -116,9 +123,10 @@ class GlobalDownloadManagerTest {
         coEvery { poiManager.downloadUnSyncedPoiS() } returns listOf(success)
         coEvery { crossManager.downloadUnSyncedPropertyPoiCross() } returns emptyList()
         coEvery { propertyManager.downloadUnSyncedProperties() } returns emptyList()
+        coEvery { staticMapManager.downloadUnSyncedStaticMaps() } returns emptyList()
 
         val result = downloadManager.downloadAll()
 
         assertThat(result).containsExactly(success)
     }
-}*/
+}

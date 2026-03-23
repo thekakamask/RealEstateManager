@@ -1,6 +1,6 @@
-/*
 package com.dcac.realestatemanager.syncManagerTest.uploadManagerTest
 
+import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross.PropertyPoiCrossOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.propertyPoiCross.PropertyPoiCrossRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
@@ -9,10 +9,13 @@ import com.dcac.realestatemanager.data.sync.propertyPoiCross.PropertyPoiCrossUpl
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePropertyPoiCrossEntity
 import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakePropertyPoiCrossOnlineEntity
 import com.google.common.truth.Truth.assertThat
+import com.google.firebase.auth.FirebaseAuth
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -28,16 +31,23 @@ class CrossRefUploadManagerTest {
     private lateinit var uploadManager: PropertyPoiCrossUploadInterfaceManager
 
     private val crossRefEntity1 = FakePropertyPoiCrossEntity.propertyPoiCross1
-    private val crossRefEntity2 = FakePropertyPoiCrossEntity.propertyPoiCross3
+    private val crossRefEntity2 = FakePropertyPoiCrossEntity.propertyPoiCross2
     private val crossRefEntity3 = FakePropertyPoiCrossEntity.propertyPoiCross5
-
-    private val crossRefOnlineEntity1 = FakePropertyPoiCrossOnlineEntity.cross1
-    private val crossRefOnlineEntity2 = FakePropertyPoiCrossOnlineEntity.cross2
-
+    private val crossRefOnlineEntity1 = FakePropertyPoiCrossOnlineEntity.crossOnline1
 
     @Before
     fun setup(){
         MockKAnnotations.init(this, relaxUnitFun = true)
+
+        mockkStatic(FirebaseAuth::class)
+
+        val mockAuth = mockk<FirebaseAuth>()
+        val mockUser = mockk<com.google.firebase.auth.FirebaseUser>()
+
+        every { FirebaseAuth.getInstance() } returns mockAuth
+        every { mockAuth.currentUser } returns mockUser
+        every { mockUser.uid } returns "user-123"
+
         uploadManager = PropertyPoiCrossUploadManager(crossRefRepository, crossRefOnlineRepository)
     }
 
@@ -48,8 +58,8 @@ class CrossRefUploadManagerTest {
 
     @Test
     fun uploadUnSyncedPoiS_poiNotDeleted_uploadsAndUpdatesRoom() = runTest {
-        coEvery {
-            crossRefRepository.uploadUnSyncedPropertiesPoiSCross()
+        every {
+            crossRefRepository.uploadUnSyncedCrossRefsToFirebase()
         } returns flowOf(listOf(crossRefEntity1))
 
         coEvery {
@@ -60,131 +70,218 @@ class CrossRefUploadManagerTest {
 
         assertThat(result).hasSize(1)
 
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success!!.userEmail).isEqualTo("CrossRef (${crossRefEntity1.propertyId}, ${crossRefEntity1.poiId}) uploaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
 
-        coVerify {
-            crossRefOnlineRepository.uploadCrossRef(match {
-                it.propertyId == crossRefEntity1.propertyId &&
-                        it.poiId == crossRefEntity1.poiId
-            })
+        assertThat(messages)
+            .containsExactly("CrossRef ${crossRefEntity1.universalLocalPropertyId}-${crossRefEntity1.universalLocalPoiId} uploaded to Firebase")
+
+        coVerify(exactly = 1) {
+            crossRefOnlineRepository.uploadCrossRef(
+                any()
+            )
         }
 
-        coVerify {
-            crossRefRepository.downloadCrossRefFromFirebase(match {
-                it.propertyId == crossRefEntity1.propertyId &&
-                        it.poiId == crossRefEntity1.poiId
-            })
+        val updatedCrossRef = mutableListOf<PropertyPoiCrossOnlineEntity>()
+
+        val expectedId = "${crossRefEntity1.universalLocalPropertyId}-${crossRefEntity1.universalLocalPoiId}"
+
+        coVerify(exactly = 1) {
+            crossRefRepository.updateCrossRefFromFirebase(
+                capture(updatedCrossRef),
+                expectedId
+            )
         }
+
+        assertThat(updatedCrossRef.first().universalLocalPropertyId)
+            .isEqualTo(crossRefEntity1.universalLocalPropertyId)
+        assertThat(updatedCrossRef.first().universalLocalPoiId)
+            .isEqualTo(crossRefEntity1.universalLocalPoiId)
+
+        coVerify(exactly = 0) {
+            crossRefRepository.deleteCrossRef(any())
+        }
+
     }
 
     @Test
     fun uploadUnSyncedPoiS_poiMarkedDeleted_deletesFromFirebaseAndRoom() = runTest {
-        val deletedCrossRef = crossRefEntity3
-        coEvery { crossRefRepository.uploadUnSyncedPropertiesPoiSCross() } returns flowOf(listOf(deletedCrossRef))
+        every {
+            crossRefRepository.uploadUnSyncedCrossRefsToFirebase()
+        } returns flowOf(listOf(crossRefEntity3))
+        coEvery {
+            crossRefOnlineRepository.markCrossRefAsDeleted(any(), any(), any())
+        } returns Unit
 
         val result = uploadManager.syncUnSyncedPropertyPoiCross()
 
         assertThat(result).hasSize(1)
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success!!.userEmail).isEqualTo("CrossRef (${deletedCrossRef.propertyId}, ${deletedCrossRef.poiId}) deleted")
 
-        coVerify {
-            crossRefOnlineRepository.deleteCrossRef(deletedCrossRef.propertyId, deletedCrossRef.poiId)
-            crossRefRepository.deleteCrossRef(deletedCrossRef)
+        val expectedId =
+            "${crossRefEntity3.universalLocalPropertyId}-${crossRefEntity3.universalLocalPoiId}"
+
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages)
+            .containsExactly(
+                "CrossRef $expectedId marked deleted online & removed locally"
+            )
+
+        coVerify(exactly = 1) {
+            crossRefOnlineRepository.markCrossRefAsDeleted(
+                crossRefEntity3.universalLocalPoiId,
+                crossRefEntity3.universalLocalPropertyId,
+                crossRefEntity3.updatedAt
+            )
+        }
+        coVerify(exactly = 1) {
+            crossRefRepository.deleteCrossRef(crossRefEntity3)
+        }
+        coVerify(exactly = 0) {
+            crossRefOnlineRepository.uploadCrossRef(any())
+        }
+        coVerify(exactly = 0) {
+            crossRefRepository.updateCrossRefFromFirebase(any(), any())
         }
     }
 
     @Test
     fun uploadUnSyncedPoiS_globalFailure_returnsFailureStatus() = runTest {
-        coEvery { crossRefRepository.uploadUnSyncedPropertiesPoiSCross() } throws RuntimeException("Room is down")
+        every {
+            crossRefRepository.uploadUnSyncedCrossRefsToFirebase()
+        } throws RuntimeException("DB crash")
 
-        val result = uploadManager.syncUnSyncedPropertyPoiCross()
+        try {
+            uploadManager.syncUnSyncedPropertyPoiCross()
+            throw AssertionError("Exception expected but not thrown")
+        } catch (e: RuntimeException) {
+            assertThat(e.message).isEqualTo("DB crash")
+        }
 
-        assertThat(result).hasSize(1)
-        val failure = result[0] as? SyncStatus.Failure
-        assertThat(failure!!.label).isEqualTo("Global CrossRef upload failed")
-        assertThat(failure.error.message).isEqualTo("Room is down")
+        coVerify(exactly = 1) {
+            crossRefRepository.uploadUnSyncedCrossRefsToFirebase()
+        }
+        coVerify(exactly = 0) {
+            crossRefOnlineRepository.uploadCrossRef(any())
+        }
+        coVerify(exactly = 0) {
+            crossRefOnlineRepository.markCrossRefAsDeleted(any(), any(), any())
+        }
+        coVerify(exactly = 0) {
+            crossRefRepository.updateCrossRefFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            crossRefRepository.deleteCrossRef(any())
+        }
     }
 
     @Test
     fun uploadUnSyncedPoiS_noPoiSToUpload_returnsEmptyList() = runTest {
-        coEvery { crossRefRepository.uploadUnSyncedPropertiesPoiSCross() } returns flowOf(emptyList())
+        every {
+            crossRefRepository.uploadUnSyncedCrossRefsToFirebase()
+        } returns flowOf(emptyList())
 
-        // Act
         val result = uploadManager.syncUnSyncedPropertyPoiCross()
 
-        // Assert
         assertThat(result).isEmpty()
 
+        coVerify(exactly = 1) {
+            crossRefRepository.uploadUnSyncedCrossRefsToFirebase()
+        }
         coVerify(exactly = 0) {
             crossRefOnlineRepository.uploadCrossRef(any())
-            crossRefRepository.downloadCrossRefFromFirebase(any())
-            crossRefOnlineRepository.deleteCrossRef(crossRefOnlineEntity2.propertyId, crossRefOnlineEntity2.poiId)
+        }
+        coVerify(exactly = 0) {
+            crossRefOnlineRepository.markCrossRefAsDeleted(any(), any(), any())
+        }
+        coVerify(exactly = 0) {
+            crossRefRepository.updateCrossRefFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
             crossRefRepository.deleteCrossRef(any())
         }
     }
 
     @Test
     fun uploadUnSyncedPoiS_mixedCases_returnsCorrectStatuses() = runTest {
-        val notSyncedNotDeleted = crossRefEntity1
-        val alreadySyncedNotDeleted = crossRefEntity2
-        val notSyncedDeleted = crossRefEntity3
+        val crossInsert = crossRefEntity1
+        val crossDelete = crossRefEntity3
+        val crossError = crossRefEntity2
+
+        every {
+            crossRefRepository.uploadUnSyncedCrossRefsToFirebase()
+        } returns flowOf(listOf(crossInsert, crossDelete, crossError))
 
         coEvery {
-            crossRefRepository.uploadUnSyncedPropertiesPoiSCross()
-        } returns flowOf(listOf(notSyncedNotDeleted, notSyncedDeleted))
-
-        coEvery {
-            crossRefOnlineRepository.uploadCrossRef(match {
-                it.propertyId == notSyncedNotDeleted.propertyId &&
-                        it.poiId == notSyncedNotDeleted.poiId
-            })
+            crossRefOnlineRepository.uploadCrossRef(any())
         } returns crossRefOnlineEntity1
 
+        coEvery {
+            crossRefOnlineRepository.markCrossRefAsDeleted(any(), any(), any())
+        } returns Unit
+        coEvery {
+            crossRefOnlineRepository.uploadCrossRef(
+                match {
+                    it.universalLocalPropertyId == crossError.universalLocalPropertyId &&
+                            it.universalLocalPoiId == crossError.universalLocalPoiId
+                }
+            )
+        } throws RuntimeException("upload failed")
+
         val result = uploadManager.syncUnSyncedPropertyPoiCross()
+        println("RESULT = $result")
 
-        assertThat(result).hasSize(2)
+        assertThat(result).hasSize(3)
 
-        val uploaded = result.find {
-            it is SyncStatus.Success &&
-                    it.userEmail == "CrossRef (${notSyncedNotDeleted.propertyId}, ${notSyncedNotDeleted.poiId}) uploaded"
+        val successes = result.filterIsInstance<SyncStatus.Success>()
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
+
+        val insertId =
+            "${crossInsert.universalLocalPropertyId}-${crossInsert.universalLocalPoiId}"
+        val deleteId =
+            "${crossDelete.universalLocalPropertyId}-${crossDelete.universalLocalPoiId}"
+
+        val successMessages = successes.map { it.message }
+
+        assertThat(successMessages).containsExactly(
+            "CrossRef $insertId uploaded to Firebase",
+            "CrossRef $deleteId marked deleted online & removed locally"
+        )
+
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+        val errorId =
+            "${crossError.universalLocalPropertyId}-${crossError.universalLocalPoiId}"
+
+        assertThat(failure.label).isEqualTo("CrossRef $errorId failed to sync")
+        assertThat(failure.error).hasMessageThat().isEqualTo("upload failed")
+
+        coVerify(exactly = 2) {
+            crossRefOnlineRepository.uploadCrossRef(any())
         }
 
-        val deleted = result.find {
-            it is SyncStatus.Success &&
-                    it.userEmail == "CrossRef (${notSyncedDeleted.propertyId}, ${notSyncedDeleted.poiId}) deleted"
-        }
-
-        assertThat(uploaded).isNotNull()
-        assertThat(deleted).isNotNull()
-
-        coVerify { crossRefOnlineRepository.deleteCrossRef(notSyncedDeleted.propertyId, notSyncedDeleted.poiId) }
-        coVerify { crossRefRepository.deleteCrossRef(notSyncedDeleted) }
+        val updatedCrossRefs = mutableListOf<PropertyPoiCrossOnlineEntity>()
 
         coVerify(exactly = 1) {
-            crossRefOnlineRepository.uploadCrossRef(match {
-                it.propertyId == notSyncedNotDeleted.propertyId &&
-                        it.poiId == notSyncedNotDeleted.poiId
-            })
+            crossRefRepository.updateCrossRefFromFirebase(
+                capture(updatedCrossRefs),
+                any()
+            )
         }
 
-        coVerify {
-            crossRefRepository.downloadCrossRefFromFirebase(match {
-                it.propertyId == crossRefEntity1.propertyId &&
-                        it.poiId == crossRefEntity1.poiId
-            })
-        }
+        assertThat(updatedCrossRefs.first().universalLocalPropertyId)
+            .isEqualTo(crossInsert.universalLocalPropertyId)
 
-        coVerify(exactly = 0) {
-            crossRefOnlineRepository.uploadCrossRef(match {
-                it.propertyId == alreadySyncedNotDeleted.propertyId &&
-                        it.poiId == alreadySyncedNotDeleted.poiId
-            })
+        coVerify(exactly = 1) {
+            crossRefOnlineRepository.markCrossRefAsDeleted(
+                crossDelete.universalLocalPoiId,
+                crossDelete.universalLocalPropertyId,
+                crossDelete.updatedAt
+            )
         }
-
-        coVerify(exactly = 0) {
-            crossRefRepository.downloadCrossRefFromFirebase(crossRefOnlineEntity2)
+        coVerify(exactly = 1) {
+            crossRefRepository.deleteCrossRef(crossDelete)
         }
     }
-}*/
+
+}

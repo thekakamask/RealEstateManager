@@ -18,73 +18,82 @@ class PhotoDownloadManager(
             val onlinePhotos = photoOnlineRepository.getAllPhotos()
 
             for (doc in onlinePhotos) {
-                val photoOnline = doc.photo
-                val localId = photoOnline.universalLocalId
-                val localPhotoEntity =
-                    photoRepository.getPhotoByIdIncludeDeleted(localId).first()
 
-                if (photoOnline.isDeleted) {
-                    if (localPhotoEntity != null) {
-                        photoRepository.deletePhoto(localPhotoEntity)
-                        results.add(
-                            SyncStatus.Success("Photo $localId deleted locally (remote deleted)")
-                        )
-                    }
-                    continue
-                }
+                try {
+                    val photoOnline = doc.photo
+                    val localId = photoOnline.universalLocalId
 
-                if (localPhotoEntity?.isDeleted == true) {
-                    results.add(
-                        SyncStatus.Success("Photo $localId locally deleted → skip download")
-                    )
-                    continue
-                }
+                    val localPhotoEntity =
+                        photoRepository.getPhotoByIdIncludeDeleted(localId).first()
 
-                val shouldDownload =
-                    localPhotoEntity == null ||
-                            photoOnline.updatedAt > localPhotoEntity.updatedAt
-
-                if (!shouldDownload) {
-                    results.add(SyncStatus.Success("Photo $localId already up-to-date"))
-                    continue
-                }
-
-                val localUri = when {
-                    localPhotoEntity?.uri?.isNotBlank() == true &&
-                            File(localPhotoEntity.uri).exists() -> {
-                        localPhotoEntity.uri
-                    }
-
-                    photoOnline.storageUrl.isNotEmpty() -> {
-                        photoOnlineRepository.downloadImageLocally(photoOnline.storageUrl)
-                    }
-
-                    else -> {
-                        results.add(
-                            SyncStatus.Failure(
-                                "Missing URI for photo $localId",
-                                Exception("No local file and no storageUrl")
+                    if (photoOnline.isDeleted) {
+                        if (localPhotoEntity != null) {
+                            photoRepository.deletePhoto(localPhotoEntity)
+                            results.add(
+                                SyncStatus.Success("Photo $localId deleted locally (remote deleted)")
                             )
+                        }
+                        continue
+                    }
+
+                    if (localPhotoEntity?.isDeleted == true) {
+                        results.add(
+                            SyncStatus.Success("Photo $localId locally deleted → skip download")
                         )
                         continue
                     }
-                }
 
-                if (localPhotoEntity == null) {
-                    photoRepository.insertPhotoInsertFromFirebase(
-                        photo = photoOnline,
-                        firestoreId = doc.firebaseId,
-                        localUri = localUri
+                    val shouldDownload =
+                        localPhotoEntity == null ||
+                                photoOnline.updatedAt > localPhotoEntity.updatedAt
+
+                    if (!shouldDownload) {
+                        results.add(SyncStatus.Success("Photo $localId already up-to-date"))
+                        continue
+                    }
+
+                    val localUri = when {
+                        localPhotoEntity?.uri?.isNotBlank() == true &&
+                                File(localPhotoEntity.uri).exists() -> {
+                            localPhotoEntity.uri
+                        }
+
+                        photoOnline.storageUrl.isNotEmpty() -> {
+                            photoOnlineRepository.downloadImageLocally(photoOnline.storageUrl)
+                        }
+
+                        else -> {
+                            throw Exception("No local file and no storageUrl")
+                        }
+                    }
+
+                    if (localPhotoEntity == null) {
+                        photoRepository.insertPhotoInsertFromFirebase(
+                            photo = photoOnline,
+                            firestoreId = doc.firebaseId,
+                            localUri = localUri
+                        )
+                        results.add(SyncStatus.Success("Photo $localId inserted"))
+                    } else {
+                        photoRepository.updatePhotoFromFirebase(
+                            photo = photoOnline,
+                            firestoreId = doc.firebaseId
+                        )
+                        results.add(SyncStatus.Success("Photo $localId updated"))
+                    }
+
+                } catch (e: Exception) {
+                    val localId = doc.photo.universalLocalId
+
+                    results.add(
+                        SyncStatus.Failure(
+                            label = "Photo $localId",
+                            error = e
+                        )
                     )
-                    results.add(SyncStatus.Success("Photo $localId inserted"))
-                } else {
-                    photoRepository.updatePhotoFromFirebase(
-                        photo = photoOnline,
-                        firestoreId = doc.firebaseId
-                    )
-                    results.add(SyncStatus.Success("Photo $localId updated"))
                 }
             }
+
         } catch (e: Exception) {
             results.add(SyncStatus.Failure("Photo download (global failure)", e))
         }

@@ -1675,5 +1675,28 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Improved test reliability by isolating Firestore interactions and avoiding external dependencies.
 
 
+### 🔹 **Update #52**
+
+  - 🔄 **Download managers synchronization logic improved**
+    - Refactored all download managers (User, Property, Photo, POI, PropertyPoiCrossRef, StaticMap) to ensure resilient synchronization.
+    - Introduced per-item error handling using try/catch inside iteration loops to prevent a single failure from stopping the entire sync process.
+    - Preserved global error handling for critical failures (e.g., remote data fetch issues).
+
+  - 🔄 **Entity synchronization managers fully tested**
+    - Added comprehensive unit tests for all entity-specific upload and download managers: User, Property, Photo, POI, PropertyPoiCrossRef, and StaticMap.
+    - Covered success cases, edge scenarios (insert, update, skip, delete), and failure handling.
+    - Ensured consistent SyncStatus reporting and correct repository interactions.
+
+  - 🔄 **Global synchronization managers tested**
+    - Added unit tests for UploadManager and DownloadManager.
+    - Verified correct orchestration of all entity managers during synchronization.
+    - Ensured proper aggregation and propagation of SyncStatus results across all layers.
+
+  - 🔄 **SyncWorker behavior tested**
+    - Added unit tests for SyncWorker covering full synchronization execution.
+    - Validated retry behavior when no network is available.
+    - Ensured proper failure handling and retry strategy when exceptions occur during sync.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

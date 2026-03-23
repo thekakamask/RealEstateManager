@@ -56,6 +56,9 @@ object FakePropertyPoiCrossOnlineEntity {
         crossOnline1, crossOnline2, crossOnline3, crossOnline4, crossOnline5, crossOnline6
     )
 
+    val propertyPoiCrossOnlineEntityListNotDeleted =
+        propertyPoiCrossOnlineEntityList.filter { !it.isDeleted }
+
     val firestoreCrossDocument1 = FirestoreCrossDocument(
         firebaseId = "firestore-cross-1",
         cross = crossOnline1

@@ -44,7 +44,7 @@ class SyncWorkerTest {
         context = mockk(relaxed = true)
         workerParams = mockk(relaxed = true)
 
-        // 👇 mock creation who combine Context + AppContainerProvider
+        //mock creation who combine Context + AppContainerProvider
         val appContainerProvider = mockk<Context>(
             relaxed = true,
             moreInterfaces = arrayOf(AppContainerProvider::class)

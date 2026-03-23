@@ -1,4 +1,3 @@
-/*
 package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
@@ -33,16 +32,18 @@ class PoiDownloadManagerTest {
     private val poiEntity2 = FakePoiEntity.poi2
     private val poiEntity3 = FakePoiEntity.poi3
     private val poiEntityList = FakePoiEntity.poiEntityList
-
-    private val poiOnlineEntity1 = FakePoiOnlineEntity.poiEntity1
-    private val poiOnlineEntity2 = FakePoiOnlineEntity.poiEntity2
-    private val poiOnlineEntity3 = FakePoiOnlineEntity.poiEntity3
-    private val poiOnlineEntityList = FakePoiOnlineEntity.poiOnlineEntityList
+    private val poiEntityListNotDeleted = FakePoiEntity.poiEntityListNotDeleted
+    private val poiOnlineEntity1 = FakePoiOnlineEntity.poiOnline1
+    private val poiOnlineEntity2 = FakePoiOnlineEntity.poiOnline2
+    private val poiOnlineEntity3 = FakePoiOnlineEntity.poiOnline3
+    private val poiOnlineEntityListNotDeleted = FakePoiOnlineEntity.poiOnlineEntityListNotDeleted
+    private val firestorePoiDocument1 = FakePoiOnlineEntity.firestorePoiDocument1
+    private val firestorePoiDocument2 = FakePoiOnlineEntity.firestorePoiDocument2
+    private val firestorePoiDocument3 = FakePoiOnlineEntity.firestorePoiDocument3
 
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = true)
-
         downloadManager = PoiDownloadManager(poiRepository, poiOnlineRepository)
 
     }
@@ -54,248 +55,425 @@ class PoiDownloadManagerTest {
 
     @Test
     fun downloadUnSyncedPoi_localPoiNull_downloadsAndInsertsPoi() = runTest {
+        val poiId = poiOnlineEntity1.universalLocalId
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(poiOnlineEntity1)
-
-        every { poiRepository.getPoiEntityById(poiOnlineEntity1.roomId) } returns flowOf(null)
+        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(firestorePoiDocument1)
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiId)
+        } returns flowOf(null)
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
         assertThat(result).hasSize(1)
 
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success!!.userEmail).isEqualTo("Poi ${poiOnlineEntity1.roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("Poi $poiId inserted")
+
+        val insertedPoiS = mutableListOf<PoiOnlineEntity>()
 
         coVerify(exactly = 1) {
-            poiRepository.downloadPoiFromFirebase(poiOnlineEntity1)
+            poiRepository.insertPoiInsertFromFirebase(
+                capture(insertedPoiS),
+                firestorePoiDocument1.firebaseId
+            )
+        }
+
+        assertThat(insertedPoiS.first().universalLocalId).isEqualTo(poiId)
+
+        coVerify(exactly = 0 ) {
+            poiRepository.updatePoiFromFirebase(any(), any())
         }
     }
 
     @Test
-    fun downloadUnSyncedPoiS_allPoiSMissingLocally_downloadsAndInsertsAll() = runTest {
+    fun downloadUnSyncedPoiS_allPoiSMissingLocally_downloadsAndInsertsAllExceptDeleted() = runTest {
+        val firestoreDocs = listOf(
+            firestorePoiDocument1,
+            firestorePoiDocument2,
+            firestorePoiDocument3
+        )
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns poiOnlineEntityList
+        coEvery { poiOnlineRepository.getAllPoiS() } returns firestoreDocs
 
-        poiOnlineEntityList.forEach {
-            every { poiRepository.getPoiEntityById(it.roomId) } returns flowOf(null)
+        firestoreDocs.forEach { doc ->
+            every {
+                poiRepository.getPoiByIdIncludeDeleted(doc.poi.universalLocalId)
+            } returns flowOf(null)
         }
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
-        assertThat(result).hasSize(poiOnlineEntityList.size)
+        assertThat(result).hasSize(2)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success.userEmail).isEqualTo("Poi ${poiOnlineEntityList[index].roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly(
+            "Poi ${poiEntity1.id} inserted",
+            "Poi ${poiEntity2.id} inserted"
+        )
+
+        val insertedPoiS = mutableListOf<PoiOnlineEntity>()
+
+        coVerify(exactly = 2) {
+            poiRepository.insertPoiInsertFromFirebase(
+                capture(insertedPoiS),
+                any()
+            )
         }
 
-        poiOnlineEntityList.forEach {
-            coVerify { poiRepository.downloadPoiFromFirebase(it) }
-        }
+        val insertedIds = insertedPoiS.map { it.universalLocalId }
+
+        assertThat(insertedIds)
+            .containsExactly(poiEntity1.id, poiEntity2.id)
+
     }
 
     @Test
     fun downloadUnSyncedPoiS_localPoiOutdated_downloadsAndUpdatesPoi() = runTest {
+        val outdatedLocalPoi = poiEntity1.copy(updatedAt = 1700000000000)
+        val updatedOnlinePoi = poiOnlineEntity1.copy(updatedAt = 1700000002000)
+        val poiId = updatedOnlinePoi.universalLocalId
 
-        val outdatedLocal = poiEntity1.copy(updatedAt = 1700000000000)
-        val updatedOnline = poiOnlineEntity1.copy(updatedAt = 1700000002000)
+        val firestoreDoc = firestorePoiDocument1.copy(
+            poi = updatedOnlinePoi
+        )
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(updatedOnline)
-        every { poiRepository.getPoiEntityById(updatedOnline.roomId) } returns flowOf(outdatedLocal)
+        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(firestoreDoc)
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiId)
+        } returns flowOf(outdatedLocalPoi)
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
         assertThat(result).hasSize(1)
 
-        val success = result[0] as SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success.userEmail).isEqualTo("Poi ${updatedOnline.roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("Poi $poiId updated")
+
+        val updatedPoiS = mutableListOf<PoiOnlineEntity>()
 
         coVerify(exactly = 1) {
-            poiRepository.downloadPoiFromFirebase(updatedOnline)
+            poiRepository.updatePoiFromFirebase(
+                capture(updatedPoiS),
+                firestoreDoc.firebaseId
+            )
+        }
+
+        assertThat(updatedPoiS.first().universalLocalId).isEqualTo(poiId)
+
+        coVerify(exactly = 0) {
+            poiRepository.insertPoiInsertFromFirebase(any(), any())
         }
     }
 
 
     @Test
     fun downloadUnSyncedPoiS_allPoiSOutdatedLocally_downloadsAndUpdatesAll() = runTest {
-
-        val outdatedLocalsPoiS = poiEntityList.mapIndexed { index, poi ->
+        val outdatedLocalPoiS = poiEntityListNotDeleted.mapIndexed { index, poi ->
             poi.copy(updatedAt = 1700000000000 + index)
         }
-
-        val newerOnlinePoiS = poiOnlineEntityList.mapIndexed { index, poi ->
+        val newerOnlinePoiS = poiOnlineEntityListNotDeleted.mapIndexed { index, poi ->
             poi.copy(updatedAt = 1700000000000 + index + 5)
         }
+        val baseDocs = listOf(
+            firestorePoiDocument1,
+            firestorePoiDocument2
+        )
+        val firestoreDocs = baseDocs.mapIndexed { index, doc ->
+            doc.copy(poi = newerOnlinePoiS[index])
+        }
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns newerOnlinePoiS
+        coEvery { poiOnlineRepository.getAllPoiS() } returns firestoreDocs
 
-    newerOnlinePoiS.forEachIndexed { index, poiOnline ->
-            every { poiRepository.getPoiEntityById(poiOnline.roomId) } returns flowOf(outdatedLocalsPoiS[index])
+        firestoreDocs.forEachIndexed { index, doc ->
+            every {
+                poiRepository.getPoiByIdIncludeDeleted(doc.poi.universalLocalId)
+            } returns flowOf(outdatedLocalPoiS[index])
         }
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
-        assertThat(result).hasSize(newerOnlinePoiS.size)
+        assertThat(result).hasSize(firestoreDocs.size)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success.userEmail).isEqualTo("Poi ${newerOnlinePoiS[index].roomId} downloaded")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        val expectedMessages = firestoreDocs.map {
+            "Poi ${it.poi.universalLocalId} updated"
         }
 
-    newerOnlinePoiS.forEach {
-            coVerify { poiRepository.downloadPoiFromFirebase(it) }
+        assertThat(messages).containsExactlyElementsIn(expectedMessages)
+
+        val updatedPoiS = mutableListOf<PoiOnlineEntity>()
+
+        coVerify(exactly = firestoreDocs.size) {
+            poiRepository.updatePoiFromFirebase(
+                capture(updatedPoiS),
+                any()
+            )
+        }
+
+        assertThat(updatedPoiS.map { it.universalLocalId })
+            .containsExactlyElementsIn(
+                firestoreDocs.map { it.poi.universalLocalId }
+            )
+
+        coVerify(exactly = 0) {
+            poiRepository.insertPoiInsertFromFirebase(any(), any())
         }
     }
 
 
     @Test
     fun downloadUnSyncedPoiS_poiAlreadyUpToDate_returnsSuccessWithoutSaving() = runTest {
+        val poiId = poiOnlineEntity1.universalLocalId
+        val firestoreDoc = firestorePoiDocument1
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(poiOnlineEntity1)
-
-        every { poiRepository.getPoiEntityById(poiOnlineEntity1.roomId) } returns flowOf(poiEntity1)
+        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(firestoreDoc)
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiId)
+        } returns flowOf(poiEntity1)
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
         assertThat(result).hasSize(1)
-        val success = result[0] as SyncStatus.Success
-        assertThat(success).isNotNull()
-        assertThat(success.userEmail).isEqualTo("Poi ${poiOnlineEntity1.roomId} already up-to-date")
+
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages).containsExactly("Poi $poiId already up-to-date")
 
         coVerify(exactly = 0) {
-            poiRepository.downloadPoiFromFirebase(any())
+            poiRepository.insertPoiInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
+        }
+        coVerify(exactly = 1) {
+            poiRepository.getPoiByIdIncludeDeleted(poiId)
         }
     }
 
     @Test
     fun downloadUnSyncedPoiS_allPoiSAlreadyUpToDate_returnsSuccessWithoutSaving() = runTest {
+        val firestoreDocs = listOf(
+            firestorePoiDocument1,
+            firestorePoiDocument2
+        )
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns poiOnlineEntityList
+        coEvery { poiOnlineRepository.getAllPoiS() } returns firestoreDocs
 
-        poiOnlineEntityList.forEachIndexed { index, onlinePoi ->
-            every { poiRepository.getPoiEntityById(onlinePoi.roomId) } returns flowOf(poiEntityList[index])
+        firestoreDocs.forEachIndexed { index, doc ->
+            every {
+                poiRepository.getPoiByIdIncludeDeleted(doc.poi.universalLocalId)
+            } returns flowOf(poiEntityList[index])
         }
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
-        assertThat(result).hasSize(poiOnlineEntityList.size)
+        assertThat(result).hasSize(firestoreDocs.size)
 
-        result.forEachIndexed { index, syncStatus ->
-            val success = syncStatus as SyncStatus.Success
-            assertThat(success).isNotNull()
-            assertThat(success.userEmail).isEqualTo("Poi ${poiOnlineEntityList[index].roomId} already up-to-date")
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        val expectedMessages = firestoreDocs.map {
+            "Poi ${it.poi.universalLocalId} already up-to-date"
         }
 
+        assertThat(messages).containsExactlyElementsIn(expectedMessages)
+
         coVerify(exactly = 0) {
-            poiRepository.downloadPoiFromFirebase(any())
+            poiRepository.insertPoiInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
+        }
+        firestoreDocs.forEach { doc ->
+            coVerify(exactly = 1) {
+                poiRepository.getPoiByIdIncludeDeleted(doc.poi.universalLocalId)
+            }
         }
     }
 
     @Test
     fun downloadUnSyncedPoiS_mixedCases_returnsCorrectStatuses() = runTest {
-
-        val poiOnlineEntity4 = PoiOnlineEntity(
-            name = "Monop chez Mounette",
-            type = "supermarché",
-            updatedAt = 1700000008000 ,
-            roomId = 4L
-        )
-
         val poiInsert = poiOnlineEntity1
         val poiUpdate = poiOnlineEntity2.copy(updatedAt = 1700000006000)
-        val poiSkip = poiOnlineEntity3
-        val poiError = poiOnlineEntity4.copy(updatedAt = 1700000008000)
+        val poiSkip = poiOnlineEntity3.copy(isDeleted = false)
+        val poiError = poiOnlineEntity3.copy(
+            universalLocalId = "error_id",
+            updatedAt = 1700000008000
+        )
+        val poiDelete = poiOnlineEntity3
 
-        val outdatedLocal = poiEntity2.copy(updatedAt = 1700000001000)
-        val upToDateLocal = poiEntity3
+        val outdatedLocalPoi = poiEntity2.copy(updatedAt = 1700000001000)
+        val upToDateLocalPoi = poiEntity3.copy(isDeleted = false)
+        val localPoiToDelete = poiEntity3.copy(isDeleted = false)
 
-        val onlinePoiS = listOf(poiInsert, poiUpdate, poiSkip, poiError)
+        val firestoreDocs = listOf(
+            firestorePoiDocument1.copy(poi = poiInsert),
+            firestorePoiDocument2.copy(poi = poiUpdate),
+            firestorePoiDocument3.copy(poi = poiSkip),
+            firestorePoiDocument3.copy(poi = poiError),
+            firestorePoiDocument3.copy(poi = poiDelete)
+        )
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns onlinePoiS
-
-        every { poiRepository.getPoiEntityById(poiInsert.roomId) } returns flowOf(null)
-        every { poiRepository.getPoiEntityById(poiUpdate.roomId) } returns flowOf(outdatedLocal)
-        every { poiRepository.getPoiEntityById(poiSkip.roomId) } returns flowOf(upToDateLocal)
-        every { poiRepository.getPoiEntityById(poiError.roomId) } throws RuntimeException("DB crash")
+        coEvery { poiOnlineRepository.getAllPoiS() } returns firestoreDocs
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiInsert.universalLocalId)
+        } returns flowOf(null)
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiUpdate.universalLocalId)
+        } returns flowOf(outdatedLocalPoi)
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiSkip.universalLocalId)
+        } returns flowOf(upToDateLocalPoi)
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiError.universalLocalId)
+        } throws RuntimeException("DB fail")
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiDelete.universalLocalId)
+        } returns flowOf(localPoiToDelete)
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
-        assertThat(result).hasSize(4)
+        assertThat(result).hasSize(5)
 
-        // Check insertion
-        val statusInsert = result[0] as? SyncStatus.Success
-        assertThat(statusInsert).isNotNull()
-        assertThat(statusInsert!!.userEmail).isEqualTo("Poi ${poiInsert.roomId} downloaded")
+        val successes = result.filterIsInstance<SyncStatus.Success>()
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
 
-        // Check update
-        val statusUpdate = result[1] as? SyncStatus.Success
-        assertThat(statusUpdate).isNotNull()
-        assertThat(statusUpdate!!.userEmail).isEqualTo("Poi ${poiUpdate.roomId} downloaded")
+        val successMessages = successes.map { it.message }
 
-        // Check skip
-        val statusSkip = result[2] as? SyncStatus.Success
-        assertThat(statusSkip).isNotNull()
-        assertThat(statusSkip!!.userEmail).isEqualTo("Poi ${poiSkip.roomId} already up-to-date")
+        assertThat(successMessages).containsExactly(
+            "Poi ${poiInsert.universalLocalId} inserted",
+            "Poi ${poiUpdate.universalLocalId} updated",
+            "Poi ${poiSkip.universalLocalId} already up-to-date",
+            "Poi ${poiDelete.universalLocalId} deleted locally (remote deleted)"
+        )
 
-        // Check error
-        val statusError = result[3] as? SyncStatus.Failure
-        assertThat(statusError).isNotNull()
-        assertThat(statusError!!.label).isEqualTo("Poi ${poiError.roomId} failed to sync")
-        assertThat(statusError.error).hasMessageThat().isEqualTo("DB crash")
+        assertThat(failures).hasSize(1)
 
-        coVerify(exactly = 1) { poiRepository.downloadPoiFromFirebase(poiInsert) }
-        coVerify(exactly = 1) { poiRepository.downloadPoiFromFirebase(poiUpdate) }
-        coVerify(exactly = 0) { poiRepository.downloadPoiFromFirebase(poiSkip) }
-        coVerify(exactly = 0) { poiRepository.downloadPoiFromFirebase(poiError) }
+        val failure = failures.first()
+        assertThat(failure.label).isEqualTo("Poi ${poiError.universalLocalId}")
+        assertThat(failure.error).hasMessageThat().isEqualTo("DB fail")
+
+        val insertedPoiS = mutableListOf<PoiOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            poiRepository.insertPoiInsertFromFirebase(
+                capture(insertedPoiS),
+                any()
+            )
+        }
+
+        assertThat(insertedPoiS.first().universalLocalId)
+            .isEqualTo(poiInsert.universalLocalId)
+
+        val updatedPoiS = mutableListOf<PoiOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            poiRepository.updatePoiFromFirebase(
+                capture(updatedPoiS),
+                any()
+            )
+        }
+
+        assertThat(updatedPoiS.first().universalLocalId)
+            .isEqualTo(poiUpdate.universalLocalId)
+
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(poiSkip, any())
+        }
+        coVerify(exactly = 1) {
+            poiRepository.deletePoi(localPoiToDelete)
+        }
 
     }
 
     @Test
     fun downloadUnSyncedPoiS_individualFailure_returnsPartialSuccessWithFailure() = runTest {
+        val poiId = poiOnlineEntity1.universalLocalId
+        val firestoreDoc = firestorePoiDocument1
 
-        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(poiOnlineEntity1)
-
-        every { poiRepository.getPoiEntityById(poiOnlineEntity1.roomId) } throws RuntimeException("DB crash")
+        coEvery { poiOnlineRepository.getAllPoiS() } returns listOf(firestoreDoc)
+        every {
+            poiRepository.getPoiByIdIncludeDeleted(poiId)
+        } throws RuntimeException("DB crash")
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
         assertThat(result).hasSize(1)
 
-        val failure = result[0] as SyncStatus.Failure
-        assertThat(failure.label).isEqualTo("Poi ${poiOnlineEntity1.roomId} failed to sync")
-        assertThat(failure.error.message).isEqualTo("DB crash")
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
+
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
+        assertThat(failure.label).isEqualTo("Poi $poiId")
+        assertThat(failure.error).hasMessageThat().isEqualTo("DB crash")
+
+        coVerify(exactly = 0) {
+            poiRepository.insertPoiInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
+        }
+        coVerify(exactly = 1) {
+            poiRepository.getPoiByIdIncludeDeleted(poiId)
+        }
+
     }
 
     @Test
     fun downloadUnSyncedPoiS_globalFailure_returnsFailureStatus() = runTest {
-
-        coEvery { poiOnlineRepository.getAllPoiS() } throws RuntimeException("Firestore down")
+        coEvery { poiOnlineRepository.getAllPoiS() } throws RuntimeException("Firebase is down")
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
         assertThat(result).hasSize(1)
 
-        val failure = result[0] as SyncStatus.Failure
-        assertThat(failure).isNotNull()
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
+
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
         assertThat(failure.label).isEqualTo("Global POI download failed")
-        assertThat(failure.error.message).isEqualTo("Firestore down")
+        assertThat(failure.error).hasMessageThat().isEqualTo("Firebase is down")
+
+        coVerify(exactly = 1) {
+            poiOnlineRepository.getAllPoiS()
+        }
+        coVerify(exactly = 0) {
+            poiRepository.getPoiByIdIncludeDeleted(any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.insertPoiInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
+        }
     }
 
     @Test
     fun downloadUnSyncedPoiS_noPoiSOnline_returnsEmptyList() = runTest {
-
         coEvery { poiOnlineRepository.getAllPoiS() } returns emptyList()
 
         val result = downloadManager.downloadUnSyncedPoiS()
 
         assertThat(result).isEmpty()
 
+        coVerify(exactly = 1) {
+            poiOnlineRepository.getAllPoiS()
+        }
         coVerify(exactly = 0) {
-            poiRepository.downloadPoiFromFirebase(any())
+            poiRepository.getPoiByIdIncludeDeleted(any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.insertPoiInsertFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
         }
     }
-}*/
+}

@@ -86,6 +86,9 @@ object FakePropertyOnlineEntity {
         propertyOnline1, propertyOnline2, propertyOnline3
     )
 
+    val propertyOnlineEntityListNotDeleted =
+        propertyOnlineEntityList.filter { !it.isDeleted }
+
     val firestorePropertyDocumentList = listOf(
         firestorePropertyDocument1,
         firestorePropertyDocument2,

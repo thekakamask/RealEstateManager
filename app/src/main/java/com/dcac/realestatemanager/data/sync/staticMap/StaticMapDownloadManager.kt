@@ -20,78 +20,83 @@ class StaticMapDownloadManager(
                 staticMapOnlineRepository.getAllStaticMaps()
 
             for (doc in onlineStaticMaps) {
+
                 val online = doc.staticMap
                 val localId = online.universalLocalId
 
-                val local =
-                    staticMapRepository
-                        .getStaticMapByIdIncludeDeleted(localId)
-                        .first()
+                try {
+                    val local =
+                        staticMapRepository
+                            .getStaticMapByIdIncludeDeleted(localId)
+                            .first()
 
-                if (online.isDeleted) {
-                    if (local != null) {
-                        staticMapRepository.deleteStaticMap(local)
-                        results.add(
-                            SyncStatus.Success(
-                                "StaticMap $localId deleted locally (remote deleted)"
+                    if (online.isDeleted) {
+                        if (local != null) {
+                            staticMapRepository.deleteStaticMap(local)
+                            results.add(
+                                SyncStatus.Success(
+                                    "StaticMap $localId deleted locally (remote deleted)"
+                                )
                             )
-                        )
+                        }
+                        continue
                     }
-                    continue
-                }
 
-                if (local?.isDeleted == true) {
-                    results.add(
-                        SyncStatus.Success("Static map $localId locally deleted → skip download")
-                    )
-                    continue
-                }
-
-                val shouldDownload =
-                    local == null || online.updatedAt > local.updatedAt
-
-                if (!shouldDownload) {
-                    results.add(
-                        SyncStatus.Success("StaticMap $localId already up-to-date")
-                    )
-                    continue
-                }
-
-                val localUri = when {
-                    local?.uri?.isNotBlank() == true &&
-                            File(local.uri).exists() -> local.uri
-
-                    online.storageUrl.isNotEmpty() ->
-                        staticMapOnlineRepository
-                            .downloadImageLocally(online.storageUrl)
-
-                    else -> {
+                    if (local?.isDeleted == true) {
                         results.add(
-                            SyncStatus.Failure(
-                                "Missing URI for staticMap $localId",
-                                Exception("No local file and no storageUrl")
-                            )
+                            SyncStatus.Success("Static map $localId locally deleted → skip download")
                         )
                         continue
                     }
-                }
 
-                if (local == null) {
-                    staticMapRepository.insertStaticMapInsertFromFirebase(
-                        staticMap = online,
-                        firestoreId = doc.firebaseId,
-                        localUri = localUri
-                    )
+                    val shouldDownload =
+                        local == null || online.updatedAt > local.updatedAt
+
+                    if (!shouldDownload) {
+                        results.add(
+                            SyncStatus.Success("StaticMap $localId already up-to-date")
+                        )
+                        continue
+                    }
+
+                    val localUri = when {
+                        local?.uri?.isNotBlank() == true &&
+                                File(local.uri).exists() -> local.uri
+
+                        online.storageUrl.isNotEmpty() ->
+                            staticMapOnlineRepository
+                                .downloadImageLocally(online.storageUrl)
+
+                        else -> {
+                            throw IllegalStateException("No local file and no storageUrl")
+                        }
+                    }
+
+                    if (local == null) {
+                        staticMapRepository.insertStaticMapInsertFromFirebase(
+                            staticMap = online,
+                            firestoreId = doc.firebaseId,
+                            localUri = localUri
+                        )
+                        results.add(
+                            SyncStatus.Success("StaticMap $localId inserted")
+                        )
+                    } else {
+                        staticMapRepository.updateStaticMapFromFirebase(
+                            staticMap = online,
+                            firestoreId = doc.firebaseId
+                        )
+                        results.add(
+                            SyncStatus.Success("StaticMap $localId updated")
+                        )
+                    }
+
+                } catch (e: Exception) {
                     results.add(
-                        SyncStatus.Success("StaticMap $localId inserted")
-                    )
-                } else {
-                    staticMapRepository.updateStaticMapFromFirebase(
-                        staticMap = online,
-                        firestoreId = doc.firebaseId
-                    )
-                    results.add(
-                        SyncStatus.Success("StaticMap $localId updated")
+                        SyncStatus.Failure(
+                            label = "StaticMap $localId",
+                            error = e
+                        )
                     )
                 }
             }

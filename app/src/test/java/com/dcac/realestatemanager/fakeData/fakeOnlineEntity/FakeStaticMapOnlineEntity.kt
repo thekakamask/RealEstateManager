@@ -55,6 +55,9 @@ object FakeStaticMapOnlineEntity {
         staticMapOnline3
     )
 
+    val staticMapOnlineEntityListNotDeleted =
+        staticMapOnlineEntityList.filter { !it.isDeleted }
+
     val firestoreStaticMapDocumentList = listOf(
         firestoreStaticMapDocument1,
         firestoreStaticMapDocument2,

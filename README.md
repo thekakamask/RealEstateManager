@@ -15,7 +15,10 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - ☁️ Added unit tests for Firebase repositories covering user, property, photo, POI, and related entities with full coroutine and Firestore mocking.
+   - 🔄 Improved synchronization reliability by implementing resilient download managers with per-item error handling and consistent SyncStatus reporting.
+   - 🔄 Added comprehensive unit tests for all entity-specific upload and download managers, covering success, edge cases, and failure scenarios.
+   - 🔄 Added tests for global upload and download managers ensuring correct orchestration and aggregation of sync results.
+   - 🔄 Added SyncWorker tests covering success, retry on no network, and failure handling scenarios.
 
 
 ## ❌ **NEXT UPDATES**

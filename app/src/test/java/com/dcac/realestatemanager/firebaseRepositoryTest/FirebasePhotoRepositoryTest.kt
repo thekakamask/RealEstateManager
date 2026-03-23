@@ -28,17 +28,10 @@ import org.junit.runners.JUnit4
 import java.io.File
 
 
-/**
- * Unit tests for [FirebasePhotoOnlineRepository].
- *
- * using MockK to simulate FirebaseFirestore and FirebaseStorage behavior,
- * so tests run locally without a real Firebase backend.
- */
-
 @RunWith(JUnit4::class)
 class FirebasePhotoRepositoryTest {
 
-    // --- Firebase mock objects ---
+    //Firebase mock objects
     private val firestore = mockk<FirebaseFirestore>() // Firestore root
     private val storage = mockk<FirebaseStorage>()     // Firebase Storage root
     private val collection = mockk<CollectionReference>() // A Firestore collection

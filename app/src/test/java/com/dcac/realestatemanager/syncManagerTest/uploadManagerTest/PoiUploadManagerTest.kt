@@ -1,6 +1,6 @@
-/*
 package com.dcac.realestatemanager.syncManagerTest.uploadManagerTest
 
+import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.poi.PoiOnlineRepository
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
@@ -9,10 +9,13 @@ import com.dcac.realestatemanager.data.sync.poi.PoiUploadManager
 import com.dcac.realestatemanager.fakeData.fakeEntity.FakePoiEntity
 import com.dcac.realestatemanager.fakeData.fakeOnlineEntity.FakePoiOnlineEntity
 import com.google.common.truth.Truth.assertThat
+import com.google.firebase.auth.FirebaseAuth
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -30,13 +33,21 @@ class PoiUploadManagerTest {
     private val poiEntity1 = FakePoiEntity.poi1
     private val poiEntity2 = FakePoiEntity.poi2
     private val poiEntity3 = FakePoiEntity.poi3
-
-    private val poiOnline1 = FakePoiOnlineEntity.poiEntity1
-    private val poiOnline2 = FakePoiOnlineEntity.poiEntity2
+    private val poiOnlineEntity1 = FakePoiOnlineEntity.poiOnline1
 
     @Before
     fun setup(){
         MockKAnnotations.init(this, relaxUnitFun = true)
+
+        mockkStatic(FirebaseAuth::class)
+
+        val mockAuth = mockk<FirebaseAuth>()
+        val mockUser = mockk<com.google.firebase.auth.FirebaseUser>()
+
+        every { FirebaseAuth.getInstance() } returns mockAuth
+        every { mockAuth.currentUser } returns mockUser
+        every { mockUser.uid } returns "user-123"
+
         uploadManager = PoiUploadManager(poiRepository, poiOnlineRepository)
     }
 
@@ -47,103 +58,211 @@ class PoiUploadManagerTest {
 
     @Test
     fun uploadUnSyncedPoiS_poiNotDeleted_uploadsAndUpdatesRoom() = runTest {
-        coEvery { poiRepository.uploadUnSyncedPoiSToFirebase() } returns flowOf(listOf(poiEntity1))
-        coEvery { poiOnlineRepository.uploadPoi(any(), any()) } returns poiOnline1
+        every {
+            poiRepository.uploadUnSyncedPoiSToFirebase()
+        } returns flowOf(listOf(poiEntity1))
+
+        coEvery {
+            poiOnlineRepository.uploadPoi(any(), any())
+        } returns poiOnlineEntity1
 
         val result = uploadManager.syncUnSyncedPoiS()
 
         assertThat(result).hasSize(1)
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success!!.userEmail).isEqualTo("Poi ${poiEntity1.id} uploaded")
 
-        coVerify {
-            poiOnlineRepository.uploadPoi(any(), poiEntity1.id.toString())
-            poiRepository.downloadPoiFromFirebase(poiOnline1)
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages)
+            .containsExactly("Poi ${poiEntity1.id} uploaded to Firebase")
+
+        coVerify(exactly = 1) {
+            poiOnlineRepository.uploadPoi(
+                any(),
+                poiEntity1.firestoreDocumentId!!
+            )
+        }
+
+        val updatedPoiS = mutableListOf<PoiOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            poiRepository.updatePoiFromFirebase(
+                capture(updatedPoiS),
+                poiEntity1.firestoreDocumentId!!
+            )
+        }
+
+        assertThat(updatedPoiS.first().universalLocalId)
+            .isEqualTo(poiEntity1.id)
+
+        coVerify(exactly = 0) {
+            poiRepository.deletePoi(any())
         }
     }
 
     @Test
     fun uploadUnSyncedPoiS_poiMarkedDeleted_deletesFromFirebaseAndRoom() = runTest {
-        val deletedPoi = poiEntity3
-        coEvery { poiRepository.uploadUnSyncedPoiSToFirebase() } returns flowOf(listOf(deletedPoi))
+        every {
+            poiRepository.uploadUnSyncedPoiSToFirebase()
+        } returns flowOf(listOf(poiEntity3))
+
+        coEvery {
+            poiOnlineRepository.markPoiAsDeleted(any(), any())
+        } returns Unit
 
         val result = uploadManager.syncUnSyncedPoiS()
 
         assertThat(result).hasSize(1)
-        val success = result[0] as? SyncStatus.Success
-        assertThat(success!!.userEmail).isEqualTo("Poi ${deletedPoi.id} deleted")
 
-        coVerify {
-            poiOnlineRepository.deletePoi(deletedPoi.id.toString())
-            poiRepository.deletePoi(deletedPoi)
+        val messages = result.map { (it as SyncStatus.Success).message }
+
+        assertThat(messages)
+            .containsExactly(
+                "Poi ${poiEntity3.id} marked deleted online & removed locally"
+            )
+
+        coVerify(exactly = 1) {
+            poiOnlineRepository.markPoiAsDeleted(
+                poiEntity3.firestoreDocumentId!!,
+                poiEntity3.updatedAt
+            )
+        }
+
+        coVerify(exactly = 1) {
+            poiRepository.deletePoi(poiEntity3)
+        }
+        coVerify(exactly = 0) {
+            poiOnlineRepository.uploadPoi(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
         }
     }
 
     @Test
     fun uploadUnSyncedPoiS_globalFailure_returnsFailureStatus() = runTest {
-        coEvery { poiRepository.uploadUnSyncedPoiSToFirebase() } throws RuntimeException("Room is down")
+        every {
+            poiRepository.uploadUnSyncedPoiSToFirebase()
+        } throws RuntimeException("DB crash")
 
-        val result = uploadManager.syncUnSyncedPoiS()
+        try {
+            uploadManager.syncUnSyncedPoiS()
+            throw AssertionError("Exception expected but not thrown")
+        } catch (e: RuntimeException) {
+            assertThat(e.message).isEqualTo("DB crash")
+        }
 
-        assertThat(result).hasSize(1)
-        val failure = result[0] as? SyncStatus.Failure
-        assertThat(failure!!.label).isEqualTo("Global upload sync failed")
-        assertThat(failure.error.message).isEqualTo("Room is down")
+        coVerify(exactly = 1) {
+            poiRepository.uploadUnSyncedPoiSToFirebase()
+        }
+        coVerify(exactly = 0) {
+            poiOnlineRepository.uploadPoi(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiOnlineRepository.markPoiAsDeleted(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.deletePoi(any())
+        }
     }
 
     @Test
     fun uploadUnSyncedPoiS_noPoiSToUpload_returnsEmptyList() = runTest {
-        coEvery { poiRepository.uploadUnSyncedPoiSToFirebase() } returns flowOf(emptyList())
+        every {
+            poiRepository.uploadUnSyncedPoiSToFirebase()
+        } returns flowOf(emptyList())
 
-        // Act
         val result = uploadManager.syncUnSyncedPoiS()
 
-        // Assert
         assertThat(result).isEmpty()
 
+        coVerify(exactly = 1) {
+            poiRepository.uploadUnSyncedPoiSToFirebase()
+        }
         coVerify(exactly = 0) {
             poiOnlineRepository.uploadPoi(any(), any())
-            poiRepository.downloadPoiFromFirebase(any())
-            poiOnlineRepository.deletePoi(any())
+        }
+        coVerify(exactly = 0) {
+            poiOnlineRepository.markPoiAsDeleted(any(), any())
+        }
+        coVerify(exactly = 0) {
+            poiRepository.updatePoiFromFirebase(any(), any())
+        }
+        coVerify(exactly = 0) {
             poiRepository.deletePoi(any())
         }
     }
 
     @Test
     fun uploadUnSyncedPoiS_mixedCases_returnsCorrectStatuses() = runTest {
-        val notSyncedNotDeleted = poiEntity1
-        val alreadySyncedNotDeleted = poiEntity2
-        val notSyncedDeleted = poiEntity3
+        val poiInsert = poiEntity1
+        val poiDelete = poiEntity3
+        val poiError = poiEntity2
 
-        coEvery {
+        every {
             poiRepository.uploadUnSyncedPoiSToFirebase()
-        } returns flowOf(listOf(notSyncedNotDeleted, notSyncedDeleted))
-
+        } returns flowOf(listOf(poiInsert, poiDelete, poiError))
         coEvery {
-            poiOnlineRepository.uploadPoi(any(), notSyncedNotDeleted.id.toString())
-        } returns poiOnline1
+            poiOnlineRepository.uploadPoi(any(), any())
+        } returns poiOnlineEntity1
+        coEvery {
+            poiOnlineRepository.markPoiAsDeleted(any(), any())
+        } returns Unit
+        coEvery {
+            poiOnlineRepository.uploadPoi(
+                match { it.universalLocalId == poiError.id },
+                any()
+            )
+        } throws RuntimeException("upload failed")
 
         val result = uploadManager.syncUnSyncedPoiS()
 
-        assertThat(result).hasSize(2)
+        assertThat(result).hasSize(3)
 
-        val uploaded = result.find { it is SyncStatus.Success && it.userEmail == "Poi ${notSyncedNotDeleted.id} uploaded" }
-        val deleted = result.find { it is SyncStatus.Success && it.userEmail == "Poi ${notSyncedDeleted.id} deleted" }
+        val successes = result.filterIsInstance<SyncStatus.Success>()
+        val failures = result.filterIsInstance<SyncStatus.Failure>()
 
-        assertThat(uploaded).isNotNull()
-        assertThat(deleted).isNotNull()
+        val successMessages = successes.map { it.message }
 
-        coVerify { poiOnlineRepository.deletePoi(notSyncedDeleted.id.toString()) }
-        coVerify { poiRepository.deletePoi(notSyncedDeleted) }
-        coVerify { poiOnlineRepository.uploadPoi(any(), notSyncedNotDeleted.id.toString()) }
-        coVerify { poiRepository.downloadPoiFromFirebase(poiOnline1) }
+        assertThat(successMessages).containsExactly(
+            "Poi ${poiInsert.id} uploaded to Firebase",
+            "Poi ${poiDelete.id} marked deleted online & removed locally"
+        )
 
-        coVerify(exactly = 0) {
-            poiOnlineRepository.uploadPoi(any(), alreadySyncedNotDeleted.id.toString())
+        assertThat(failures).hasSize(1)
+
+        val failure = failures.first()
+
+        assertThat(failure.label).isEqualTo("Poi ${poiError.id}")
+        assertThat(failure.error).hasMessageThat().isEqualTo("upload failed")
+
+        coVerify(exactly = 2) {
+            poiOnlineRepository.uploadPoi(any(), any())
         }
-        coVerify(exactly = 0) {
-            poiRepository.downloadPoiFromFirebase(poiOnline2)
+
+        val updatedPoiS = mutableListOf<PoiOnlineEntity>()
+
+        coVerify(exactly = 1) {
+            poiRepository.updatePoiFromFirebase(
+                capture(updatedPoiS),
+                any()
+            )
+        }
+
+        assertThat(updatedPoiS.first().universalLocalId)
+            .isEqualTo(poiInsert.id)
+
+        coVerify(exactly = 1) {
+            poiOnlineRepository.markPoiAsDeleted(
+                poiDelete.firestoreDocumentId!!,
+                poiDelete.updatedAt
+            )
+        }
+        coVerify(exactly = 1) {
+            poiRepository.deletePoi(poiDelete)
         }
     }
 
-}*/
+}

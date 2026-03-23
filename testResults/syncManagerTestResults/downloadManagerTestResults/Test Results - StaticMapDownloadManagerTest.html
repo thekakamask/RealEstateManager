@@ -2,7 +2,7 @@
 <html xmlns:str="http://exslt.org/strings" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Test Results &mdash; PropertyUploadManagerTest</title>
+        <title>Test Results &mdash; StaticMapDownloadManagerTest</title>
         <style type="text/css">
           html {
             height: 100%
@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">3.22 s</div>
+                <div class="time" xmlns="">2.35 s</div>
                 <h1>
-                    PropertyUploadManagerTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">5 total, </span><span class="passed">5 passed</span></strong>
+                    StaticMapDownloadManagerTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">10 total, </span><span class="passed">10 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,33 +593,58 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">3.22 s</div>
-                            </em>PropertyUploadManagerTest</span>
+                                <div class="time">2.35 s</div>
+                            </em>StaticMapDownloadManagerTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">2.67 s</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedProperties_noPropertiesToUpload_returnsEmptyList</span>
+                                        <div class="time">2.20 s</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_allStaticMapsMissingLocally_downloadsAndInsertsAllExceptDeleted</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">159 ms</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedPoiS_mixedCases_returnsCorrectStatuses</span>
+                                        <div class="time">21 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_individualFailure_returnsPartialSuccessWithFailure</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">125 ms</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedProperties_propertyMarkedDeleted_deletesFromFirebaseAndRoom</span>
+                                        <div class="time">17 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_localStaticMapNull_downloadsAndInsertsStaticMap</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">121 ms</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedProperties_globalFailure_returnsFailureStatus</span>
+                                        <div class="time">16 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_noStaticMapsOnline_returnsEmptyList</span>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">139 ms</div>
-                                    </em><em class="status">passed</em>uploadUnSyncedProperties_propertyNotDeleted_uploadsAndUpdatesRoom</span>
+                                        <div class="time">25 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_mixedCases_returnsCorrectStatuses</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">13 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_allStaticMapsOutdatedLocally_downloadsAndUpdatesAll</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">14 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_localStaticMapOutdated_downloadsAndUpdatesStaticMap</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">13 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_allStaticMapsAlreadyUpToDate_returnsSuccessWithoutSaving</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">15 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_globalFailure_returnsFailureStatus</span>
+                            </li>
+                            <li class="level test">
+                                <span><em class="time">
+                                        <div class="time">11 ms</div>
+                                    </em><em class="status">passed</em>downloadUnSyncedStaticMaps_staticMapAlreadyUpToDate_returnsSuccessWithoutSaving</span>
                             </li>
                         </ul>
                     </li>
@@ -627,7 +652,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 20/03/2026 19:41</p>
+            <p>Generated by Android Studio on 21/03/2026 02:12</p>
         </div>
     </body>
 </html>

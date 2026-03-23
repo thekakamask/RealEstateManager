@@ -45,6 +45,10 @@ object FakeUserOnlineEntity {
 
     val userOnlineEntityList = listOf(userOnline1, userOnline2, userOnline3)
 
+    val userOnlineEntityListNotDeleted = userOnlineEntityList
+        .filter { !it.isDeleted }
+
+
     val firestoreUserDocumentList = listOf(
         firestoreUserDocument1,
         firestoreUserDocument2,
