@@ -2,7 +2,7 @@
 <html xmlns:str="http://exslt.org/strings" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Test Results &mdash; MapperEntitiesAndOnlineEntitiesTest</title>
+        <title>Test Results &mdash; UtilsInstrumentedTest</title>
         <style type="text/css">
           html {
             height: 100%
@@ -572,9 +572,9 @@ jQuery.cookie = function(name, value, options) {
     <body>
         <div id="container">
             <div id="header">
-                <div class="time" xmlns="">26 ms</div>
+                <div class="time" xmlns="">37 ms</div>
                 <h1>
-                    MapperEntitiesAndOnlineEntitiesTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">16 total, </span><span class="passed">16 passed</span></strong>
+                    UtilsInstrumentedTest: <strong><span class="total" xmlns="http://www.w3.org/1999/xhtml">3 total, </span><span class="passed">3 passed</span></strong>
                 </h1>
                 <div id="treecontrol">
                     <ul>
@@ -593,88 +593,38 @@ jQuery.cookie = function(name, value, options) {
                 <ul id="tree">
                     <li xmlns="" class="level top open">
                         <span><em class="time">
-                                <div class="time">26 ms</div>
-                            </em>MapperEntitiesAndOnlineEntitiesTest</span>
+                                <div class="time">37 ms</div>
+                            </em>com.dcac.realestatemanager.utilsTest.UtilsInstrumentedTest</span>
                         <ul>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">23 ms</div>
-                                    </em><em class="status">passed</em>toEntity_propertyOnlineEntity_withNullFirestoreId</span>
+                                        <div class="time">29 ms</div>
+                                    </em><em class="status">passed</em>isInternetAvailable_doesNotCrash</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">03-24 19:48:55.242  9163  9189 I TestRunner: started: isInternetAvailable_doesNotCrash(com.dcac.realestatemanager.utilsTest.UtilsInstrumentedTest)&#13;<br/>03-24 19:48:55.243  7948  9195 D AdvertisingIdClient: AdvertisingIdClient is bounded&#13;<br/>03-24 19:48:55.258  7948  9195 I AdvertisingIdClient: shouldSendLog -1&#13;<br/>03-24 19:48:55.262  7948  7948 I AdvertisingIdClient: getting error as 17: API: ClientTelemetry.API is not available on this device. Connection failed with: ConnectionResult{statusCode=API_DISABLED, resolution=null, message=null, clientMethodKey=null}&#13;<br/>03-24 19:48:55.263  7948  9195 I AdvertisingIdClient: GetInfoInternal elapse 42ms&#13;<br/>03-24 19:48:55.273  9163  9189 I TestRunner: finished: isInternetAvailable_doesNotCrash(com.dcac.realestatemanager.utilsTest.UtilsInstrumentedTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_photoOnlineEntity_mapsCorrectlyToPhotoEntity</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>saveBytesToAppStorage_createsFileSuccessfully</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">03-24 19:48:55.277  9163  9189 I TestRunner: started: saveBytesToAppStorage_createsFileSuccessfully(com.dcac.realestatemanager.utilsTest.UtilsInstrumentedTest)&#13;<br/>03-24 19:48:55.284  9163  9189 I TestRunner: finished: saveBytesToAppStorage_createsFileSuccessfully(com.dcac.realestatemanager.utilsTest.UtilsInstrumentedTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
                             </li>
                             <li class="level test">
                                 <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_userOnlineEntity_mapsCorrectlyToUserEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>toOnlineEntity_userEntity_mapsCorrectlyToUserOnlineEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toOnlineEntity_poiEntity_mapsCorrectlyToPoiOnlineEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toOnlineEntity_propertyEntity_mapsCorrectlyToPropertyOnlineEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_staticMapOnlineEntity_withNullFirestoreId</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_propertyOnlineEntity_mapsCorrectlyToPropertyEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>toOnlineEntity_propertyPoiCrossEntity_mapsCorrectlyToOnlineEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toOnlineEntity_photoEntity_mapsCorrectlyToPhotoOnlineEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_poiOnlineEntity_withNullFirestoreId</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_crossOnlineEntity_withNullFirestoreId</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toOnlineEntity_staticMapEntity_mapsCorrectlyToOnlineEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">1 ms</div>
-                                    </em><em class="status">passed</em>toEntity_propertyPoiCrossOnlineEntity_mapsCorrectlyToCrossEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_staticMapOnlineEntity_mapsCorrectlyToEntity</span>
-                            </li>
-                            <li class="level test">
-                                <span><em class="time">
-                                        <div class="time">0 ms</div>
-                                    </em><em class="status">passed</em>toEntity_poiOnlineEntity_mapsCorrectlyToPoiEntity</span>
+                                        <div class="time">4 ms</div>
+                                    </em><em class="status">passed</em>saveUriToAppStorage_copiesFileSuccessfully</span>
+                                <ul>
+                                    <li class="text">
+                                        <span class="stdout">03-24 19:48:55.287  9163  9189 I TestRunner: started: saveUriToAppStorage_copiesFileSuccessfully(com.dcac.realestatemanager.utilsTest.UtilsInstrumentedTest)&#13;<br/>03-24 19:48:55.292  9163  9189 I TestRunner: finished: saveUriToAppStorage_copiesFileSuccessfully(com.dcac.realestatemanager.utilsTest.UtilsInstrumentedTest)&#13;<br/></span>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </li>
@@ -682,7 +632,7 @@ jQuery.cookie = function(name, value, options) {
             </div>
         </div>
         <div id="footer">
-            <p>Generated by Android Studio on 24/03/2026 16:46</p>
+            <p>Generated by Android Studio on </p>
         </div>
     </body>
 </html>

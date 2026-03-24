@@ -98,10 +98,10 @@ object Utils {
         }
     }
 
-    fun LocalDate.formatToDisplay(pattern: String = "dd/MM/yyyy"): String {
+    /*fun LocalDate.formatToDisplay(pattern: String = "dd/MM/yyyy"): String {
         val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
         return this.format(formatter)
-    }
+    }*/
 
     fun calculatePricePerSquareMeter(price: Int, surface: Int): Int {
         return if (surface > 0) (price / surface) else 0

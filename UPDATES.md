@@ -1698,5 +1698,23 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Ensured proper failure handling and retry strategy when exceptions occur during sync.
 
 
+### 🔹 **Update #53**
+
+  - 🔄 **Data mappers fully tested**
+    - Added comprehensive unit tests for all data mappers covering transformations between offline entities, domain models, and online entities.
+    - Validated correct field mapping, date conversions, relationship handling, and filtering logic (e.g., photos and POIs association).
+    - Covered edge cases such as null values, empty fields, and conditional mapping logic to ensure robustness and consistency across layers.
+
+  - 🔄 **Android utilities tested with instrumented tests**
+    - Added instrumented tests for Android-dependent utilities including file storage operations (URI and byte saving) and network availability checks.
+    - Verified correct interaction with Android framework components such as Context, ContentResolver, and system services.
+    - Ensured reliability of file creation, data persistence, and safe execution without crashes in real device/emulator environments.
+
+  - 🔄 **Utility helpers fully covered with unit tests**
+    - Added unit tests for pure utility helpers including date formatting, currency conversion, string normalization, and UI-related helpers (icons, colors, labels).
+    - Ensured deterministic behavior by validating output formats, calculation accuracy, and correct resource selection based on input conditions.
+    - Covered edge cases such as zero values and invalid inputs to guarantee stable and predictable logic.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

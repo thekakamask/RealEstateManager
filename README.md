@@ -15,10 +15,9 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
    
-   - 🔄 Improved synchronization reliability by implementing resilient download managers with per-item error handling and consistent SyncStatus reporting.
-   - 🔄 Added comprehensive unit tests for all entity-specific upload and download managers, covering success, edge cases, and failure scenarios.
-   - 🔄 Added tests for global upload and download managers ensuring correct orchestration and aggregation of sync results.
-   - 🔄 Added SyncWorker tests covering success, retry on no network, and failure handling scenarios.
+   - 🔄 Added comprehensive unit tests for all data mappers ensuring correct transformations between entities, domain models, and online models, including edge cases and null handling.
+   - 🔄 Added instrumented tests for Android-dependent utilities (file storage, URI handling, and network checks) to ensure correct behavior with real context and system services.
+   - 🔄 Added unit tests for pure utility helpers (date formatting, currency conversion, string normalization, and UI helpers) ensuring deterministic and reliable logic.
 
 
 ## ❌ **NEXT UPDATES**

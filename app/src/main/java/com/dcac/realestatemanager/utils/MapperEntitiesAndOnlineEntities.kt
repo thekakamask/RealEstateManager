@@ -18,7 +18,7 @@ fun UserEntity.toOnlineEntity(): UserOnlineEntity {
         email = this.email,
         agentName = this.agentName,
         updatedAt = this.updatedAt,
-        universalLocalId = this.id, // ✅ Same UUID
+        universalLocalId = this.id, // Same UUID
         isDeleted = this.isDeleted
     )
 }
@@ -27,7 +27,7 @@ fun UserOnlineEntity.toEntity(
     firebaseUid: String
 ): UserEntity {
     return UserEntity(
-        id = this.universalLocalId, // ✅ UUID receive from firestore
+        id = this.universalLocalId, // UUID receive from firestore
         email = this.email,
         agentName = this.agentName,
         isSynced = true,
