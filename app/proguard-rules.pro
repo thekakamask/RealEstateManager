@@ -38,3 +38,36 @@
 -keepclassmembers class * {
     @androidx.annotation.Keep *;
 }
+
+# Keep Google Maps
+-keep class com.google.android.gms.maps.** { *; }
+-keep interface com.google.android.gms.maps.** { *; }
+
+# Keep Firebase
+-keep class com.google.firebase.** { *; }
+
+# Keep Hilt / Dagger
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+-keep class dagger.** { *; }
+-keep class hilt_aggregated_deps.** { *; }
+
+# Keep Room entities and DAO
+-keep class androidx.room.** { *; }
+-keep @androidx.room.Entity class * { *; }
+-keep @androidx.room.Dao class * { *; }
+
+# Keep Retrofit models
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class retrofit2.** { *; }
+
+# Keep Kotlin serialization
+-keep class kotlinx.serialization.** { *; }
+-keep class kotlinx.serialization.json.** { *; }
+-keep class **$$serializer { *; }
+
+# Keep parcelable / reflection
+-keepclassmembers class * {
+    @android.os.Parcelable$Creator *;
+}

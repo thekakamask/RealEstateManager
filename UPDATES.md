@@ -1716,5 +1716,29 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Covered edge cases such as zero values and invalid inputs to guarantee stable and predictable logic.
 
 
+### 🔹 **Update #54**
+
+  - 🔄 **All ViewModels fully covered with unit tests**
+    - Added comprehensive unit tests for all ViewModels including AccountViewModel, GoogleMapViewModel, HomeViewModel, LoginViewModel, PropertiesListViewModel, PropertyCreationViewModel, PropertyDetailsViewModel, SettingsViewModel, and UserPropertiesViewModel.
+    - Validated key presentation-layer behaviors such as state transitions, input validation, data loading, filtering and sorting logic, creation and update workflows, deletion handling, and reset behavior.
+    - Ensured reliable UI state management by covering success, error, idle, and loading scenarios, while also verifying interactions with repositories and other injected dependencies.
+
+  - 🖼️ **Tablet version screen capture added**
+    - Added a dedicated screen capture of the tablet version of the application to better showcase the large-screen layout and responsive UI behavior.
+    - Highlights the adaptation of the interface for tablet devices, with improved spacing, content organization, and readability.
+
+  - 📘 **How-to-use section added**
+    - Added a dedicated how-to-use section in the documentation to explain the main user flows in a simple and accessible way for non-technical users.
+    - Clarifies how to navigate through the app, create and manage properties, and understand how data is saved locally on the phone and backed up online through the user account.
+
+  - 📦 **Signed APK generated for release installation**
+    - Generated a signed APK to allow installation of the application in release mode outside the development environment.
+    - Ensures the app can be tested and shared in a production-like version, with the expected release configuration and signing process applied.
+
+  - 🔐 **Release obfuscation and code shrinking enabled**
+    - Enabled R8/ProGuard for release builds to activate code shrinking, dead code removal, and class/method obfuscation.
+    - Improved APK optimization and strengthened protection against reverse engineering by renaming implementation classes and removing unused bytecode.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

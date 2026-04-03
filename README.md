@@ -14,18 +14,18 @@ This project is developed using modern Android architecture principles, with a f
 
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
-   
-   - 🔄 Added comprehensive unit tests for all data mappers ensuring correct transformations between entities, domain models, and online models, including edge cases and null handling.
-   - 🔄 Added instrumented tests for Android-dependent utilities (file storage, URI handling, and network checks) to ensure correct behavior with real context and system services.
-   - 🔄 Added unit tests for pure utility helpers (date formatting, currency conversion, string normalization, and UI helpers) ensuring deterministic and reliable logic.
+
+   - 🔄 Added comprehensive unit tests for all ViewModels (Account, GoogleMap, Home, Login, PropertiesList, PropertyCreation, PropertyDetails, Settings, and UserProperties) covering state transitions, validation rules, data loading, filtering/sorting, creation/update flows, deletion flows, and reset behaviors.
+   - 🖼️ Added tablet version screen capture of the app.
+   - 📘 Added a how-to-use section.
+   - 📦 Deployed signed APK to install the application in release mode.
+   - 🔐 Enabled code obfuscation and shrinking for release builds using R8/ProGuard to optimize APK size, remove unused code, and improve reverse-engineering resistance.
 
 
 ## ❌ **NEXT UPDATES**
 
    - ⚠️ Implement backend logic for Forgot Password and Contact page.
-   - Implemented responsive design for tablet.
    - 🔔 Notification on property creation.
-   - 🧪 Testing coverage
 
 
 ## 📋 **Features**
@@ -173,19 +173,19 @@ This project is developed using modern Android architecture principles, with a f
 
    - 🚀 **Performance and responsiveness**:
    
-      - 🟩 **IN PROGRESS** Optimize UI scrolling and animations.
+      - ✅ **DONE** Optimize UI scrolling and animations.
 
    - 🧪 **Testing & Quality Assurance** :
 
       - ✅ **DONE** Unit test for dollar to euro conversion.
       - ✅ **DONE** Unit test for euro to dollar conversion.
       - ✅ **DONE** Unit test for date formatting.
-      - ❌ **NOT IMPLEMENTED** Integration test for network availability.
-      - 🟩 **IN PROGRESS** Unit test for Models/Entities/OnlineEntities mappers.
-      - 🟩 **IN PROGRESS** DAO tests using instrumented tests for Room database.
-      - 🟩 **IN PROGRESS** Repository unit tests using fake DAO architecture and model/entity separation.
-      - 🟩 **IN PROGRESS** Firebase Repository unit tests using offline/online entities separation.
-      - 🟩 **IN PROGRESS** Unit test for Sync layer (download/upload managers) unit tests between Room and Firebase Repositories.
+      - ✅ **DONE** Integration test for network availability.
+      - ✅ **DONE** Unit test for Models/Entities/OnlineEntities mappers.
+      - ✅ **DONE** DAO tests using instrumented tests for Room database.
+      - ✅ **DONE** Repository unit tests using fake DAO architecture and model/entity separation.
+      - ✅ **DONE** Firebase Repository unit tests using offline/online entities separation.
+      - ✅ **DONE** Unit test for Sync layer (download/upload managers) unit tests between Room and Firebase Repositories.
 
 
 ## 🛠️ **Tech Stack**
@@ -228,7 +228,58 @@ This project is developed using modern Android architecture principles, with a f
 
 ## 🚀 **How to Use**
 
-❌ **THIS SECTION IS NOT AVAILABLE YET**
+1. **Launch the App**:
+   - Download the "app-release.apk" file find in \app\release\ .
+   - Install the file in your smartphone or in an emulator. (Good performance because in Release Build Variant)
+   - If you want to use android studio, download the code and launch the app on an Android device or emulator. (Bad performance because in Debug Build Variant)
+2. **Sign in or Sign up**:
+   - If you already have an account, select "log in" and enter your informations to log.
+   - If not, select "create your account and enter your informations.
+3. **Home page of the application**:
+   - After log in, you will be redirect to the main page of the app.
+   - After a delay the app will download all the properties saved online (if the network work).
+   - You will see a scrolling list of properties that all real estate agents handle.
+   - you can filtered them by using the right button of the top bar or you can open the menu by using the icon of user in the left of the top bar.
+   - On the bottom bar, you can display the properties with the scrolling list or going to the google map screen to see the locations of the properties (and their points of interest) if the network work.
+   - On the down right of the screen, you will see a button with which you can add a property.
+   - By clicking on a property in the list or in google map, you will be redirect to the selected property details.
+4. **Home page menu**:
+   - When you have open the main page menu you will see some informations.
+   - The icon of the user with which you can go to your profile.
+   - Your email adress and the number of properties you handle and have sold
+   - "My properties" button where you can display only your properties (it works as the main page properties list).
+   - "Settings" button where you can modify the application settings.
+   - "Log out" button where you can log out.
+5. **Home page filtered**
+   - By clicking on the filter button, you can filtered all the properties (the filter button also work in "your properties" page)
+   - You can sort the properties by alphabetic or by the added date.
+   - You can filter by the property type, the status or the surface and the price.
+   - Click on the "apply" button to apply the filtering.
+   - Click on the "reset" button to reset the filtering. 
+6. **Adding property section**:
+   - When you click for adding a property, you will be redirected to many steps.
+   - You can always go back to previous step to modify informations as long as you have not click on "finish" button to save the property.
+   - You can also modify the property if you handle it from the details page when you want.
+   - You will need to select the property type, the location informations, the points of interest informations, the description (price, surface etc.).
+   - You will also need to add at least one picture of the property (and a picture description if you want).
+   - The application will generate a static map image of the property and their points of interet.
+   - On the last step, you will have a confirmation page where you can check all the property informations.
+   - When you click on "finish", your property will be saved on the phone and also backed up online through your account (if no network, it will be saved online when the network will come back)
+7. **Property details page**:
+   - After clicking on a property on the main page you will be redirected to the details page of the property.
+   - All the property details will be displayed (date, price, address, description, points of interest etc.)
+   - If you handle this property, you will be able to click on the down right button to modify property informations.
+   - A pop up will appear and you will be able to select which informations you want to modify. Also, you will be able to delete this property.
+   - You can come back on the main page by clicking on the arrow in the top bar.
+8. **Account details page**:
+   - When the main page menu is open, you can click on the user icon to display the account details page.
+   - You will see your informations and a summary of the properties you handle (you can also delete a property here)
+   - With the down right button you will be able to change some of your account informations.
+   - Come back by using the arrow on the top bar.
+9. **Settings page**:
+   - When the main page menu is open, you can click on "Settings" button to display the settings page.
+   - With this page, you can change the languages (english or french) and change the currencies (USD or EUR)
+   - Come back by using the arrown on the top bar.
 
 
 ## 📸 **Screenshots**
@@ -241,6 +292,28 @@ This project is developed using modern Android architecture principles, with a f
 
    ![Login page](screenshots/login_page.png)
 
+- **HomePage with PropertyListScreen**:
+
+   ![HomePage with PropertyScreen](screenshots/home_page_1.png)
+   ![HomePage with PropertyScreen (MenuDrawer open)](screenshots/home_page_2.png)
+   ![HomePage with PropertyScreen (FilterScreen open)](screenshots/home_page_3.png)
+
+- **HomePage with GoogleMapScreen**:
+
+   ![HomePage with GoogleMapScreen](screenshots/home_page_4.png)
+   ![HomePage with GoogleMapScreen (MenuDrawer open)](screenshots/home_page_5.png)
+   ![HomePage with GoogleMapScreen (FilterScreen open)](screenshots/home_page_6.png)
+
+- **UserPropertiesPage**:
+
+   ![UserPropertiesPage](screenshots/user_properties_page.png)
+
+- **DetailPage**:
+
+   ![DetailPage](screenshots/detail_page.png)
+   ![DetailPage2](screenshots/detail_page_2.png)
+   ![DetailPageModify](screenshots/detail_page_modify.jpg)
+
 - **Forgot password page**:
 
    ![Forgot password page](screenshots/forgot_password_page.png)
@@ -248,6 +321,11 @@ This project is developed using modern Android architecture principles, with a f
 - **Account creation page**:
 
    ![Account creation page](screenshots/account_creation_page.png)
+
+- **Account details page**:
+
+   ![Account details page](screenshots/account_page.jpg)
+   ![Account details modify](screenshots/account_page_modify.jpg)
 
 - **Help page**:
 
@@ -273,30 +351,33 @@ This project is developed using modern Android architecture principles, with a f
    ![Step 8 screen](screenshots/property_creation_step_8_screen.png)
    ![Step 8 screen 2](screenshots/property_creation_step_8_screen_2.png)
 
-- **HomePage with PropertyListScreen**:
-
-   ![HomePage with PropertyScreen](screenshots/home_page_1.png)
-   ![HomePage with PropertyScreen (MenuDrawer open)](screenshots/home_page_2.png)
-   ![HomePage with PropertyScreen (FilterScreen open)](screenshots/home_page_3.png)
-
-- **HomePage with GoogleMapScreen**:
-
-   ![HomePage with GoogleMapScreen](screenshots/home_page_4.png)
-   ![HomePage with GoogleMapScreen (MenuDrawer open)](screenshots/home_page_5.png)
-   ![HomePage with GoogleMapScreen (FilterScreen open)](screenshots/home_page_6.png)
-
-- **UserPropertiesPage**:
-
-   ![UserPropertiesPage](screenshots/user_properties_page.png)
-
-- **DetailPage**:
-
-   ![DetailPage](screenshots/detail_page.png)
-   ![DetailPage2](screenshots/detail_page_2.png)
-
 - **SettingsPage**:
 
    ![SettingsPage](screenshots/settings_page.png)
+
+- **TabletLoginPage**:
+
+   ![TabletLoginPage](screenshots/tablet_login_page.jpg)
+
+- **TabletHomePage**:
+
+   ![TabletHomePage](screenshots/tablet_home_page.jpg)
+
+- **TabletHomePage2**:
+
+   ![TabletHomePage2](screenshots/tablet_home_page_2.jpg)
+
+- **TabletHomePageMenu**:
+
+   ![TabletHomePageMenu](screenshots/tablet_home_page_menu.jpg)
+
+- **TabletHomePageFilter**:
+
+   ![TabletHomePageFilter](screenshots/tablet_home_page_filter.jpg)
+
+- **TabletHomePageModify**:
+
+   ![TabletHomePageModify](screenshots/tablet_home_page_Modify.jpg)
 
 
 ## 🤝 **Contributions**

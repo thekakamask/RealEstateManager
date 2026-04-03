@@ -1,6 +1,5 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.property
 
-import androidx.room.Update
 
 interface PropertyOnlineRepository {
     suspend fun uploadProperty(property: PropertyOnlineEntity, firebasePropertyId: String): PropertyOnlineEntity

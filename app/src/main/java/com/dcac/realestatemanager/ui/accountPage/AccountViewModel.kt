@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import javax.inject.Inject
 
@@ -40,18 +39,20 @@ class AccountViewModel @Inject constructor(
 
 
     override fun checkAndLoadUser() {
-        val userId = getUserIdOrNull()
-        if (userId != null) {
-            loadUser(userId)
-        } else {
-            setError("No user connected.")
+        viewModelScope.launch {
+            val userId = getUserIdOrNull()
+            if (userId != null) {
+                loadUser(userId)
+            } else {
+                _uiState.value = Error("No user connected.")
+            }
         }
     }
 
-    override fun getUserIdOrNull(): String? = runBlocking {
-        val firebaseUid = authRepository.currentUser?.uid ?: return@runBlocking null
+    override suspend fun getUserIdOrNull(): String? {
+        val firebaseUid = authRepository.currentUser?.uid ?: return null
         val user = userRepository.getUserByFirebaseUid(firebaseUid).firstOrNull()
-        user?.universalLocalId
+        return user?.universalLocalId
     }
 
     override fun loadUser(userId: String) {
@@ -104,8 +105,9 @@ class AccountViewModel @Inject constructor(
                 val propertyId = property.universalLocalId
 
                 property.photos.forEach { photo ->
-                    photo.uri.toUri().path?.let { path ->
-                        runCatching {
+                    runCatching {
+                        val path = photo.uri.toUri().path
+                        if (!path.isNullOrEmpty()) {
                             val file = File(path)
                             if (file.exists()) file.delete()
                         }
@@ -114,8 +116,9 @@ class AccountViewModel @Inject constructor(
                 }
 
                 property.staticMap?.let { map ->
-                    map.uri.toUri().path?.let { path ->
-                        runCatching {
+                    runCatching {
+                        val path = map.uri.toUri().path
+                        if (!path.isNullOrEmpty()) {
                             val file = File(path)
                             if (file.exists()) file.delete()
                         }

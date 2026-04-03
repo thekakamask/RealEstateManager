@@ -1,7 +1,6 @@
 package com.dcac.realestatemanager.data.firebaseDatabase.propertyPoiCross
 
 import androidx.annotation.Keep
-import androidx.room.ColumnInfo
 import com.google.firebase.firestore.PropertyName
 
 /**

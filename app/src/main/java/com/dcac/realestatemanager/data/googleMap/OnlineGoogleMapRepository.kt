@@ -2,7 +2,6 @@ package com.dcac.realestatemanager.data.googleMap
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Geocoder
 import android.location.Location
 import android.os.Looper
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiRepository

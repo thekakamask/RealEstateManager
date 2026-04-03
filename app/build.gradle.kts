@@ -20,6 +20,10 @@ val localProperties = Properties().apply {
 val mapsApiKey = localProperties.getProperty("MAPS_API_KEY")
     ?: throw GradleException("MAPS_API_KEY not found in local.properties")
 
+val keystoreProperties = Properties().apply {
+    load(FileInputStream(File(rootDir, "keystore.properties")))
+}
+
 // Android-specific build settings for the app module
 // Includes SDK versioning, build types, and default configuration
 android {
@@ -43,10 +47,26 @@ android {
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(
+                keystoreProperties.getProperty("RELEASE_STORE_FILE")
+                    ?: throw GradleException("RELEASE_STORE_FILE missing in keystore.properties")
+            )
+            storePassword = keystoreProperties.getProperty("RELEASE_STORE_PASSWORD")
+                ?: throw GradleException("RELEASE_STORE_PASSWORD missing in keystore.properties")
+            keyAlias = keystoreProperties.getProperty("RELEASE_KEY_ALIAS")
+                ?: throw GradleException("RELEASE_KEY_ALIAS missing in keystore.properties")
+            keyPassword = keystoreProperties.getProperty("RELEASE_KEY_PASSWORD")
+                ?: throw GradleException("RELEASE_KEY_PASSWORD missing in keystore.properties")
+        }
+    }
+
     // Release build configuration
     buildTypes {
         release {
-            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

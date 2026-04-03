@@ -7,7 +7,7 @@ interface IAccountViewModel {
 
     val uiState: StateFlow<AccountUiState>
     fun checkAndLoadUser()
-    fun getUserIdOrNull(): String?
+    suspend fun getUserIdOrNull(): String?
     fun loadUser(userId: String)
     fun enterEditMode()
     fun updateUser(newName: String)
