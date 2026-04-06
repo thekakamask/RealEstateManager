@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.ui.homePage.propertiesListScreen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +36,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
@@ -107,7 +107,6 @@ fun PropertyListContent(
     selectedPropertyId: String?,
     onClick: (Property) -> Unit
 ) {
-    val context = LocalContext.current
 
     LazyColumn(
         modifier = Modifier
@@ -153,16 +152,18 @@ fun PropertyItem(
     val formattedPricePerSquareMeter = stringResource(id = priceSquareUnitText, pricePerSquareMeter)
 
     val containerColor =
-        if (isSelected) MaterialTheme.colorScheme.primaryContainer
-        else MaterialTheme.colorScheme.surface
+        if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        }
 
     val border =
-        if (isSelected)
-            androidx.compose.foundation.BorderStroke(
-                2.dp,
-                MaterialTheme.colorScheme.primary
-            )
-        else null
+        if (isSelected) {
+            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        } else {
+            BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        }
 
     Card(
         modifier = Modifier
@@ -174,7 +175,7 @@ fun PropertyItem(
             containerColor = containerColor
         ),
         border = border,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ){
         Column(
             modifier = Modifier.padding(12.dp)
@@ -192,7 +193,8 @@ fun PropertyItem(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = agentName,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -241,11 +243,13 @@ fun PropertyItem(
             ) {
                 Text(
                     text = formattedPrice,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = formattedPricePerSquareMeter,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -264,7 +268,8 @@ fun PropertyItem(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = property.title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
             }
@@ -277,14 +282,16 @@ fun PropertyItem(
                     property.rooms,
                     property.surface
                 ),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 text = property.address,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -304,7 +311,8 @@ fun PropertyItem(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = poi.name,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

@@ -58,6 +58,7 @@
     <string name="chat_contact_subtitle">This section is not implemented yet</string>
     <string name="chat_contact_text">Our development team will implement this feature shortly.</string>
     <string name="chat_contact_image_content_description">Error image</string>
+    <string name="email_app_not_found">Unable to open an email app.</string>
 
     <!-- Login screen -->
     <string name="login_back_button_content_description">back</string>
@@ -86,6 +87,8 @@
     <string name="forgot_password_email_label">Email</string>
     <string name="forgot_password_email_content">exampleEmail@Example.com</string>
     <string name="forgot_password_button">Send me an email</string>
+    <string name="reset_email_sending">Sending reset email…</string>
+    <string name="reset_email_send">Email has been send (check your spams)</string>
 
     <!-- Account creation screen -->
     <string name="account_creation_button_content_description">back</string>
@@ -94,7 +97,7 @@
     <string name="account_creation_text">Enter your information to create your account.</string>
     <string name="account_creation_email_label">Register your email</string>
     <string name="account_creation_agent_name_label">Register your name</string>
-    <string name="account_creation_password_label">Register your password</string>
+    <string name="account_creation_password_label">Register your password (6 characters minimum)</string>
     <string name="account_creation_password_confirmation_label">Confirm your password</string>
     <string name="account_creation_email_content">exampleEmail@Example.com</string>
     <string name="account_creation_agent_name_content">Example Example</string>

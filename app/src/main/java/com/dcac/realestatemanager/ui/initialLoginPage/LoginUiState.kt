@@ -12,7 +12,7 @@ sealed class LoginUiState {
 
     @Immutable
     data class Success(
-        val firebaseUser: FirebaseUser
+        val user: FirebaseUser? = null
     ) : LoginUiState()
 
     @Immutable

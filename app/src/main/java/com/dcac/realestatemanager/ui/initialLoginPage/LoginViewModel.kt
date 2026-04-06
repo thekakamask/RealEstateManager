@@ -16,11 +16,12 @@ import kotlinx.coroutines.launch
 import com.dcac.realestatemanager.utils.toOnlineEntity
 import com.dcac.realestatemanager.ui.initialLoginPage.LoginUiState.*
 import com.dcac.realestatemanager.utils.toEntity
-import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -75,16 +76,15 @@ class LoginViewModel @Inject constructor(
                 onFailure = { e ->
                     Log.e("AuthError", "Sign in failed: ${e.message}", e)
 
-                    val messageResId = when {
-                        e.message?.contains("no user record", true) == true ||
-                                (e as? FirebaseAuthException)?.errorCode == "ERROR_USER_NOT_FOUND" ->
+                    val messageResId = when (e) {
+                        is FirebaseAuthInvalidUserException ->
                             R.string.error_no_account_found
 
-                        e.message?.contains("password", true) == true ||
-                                (e as? FirebaseAuthException)?.errorCode == "ERROR_WRONG_PASSWORD" ->
+                        is FirebaseAuthInvalidCredentialsException ->
                             R.string.error_invalid_credentials
 
-                        else -> R.string.error_unknown
+                        else ->
+                            R.string.error_unknown
                     }
 
                     _uiState.value = Error(messageResId)
@@ -146,6 +146,25 @@ class LoginViewModel @Inject constructor(
                 },
                 onFailure = {
                     // Handle Firebase sign-up failure
+                    _uiState.value = Error(R.string.error_unknown)
+                }
+            )
+        }
+    }
+
+    fun sendPasswordResetEmail(email: String) {
+        viewModelScope.launch {
+            _uiState.value = Loading
+
+            val result = authRepository.sendPasswordResetEmail(email)
+
+            result.fold(
+                onSuccess = {
+                    _uiState.value = Success()
+                    delay(500)
+                    resetState()
+                },
+                onFailure = {
                     _uiState.value = Error(R.string.error_unknown)
                 }
             )

@@ -42,6 +42,7 @@
     <string name="contact_info_email_card_text">Réponse par e-mail dans les 12 heures</string>
     <string name="contact_info_chat_card_title">Contact par chat</string>
     <string name="contact_info_chat_card_text">Discutez en direct avec un expert en quelques minutes</string>
+    <string name="email_app_not_found">Impossible d\'ouvrir un application d\'email.</string>
 
     <!-- Email Contact screen -->
     <string name="email_contact_back_button_content_description">retour</string>
@@ -87,6 +88,8 @@
     <string name="forgot_password_email_label">Email</string>
     <string name="forgot_password_email_content">exempleEmail@Exemple.com</string>
     <string name="forgot_password_button">Envoyez-moi un e-mail</string>
+    <string name="reset_email_sending">Envoi d\'email en cours …</string>
+    <string name="reset_email_send">Email envoyé (verifiez vos spams)</string>
 
     <!-- Account creation screen -->
     <string name="account_creation_button_content_description">retour</string>
@@ -95,7 +98,7 @@
     <string name="account_creation_text">Entrez vos informations pour créer votre compte.</string>
     <string name="account_creation_email_label">Enregistrez votre adresse e-mail</string>
     <string name="account_creation_agent_name_label">Enregistrez votre nom</string>
-    <string name="account_creation_password_label">Enregistrez votre mot de passe</string>
+    <string name="account_creation_password_label">Enregistrez votre mot de passe (6 caractères minimum)</string>
     <string name="account_creation_password_confirmation_label">Confirmez votre mot de passe</string>
     <string name="account_creation_email_content">exempleEmail@Exemple.com</string>
     <string name="account_creation_agent_name_content">Exemple Exemple</string>

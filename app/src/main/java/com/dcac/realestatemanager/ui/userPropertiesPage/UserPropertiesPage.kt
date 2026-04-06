@@ -1,5 +1,6 @@
 package com.dcac.realestatemanager.ui.userPropertiesPage
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -369,16 +370,18 @@ fun UserPropertyItem(
     )
 
     val containerColor =
-        if (isSelected) MaterialTheme.colorScheme.primaryContainer
-        else MaterialTheme.colorScheme.surface
+        if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        }
 
     val border =
-        if (isSelected)
-            androidx.compose.foundation.BorderStroke(
-                2.dp,
-                MaterialTheme.colorScheme.primary
-            )
-        else null
+        if (isSelected) {
+            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        } else {
+            BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        }
 
     Card(
         modifier = Modifier
@@ -442,11 +445,13 @@ fun UserPropertyItem(
             ) {
                 Text(
                     text = formattedPrice,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = formattedPricePerSquareMeter,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -465,7 +470,8 @@ fun UserPropertyItem(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = property.title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
             }
@@ -478,14 +484,16 @@ fun UserPropertyItem(
                     property.rooms,
                     property.surface
                 ),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 text = property.address,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -505,7 +513,8 @@ fun UserPropertyItem(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = poi.name,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

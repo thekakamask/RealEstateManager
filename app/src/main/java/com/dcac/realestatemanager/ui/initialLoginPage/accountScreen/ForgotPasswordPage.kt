@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,15 +32,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.core.util.PatternsCompat.EMAIL_ADDRESS
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dcac.realestatemanager.R
+import com.dcac.realestatemanager.ui.initialLoginPage.LoginUiState
+import com.dcac.realestatemanager.ui.initialLoginPage.LoginViewModel
 
 @Composable
 fun ForgotPasswordPage(
+    viewModel: LoginViewModel = hiltViewModel(),
     onBackClick:() -> Unit,
 ){
 
+    val uiState by viewModel.uiState.collectAsState()
     var email by remember { mutableStateOf(TextFieldValue()) }
-    val isFormValid = email.text.isNotBlank()
+    val isFormValid = EMAIL_ADDRESS
+        .matcher(email.text.trim())
+        .matches()
 
     Column(
         modifier = Modifier
@@ -117,7 +126,7 @@ fun ForgotPasswordPage(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { /* Send action here */ },
+            onClick = { viewModel.sendPasswordResetEmail(email.text.trim()) },
             enabled = isFormValid,
             modifier = Modifier
                 .fillMaxWidth()
@@ -131,6 +140,40 @@ fun ForgotPasswordPage(
         ) {
             Text(stringResource(
                 R.string.forgot_password_button))
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (uiState) {
+                is LoginUiState.Loading -> {
+                    Text(
+                        text = stringResource(R.string.reset_email_sending),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                is LoginUiState.Success -> {
+                    Text(
+                        text = stringResource(R.string.reset_email_send),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                is LoginUiState.Error -> {
+                    Text(
+                        text = stringResource(
+                            (uiState as LoginUiState.Error).messageResId
+                        ),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                else -> Unit
+            }
         }
     }
 }

@@ -1740,5 +1740,24 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Improved APK optimization and strengthened protection against reverse engineering by renaming implementation classes and removing unused bytecode.
 
 
+### 🔹 **Update #55**
+
+  - 🔑 **Password reset flow added with Firebase Authentication**
+    - Added a complete "Forgot Password" flow from the login screen, allowing users to securely request a password reset email directly from the application.
+    - Integrated Firebase Authentication’s native password reset mechanism using email-based recovery, enabling users to receive a secure reset link and update their password through Firebase’s hosted flow.
+
+  - 🌙 **Dark mode property cards UX improved**
+    - Improved the visual rendering of property cards in dark mode by replacing the default card background with a Material 3 surfaceVariant color for better contrast against the screen background.
+    - Added adaptive borders using outlineVariant for standard cards and a highlighted primary border for selected properties, significantly improving readability and visual separation in dark theme.
+
+  - 🔐 **Login error handling improved**
+    - Reworked Firebase authentication error handling in the login flow by replacing generic fallback messages with explicit and user-friendly feedback for invalid credentials and unknown accounts.
+    - Added support for Firebase-specific exceptions such as FirebaseAuthInvalidCredentialsException and FirebaseAuthInvalidUserException to provide more accurate error states and improve the overall sign-in experience.
+
+  - 📩 **Contact support page fully implemented**
+    - Implemented the support contact page with a fully functional email sending flow using the device’s default mail client through Android intent integration.
+    - Added email validation, pre-filled subject and message support, and a snackbar fallback message when no compatible email application is installed on the device.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.

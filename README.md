@@ -15,16 +15,14 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔄 Added comprehensive unit tests for all ViewModels (Account, GoogleMap, Home, Login, PropertiesList, PropertyCreation, PropertyDetails, Settings, and UserProperties) covering state transitions, validation rules, data loading, filtering/sorting, creation/update flows, deletion flows, and reset behaviors.
-   - 🖼️ Added tablet version screen capture of the app.
-   - 📘 Added a how-to-use section.
-   - 📦 Deployed signed APK to install the application in release mode.
-   - 🔐 Enabled code obfuscation and shrinking for release builds using R8/ProGuard to optimize APK size, remove unused code, and improve reverse-engineering resistance.
+   - 🔑 Added password reset functionality using Firebase Authentication with dedicated "Forgot Password" flow and automatic reset email delivery.
+   - 🌙 Improved dark mode UX for property cards with enhanced contrast using Material 3 surface variants and adaptive borders for better readability.
+   - 🔐 Improved login error handling with precise Firebase authentication feedback for invalid credentials and unknown accounts.
+   - 📩 Added a fully functional contact support page with email client integration and snackbar fallback handling.
 
 
 ## ❌ **NEXT UPDATES**
 
-   - ⚠️ Implement backend logic for Forgot Password and Contact page.
    - 🔔 Notification on property creation.
 
 
@@ -231,7 +229,14 @@ This project is developed using modern Android architecture principles, with a f
 1. **Launch the App**:
    - Download the "app-release.apk" file find in \app\release\ .
    - Install the file in your smartphone or in an emulator. (Good performance because in Release Build Variant)
-   - If you want to use android studio, download the code and launch the app on an Android device or emulator. (Bad performance because in Debug Build Variant)
+   ⚠️ **Important security note**:
+   - If you want to use Android Studio, download the source code and launch the app on an Android device or emulator.
+   - For security reasons, some sensitive configuration files are intentionally excluded from the repository and are therefore missing when cloning the project.
+   - This includes files such as:
+     - keystore.properties
+     - local.properties
+     - Google Maps / Firebase configuration files (google-services.json, API key configuration)
+   - As a result, the application may not run correctly directly from Android Studio without manually recreating these files and providing your own secure credentials and API keys.
 2. **Sign in or Sign up**:
    - If you already have an account, select "log in" and enter your informations to log.
    - If not, select "create your account and enter your informations.

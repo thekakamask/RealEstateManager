@@ -59,4 +59,15 @@ class OnlineAuthRepository(
     override suspend fun signOut() {
         firebaseAuth.signOut()
     }
+
+    override suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            Log.d("AUTH", "Password reset email sent to $email")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("AUTH", "Password reset email failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
 }

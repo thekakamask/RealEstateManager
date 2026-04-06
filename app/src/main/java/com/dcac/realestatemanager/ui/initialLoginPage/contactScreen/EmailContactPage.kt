@@ -31,6 +31,11 @@ import androidx.compose.ui.unit.dp
 import com.dcac.realestatemanager.R
 import androidx.compose.material3.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import android.content.Intent
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
+import kotlinx.coroutines.launch
 
 @Composable
 fun EmailContactPage(
@@ -40,138 +45,177 @@ fun EmailContactPage(
     var email by remember { mutableStateOf(TextFieldValue()) }
     var subject by remember { mutableStateOf(TextFieldValue()) }
     var message by remember { mutableStateOf(TextFieldValue()) }
-    val isFormValid = email.text.isNotBlank() && subject.text.isNotBlank() && message.text.isNotBlank()
+    val isFormValid =
+        android.util.Patterns.EMAIL_ADDRESS
+            .matcher(email.text.trim())
+            .matches() &&
+                subject.text.isNotBlank() &&
+                message.text.isNotBlank()
+    val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            )
-    ) {
-
-        Box(
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        }
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(
+                    top = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                )
         ) {
-            // Icon back (left aligned)
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.align(Alignment.CenterStart)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
             ) {
-                Icon(
-                    Icons.Default.ArrowBack,
-                    contentDescription = stringResource(R.string.email_contact_back_button_content_description),
-                    tint = MaterialTheme.colorScheme.onBackground)
+                // Icon back (left aligned)
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        Icons.Default.ArrowBack,
+                        contentDescription = stringResource(R.string.email_contact_back_button_content_description),
+                        tint = MaterialTheme.colorScheme.onBackground)
+                }
+
+                // Title centered
+                Text(
+                    text = stringResource(R.string.contact_info_title),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
-            // Title centered
+            Spacer(modifier = Modifier.height(24.dp))
+
             Text(
-                text = stringResource(R.string.contact_info_title),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Medium
+                text = stringResource(R.string.email_contact_subtitle),
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold
                 ),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.email_contact_text),
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.align(Alignment.Center)
             )
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = stringResource(R.string.email_contact_subtitle),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(R.string.email_contact_text),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(text = stringResource(
-            R.string.email_contact_email_label),
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground)
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            placeholder = { Text(stringResource(
-                R.string.email_contact_email_content),
-                color = MaterialTheme.colorScheme.onSurfaceVariant) }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Subject Field
-        Text(text = stringResource(
-            R.string.email_contact_subject_label),
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground)
-        OutlinedTextField(
-            value = subject,
-            onValueChange = { subject = it },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            placeholder = { Text(
-                stringResource(
-                    R.string.email_contact_subject_content),
-                color = MaterialTheme.colorScheme.onSurfaceVariant) }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Message Field
-        Text(text = stringResource(
-            R.string.email_contact_message_label),
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onBackground)
-        OutlinedTextField(
-            value = message,
-            onValueChange = { message = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(240.dp),
-            shape = RoundedCornerShape(12.dp),
-            placeholder = { Text(stringResource(
-                R.string.email_contact_message_content),
-                color = MaterialTheme.colorScheme.onSurfaceVariant) }
-        )
-
-        Spacer(modifier = Modifier.height(32.dp)) // Push button to bottom
-
-        // Send Button
-        Button(
-            onClick = { /* Send action here */ },
-            enabled = isFormValid,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
-
+            Text(text = stringResource(
+                R.string.email_contact_email_label),
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground)
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                placeholder = { Text(stringResource(
+                    R.string.email_contact_email_content),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant) }
             )
-        ) {
-            Text(stringResource(
-                R.string.email_contact_button_label))
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Subject Field
+            Text(text = stringResource(
+                R.string.email_contact_subject_label),
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground)
+            OutlinedTextField(
+                value = subject,
+                onValueChange = { subject = it },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                placeholder = { Text(
+                    stringResource(
+                        R.string.email_contact_subject_content),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Message Field
+            Text(text = stringResource(
+                R.string.email_contact_message_label),
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground)
+            OutlinedTextField(
+                value = message,
+                onValueChange = { message = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp),
+                shape = RoundedCornerShape(12.dp),
+                placeholder = { Text(stringResource(
+                    R.string.email_contact_message_content),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            )
+
+            Spacer(modifier = Modifier.height(32.dp)) // Push button to bottom
+
+            // Send Button
+            Button(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = "mailto:".toUri()
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf("adechaunac@hotmail.fr"))
+                        putExtra(Intent.EXTRA_SUBJECT, subject.text.trim())
+                        putExtra(
+                            Intent.EXTRA_TEXT,
+                            """
+            From: ${email.text.trim()}
+            
+            ${message.text.trim()}
+            """.trimIndent()
+                        )
+                    }
+                    try {
+                        context.startActivity(intent)
+                    } catch (e: Exception) {
+                        scope.launch {
+                            snackBarHostState.showSnackbar(
+                                message = context.getString(R.string.email_app_not_found)
+                            )
+                        }
+                    }
+                },
+                enabled = isFormValid,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
+
+                )
+            ) {
+                Text(stringResource(
+                    R.string.email_contact_button_label))
+            }
         }
     }
+
 }
