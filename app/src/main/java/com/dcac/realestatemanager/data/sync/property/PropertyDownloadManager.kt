@@ -1,26 +1,65 @@
 package com.dcac.realestatemanager.data.sync.property
 
+import android.annotation.SuppressLint
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import kotlinx.coroutines.flow.first
 import android.util.Log
+import com.dcac.realestatemanager.data.notification.SyncNotificationHelper
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
+import kotlinx.coroutines.flow.firstOrNull
 
 class PropertyDownloadManager(
     private val propertyRepository: PropertyRepository,
-    private val propertyOnlineRepository: PropertyOnlineRepository
+    private val propertyOnlineRepository: PropertyOnlineRepository,
+    private val syncNotificationHelper : SyncNotificationHelper,
+    private val userRepository: UserRepository
 ): PropertyDownloadInterfaceManager {
+
+    @SuppressLint("MissingPermission")
+    private fun notifyInserted(
+        title: String,
+        agentName: String
+    ) {
+        syncNotificationHelper.showPropertyInsertedNotification(
+            title = title,
+            agentName = agentName
+        )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun notifyUpdated(
+        title: String,
+        agentName: String
+    ) {
+        syncNotificationHelper.showPropertyUpdatedNotification(
+            title = title,
+            agentName = agentName
+        )
+    }
 
     override suspend fun downloadUnSyncedProperties(): List<SyncStatus> {
         val results = mutableListOf<SyncStatus>()
 
         try {
             val onlineProperties = propertyOnlineRepository.getAllProperties()
+            val userIds = onlineProperties
+                .map { it.property.ownerUid }
+                .distinct()
+            val agentNames = userIds.associateWith { id ->
+                userRepository.getUserByFirebaseUid(id)
+                    .firstOrNull()
+                    ?.agentName
+                    ?: "Unknown"
+            }
 
             for (doc in onlineProperties) {
 
                 val propertyOnline = doc.property
                 val localId = propertyOnline.universalLocalId
+                val agentName =
+                    agentNames[propertyOnline.ownerUid] ?: "Unknown"
 
                 try {
                     val localProperty =
@@ -63,12 +102,24 @@ class PropertyDownloadManager(
                             property = propertyOnline,
                             firebaseDocumentId = doc.firebaseId
                         )
+
+                        notifyInserted(
+                            title = propertyOnline.title,
+                            agentName = agentName
+                        )
+
                         results.add(SyncStatus.Success("Property $localId inserted"))
                     } else {
                         propertyRepository.updatePropertyFromFirebase(
                             property = propertyOnline,
                             firebaseDocumentId = doc.firebaseId
                         )
+
+                        notifyUpdated(
+                            title = propertyOnline.title,
+                            agentName = agentName
+                        )
+
                         results.add(SyncStatus.Success("Property $localId updated"))
                     }
 

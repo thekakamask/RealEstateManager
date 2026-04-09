@@ -15,10 +15,9 @@ This project is developed using modern Android architecture principles, with a f
 
 ## ✅ **LAST MAJOR UPDATES (see [UPDATES.md](./UPDATES.md) for details)**
 
-   - 🔑 Added password reset functionality using Firebase Authentication with dedicated "Forgot Password" flow and automatic reset email delivery.
-   - 🌙 Improved dark mode UX for property cards with enhanced contrast using Material 3 surface variants and adaptive borders for better readability.
-   - 🔐 Improved login error handling with precise Firebase authentication feedback for invalid credentials and unknown accounts.
-   - 📩 Added a fully functional contact support page with email client integration and snackbar fallback handling.
+   - 🔔 Added local notifications for property synchronization events, with automatic alerts when properties are downloaded or updated from remote Firebase data.
+   - 🔄 Added automatic background synchronization using WorkManager periodic tasks, enabling property downloads and updates even when the application is closed (while the user remains authenticated).
+   - 🗺️ Improved Google Maps interaction experience by resolving gesture conflicts with the navigation drawer, restoring smooth map dragging, pinch zoom, and native location recenter controls.
 
 
 ## ❌ **NEXT UPDATES**

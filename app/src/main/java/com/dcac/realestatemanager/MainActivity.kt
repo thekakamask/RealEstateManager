@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -53,31 +54,71 @@ class MainActivity : ComponentActivity() {
         super.attachBaseContext(updated)
     }
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            println(getString(R.string.location_permission_accepted))
-        } else {
-            Toast.makeText(
-                this,
-                getString(R.string.location_required_to_display_your_position_on_the_map),
-                Toast.LENGTH_LONG
-            ).show()
+    private val requestPermissionsLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+
+            val locationGranted =
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+
+            val notificationGranted =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    permissions[Manifest.permission.POST_NOTIFICATIONS] == true
+                } else {
+                    true
+                }
+
+            if (!locationGranted) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.location_required_to_display_your_position_on_the_map),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            if (
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                !notificationGranted
+            ) {
+                Toast.makeText(
+                    this,
+                    "Notifications disabled",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val permissionsToRequest = mutableListOf<String>()
+
         lockOrientation()
 
-        if (ContextCompat.checkSelfPermission(
+        if (
+            ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            requestPermissionsLauncher.launch(
+                permissionsToRequest.toTypedArray()
+            )
         }
 
         enableEdgeToEdge()

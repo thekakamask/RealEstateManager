@@ -30,13 +30,34 @@ class RealEstateManagerApplication : Application(), AppContainerProvider {
 
     @Inject lateinit var syncScheduler: SyncScheduler
 
+    private fun createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = android.app.NotificationChannel(
+                "sync_channel",
+                "Property synchronization",
+                android.app.NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifications for downloaded properties"
+            }
+
+            val notificationManager =
+                getSystemService(android.app.NotificationManager::class.java)
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         // Global init
         AndroidThreeTen.init(this)
         FirebaseApp.initializeApp(this)
+
+        createNotificationChannel()
+
         if (FirebaseAuth.getInstance().currentUser != null) {
             syncScheduler.scheduleSync()
+            syncScheduler.schedulePeriodicSync()
         }
 
     }

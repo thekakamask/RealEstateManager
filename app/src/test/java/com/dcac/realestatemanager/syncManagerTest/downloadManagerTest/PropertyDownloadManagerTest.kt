@@ -2,7 +2,10 @@ package com.dcac.realestatemanager.syncManagerTest.downloadManagerTest
 
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineEntity
 import com.dcac.realestatemanager.data.firebaseDatabase.property.PropertyOnlineRepository
+import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.data.notification.SyncNotificationHelper
 import com.dcac.realestatemanager.data.offlineDatabase.property.PropertyRepository
+import com.dcac.realestatemanager.data.offlineDatabase.user.UserRepository
 import com.dcac.realestatemanager.data.sync.SyncStatus
 import com.dcac.realestatemanager.data.sync.property.PropertyDownloadInterfaceManager
 import com.dcac.realestatemanager.data.sync.property.PropertyDownloadManager
@@ -25,6 +28,8 @@ class PropertyDownloadManagerTest {
 
     private val propertyRepository = mockk<PropertyRepository>(relaxed = true)
     private val propertyOnlineRepository = mockk<PropertyOnlineRepository>(relaxed = true)
+    private val userRepository = mockk<UserRepository>(relaxed = true)
+    private val syncNotificationHelper = mockk<SyncNotificationHelper>(relaxed = true)
 
     private lateinit var downloadManager: PropertyDownloadInterfaceManager
 
@@ -45,7 +50,7 @@ class PropertyDownloadManagerTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxUnitFun = true)
-        downloadManager = PropertyDownloadManager(propertyRepository, propertyOnlineRepository)
+        downloadManager = PropertyDownloadManager(propertyRepository, propertyOnlineRepository, syncNotificationHelper, userRepository)
     }
 
     @After

@@ -3,6 +3,7 @@ package com.dcac.realestatemanager.ui.homePage.propertiesListScreen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -134,6 +135,12 @@ fun PropertyItem(
     onClick: () -> Unit
 ){
 
+    val isDarkTheme = isSystemInDarkTheme()
+
+    val elevation =
+        if (isDarkTheme) 8.dp
+        else 4.dp
+
     val photos = property.photos.take(3)
 
     val currency = CurrencyHelper.LocalCurrency.current
@@ -155,7 +162,11 @@ fun PropertyItem(
         if (isSelected) {
             MaterialTheme.colorScheme.primaryContainer
         } else {
-            MaterialTheme.colorScheme.surfaceVariant
+            if (isDarkTheme) {
+                MaterialTheme.colorScheme.surfaceContainerHigh
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            }
         }
 
     val border =
@@ -175,7 +186,9 @@ fun PropertyItem(
             containerColor = containerColor
         ),
         border = border,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = elevation
+        )
     ){
         Column(
             modifier = Modifier.padding(12.dp)

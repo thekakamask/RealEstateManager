@@ -28,6 +28,7 @@ import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.FirebaseStatic
 import com.dcac.realestatemanager.data.firebaseDatabase.staticMap.StaticMapOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.FirebaseUserOnlineRepository
 import com.dcac.realestatemanager.data.firebaseDatabase.user.UserOnlineRepository
+import com.dcac.realestatemanager.data.notification.SyncNotificationHelper
 import com.dcac.realestatemanager.data.offlineDatabase.RealEstateManagerDatabase
 import com.dcac.realestatemanager.data.offlineDatabase.photo.PhotoDao
 import com.dcac.realestatemanager.data.offlineDatabase.poi.PoiDao
@@ -119,6 +120,7 @@ interface AppContainer {
     val propertyUploadManager: PropertyUploadInterfaceManager
     val staticMapUploadManager: StaticMapUploadInterfaceManager
     val syncScheduler: SyncScheduler
+    val syncNotificationHelper: SyncNotificationHelper
 }
 
 // Manual version for non hilt layers
@@ -151,7 +153,8 @@ class AppDataContainer(
     override val crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
     override val propertyUploadManager: PropertyUploadInterfaceManager,
     override val staticMapUploadManager: StaticMapUploadInterfaceManager,
-    override val syncScheduler: SyncScheduler
+    override val syncScheduler: SyncScheduler,
+    override val syncNotificationHelper: SyncNotificationHelper
 ) : AppContainer
 
 //AppModule will tell to Hilt how to create object needed by the app.
@@ -193,7 +196,8 @@ object AppModule {
         crossSyncManager: PropertyPoiCrossUploadInterfaceManager,
         propertyUploadManager: PropertyUploadInterfaceManager,
         staticMapUploadManager: StaticMapUploadInterfaceManager,
-        syncScheduler: SyncScheduler
+        syncScheduler: SyncScheduler,
+        syncNotificationHelper: SyncNotificationHelper
 
     ): AppContainer {
         return AppDataContainer(
@@ -225,7 +229,8 @@ object AppModule {
             crossSyncManager,
             propertyUploadManager,
             staticMapUploadManager,
-            syncScheduler
+            syncScheduler,
+            syncNotificationHelper
         )
     }
 
@@ -476,8 +481,10 @@ object AppModule {
     @Singleton
     fun providePropertyDownloadManager(
         propertyRepository: PropertyRepository,
-        propertyOnlineRepository: PropertyOnlineRepository
-    ): PropertyDownloadInterfaceManager = PropertyDownloadManager(propertyRepository, propertyOnlineRepository)
+        propertyOnlineRepository: PropertyOnlineRepository,
+        syncNotificationHelper: SyncNotificationHelper,
+        userRepository: UserRepository
+    ): PropertyDownloadInterfaceManager = PropertyDownloadManager(propertyRepository, propertyOnlineRepository, syncNotificationHelper, userRepository)
 
     @Provides
     @Singleton
@@ -516,6 +523,14 @@ object AppModule {
     @Singleton
     fun provideSyncScheduler(application: Application): SyncScheduler {
         return SyncScheduler(application)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSyncNotificationHelper(
+        application: Application
+    ): SyncNotificationHelper {
+        return SyncNotificationHelper(application)
     }
 }
 

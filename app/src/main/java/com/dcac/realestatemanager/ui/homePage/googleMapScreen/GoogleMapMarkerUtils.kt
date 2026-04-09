@@ -8,12 +8,10 @@ import com.dcac.realestatemanager.utils.Utils.getIconForPoiType
 import com.dcac.realestatemanager.utils.Utils.getColorForPoiType
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import androidx.core.graphics.createBitmap
-import com.dcac.realestatemanager.R
 
 
 private val propertyMarkerCache = mutableMapOf<String, BitmapDescriptor>()
@@ -113,7 +111,7 @@ fun getCachedPoiMarker(
     }
 }
 
-private val userMarkerCache = mutableMapOf<String, BitmapDescriptor>()
+/*private val userMarkerCache = mutableMapOf<String, BitmapDescriptor>()
 
 fun getCustomUserMarker(context: Context): BitmapDescriptor {
     val iconRes = R.drawable.user_24px
@@ -157,4 +155,4 @@ fun getCachedUserMarker(
     return userMarkerCache.getOrPut("user") {
         getCustomUserMarker(context)
     }
-}
+}*/

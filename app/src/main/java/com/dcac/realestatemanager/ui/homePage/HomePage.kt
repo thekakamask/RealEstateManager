@@ -194,6 +194,8 @@ fun HomeScreenTablet(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = drawerState.isOpen ||
+                state.currentScreen !is HomeDestination.GoogleMap,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.width(300.dp)
@@ -491,6 +493,8 @@ fun HomeScreen(
         }
         ModalNavigationDrawer(
             drawerState = drawerState,
+            gesturesEnabled = drawerState.isOpen ||
+                    state.currentScreen !is HomeDestination.GoogleMap,
             drawerContent ={
                 ModalDrawerSheet(
                     modifier = Modifier.width(300.dp)

@@ -32,6 +32,7 @@ import com.dcac.realestatemanager.utils.settingsUtils.CurrencyHelper
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.MapUiSettings
@@ -148,20 +149,24 @@ fun MapContent(
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
+        properties = MapProperties(
+            isMyLocationEnabled = true
+        ),
         uiSettings = MapUiSettings(
             zoomControlsEnabled = true,
             scrollGesturesEnabled = true,
             zoomGesturesEnabled = true,
             tiltGesturesEnabled = true,
-            rotationGesturesEnabled = true
+            rotationGesturesEnabled = true,
+            myLocationButtonEnabled = true,
         )
     ) {
-        Marker(
+        /*Marker(
             state = MarkerState(position = LatLng(userLocation.latitude, userLocation.longitude)),
             title = stringResource(R.string.user_marker_title),
             snippet = stringResource(R.string.user_marker_snippet),
             icon = getCachedUserMarker(context)
-        )
+        )*/
 
         properties.forEach { item ->
 

@@ -1759,5 +1759,23 @@ This file documents key technical updates applied to the RealEstateManager Andro
     - Added email validation, pre-filled subject and message support, and a snackbar fallback message when no compatible email application is installed on the device.
 
 
+### 🔹 **Update #56**
+
+  - 🔔 **Property synchronization notifications added**
+    - Implemented a complete local notification system for synchronization events using Android Notification Channels and NotificationManagerCompat, allowing users to receive instant alerts whenever new properties are downloaded or existing ones are updated from remote Firebase data.
+    - Added automatic notification triggering during the property download flow by integrating notification dispatch directly into the synchronization managers, with dedicated messages for newly inserted properties and updated property records, including the property title and responsible agent name.
+
+  - 🔄 **Background synchronization enabled outside application lifecycle**
+    - Added automatic background synchronization using WorkManager periodic tasks, enabling the application to continue downloading and updating remote Firebase data even when the application is closed, as long as the user remains authenticated.
+    - Introduced a dual synchronization strategy combining immediate one-time sync requests for in-app actions and periodic background workers scheduled every 15 minutes, ensuring continuous data consistency between local Room storage and remote Firebase collections outside the UI lifecycle.
+
+  - 🗺️ **Google Maps interaction and gesture handling improved**
+    - Resolved a major gesture conflict between the ModalNavigationDrawer and the Google Maps screen that was preventing proper map manipulation.
+    - Added adaptive drawer gesture management by dynamically disabling swipe gestures while the map is displayed and re-enabling them automatically when the drawer is opened, allowing both smooth map interaction and intuitive drawer closing behavior.
+    - Restored full native Google Maps gestures including single-finger drag navigation, two-finger pinch zoom, and map panning without accidental drawer opening.
+    - Added native Google Maps location layer and recenter button support using MapProperties(isMyLocationEnabled = true) and myLocationButtonEnabled, allowing users to instantly recenter the map on their current position with the standard Google Maps UX.
+    - Removed the previous custom user location marker in favor of the native Google Maps location indicator for a cleaner and more familiar user experience.
+
+
 ## 🤝 **Contributions**
 Contributions are welcome! Feel free to fork the repository and submit a pull request for new features or bug fixes✅🟩❌.
